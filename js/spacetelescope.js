@@ -24,17 +24,16 @@ if(typeof $==="undefined") $ = {};
 
 	// Get the URL query string and parse it
 	$.query = function() {
-			var r = {length:0};
-			var q = location.search;
+		var r = {length:0};
+		var q = location.search;
 		if(q && q != '#'){
 			// remove the leading ? and trailing &
 			q = q.replace(/^\?/,'').replace(/\&$/,'');
 			jQuery.each(q.split('&'), function(){
 				var key = this.split('=')[0];
 				var val = this.split('=')[1];
-				if(/^[0-9.]+$/.test(val)) val = parseFloat(val);	// convert floats
+				if(/^[0-9\.]+$/.test(val)) val = parseFloat(val);	// convert floats
 				r[key] = val;
-				r['length']++;
 			});
 		}
 		return r;
@@ -50,6 +49,20 @@ if(typeof $==="undefined") $ = {};
 		}
 
 		this.q = $.query();
+		this.i = inp;
+
+		// Set some variables
+		this.langurl = "config/%LANG%.json";
+		this.dataurl = "config/options.json";
+		
+		this.settings = { 'length': 'm', 'currency': 'pounds', 'usecookies': false };
+
+		this.init(inp);
+
+		return this;
+	}
+
+	SpaceTelescope.prototype.init = function(inp){
 
 		// Language support
 		// Set the user's language using the browser settings. Over-ride with query string set value
@@ -57,22 +70,33 @@ if(typeof $==="undefined") $ = {};
 		this.langshort = (this.lang.indexOf('-') > 0 ? this.lang.substring(0,this.lang.indexOf('-')) : this.lang.substring(0,2));
 		this.langs = (inp && inp.langs) ? inp.langs : { 'en': 'English' };
 
-		// Set some variables
-		this.langurl = "config/%LANG%.json";
-		this.dataurl = "config/options.json";
-		
-		
-		this.settings = { 'length': 'ft', 'currency': 'euros' };
-
-		this.init();
-		return this;
-	}
-
-	SpaceTelescope.prototype.init = function(){
+		// Overwrite defaults with variables passed to the function
+		this.setVar("currency","string");
+		this.setVar("length","string");
+		this.setVar("mass","string");
 
 		this.loadConfig(this.update);
 		this.loadLanguage(this.lang,this.update);
 
+		return this;
+	}
+	
+	SpaceTelescope.prototype.setVar = function(v,t){
+		if(typeof v==="string"){
+			if(this.i && typeof this.i[v]===t) this.settings[v] = this.i[v];
+			// Was it set in the query string?
+			if(typeof this.q[v]===t){
+				this.settings[v] = this.q[v];
+				// When the setting is provided in the query string we'll also set a cookie with the value
+				if(this.settings.usecookies) setCookie('spacetelescope.'+v,this.settings[v],1);
+			}
+			if(this.settings.usecookies){
+				// See if we've set a cookie for this value.
+				var cookie = getCookie('spacetelescope.'+v);
+				// If we have a cookie set we use that value
+				if(cookie) this.settings[v] = cookie;
+			}
+		}
 		return this;
 	}
 
@@ -117,7 +141,7 @@ if(typeof $==="undefined") $ = {};
 				this.langshort = l;
 				this.lang = l;
 				// Store the data
-				this.phrasebook = data;
+				this.phrases = data;
 				if(typeof fn==="function") fn.call(this);
 			}
 		});
@@ -127,7 +151,7 @@ if(typeof $==="undefined") $ = {};
 	// Update the page using the JSON response
 	SpaceTelescope.prototype.update = function(){
 
-		if(!this.phrasebook || !this.data) return this;
+		if(!this.phrases || !this.data) return this;
 
 		this.updateLanguage();
 		
@@ -136,9 +160,9 @@ if(typeof $==="undefined") $ = {};
 
 	SpaceTelescope.prototype.updateLanguage = function(){
 
-		if(!this.phrasebook || !this.data) return this;
+		if(!this.phrases || !this.data) return this;
 
-		d = this.phrasebook;
+		d = this.phrases;
 
 		// Update page title (make sure we encode the HTML entities)
 		if(d.title) $('html title').text(htmlDecode(d.title));
@@ -150,8 +174,14 @@ if(typeof $==="undefined") $ = {};
 		$('body').attr('dir',(d.language.alignment=="right" ? 'rtl' : 'ltr')).removeClass('ltr rtl').addClass((d.language.alignment=="right" ? 'rtl' : 'ltr'));
 
 		var html = "<ul>";
+		console.log(this.data.rocket)
 		for(var l in this.data.rocket){
-			html += '<li><div class="rocket">'+this.phrasebook.options.rocket[l].label+'</div><div class="operator">'+this.phrasebook.options.operator[this.data.rocket[l].operator].label+'</div><div class="diameter">'+this.formatLength(this.data.rocket[l].diameter)+'</div> <div class="currency">'+this.formatCurrency(this.data.rocket[l].cost,"euros")+'</div></li>';
+			html += '<li><div class="rocket">'+this.phrases.options.rocket[l].label+'</div><div class="operator">'+this.phrases.options.operator[this.data.rocket[l].operator].label+'</div><div class="diameter"><strong>Diameter:</strong> '+this.formatLength(this.data.rocket[l].diameter)+'</div> <div class="currency"><strong>Cost:</strong> '+this.formatCurrency(this.data.rocket[l].cost)+'</div><div class="mass"><strong>Mass to LEO:</strong> '+this.formatMass(this.data.rocket[l].mass.LEO)+'<br /><strong>Mass beyond LEO:</strong> '+this.formatMass(this.data.rocket[l].mass.beyond)+'</div><div class="risk"><strong>Risk:</strong> '+(this.data.rocket[l].risk)+'</div>'
+			html += '<div class="sites"><strong>Sites:</strong> <br />'
+			for(var i = 0; i < this.data.rocket[l].sites.length; i++){
+				html += ''+this.phrases.options.site[this.data.rocket[l].sites[i]].label+'<br />';
+			}
+			html += '</div></li>';
 		}
 		html += "</ul>";
 		$('p').html(html);
@@ -168,9 +198,26 @@ if(typeof $==="undefined") $ = {};
 		if(!u) u = (this.settings.length) ? this.settings.length : "m";
 		if(typeof p==="string") p = parseInt(p,10);
 		if(!p) p = 1;
-		var unit = (this.phrasebook.ui.units[u]) ? this.phrasebook.ui.units[u].unit : "";
+		var unit = (this.phrases.ui.units[u]) ? this.phrases.ui.units[u].unit : "";
 		var conv = (this.data.units[u].conv) ? this.data.units[u].conv : 1;
-		return ''+(n*conv).toFixed(p)+''+unit;
+		return ''+addCommas((n*conv).toFixed(p))+''+unit;
+	}
+
+	// Inputs:
+	//  n - the number
+	//  u - the unit e.g. "kg" or "lb"
+	//  p - the number of decimal places to show in the output
+	SpaceTelescope.prototype.formatMass = function(n,u,p){
+		if(typeof n==="string") n = parseFloat(n,10);
+		if(!u) u = (this.settings.mass) ? this.settings.mass : "kg";
+		if(typeof p==="string") p = parseInt(p,10);
+		var unit = (this.phrases.ui.units[u]) ? this.phrases.ui.units[u].unit : "";
+		var conv = (this.data.units[u].conv) ? this.data.units[u].conv : 1;
+		n *= conv;
+		if(!p){
+			p = (n > 1000) ? 0 : 1;
+		}
+		return ''+addCommas((n).toFixed(p))+''+unit;
 	}
 
 	// Inputs:
@@ -178,16 +225,83 @@ if(typeof $==="undefined") $ = {};
 	//  c - the currency e.g. "pounds", "dollars", "euros"
 	//  p - the number of decimal places to show in the output
 	SpaceTelescope.prototype.formatCurrency = function(n,c,p){
-		n = parseFloat(n,10);
+		if(typeof n==="string") n = parseFloat(n,10);
 		if(!c) c = (this.settings.currency) ? this.settings.currency : "pounds";
+		if(typeof p==="string") p = parseInt(p,10);
 		if(!p) p = 0;
-		return this.phrasebook.ui.currency[c].symbol+''+(n*this.data.currency[c].conv).toFixed(p)+''+this.phrasebook.ui.million;
+		var append = (this.phrases.ui.million) ? this.phrases.ui.million : "";
+		var s = (this.phrases.ui.currency[c] && this.phrases.ui.currency[c].symbol) ? this.phrases.ui.currency[c].symbol : (this.phrases.ui.currency["pounds"].symbol ? this.phrases.ui.currency["pounds"].symbol : "");
+		var conv = (this.data.currency[c] && this.data.currency[c].conv) ? this.data.currency[c].conv : 1;
+		n *= conv;
+		// Change the "million" to "billion" if the number if too big
+		if(n >= 1000){
+			n /= 1000;
+			append = (this.phrases.ui.billion) ? this.phrases.ui.billion : "";
+		}
+		return s+''+(n).toFixed(p)+''+append;
+	}
+
+	// Add commas every 10^3
+	function addCommas(nStr) {
+		nStr += '';
+		var x = nStr.split('.');
+		var x1 = x[0];
+		var x2 = x.length > 1 ? '.' + x[1] : '';
+		var rgx = /(\d+)(\d{3})/;
+		while (rgx.test(x1)) {
+			x1 = x1.replace(rgx, '$1' + ',' + '$2');
+		}
+		return x1 + x2;
+	}
+
+	// Add commas to separate thousands	
+	function addCommas2(v){
+		var str = "";
+		var v2;
+		if(typeof v==="string") v = parseFloat(v,10)
+		if(v < 1000) return ''+v;
+		while(v > 1000){
+			v2 = (v - Math.floor(v/1000)*1000);
+			if(v2 < 100) v2 = "0"+v2;
+			if(v2 < 10) v2 = "0"+v2;
+			if(str) str = ","+str;
+			str = ''+v2+''+str;
+			v = (v - v2)/1000;
+		}
+		if(str!="") str = ','+str;
+		if(v > 0) str = v+str;
+		return str;
 	}
 
 	// Helper functions
 	function htmlDecode(input){
 		return $('<div />').html(input).text();
 	}
+
+	// Functions for getting, setting and deleting cookies
+	function setCookie(name,value,days){
+		if (days) {
+			var date = new Date();
+			date.setTime(date.getTime()+(days*24*60*60*1000));
+			var expires = "; expires="+date.toGMTString();
+		}
+		else var expires = "";
+		document.cookie = name+"="+value+expires+"; path=/";
+	}
+	
+	function getCookie(name){
+		var nameEQ = name + "=";
+		var ca = document.cookie.split(';');
+		for(var i=0;i < ca.length;i++) {
+			var c = ca[i];
+			while (c.charAt(0)==' ') c = c.substring(1,c.length);
+			if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+		}
+		return null;
+	}
+	
+	function deleteCookie(name){ setCookie(name,"",-1); }
+	
 
 
 	$.spacetelescope = function(placeholder,input) {

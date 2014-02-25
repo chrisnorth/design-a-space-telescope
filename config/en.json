@@ -8,16 +8,20 @@
 	"title": "Space Telescope Designer!",
 	"ui": {
 		"million": " million",
+		"billion": "Bn",
 		"units": {
 			"m": { "unit": " m" },
 			"ft": { "unit": " ft" },
+			"kg": { "unit": " kg" },
+			"lb": { "unit": " lb" },
 			"years": { "unit": " yrs" },
 			"months": { "unit": " months" }
 		},
 		"currency": {
 			"pounds": { "symbol": "&pound;" },
 			"dollars": { "symbol": "&dollar;" },
-			"euros": { "symbol": "&euro;" }
+			"euros": { "symbol": "&euro;" },
+			"yen": { "symbol": "&yen;" }
 		}
 	},
 	"options": {

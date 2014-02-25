@@ -2,13 +2,16 @@
 	"units": {
 		"m": { "conv": 1 },
 		"ft": { "conv": 3.281 },
+		"kg": { "conv": 1 },
+		"lb": { "conv": 2.205 },
 		"years": { "conv": 1 },
 		"months": { "conv": 12 }
 	},
 	"currency": {
 		"pounds": { "conv": 1 },
 		"dollars": { "conv": 1.67 },
-		"euros": { "conv": 1.21 }
+		"euros": { "conv": 1.21 },
+		"yen": { "conv": 170.7 }
 	},
 	"mirror": {
 		"0.5m": { "diameter": 0.5, "cost": 12, "mass": 3, "devtime": 0.5, "bus": { "diameter": 0.8, "cost": 100, "mass": 50, "devtime": 5 }, "passive": { "cost": 5, "mass": 20, "devtime": 0.5 }, "risk" : 0.99 },
