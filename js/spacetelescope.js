@@ -61,7 +61,8 @@ if(typeof $==="undefined") $ = {};
 		this.langurl = "config/%LANG%.json";
 		this.dataurl = "config/options.json";
 		
-		console.log(this);
+		
+		this.settings = { 'length': 'ft', 'currency': 'euros' };
 
 		this.init();
 		return this;
@@ -148,6 +149,39 @@ if(typeof $==="undefined") $ = {};
 		// Set language direction via attribute and a CSS class
 		$('body').attr('dir',(d.language.alignment=="right" ? 'rtl' : 'ltr')).removeClass('ltr rtl').addClass((d.language.alignment=="right" ? 'rtl' : 'ltr'));
 
+		var html = "<ul>";
+		for(var l in this.data.rocket){
+			html += '<li><div class="rocket">'+this.phrasebook.options.rocket[l].label+'</div><div class="operator">'+this.phrasebook.options.operator[this.data.rocket[l].operator].label+'</div><div class="diameter">'+this.formatLength(this.data.rocket[l].diameter)+'</div> <div class="currency">'+this.formatCurrency(this.data.rocket[l].cost,"euros")+'</div></li>';
+		}
+		html += "</ul>";
+		$('p').html(html);
+
+		return this;
+	}
+
+	// Inputs:
+	//  n - the number
+	//  u - the unit e.g. "m" or "ft"
+	//  p - the number of decimal places to show in the output
+	SpaceTelescope.prototype.formatLength = function(n,u,p){
+		if(typeof n==="string") n = parseFloat(n,10);
+		if(!u) u = (this.settings.length) ? this.settings.length : "m";
+		if(typeof p==="string") p = parseInt(p,10);
+		if(!p) p = 1;
+		var unit = (this.phrasebook.ui.units[u]) ? this.phrasebook.ui.units[u].unit : "";
+		var conv = (this.data.units[u].conv) ? this.data.units[u].conv : 1;
+		return ''+(n*conv).toFixed(p)+''+unit;
+	}
+
+	// Inputs:
+	//  n - the number
+	//  c - the currency e.g. "pounds", "dollars", "euros"
+	//  p - the number of decimal places to show in the output
+	SpaceTelescope.prototype.formatCurrency = function(n,c,p){
+		n = parseFloat(n,10);
+		if(!c) c = (this.settings.currency) ? this.settings.currency : "pounds";
+		if(!p) p = 0;
+		return this.phrasebook.ui.currency[c].symbol+''+(n*this.data.currency[c].conv).toFixed(p)+''+this.phrasebook.ui.million;
 	}
 
 	// Helper functions

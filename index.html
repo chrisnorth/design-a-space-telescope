@@ -5,8 +5,9 @@
 		<script type="text/javascript" src="js/jquery-1.11.0.min.js"></script>
 		<script type="text/javascript" src="js/spacetelescope.js"></script>
 		<script>
+		var spacetel;
 		$(document).ready(function(){
-			var spacetel = $.spacetelescope({id:"image",width:455,height:333});
+			spacetel = $.spacetelescope({id:"image",width:455,height:333});
  		});
 		</script>
 		<style>
@@ -38,7 +39,9 @@
 		h2 { font-size: 1.3em; margin-bottom: 0.5em; }
 		h3 { font-size: 1.15em; margin-bottom: 0.5em; }
 		h1, h2, h3 { font-weight: bold; }
-
+		li { margin-bottom: 1em; margin-right: 1em; display: inline-block; }
+		li:last-child { margin-bottom: 0; }
+		.rocket { font-weight: bold; }
 
 		</style>
 	</head>

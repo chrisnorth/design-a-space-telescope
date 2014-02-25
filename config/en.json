@@ -6,96 +6,112 @@
 		"translator": "Chris North"
 	},
 	"title": "Space Telescope Designer!",
-	"mirror": {
-		"0.5m" : { "label": "0.5 m" },
-		"1.0m" : { "label": "1.0 m" },
-		"2.0m" : { "label": "2.0 m" },
-		"4.0m" : { "label": "4.0 m" },
-		"8.0m" : { "label": "8.0 m" }
-	},
-	"orbit": {
-		"LEO": { "label": "Low Earth Orbit", "altitude": "<1000", "launchreq": "" },
-		"HEO": { "label": "High Earth Orbit", "altitude": ">1000", "launchreq": "" },
-		"SNS": { "label": "Sun-synchronous Orbit", "altitude": "<1000", "launchreq": "Requires ability to de-orbit" },
-		"GEO": { "label": "Geostationary Orbit", "altitude": "40000", "launchreq": "" },
-		"ETR": { "label": "Earth-Trailing", "altitude": "10000000", "launchreq": "" },
-		"EM2": { "label": "Earth-Moon L2", "altitude": "400000", "launchreq": "Requires relay satellite" },
-		"ES2": { "label": "Earth-Sun L2", "altitude": "1500000", "launchreq": "" }
-	},
-	"rocket": {
-		"ARI5": { "label": "Ariane 5" },
-		"SOYZ": { "label": "Soyuz" },
-		"DLT2": { "label": "Delta II" },
-		"DLT4": { "label": "Delta IV" },
-		"PRTM": { "label": "Proton-M" },
-		"H2B4": { "label": "H-2B" },
-		"VEGA": { "label": "Vega" },
-		"PEGA": { "label": "Pegasus" },
-		"LM3B": { "label": "Long March 3B" },
-		"ATLV": { "label": "Atlas V" },
-		"FLC9": { "label": "Falcon 9" }
-	},
-	"operator": {
-		"nasa": { "label": "NASA (USA)" },
-		"roscosmos": { "label": "Roscosmos (Russia)" },
-		"esa": { "label": "ESA (Europe)" },
-		"jaxa": { "label": "JAXA (Japan)" },
-		"orbital": { "label": "Orbital (Private)" },
-		"cnsa": { "label": "CNSA (China)" },
-		"spacex": { "label": "SpaceX (Private)" }
-	},
-	"site": {
-		"CSG": { "label": "Guiana Space Centre" },
-		"BKR": { "label": "Baikonur" },
-		"PTK": { "label": "Plestesk" },
-		"KSC": { "label": "Kennedy Space Centre" },
-		"VDB": { "label": "Vandenberg" },
-		"XCH": { "label": "Xichang" },
-		"TNG": { "label": "Tanegashima" },
-		"AIR": { "label": "Carrier Aircraft" }
-	},
-	"wavelengths": {
-		"none": { "label": "None" },
-		"submm": { "label": "sub-mm" },
-		"farir": { "label": "Far-IR" },
-		"midir": { "label": "Mid-IR" },
-		"nearir": { "label": "Near-IR" },
-		"optical": { "label": "Optical" },
-		"uv": { "label": "UV" }
-	},
-	"instrument": {
-		"camera": { "label": "Camera" },
-		"spectrometer": { "label": "Spectrometer" },
-		"both": { "label": "Both" }
-	},
-	"cooling": {
-		"passive": {
-			"yes": { "label": "Yes" },
-			"no": { "label": "No" }
+	"ui": {
+		"million": " million",
+		"units": {
+			"m": { "unit": " m" },
+			"ft": { "unit": " ft" },
+			"years": { "unit": " yrs" },
+			"months": { "unit": " months" }
 		},
-		"cryogenic": {
-			"none": { "label": "None" },
-			"2yr": { "label": "2yr" },
-			"4yr": { "label": "4yr" },
-			"8yr": { "label": "8yr" }
-		},
-		"active": {
-			"yes": { "label": "Yes" },
-			"no": { "label": "No" }
+		"currency": {
+			"pounds": { "symbol": "&pound;" },
+			"dollars": { "symbol": "&dollar;" },
+			"euros": { "symbol": "&euro;" }
 		}
 	},
-	"mission": {
-		"1": { "label": "1 yr" },
-		"2": { "label": "2 yrs" },
-		"3": { "label": "3 yrs" },
-		"4": { "label": "4 yrs" },
-		"5": { "label": "5 yrs" },
-		"6": { "label": "6 yrs" },
-		"7": { "label": "7 yrs" },
-		"8": { "label": "8 yrs" },
-		"9": { "label": "9 yrs" },
-		"10": { "label": "10 yrs" },
-		"15": { "label": "15 yrs" },
-		"20": { "label": "20 yrs" }
+	"options": {
+		"mirror": {
+			"mirror_0.5" : { "label": "0.5 m" },
+			"mirror_1.0" : { "label": "1.0 m" },
+			"mirror_2.0" : { "label": "2.0 m" },
+			"mirror_4.0" : { "label": "4.0 m" },
+			"mirror_8.0" : { "label": "8.0 m" }
+		},
+		"orbit": {
+			"LEO": { "label": "Low Earth Orbit", "altitude": "<1000", "launchreq": "" },
+			"HEO": { "label": "High Earth Orbit", "altitude": ">1000", "launchreq": "" },
+			"SNS": { "label": "Sun-synchronous Orbit", "altitude": "<1000", "launchreq": "Requires ability to de-orbit" },
+			"GEO": { "label": "Geostationary Orbit", "altitude": "40000", "launchreq": "" },
+			"ETR": { "label": "Earth-Trailing", "altitude": "10000000", "launchreq": "" },
+			"EM2": { "label": "Earth-Moon L2", "altitude": "400000", "launchreq": "Requires relay satellite" },
+			"ES2": { "label": "Earth-Sun L2", "altitude": "1500000", "launchreq": "" }
+		},
+		"rocket": {
+			"ARI5": { "label": "Ariane 5" },
+			"SOYZ": { "label": "Soyuz" },
+			"DLT2": { "label": "Delta II" },
+			"DLT4": { "label": "Delta IV" },
+			"PRTM": { "label": "Proton-M" },
+			"H2B4": { "label": "H-2B" },
+			"VEGA": { "label": "Vega" },
+			"PEGA": { "label": "Pegasus" },
+			"LM3B": { "label": "Long March 3B" },
+			"ATLV": { "label": "Atlas V" },
+			"FLC9": { "label": "Falcon 9" }
+		},
+		"operator": {
+			"nasa": { "label": "NASA (USA)" },
+			"roscosmos": { "label": "Roscosmos (Russia)" },
+			"esa": { "label": "ESA (Europe)" },
+			"jaxa": { "label": "JAXA (Japan)" },
+			"orbital": { "label": "Orbital (Private)" },
+			"cnsa": { "label": "CNSA (China)" },
+			"spacex": { "label": "SpaceX (Private)" }
+		},
+		"site": {
+			"CSG": { "label": "Guiana Space Centre" },
+			"BKR": { "label": "Baikonur" },
+			"PTK": { "label": "Plestesk" },
+			"KSC": { "label": "Kennedy Space Centre" },
+			"VDB": { "label": "Vandenberg" },
+			"XCH": { "label": "Xichang" },
+			"TNG": { "label": "Tanegashima" },
+			"AIR": { "label": "Carrier Aircraft" }
+		},
+		"wavelengths": {
+			"none": { "label": "None" },
+			"submm": { "label": "sub-mm" },
+			"farir": { "label": "Far-IR" },
+			"midir": { "label": "Mid-IR" },
+			"nearir": { "label": "Near-IR" },
+			"optical": { "label": "Optical" },
+			"uv": { "label": "UV" }
+		},
+		"instrument": {
+			"camera": { "label": "Camera" },
+			"spectrometer": { "label": "Spectrometer" },
+			"both": { "label": "Both" }
+		},
+		"cooling": {
+			"passive": {
+				"yes": { "label": "Yes" },
+				"no": { "label": "No" }
+			},
+			"cryogenic": {
+				"none": { "label": "None" },
+				"years_2": { "label": "2yr" },
+				"years_4": { "label": "4yr" },
+				"years_8": { "label": "8yr" }
+			},
+			"active": {
+				"yes": { "label": "Yes" },
+				"no": { "label": "No" }
+			}
+		},
+		"mission": {
+			"years_1": { "label": "1 yr" },
+			"years_2": { "label": "2 yrs" },
+			"years_3": { "label": "3 yrs" },
+			"years_4": { "label": "4 yrs" },
+			"years_5": { "label": "5 yrs" },
+			"years_6": { "label": "6 yrs" },
+			"years_7": { "label": "7 yrs" },
+			"years_8": { "label": "8 yrs" },
+			"years_9": { "label": "9 yrs" },
+			"years_10": { "label": "10 yrs" },
+			"years_15": { "label": "15 yrs" },
+			"years_20": { "label": "20 yrs" }
+		}
 	}
 }

@@ -1,0 +1,120 @@
+{
+	"title": { "_title": "Main title", "_text": "The title of the activity", "_type": "string" },
+	"language" : {
+		"_title": "About the language",
+		"code" : { "_title": "Language Code", "_text": "The two letter language code", "_type": "string" },
+		"name" : { "_title": "Language Name", "_text": "This is the name of the language in that language e.g. English, Fran&#231;ais, Espa&#241;ol, and &#2350;&#2366;&#2344;&#2325; &#2361;&#2367;&#2344;&#2381;&#2342;&#2368;. It appears in the language menu.", "_type": "string" },
+		"translator" : { "_title": "Translator", "_text": "This is the name of the translator. It can contain a hyperlink. Not currently displayed but may be in the future.", "_type": "string" },
+		"alignment" : { "_title": "Language Direction", "_text": "The direction that the language goes.", "_type": "select", "_options": [{"name":"left to right","value":"left"},{"name":"right to left","value":"right"}] }
+	},
+	"ui": {
+		"million": { "_title": "Million", "_text": "The text label appended to numbers in the millions", "_type": "string"; },
+		"length": { "_title": "Length unit", "_text": "The unit appended to linear dimensions.", "_type": "string"; },
+		"unitconv": { "_title": "Unit conversion", "_text": "The text label appended to linear dimensions.", "_type": "number"; }
+	},
+	"options": {
+		"mirror": {
+			"_title": "Mirrors",
+			"mirror_0.5" : { "label": { "_title": "0.5 m", "_text": "The 0.5 m mirror", "_type": "string" } },
+			"mirror_1.0" : { "label": { "_title": "1 m", "_text": "The 1 m mirror", "_type": "string" } },
+			"mirror_2.0" : { "label": { "_title": "2 m", "_text": "The 2 m mirror", "_type": "string" } },
+			"mirror_4.0" : { "label": { "_title": "4 m", "_text": "The 4 m mirror", "_type": "string" } },
+			"mirror_8.0" : { "label": { "_title": "8 m", "_text": "The 8 m mirror", "_type": "string" } }
+		},
+		"orbit": {
+			"_title": "Orbits",
+			"LEO": { "label": { "_title": "Low Earth Orbit", "_text": "Label", "_type": "string" }, "altitude": { "_title": "Altitude", "_text": "<1000", "_type": "string" }, "launchreq": "" },
+			"HEO": { "label": { "_title": "High Earth Orbit", "_text": "Label", "_type": "string" }, "altitude": { "_title": "Altitude", "_text": ">1000", "_type": "string" }, "launchreq": "" },
+			"SNS": { "label": { "_title": "Sun-synchronous Orbit", "_text": "Label", "_type": "string" }, "altitude": { "_title": "Altitude", "_text": "<1000", "_type": "string" }, "launchreq": "Requires ability to de-orbit" },
+			"GEO": { "label": { "_title": "Geostationary Orbit", "_text": "Label", "_type": "string" }, "altitude": { "_title": "Altitude", "_text": "40000", "_type": "string" }, "launchreq": "" },
+			"ETR": { "label": { "_title": "Earth-Trailing", "_text": "Label", "_type": "string" }, "altitude": { "_title": "Altitude", "_text": "10000000", "_type": "string" }, "launchreq": "" },
+			"EM2": { "label": { "_title": "Earth-Moon L2", "_text": "Label", "_type": "string" }, "altitude": { "_title": "Altitude", "_text": "400000", "_type": "string" }, "launchreq": "Requires relay satellite" },
+			"ES2": { "label": { "_title": "Earth-Sun L2", "_text": "Label", "_type": "string" }, "altitude": { "_title": "Altitude", "_text": "1500000", "_type": "string" }, "launchreq": "" }
+		},
+		"rocket": {
+			"_title": "Rockets",
+			"ARI5": { "label": { "_title": "Ariane 5", "_text": "The rocket name", "_type": "string" } },
+			"SOYZ": { "label": { "_title": "Soyuz", "_text": "The rocket name", "_type": "string" } },
+			"DLT2": { "label": { "_title": "Delta II", "_text": "The rocket name", "_type": "string" } },
+			"DLT4": { "label": { "_title": "Delta IV", "_text": "The rocket name", "_type": "string" } },
+			"PRTM": { "label": { "_title": "Proton-M", "_text": "The rocket name", "_type": "string" } },
+			"H2B4": { "label": { "_title": "H-2B", "_text": "The rocket name", "_type": "string" } },
+			"VEGA": { "label": { "_title": "Vega", "_text": "The rocket name", "_type": "string" } },
+			"PEGA": { "label": { "_title": "Pegasus", "_text": "The rocket name", "_type": "string" } },
+			"LM3B": { "label": { "_title": "Long March 3B", "_text": "The rocket name", "_type": "string" } },
+			"ATLV": { "label": { "_title": "Atlas V", "_text": "The rocket name", "_type": "string" } },
+			"FLC9": { "label": { "_title": "Falcon 9", "_text": "The rocket name", "_type": "string" } }
+		},
+		"operator": {
+			"_title": "Launch Operator",
+			"nasa": { "label": { "_title": "NASA (USA)", "_text": "Label", "_type": "string" } },
+			"roscosmos": { "label": { "_title": "Roscosmos (Russia)", "_text": "Label", "_type": "string" } },
+			"esa": { "label": { "_title": "ESA (Europe)", "_text": "Label", "_type": "string" } },
+			"jaxa": { "label": { "_title": "JAXA (Japan)", "_text": "Label", "_type": "string" } },
+			"orbital": { "label": { "_title": "Orbital (Private)", "_text": "Label", "_type": "string" } },
+			"cnsa": { "label": { "_title": "CNSA (China)", "_text": "Label", "_type": "string" } },
+			"spacex": { "label": { "_title": "SpaceX (Private)", "_text": "Label", "_type": "string" } }
+		},
+		"site": {
+			"_title": "Launch Site",
+			"CSG": { "label": { "_title": "Guiana Space Centre", "_text": "Label", "_type": "string" } },
+			"BKR": { "label": { "_title": "Baikonur", "_text": "Label", "_type": "string" } },
+			"PTK": { "label": { "_title": "Plestesk", "_text": "Label", "_type": "string" } },
+			"KSC": { "label": { "_title": "Kennedy Space Centre", "_text": "Label", "_type": "string" } },
+			"VDB": { "label": { "_title": "Vandenberg", "_text": "Label", "_type": "string" } },
+			"XCH": { "label": { "_title": "Xichang", "_text": "Label", "_type": "string" } },
+			"TNG": { "label": { "_title": "Tanegashima", "_text": "Label", "_type": "string" } },
+			"AIR": { "label": { "_title": "Carrier Aircraft", "_text": "Label", "_type": "string" } }
+		},
+		"wavelengths": {
+			"_title": "The Instrument Wavelength",
+			"none": { "label": { "_title": "None", "_text": "Label", "_type": "string" } },
+			"submm": { "label": { "_title": "sub-mm", "_text": "Label", "_type": "string" } },
+			"farir": { "label": { "_title": "Far-IR", "_text": "Label", "_type": "string" } },
+			"midir": { "label": { "_title": "Mid-IR", "_text": "Label", "_type": "string" } },
+			"nearir": { "label": { "_title": "Near-IR", "_text": "Label", "_type": "string" } },
+			"optical": { "label": { "_title": "Optical", "_text": "Label", "_type": "string" } },
+			"uv": { "label": { "_title": "UV", "_text": "Label", "_type": "string" } }
+		},
+		"instrument": {
+			"_title": "The Instrument",
+			"camera": { "label": { "_title": "Camera", "_text": "Label", "_type": "string" } },
+			"spectrometer": { "label": { "_title": "Spectrometer", "_text": "Label", "_type": "string" } },
+			"both": { "label": { "_title": "Both", "_text": "Label", "_type": "string" } }
+		},
+		"cooling": {
+			"passive": {
+				"_title": "Passive cooling",
+				"yes": { "label": { "_title": "Yes", "_text": "Label", "_type": "string" } },
+				"no": { "label": { "_title": "No", "_text": "Label", "_type": "string" } }
+			},
+			"cryogenic": {
+				"_title": "Cryogenic cooling",
+				"none": { "label": { "_title": "None", "_text": "Label", "_type": "string" } },
+				"years_2": { "label": { "_title": "2 years", "_text": "Label", "_type": "string" } },
+				"years_4": { "label": { "_title": "4 years", "_text": "Label", "_type": "string" } },
+				"years_8": { "label": { "_title": "8 years", "_text": "Label", "_type": "string" } }
+			},
+			"active": {
+				"_title": "Active cooling",
+				"yes": { "label": { "_title": "Yes", "_text": "Label", "_type": "string" } },
+				"no": { "label": { "_title": "No", "_text": "Label", "_type": "string" } }
+			}
+		},
+		"mission": {
+			"_title": "Mission",
+			"years_1": { "label": { "_title": "1 yr", "_text": "Label", "_type": "string" } },
+			"years_2": { "label": { "_title": "2 yrs", "_text": "Label", "_type": "string" } },
+			"years_3": { "label": { "_title": "3 yrs", "_text": "Label", "_type": "string" } },
+			"years_4": { "label": { "_title": "4 yrs", "_text": "Label", "_type": "string" } },
+			"years_5": { "label": { "_title": "5 yrs", "_text": "Label", "_type": "string" } },
+			"years_6": { "label": { "_title": "6 yrs", "_text": "Label", "_type": "string" } },
+			"years_7": { "label": { "_title": "7 yrs", "_text": "Label", "_type": "string" } },
+			"years_8": { "label": { "_title": "8 yrs", "_text": "Label", "_type": "string" } },
+			"years_9": { "label": { "_title": "9 yrs", "_text": "Label", "_type": "string" } },
+			"years_10": { "label": { "_title": "10 yrs", "_text": "Label", "_type": "string" } },
+			"years_15": { "label": { "_title": "15 yrs", "_text": "Label", "_type": "string" } },
+			"years_20": { "label": { "_title": "20 yrs", "_text": "Label", "_type": "string" } }
+		}
+	}
+}
