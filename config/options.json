@@ -1,85 +1,85 @@
 {
-	"mirror": [
-		{ "name" : "0.5 m", "diameter": 0.5, "cost": 12, "mass": 3, "devtime": 0.5, "bus": { "diameter": 0.8, "cost": 100, "mass": 50, "devtime": 5 }, "passive": { "cost": 5, "mass": 20, "devtime": 0.5 }, "risk" : 0.99 },
-		{ "name" : "1.0 m", "diameter": 1, "cost": 25, "mass": 10, "devtime": 1, "bus": { "diameter": 1.4, "cost": 200, "mass": 100, "devtime": 5 }, "passive": { "cost": 10, "mass": 40, "devtime": 0.5 }, "risk" : 0.98 },
-		{ "name" : "2.0 m", "diameter": 2, "cost": 50, "mass": 30, "devtime": 1, "bus": { "diameter": 2.4, "cost": 500, "mass": 200, "devtime": 5 }, "passive": { "cost": 20, "mass": 100, "devtime": 1 }, "risk" : 0.97 },
-		{ "name" : "4.0 m", "diameter": 4, "cost": 200, "mass": 100, "devtime": 2, "bus": { "diameter": 4.4, "cost": 1000, "mass": 300, "devtime": 5 }, "passive": { "cost": 40, "mass": 200, "devtime": 1 }, "risk" : 0.95 },
-		{ "name" : "8.0 m", "diameter": 8, "cost": 1000, "mass": 300, "devtime": 2, "bus": { "diameter": 10, "cost": 2000, "mass": 400, "devtime": 2 }, "passive": { "cost": 80, "mass": 400, "devtime": 2 }, "risk" : 0.9 }
-	],
-	"orbit": [
-		{ "name": "Low Earth Orbit", "altitude": "<1000", "obsfrac": 0.5, "period": 0.0625, "multiplier": { "passive": 1, "cryo": 0.7, "launchcost": 1.2 }, "launchreq": "Requires ability to de-orbit", "fuellifetime": 10, "temperature": 400, "LEO": 1, "groundcost": 20, "risk": 0.9 },
-		{ "name": "High Earth Orbit", "altitude": ">1000", "obsfrac": 0.75, "period": 0.0625, "multiplier": { "passive": 1, "cryo": 1, "launchcost": 1 }, "launchreq": "", "fuellifetime": 20, "temperature": 300, "LEO": 1, "groundcost": 30, "risk": 0.95 },
-		{ "name": "Sun-synchronous Orbit", "altitude": "<1000", "obsfrac": 1, "period": 0.0625, "multiplier": { "passive": 1, "cryo": 1, "launchcost": 1.2 }, "launchreq": "Requires ability to de-orbit", "fuellifetime": 10, "temperature": 400, "LEO": 1, "groundcost": 30, "risk": 0.9 },
-		{ "name": "Geostationary Orbit", "altitude": "40000", "obsfrac": 0.5, "period": 1, "multiplier": { "passive": 0, "cryo": 0, "launchcost": 1 }, "launchreq": "", "fuellifetime": 20, "temperature": 300, "LEO": 0, "groundcost": 40, "risk": 0.95 },
-		{ "name": "Earth-Trailing", "altitude": "10000000", "obsfrac": 1, "period": 370, "multiplier": { "passive": 1, "cryo": 1, "launchcost": 1 }, "launchreq": "", "fuellifetime": 20, "temperature": 300, "LEO": 0, "groundcost": 60, "risk": 0.95 },
-		{ "name": "Earth-Moon L2", "altitude": "400000", "obsfrac": 0.5, "period": 27, "multiplier": { "passive": 0, "cryo": 0, "launchcost": 1.5 }, "launchreq": "Requires relay satellite, "fuellifetime": 10, "temperature": 300, "LEO": 0, "groundcost": 80, "risk": 0.95 },
-		{ "name": "Earth-Sun L2", "altitude": "1500000", "obsfrac": 1, "period": 365, "multiplier": { "passive": 1, "cryo": 1, "launchcost": 1 }, "launchreq": "", "fuellifetime": 10, "temperature": 300, "LEO": 0, "groundcost": 50, "risk": 0.95 }
-	],
-	"rocket": [
-		{ "name": "Ariane 5", "mass": { "LEO": 20000, "beyond": 9000 }, "diameter": 5.5, "operator": "ESA (Europe)", "cost": 100, "risk": 0.96, "sites": ["FG"] },
-		{ "name": "Soyuz, "mass": { "LEO": 8000, "beyond": 4000 }, "diameter": 3, "operator": "Roscosmos (Russia)", "cost": 60, "risk": 0.98, "sites": ["BK","PK",FG"] },
-		{ "name": "Delta II, "mass": { "LEO": 6000, "beyond": 2000 }, "diameter": 3, "operator": "NASA (USA)", "cost": 30, "risk": 0.99, "sites": ["KSC","VDB"] },
-		{ "name": "Delta IV, "mass": { "LEO": 23000, "beyond": 13000 }, "diameter": 5, "operator": "NASA (USA)", "cost": 200, "risk": 0.95, "sites": ["KSC","VDB"] }, 
-		{ "name": "Proton-M, "mass": { "LEO": 20000, "beyond": 5000 }, "diameter": 4, "operator": "Roscosmos (Russia)", "cost": 60, "risk": 0.88, "sites": ["BK", "PK"] }, 
-		{ "name": "H-2B, "mass": { "LEO": 15000, "beyond": 8000 }, "diameter": 5, "operator": "JAXA (Japan)", "cost": 80, "risk": 0.95, "sites": ["TNG"] },  
-		{ "name": "Vega, "mass": { "LEO": 2300, "beyond": 0 }, "diameter": 3, "operator": "ESA (Europe)", "cost": 23, "risk": 0.98, "sites": ["FG"] },
-		{ "name": "Pegasus, "mass": { "LEO": 400, "beyond": 0 }, "diameter": 1.2, "operator": "Orbital (Private)", "cost": 15, "risk": 0.92, "sites": ["AIR"] },  
-		{ "name": "Long March 3B, "mass": { "LEO": 12000, "beyond": 5000 }, "diameter": 3.5, "operator": "CNSA (China)", "cost": 30, "risk": 0.75, "sites": ["XCH"] },  
-		{ "name": "Atlas V, "mass": { "LEO": 19000, "beyond": 9000 }, "diameter": 3.5, "operator": "NASA (USA)", "cost": 150, "risk": 0.98, "sites": ["KSC","VDB"] }, 
-		{ "name": "Falcon 9, "mass": { "LEO": 10000, "beyond": 7000 }, "diameter": 3.5, "operator": "SpaceX (Private)", "cost": 40, "risk": 0.97, "sites": ["KSC","VDB"] }
-	],
-	"site": {
-		"FG": { "name": "Guiana Space Centre", "LEO": 1, "operator": "ESA", "risk": 0.98 },
-		"BK": { "name": "Baikonur", "LEO": 1, "operator": "Roscosmos", "risk": 0.95 },
-		"PK": { "name": "Plestesk", "LEO": 0, "operator": "Roscosmos", "risk": 0.95 },
-		"KSC": { "name": "Kennedy Space Centre", "LEO": 1, "operator": "NASA", "risk": 0.98 },
-		"VDB": { "name": "Vandenberg", "LEO": 0, "operator": "NASA", "risk": 0.98 },
-		"XCH": { "name": "Xichang", "LEO": 1, "operator": "CNSA", "risk": 0.9 },
-		"TNG": { "name": "Tanegashima", "LEO": 1, "operator": JAXA", "risk": 0.98 },
-		"AIR": { "name": "Carrier Aircraft", "LEO": 0, "operator": "Orbital", "risk": 0.98 }
+	"mirror": {
+		"0.5m": { "diameter": 0.5, "cost": 12, "mass": 3, "devtime": 0.5, "bus": { "diameter": 0.8, "cost": 100, "mass": 50, "devtime": 5 }, "passive": { "cost": 5, "mass": 20, "devtime": 0.5 }, "risk" : 0.99 },
+		"1.0m": { "diameter": 1, "cost": 25, "mass": 10, "devtime": 1, "bus": { "diameter": 1.4, "cost": 200, "mass": 100, "devtime": 5 }, "passive": { "cost": 10, "mass": 40, "devtime": 0.5 }, "risk" : 0.98 },
+		"2.0m": { "diameter": 2, "cost": 50, "mass": 30, "devtime": 1, "bus": { "diameter": 2.4, "cost": 500, "mass": 200, "devtime": 5 }, "passive": { "cost": 20, "mass": 100, "devtime": 1 }, "risk" : 0.97 },
+		"4.0m": { "diameter": 4, "cost": 200, "mass": 100, "devtime": 2, "bus": { "diameter": 4.4, "cost": 1000, "mass": 300, "devtime": 5 }, "passive": { "cost": 40, "mass": 200, "devtime": 1 }, "risk" : 0.95 },
+		"8.0m": { "diameter": 8, "cost": 1000, "mass": 300, "devtime": 2, "bus": { "diameter": 10, "cost": 2000, "mass": 400, "devtime": 2 }, "passive": { "cost": 80, "mass": 400, "devtime": 2 }, "risk" : 0.9 }
 	},
-	"instrument": [
-		{ "wavelength": "None", "temperature": 999, "cost": 0, "mass": 0 },
-		{ "wavelength": "sub-mm", "temperature": 0.4, "cost": 50, "mass": 100 },
-		{ "wavelength": "Far-IR", "temperature": 0.4, "cost": 50, "mass": 100 },
-		{ "wavelength": "Mid-IR", "temperature": 4, "cost": 50, "mass": 100 },
-		{ "wavelength": "Near-IR", "temperature": 40, "cost": 50, "mass": 100 },
-		{ "wavelength": "Optical", "temperature": 300, "cost": 50, "mass": 100 },
-		{ "wavelength": "UV", "temperature": 400, "cost": 50, "mass": 100 }
-	],
-	"instrumenttype": [
-		{ "name": "Camera", "multiplier": { "cost": 1, "mass": 1 }, "devtime": 0.5 },
-		{ "name": "Spectrometer", "multiplier": { "cost": 1, "mass": 1 }, "devtime": 0.5 },
-		{ "name": "Both", "multiplier": { "cost": 1.5, "mass": 1.5 }, "devtime": 1 }
-	],
+	"orbit": {
+		"LEO": { "obsfrac": 0.5, "period": 0.0625, "multiplier": { "passive": 1, "cryo": 0.7, "launchcost": 1.2 }, "launchreq": "Requires ability to de-orbit", "fuellife": 10, "temperature": 400, "LEO": 1, "groundcost": 20, "risk": 0.9 },
+		"HEO": { "obsfrac": 0.75, "period": 0.0625, "multiplier": { "passive": 1, "cryo": 1, "launchcost": 1 }, "fuellife": 20, "temperature": 300, "LEO": 1, "groundcost": 30, "risk": 0.95 },
+		"SNS": { "obsfrac": 1, "period": 0.0625, "multiplier": { "passive": 1, "cryo": 1, "launchcost": 1.2 }, "fuellife": 10, "temperature": 400, "LEO": 1, "groundcost": 30, "risk": 0.9 },
+		"GEO": { "obsfrac": 0.5, "period": 1, "multiplier": { "passive": 0, "cryo": 0, "launchcost": 1 }, "fuellife": 20, "temperature": 300, "LEO": 0, "groundcost": 40, "risk": 0.95 },
+		"ETR": { "obsfrac": 1, "period": 370, "multiplier": { "passive": 1, "cryo": 1, "launchcost": 1 }, "fuellife": 20, "temperature": 300, "LEO": 0, "groundcost": 60, "risk": 0.95 },
+		"EM2": { "obsfrac": 0.5, "period": 27, "multiplier": { "passive": 0, "cryo": 0, "launchcost": 1.5 }, "fuellife": 10, "temperature": 300, "LEO": 0, "groundcost": 80, "risk": 0.95 },
+		"ES2": { "obsfrac": 1, "period": 365, "multiplier": { "passive": 1, "cryo": 1, "launchcost": 1 }, "fuellife": 10, "temperature": 300, "LEO": 0, "groundcost": 50, "risk": 0.95 }
+	},
+	"rocket": {
+		"ARI5": { "mass": { "LEO": 20000, "beyond": 9000 }, "diameter": 5.5, "cost": 100, "operator": "esa", "risk": 0.96, "sites": ["CSG"] },
+		"SOYZ": { "mass": { "LEO": 8000, "beyond": 4000 }, "diameter": 3, "cost": 60, "operator": "roscosmos", "risk": 0.98, "sites": ["BKR","PTK","CSG"] },
+		"DLT2": { "mass": { "LEO": 6000, "beyond": 2000 }, "diameter": 3, "cost": 30, "operator": "nasa", "risk": 0.99, "sites": ["KSC","VDB"] },
+		"DLT4": { "mass": { "LEO": 23000, "beyond": 13000 }, "diameter": 5, "cost": 200, "operator": "nasa", "risk": 0.95, "sites": ["KSC","VDB"] }, 
+		"PRTM": { "mass": { "LEO": 20000, "beyond": 5000 }, "diameter": 4, "cost": 60, "operator": "roscosmos", "risk": 0.88, "sites": ["BKR", "PTK"] }, 
+		"H2B4": { "mass": { "LEO": 15000, "beyond": 8000 }, "diameter": 5, "operator": "jaxa", "cost": 80, "risk": 0.95, "sites": ["TNG"] },  
+		"VEGA": { "mass": { "LEO": 2300, "beyond": 0 }, "diameter": 3, "operator": "esa", "cost": 23, "risk": 0.98, "sites": ["CSG"] },
+		"PEGA": { "mass": { "LEO": 400, "beyond": 0 }, "diameter": 1.2, "operator": "orbital", "cost": 15, "risk": 0.92, "sites": ["AIR"] },  
+		"LM3B": { "mass": { "LEO": 12000, "beyond": 5000 }, "diameter": 3.5, "operator": "cnsa", "cost": 30, "risk": 0.75, "sites": ["XCH"] },  
+		"ATLV": { "mass": { "LEO": 19000, "beyond": 9000 }, "diameter": 3.5, "operator": "nasa", "cost": 150, "risk": 0.98, "sites": ["KSC","VDB"] }, 
+		"FLC9": { "mass": { "LEO": 10000, "beyond": 7000 }, "diameter": 3.5, "operator": "spacex", "cost": 40, "risk": 0.97, "sites": ["KSC","VDB"] }
+	},
+	"site": {
+		"CSG": { "LEO": 1, "operator": "esa", "risk": 0.98 },
+		"BKR": { "LEO": 1, "operator": "roscosmos", "risk": 0.95 },
+		"PTK": { "LEO": 0, "operator": "roscosmos", "risk": 0.95 },
+		"KSC": { "LEO": 1, "operator": "nasa", "risk": 0.98 },
+		"VDB": { "LEO": 0, "operator": "nasa", "risk": 0.98 },
+		"XCH": { "LEO": 1, "operator": "cnsa", "risk": 0.9 },
+		"TNG": { "LEO": 1, "operator": "jaxa", "risk": 0.98 },
+		"AIR": { "LEO": 0, "operator": "orbital", "risk": 0.98 }
+	},
+	"wavelengths": {
+		"none": { "temperature": 999, "cost": 0, "mass": 0 },
+		"submm": { "temperature": 0.4, "cost": 50, "mass": 100 },
+		"farir": { "temperature": 0.4, "cost": 50, "mass": 100 },
+		"midir": { "temperature": 4, "cost": 50, "mass": 100 },
+		"nearir": { "temperature": 40, "cost": 50, "mass": 100 },
+		"optical": { "temperature": 300, "cost": 50, "mass": 100 },
+		"uv": { "temperature": 400, "cost": 50, "mass": 100 }
+	},
+	"instrument": {
+		"camera": { "multiplier": { "cost": 1, "mass": 1 }, "devtime": 0.5 },
+		"spectrometer": { "multiplier": { "cost": 1, "mass": 1 }, "devtime": 0.5 },
+		"both": { "multiplier": { "cost": 1.5, "mass": 1.5 }, "devtime": 1 }
+	},
 	"cooling": {
-		"passive": [
-			{ "id": "Yes", "temperature": 0.1, "multiplier": { "cost": 1, "mass": 1 }, "life": 20, "devtime": 1, "risk": 0.99 },
-			{ "id": "No", "temperature": 1, "multiplier": { "cost": 0, "mass": 0 }, "life": 99, "devtime": 0, "risk": 1 }
-		],
-		"cryogenic": [
-			{ "id": "None", "multiplier": { "temperature": 1 }, "cost": 0, "mass": 0, "life": 99, "devtime": 0, "risk": 1 },
-			{ "id": "2yr", "multiplier": { "temperature": 0.1 }, "cost": 20, "mass": 500, "life": 2, "devtime": 1, "risk": 0.95 },
-			{ "id": "4yr", "multiplier": { "temperature": 0.1 }, "cost": 50, "mass": 1000, "life": 4, "devtime": 1, "risk": 0.9 },
-			{ "id": "8yr", "multiplier": { "temperature": 0.1 }, "cost": 250, "mass": 2000, "life": 8, "devtime": 1, "risk": 0.8 }
-		],
-		"active": [
-			{ "id": "Yes", "multiplier": { "temperature": 0.1 }, "cost": 200, "mass": 100, "life": 10, "devtime": 1, "risk": 0.9 },
-			{ "id": "No", "multiplier": { "temperature": 1 }, "cost": 0, "mass": 0, "life": 99, "devtime": 0, "risk": 1 }
-		]
-	} 
-	"lifetime": [
-		{ "name": "1 yr", "life": 1, "risk": 0.99 },
-		{ "name": "2 yrs", "life": 2, "risk": 0.98 },
-		{ "name": "3 yrs", "life": 3, "risk": 0.97 },
-		{ "name": "4 yrs", "life": 4, "risk": 0.96 },
-		{ "name": "5 yrs", "life": 5, "risk": 0.95 },
-		{ "name": "6 yrs", "life": 6, "risk": 0.94 },
-		{ "name": "7 yrs", "life": 7, "risk": 0.93 },
-		{ "name": "8 yrs", "life": 8, "risk": 0.92 },
-		{ "name": "9 yrs", "life": 9, "risk": 0.91 },
-		{ "name": "10 yrs", "life": 10, "risk": 0.9 },
-		{ "name": "15 yrs", "life": 15, "risk": 0.85 },
-		{ "name": "20 yrs", "life": 20, "risk": 0.8 }
-	]
+		"passive": {
+			"yes": { "temperature": 0.1, "multiplier": { "cost": 1, "mass": 1 }, "life": 20, "devtime": 1, "risk": 0.99 },
+			"no": { "temperature": 1, "multiplier": { "cost": 0, "mass": 0 }, "life": 99, "devtime": 0, "risk": 1 }
+		},
+		"cryogenic": {
+			"none": { "multiplier": { "temperature": 1 }, "cost": 0, "mass": 0, "life": 99, "devtime": 0, "risk": 1 },
+			"2yr": { "multiplier": { "temperature": 0.1 }, "cost": 20, "mass": 500, "life": 2, "devtime": 1, "risk": 0.95 },
+			"4yr": { "multiplier": { "temperature": 0.1 }, "cost": 50, "mass": 1000, "life": 4, "devtime": 1, "risk": 0.9 },
+			"8yr": { "multiplier": { "temperature": 0.1 }, "cost": 250, "mass": 2000, "life": 8, "devtime": 1, "risk": 0.8 }
+		},
+		"active": {
+			"yes": { "multiplier": { "temperature": 0.1 }, "cost": 200, "mass": 100, "life": 10, "devtime": 1, "risk": 0.9 },
+			"no": { "multiplier": { "temperature": 1 }, "cost": 0, "mass": 0, "life": 99, "devtime": 0, "risk": 1 }
+		}
+	},
+	"mission": {
+		"1": { "life": 1, "risk": 0.99 },
+		"2": { "life": 2, "risk": 0.98 },
+		"3": { "life": 3, "risk": 0.97 },
+		"4": { "life": 4, "risk": 0.96 },
+		"5": { "life": 5, "risk": 0.95 },
+		"6": { "life": 6, "risk": 0.94 },
+		"7": { "life": 7, "risk": 0.93 },
+		"8": { "life": 8, "risk": 0.92 },
+		"9": { "life": 9, "risk": 0.91 },
+		"10": { "life": 10, "risk": 0.9 },
+		"15": { "life": 15, "risk": 0.85 },
+		"20": { "life": 20, "risk": 0.8 }
+	}
 }
