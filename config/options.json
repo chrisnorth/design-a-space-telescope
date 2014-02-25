@@ -55,6 +55,16 @@
 		"TNG": { "LEO": 1, "operator": "jaxa", "risk": 0.98 },
 		"AIR": { "LEO": 0, "operator": "orbital", "risk": 0.98 }
 	},
+	"operator": {
+		"nasa": { "img": "images/logo_nasa.png" },
+		"roscosmos": { "img": "images/logo_roscosmos.png" },
+		"esa": { "img": "images/logo_esa.png" },
+		"jaxa": { "img": "images/logo_jaxa.png" },
+		"orbital": { "img": "images/" },
+		"cnsa": { "img": "images/logo_cnsa.png" },
+		"isro": { "img": "images/logo_isro.png" },
+		"spacex": { "img": "images/" }
+	},
 	"wavelengths": {
 		"none": { "temperature": 999, "cost": 0, "mass": 0 },
 		"submm": { "temperature": 0.4, "cost": 50, "mass": 100 },

@@ -64,6 +64,7 @@
 			"jaxa": { "label": "JAXA (Japan)" },
 			"orbital": { "label": "Orbital (Private)" },
 			"cnsa": { "label": "CNSA (China)" },
+			"isro": { "label": "ISRO (India)" },
 			"spacex": { "label": "SpaceX (Private)" }
 		},
 		"site": {

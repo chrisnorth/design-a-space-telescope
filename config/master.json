@@ -91,6 +91,7 @@
 			"jaxa": { "label": { "_title": "JAXA (Japan)", "_text": "Label", "_type": "string" } },
 			"orbital": { "label": { "_title": "Orbital (Private)", "_text": "Label", "_type": "string" } },
 			"cnsa": { "label": { "_title": "CNSA (China)", "_text": "Label", "_type": "string" } },
+			"isro": { "label": { "_title": "ISRO (India)", "_text": "Label", "_type": "string" } },
 			"spacex": { "label": { "_title": "SpaceX (Private)", "_text": "Label", "_type": "string" } }
 		},
 		"site": {
