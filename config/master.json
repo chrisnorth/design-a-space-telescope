@@ -8,9 +8,47 @@
 		"alignment" : { "_title": "Language Direction", "_text": "The direction that the language goes.", "_type": "select", "_options": [{"name":"left to right","value":"left"},{"name":"right to left","value":"right"}] }
 	},
 	"ui": {
-		"million": { "_title": "Million", "_text": "The text label appended to numbers in the millions", "_type": "string"; },
-		"length": { "_title": "Length unit", "_text": "The unit appended to linear dimensions.", "_type": "string"; },
-		"unitconv": { "_title": "Unit conversion", "_text": "The text label appended to linear dimensions.", "_type": "number"; }
+		"million": " million",
+		"billion": "Bn",
+		"units": {
+			"km": { "unit": " km" },
+			"m": { "unit": " m" },
+			"mm": { "unit": " mm" },
+			"ft": { "unit": " ft" },
+			"t": { "unit": " t" },
+			"kg": { "unit": " kg" },
+			"lb": { "unit": " lb" },
+			"years": { "unit": " yrs" },
+			"months": { "unit": " months" }
+		},
+		"currency": {
+			"pounds": { "symbol": "&pound;" },
+			"dollars": { "symbol": "&dollar;" },
+			"euros": { "symbol": "&euro;" },
+			"yen": { "symbol": "&yen;" }
+		}
+	},
+
+	"ui": {
+		"_title": "User-interface",
+		"million": { "_title": "Million", "_text": "The text label appended to numbers in the millions", "_type": "string" },
+		"billion": { "_title": "Billion", "_text": "The text label appended to numbers in the billions", "_type": "string" },
+		"units": {
+			"_title": "Units",
+			"m": { "unit": { "_title": "Metres", "_text": "The unit appended to linear dimensions.", "_type": "string" } },
+			"ft": { "unit": { "_title": "Feet", "_text": "The unit appended to linear dimensions.", "_type": "string" } },
+			"kg": { "unit": { "_title": "Kilograms", "_text": "The unit appended to mass.", "_type": "string" } },
+			"lb": { "unit": { "_title": "lbs", "_text": "The unit appended to mass.", "_type": "string" } },
+			"years": { "unit": { "_title": "Years", "_text": "The unit appended to time.", "_type": "string" } },
+			"months": { "unit": { "_title": "Months", "_text": "The unit appended to time.", "_type": "string" } }
+		},
+		"currency": {
+			"_title": "Currency",
+			"pounds": { "symbol": { "_title": "&pound;", "_text": "The currency symbol for GBP.", "_type": "string" } },
+			"dollars": { "symbol": { "_title": "&dollar;", "_text": "The currency symbol for USD.", "_type": "string" } },
+			"euros": { "symbol": { "_title": "&euro;", "_text": "The currency symbol for Euros.", "_type": "string" } },
+			"yen": { "symbol": { "_title": "&yen;", "_text": "The currency symbol for YEN.", "_type": "string" } }
+		}
 	},
 	"options": {
 		"mirror": {
@@ -23,13 +61,13 @@
 		},
 		"orbit": {
 			"_title": "Orbits",
-			"LEO": { "label": { "_title": "Low Earth Orbit", "_text": "Label", "_type": "string" }, "altitude": { "_title": "Altitude", "_text": "<1000", "_type": "string" }, "launchreq": "" },
-			"HEO": { "label": { "_title": "High Earth Orbit", "_text": "Label", "_type": "string" }, "altitude": { "_title": "Altitude", "_text": ">1000", "_type": "string" }, "launchreq": "" },
-			"SNS": { "label": { "_title": "Sun-synchronous Orbit", "_text": "Label", "_type": "string" }, "altitude": { "_title": "Altitude", "_text": "<1000", "_type": "string" }, "launchreq": "Requires ability to de-orbit" },
-			"GEO": { "label": { "_title": "Geostationary Orbit", "_text": "Label", "_type": "string" }, "altitude": { "_title": "Altitude", "_text": "40000", "_type": "string" }, "launchreq": "" },
-			"ETR": { "label": { "_title": "Earth-Trailing", "_text": "Label", "_type": "string" }, "altitude": { "_title": "Altitude", "_text": "10000000", "_type": "string" }, "launchreq": "" },
-			"EM2": { "label": { "_title": "Earth-Moon L2", "_text": "Label", "_type": "string" }, "altitude": { "_title": "Altitude", "_text": "400000", "_type": "string" }, "launchreq": "Requires relay satellite" },
-			"ES2": { "label": { "_title": "Earth-Sun L2", "_text": "Label", "_type": "string" }, "altitude": { "_title": "Altitude", "_text": "1500000", "_type": "string" }, "launchreq": "" }
+			"LEO": { "label": { "_title": "Low Earth Orbit", "_text": "Label", "_type": "string" }, "altitude": { "_title": "Altitude", "_text": "<1000 km", "_type": "string" }, "launchreq": "" },
+			"HEO": { "label": { "_title": "High Earth Orbit", "_text": "Label", "_type": "string" }, "altitude": { "_title": "Altitude", "_text": ">1000 km", "_type": "string" }, "launchreq": "" },
+			"SNS": { "label": { "_title": "Sun-synchronous Orbit", "_text": "Label", "_type": "string" }, "altitude": { "_title": "Altitude", "_text": "<1000 km", "_type": "string" }, "launchreq": "Requires ability to de-orbit" },
+			"GEO": { "label": { "_title": "Geostationary Orbit", "_text": "Label", "_type": "string" }, "altitude": { "_title": "Altitude", "_text": "40000 km", "_type": "string" }, "launchreq": "" },
+			"ETR": { "label": { "_title": "Earth-Trailing", "_text": "Label", "_type": "string" }, "altitude": { "_title": "Altitude", "_text": "10000000 km", "_type": "string" }, "launchreq": "" },
+			"EM2": { "label": { "_title": "Earth-Moon L2", "_text": "Label", "_type": "string" }, "altitude": { "_title": "Altitude", "_text": "400000 km", "_type": "string" }, "launchreq": "Requires relay satellite" },
+			"ES2": { "label": { "_title": "Earth-Sun L2", "_text": "Label", "_type": "string" }, "altitude": { "_title": "Altitude", "_text": "1500000 km", "_type": "string" }, "launchreq": "" }
 		},
 		"rocket": {
 			"_title": "Rockets",

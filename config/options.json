@@ -1,7 +1,10 @@
 {
 	"units": {
+		"km": { "conv": 0.001 },
 		"m": { "conv": 1 },
+		"mm": { "conv": 1000 },
 		"ft": { "conv": 3.281 },
+		"t": { "conv": 0.001 },
 		"kg": { "conv": 1 },
 		"lb": { "conv": 2.205 },
 		"years": { "conv": 1 },

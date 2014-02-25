@@ -10,8 +10,11 @@
 		"million": " million",
 		"billion": "Bn",
 		"units": {
+			"km": { "unit": " km" },
 			"m": { "unit": " m" },
+			"mm": { "unit": " mm" },
 			"ft": { "unit": " ft" },
+			"t": { "unit": " t" },
 			"kg": { "unit": " kg" },
 			"lb": { "unit": " lb" },
 			"years": { "unit": " yrs" },
