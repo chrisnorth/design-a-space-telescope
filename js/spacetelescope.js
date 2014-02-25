@@ -128,17 +128,26 @@ if(typeof $==="undefined") $ = {};
 
 		if(!this.phrasebook || !this.data) return this;
 
+		this.updateLanguage();
+		
+		return this;
+	}
+
+	SpaceTelescope.prototype.updateLanguage = function(){
+
+		if(!this.phrasebook || !this.data) return this;
+
 		d = this.phrasebook;
 
 		// Update page title (make sure we encode the HTML entities)
 		if(d.title) $('html title').text(htmlDecode(d.title));
 
 		// Update title
-		$('h1').replaceWith(d.title);
+		$('h1').text(d.title);
 
-	console.log(this,this.data,this.phrasebook)
+		// Set language direction via attribute and a CSS class
+		$('body').attr('dir',(d.language.alignment=="right" ? 'rtl' : 'ltr')).removeClass('ltr rtl').addClass((d.language.alignment=="right" ? 'rtl' : 'ltr'));
 
-		return this;
 	}
 
 	// Helper functions
