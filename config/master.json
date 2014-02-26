@@ -81,7 +81,8 @@
 			"PEGA": { "label": { "_title": "Pegasus", "_text": "The rocket name", "_type": "string" } },
 			"LM3B": { "label": { "_title": "Long March 3B", "_text": "The rocket name", "_type": "string" } },
 			"ATLV": { "label": { "_title": "Atlas V", "_text": "The rocket name", "_type": "string" } },
-			"FLC9": { "label": { "_title": "Falcon 9", "_text": "The rocket name", "_type": "string" } }
+			"FLC9": { "label": { "_title": "Falcon 9", "_text": "The rocket name", "_type": "string" } },
+			"PSLV": { "label": { "_title": "PSLV", "_text": "The rocket name", "_type": "string" } }
 		},
 		"operator": {
 			"_title": "Launch Operator",
@@ -103,6 +104,7 @@
 			"VDB": { "label": { "_title": "Vandenberg", "_text": "Label", "_type": "string" } },
 			"XCH": { "label": { "_title": "Xichang", "_text": "Label", "_type": "string" } },
 			"TNG": { "label": { "_title": "Tanegashima", "_text": "Label", "_type": "string" } },
+			"SDH": { "label": { "_title": "Satish Dhawan Space Centre", "_text": "Label", "_type": "string" } },
 			"AIR": { "label": { "_title": "Carrier Aircraft", "_text": "Label", "_type": "string" } }
 		},
 		"wavelengths": {

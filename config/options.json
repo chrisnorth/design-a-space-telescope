@@ -43,16 +43,18 @@
 		"PEGA": { "mass": { "LEO": 400, "beyond": 0 }, "diameter": 1.2, "operator": "orbital", "cost": 15, "risk": 0.92, "sites": ["AIR"] },  
 		"LM3B": { "mass": { "LEO": 12000, "beyond": 5000 }, "diameter": 3.5, "operator": "cnsa", "cost": 30, "risk": 0.75, "sites": ["XCH"] },  
 		"ATLV": { "mass": { "LEO": 19000, "beyond": 9000 }, "diameter": 3.5, "operator": "nasa", "cost": 150, "risk": 0.98, "sites": ["KSC","VDB"] }, 
-		"FLC9": { "mass": { "LEO": 10000, "beyond": 7000 }, "diameter": 3.5, "operator": "spacex", "cost": 40, "risk": 0.97, "sites": ["KSC","VDB"] }
+		"FLC9": { "mass": { "LEO": 10000, "beyond": 7000 }, "diameter": 3.5, "operator": "spacex", "cost": 40, "risk": 0.97, "sites": ["KSC","VDB"] },
+		"PSLV": { "mass": { "LEO": 1750, "beyond": 1425 }, "diameter": 3.2, "operator": "isro", "cost": 11.4, "risk": 0.96, "sites": ["SDH"] }
 	},
 	"site": {
-		"CSG": { "LEO": 1, "operator": "esa", "risk": 0.98 },
-		"BKR": { "LEO": 1, "operator": "roscosmos", "risk": 0.95 },
-		"PTK": { "LEO": 0, "operator": "roscosmos", "risk": 0.95 },
-		"KSC": { "LEO": 1, "operator": "nasa", "risk": 0.98 },
-		"VDB": { "LEO": 0, "operator": "nasa", "risk": 0.98 },
-		"XCH": { "LEO": 1, "operator": "cnsa", "risk": 0.9 },
-		"TNG": { "LEO": 1, "operator": "jaxa", "risk": 0.98 },
+		"CSG": { "LEO": 1, "operator": "esa", "risk": 0.98, "latitude": "5.23722", "longitude": -52.76056 },
+		"BKR": { "LEO": 1, "operator": "roscosmos", "risk": 0.95, "latitude": 45.965, "longitude": 63.305 },
+		"PTK": { "LEO": 0, "operator": "roscosmos", "risk": 0.95, "latitude": 62.70889, "longitude": 40.29389 },
+		"KSC": { "LEO": 1, "operator": "nasa", "risk": 0.98, "latitude": 28.524058, "longitude": -80.65085 },
+		"VDB": { "LEO": 0, "operator": "nasa", "risk": 0.98, "latitude": 34.73278, "longitude": -120.56806 },
+		"XCH": { "LEO": 1, "operator": "cnsa", "risk": 0.9, "latitude": 28.2460167, "longitude": 102.0265556 },
+		"TNG": { "LEO": 1, "operator": "jaxa", "risk": 0.98, "latitude": 30.40000, "longitude": 130.97000 },
+		"SDH": { "LEO": 1, "operator": "isro", "risk": 0.0, "latitude": 13.7199389, "longitude": 80.2304250 },
 		"AIR": { "LEO": 0, "operator": "orbital", "risk": 0.98 }
 	},
 	"operator": {

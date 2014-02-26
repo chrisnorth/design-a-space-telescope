@@ -55,7 +55,8 @@
 			"PEGA": { "label": "Pegasus" },
 			"LM3B": { "label": "Long March 3B" },
 			"ATLV": { "label": "Atlas V" },
-			"FLC9": { "label": "Falcon 9" }
+			"FLC9": { "label": "Falcon 9" },
+			"PSLV": { "label": "PSLV" }
 		},
 		"operator": {
 			"nasa": { "label": "NASA (USA)" },
@@ -70,11 +71,12 @@
 		"site": {
 			"CSG": { "label": "Guiana Space Centre" },
 			"BKR": { "label": "Baikonur" },
-			"PTK": { "label": "Plestesk" },
+			"PTK": { "label": "Plesetsk Cosmodrome" },
 			"KSC": { "label": "Kennedy Space Centre" },
-			"VDB": { "label": "Vandenberg" },
-			"XCH": { "label": "Xichang" },
-			"TNG": { "label": "Tanegashima" },
+			"VDB": { "label": "Vandenberg Air Force Base" },
+			"XCH": { "label": "Xichang Satellite Launch Center" },
+			"TNG": { "label": "Tanegashima Space Center" },
+			"SDH": { "label": "Satish Dhawan Space Centre" },
 			"AIR": { "label": "Carrier Aircraft" }
 		},
 		"wavelengths": {

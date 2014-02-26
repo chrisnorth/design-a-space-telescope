@@ -176,7 +176,7 @@ if(typeof $==="undefined") $ = {};
 		var html = "<ul>";
 		console.log(this.data.rocket)
 		for(var l in this.data.rocket){
-			html += '<li><div class="rocket">'+this.phrases.options.rocket[l].label+'</div><div class="operator"><img src="'+this.data.operator[this.data.rocket[l].operator].img+'" alt="'+this.phrases.options.operator[this.data.rocket[l].operator].label+'"></div><div class="diameter"><strong>Diameter:</strong> '+this.formatLength(this.data.rocket[l].diameter)+'</div> <div class="currency"><strong>Cost:</strong> '+this.formatCurrency(this.data.rocket[l].cost)+'</div><div class="mass"><strong>Mass to LEO:</strong> '+this.formatMass(this.data.rocket[l].mass.LEO)+'<br /><strong>Mass beyond LEO:</strong> '+this.formatMass(this.data.rocket[l].mass.beyond)+'</div><div class="risk"><strong>Risk:</strong> '+(this.data.rocket[l].risk)+'</div>'
+			html += '<li><div class="rocket">'+this.phrases.options.rocket[l].label+'</div><div class="operator"><img src="'+this.data.operator[this.data.rocket[l].operator].img+'" alt="'+this.phrases.options.operator[this.data.rocket[l].operator].label+'" title="'+this.phrases.options.operator[this.data.rocket[l].operator].label+'"></div><div class="diameter"><strong>Diameter:</strong> '+this.formatLength(this.data.rocket[l].diameter)+'</div> <div class="currency"><strong>Cost:</strong> '+this.formatCurrency(this.data.rocket[l].cost)+'</div><div class="mass"><strong>Mass to LEO:</strong> '+this.formatMass(this.data.rocket[l].mass.LEO)+'<br /><strong>Mass beyond LEO:</strong> '+this.formatMass(this.data.rocket[l].mass.beyond)+'</div><div class="risk"><strong>Risk:</strong> '+(this.data.rocket[l].risk)+'</div>'
 			html += '<div class="sites"><strong>Sites:</strong> <br />'
 			for(var i = 0; i < this.data.rocket[l].sites.length; i++){
 				html += ''+this.phrases.options.site[this.data.rocket[l].sites[i]].label+'<br />';
@@ -184,7 +184,7 @@ if(typeof $==="undefined") $ = {};
 			html += '</div></li>';
 		}
 		html += "</ul>";
-		$('p').html(html);
+		$('#output').html(html);
 
 		return this;
 	}
