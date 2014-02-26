@@ -44,7 +44,7 @@
 		"LM3B": { "mass": { "LEO": 12000, "beyond": 5000 }, "diameter": 3.5, "operator": "cnsa", "cost": 30, "risk": 0.75, "sites": ["XCH"] },  
 		"ATLV": { "mass": { "LEO": 19000, "beyond": 9000 }, "diameter": 3.5, "operator": "nasa", "cost": 150, "risk": 0.98, "sites": ["KSC","VDB"] }, 
 		"FLC9": { "mass": { "LEO": 10000, "beyond": 7000 }, "diameter": 3.5, "operator": "spacex", "cost": 40, "risk": 0.97, "sites": ["KSC","VDB"] },
-		"PSLV": { "mass": { "LEO": 1750, "beyond": 1425 }, "diameter": 3.2, "operator": "isro", "cost": 11.4, "risk": 0.96, "sites": ["SDH"] }
+		"PSLV": { "mass": { "LEO": 1750, "beyond": 1425 }, "diameter": 2.8, "operator": "isro", "cost": 11.4, "risk": 0.96, "sites": ["SDH"] }
 	},
 	"site": {
 		"CSG": { "LEO": 1, "operator": "esa", "risk": 0.98, "latitude": "5.23722", "longitude": -52.76056 },
@@ -62,10 +62,10 @@
 		"roscosmos": { "img": "images/logo_roscosmos.png" },
 		"esa": { "img": "images/logo_esa.png" },
 		"jaxa": { "img": "images/logo_jaxa.png" },
-		"orbital": { "img": "images/" },
+		"orbital": { "img": "images/logo_orbital.png" },
 		"cnsa": { "img": "images/logo_cnsa.png" },
 		"isro": { "img": "images/logo_isro.png" },
-		"spacex": { "img": "images/" }
+		"spacex": { "img": "images/logo_spacex.png" }
 	},
 	"wavelengths": {
 		"none": { "temperature": 999, "cost": 0, "mass": 0 },
