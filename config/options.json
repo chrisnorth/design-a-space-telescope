@@ -11,10 +11,10 @@
 		"months": { "conv": 12 }
 	},
 	"currency": {
-		"pounds": { "conv": 1 },
-		"dollars": { "conv": 1.67 },
-		"euros": { "conv": 1.21 },
-		"yen": { "conv": 170.7 }
+		"GBP": { "conv": 1 },
+		"USD": { "conv": 1.67 },
+		"EUR": { "conv": 1.21 },
+		"YEN": { "conv": 170.7 }
 	},
 	"mirror": {
 		"0.5m": { "diameter": 0.5, "cost": 12, "mass": 3, "devtime": 0.5, "bus": { "diameter": 0.8, "cost": 100, "mass": 50, "devtime": 5 }, "passive": { "cost": 5, "mass": 20, "devtime": 0.5 }, "risk" : 0.99 },
@@ -24,7 +24,7 @@
 		"8.0m": { "diameter": 8, "cost": 1000, "mass": 300, "devtime": 2, "bus": { "diameter": 10, "cost": 2000, "mass": 400, "devtime": 2 }, "passive": { "cost": 80, "mass": 400, "devtime": 2 }, "risk" : 0.9 }
 	},
 	"orbit": {
-		"LEO": { "obsfrac": 0.5, "period": 0.0625, "multiplier": { "passive": 1, "cryo": 0.7, "launchcost": 1.2 }, "launchreq": "Requires ability to de-orbit", "fuellife": 10, "temperature": 400, "LEO": 1, "groundcost": 20, "risk": 0.9 },
+		"LEO": { "obsfrac": 0.5, "period": 0.0625, "multiplier": { "passive": 1, "cryo": 0.7, "launchcost": 1.2 }, "fuellife": 10, "temperature": 400, "LEO": 1, "groundcost": 20, "risk": 0.9 },
 		"HEO": { "obsfrac": 0.75, "period": 0.0625, "multiplier": { "passive": 1, "cryo": 1, "launchcost": 1 }, "fuellife": 20, "temperature": 300, "LEO": 1, "groundcost": 30, "risk": 0.95 },
 		"SNS": { "obsfrac": 1, "period": 0.0625, "multiplier": { "passive": 1, "cryo": 1, "launchcost": 1.2 }, "fuellife": 10, "temperature": 400, "LEO": 1, "groundcost": 30, "risk": 0.9 },
 		"GEO": { "obsfrac": 0.5, "period": 1, "multiplier": { "passive": 0, "cryo": 0, "launchcost": 1 }, "fuellife": 20, "temperature": 300, "LEO": 0, "groundcost": 40, "risk": 0.95 },

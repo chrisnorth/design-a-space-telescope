@@ -55,7 +55,7 @@ if(typeof $==="undefined") $ = {};
 		this.langurl = "config/%LANG%.json";
 		this.dataurl = "config/options.json";
 		
-		this.settings = { 'length': 'm', 'currency': 'pounds', 'usecookies': false };
+		this.settings = { 'length': 'm', 'currency': 'GBP', 'usecookies': false };
 
 		this.init(inp);
 
@@ -222,15 +222,15 @@ if(typeof $==="undefined") $ = {};
 
 	// Inputs:
 	//  n - the number
-	//  c - the currency e.g. "pounds", "dollars", "euros"
+	//  c - the currency e.g. "GBP", "USD", "EUR"
 	//  p - the number of decimal places to show in the output
 	SpaceTelescope.prototype.formatCurrency = function(n,c,p){
 		if(typeof n==="string") n = parseFloat(n,10);
-		if(!c) c = (this.settings.currency) ? this.settings.currency : "pounds";
+		if(!c) c = (this.settings.currency) ? this.settings.currency : "GBP";
 		if(typeof p==="string") p = parseInt(p,10);
 		if(!p) p = 0;
 		var append = (this.phrases.ui.million) ? this.phrases.ui.million : "";
-		var s = (this.phrases.ui.currency[c] && this.phrases.ui.currency[c].symbol) ? this.phrases.ui.currency[c].symbol : (this.phrases.ui.currency["pounds"].symbol ? this.phrases.ui.currency["pounds"].symbol : "");
+		var s = (this.phrases.ui.currency[c] && this.phrases.ui.currency[c].symbol) ? this.phrases.ui.currency[c].symbol : (this.phrases.ui.currency["GBP"].symbol ? this.phrases.ui.currency["GBP"].symbol : "");
 		var conv = (this.data.currency[c] && this.data.currency[c].conv) ? this.data.currency[c].conv : 1;
 		n *= conv;
 		// Change the "million" to "billion" if the number if too big

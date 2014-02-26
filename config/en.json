@@ -21,10 +21,10 @@
 			"months": { "unit": " months" }
 		},
 		"currency": {
-			"pounds": { "symbol": "&pound;" },
-			"dollars": { "symbol": "&dollar;" },
-			"euros": { "symbol": "&euro;" },
-			"yen": { "symbol": "&yen;" }
+			"GBP": { "symbol": "&pound;" },
+			"USD": { "symbol": "&dollar;" },
+			"EUR": { "symbol": "&euro;" },
+			"YEN": { "symbol": "&yen;" }
 		}
 	},
 	"options": {
@@ -36,7 +36,7 @@
 			"mirror_8.0" : { "label": "8.0 m" }
 		},
 		"orbit": {
-			"LEO": { "label": "Low Earth Orbit", "altitude": "<1000", "launchreq": "" },
+			"LEO": { "label": "Low Earth Orbit", "altitude": "<1000", "launchreq": "Requires ability to de-orbit" },
 			"HEO": { "label": "High Earth Orbit", "altitude": ">1000", "launchreq": "" },
 			"SNS": { "label": "Sun-synchronous Orbit", "altitude": "<1000", "launchreq": "Requires ability to de-orbit" },
 			"GEO": { "label": "Geostationary Orbit", "altitude": "40000", "launchreq": "" },
