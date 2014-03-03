@@ -21,12 +21,26 @@ div { box-sizing: border-box; -moz-box-sizing: border-box; }
 /* End of reset */
 
 
-
+html, head { padding: 0px; margin: 0px; }
 body {
 	color: #4D4E53; /* To match to RS Summer Exhibition 2013 site */
 	font-family: 'Earthbound', "Helvetica Neue", Helvetica, sans-serif;
+	background-color:#269;
+	background-image: linear-gradient(rgba(255,255,255,.5) 1px, transparent 2px), linear-gradient(90deg, rgba(255,255,255,.5) 1px, transparent 2px), linear-gradient(rgba(255,255,255,.15) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.15) 1px, transparent 1px);
+	background-size: 5em 5em, 5em 5em, 1em 1em, 1em 1em;
+	background-position:-2px -2px, -2px -2px, -1px -1px, -1px -1px
+	margin: 0;
+	padding: 0px;
 }
 body.r2l { }
+#page {
+	margin: 0px;
+	padding: 3em 0 1em 0;
+	display: block;
+	-moz-box-shadow: inset 0 0 5em #000000;
+	-webkit-box-shadow: inset 0 0 5em #000000;
+	box-shadow: inset 0 0 5em #000000;
+}
 h1 { font-size: 2em; margin-bottom: 0.5em; }
 h2 { font-size: 1.3em; margin-bottom: 0.5em; }
 h3 { font-size: 1.15em; margin-bottom: 0.5em; }
@@ -39,54 +53,6 @@ strong { font-weight: bold; }
 .operator { margin-bottom: 0.5em; text-align: center; }
 .operator img { width: 3em; height: 3em; }
 
-
-#messagebar {
-	padding: 0.5em;
-	background-color: #eeeeee;
-}
-#main {
-	display: table;
-	height: 400px;
-	overflow-y: auto;
-}
-#main #menubar, #main #output, #main #sidebar {
-	display: table-cell;
-	vertical-align: top;
-	background-color: #eeddcc;
-}
-#main #menubar { width: 20%; min-width: 150px; }
-#main #output { width: 60%; background-color: #ccddee; }
-#main #sidebar { width: 20%; min-width: 150px; background-color: #ddeecc; }
-.padded { padding: 1em; }
-#menubar li { }
-#menubar li a {
-	padding: 1em;
-	display: block;
-	text-decoration: none;
-	color: inherit;
-}
-#menubar li a:hover {
-	background-color: #eee;
-}
-p .cost {
-	font-weight: bold;
-	color: #009d00;
-}
-#intro {
-	width: 50em;
-	max-width: 95%;
-	margin: 3em auto;
-	background-color: white;
-	padding: 2em;
-	border-radius: 1em;
-}
-#intro h1, #intro h2 { text-align: center; }
-body {
-	background-color:#269;
-	background-image: linear-gradient(rgba(255,255,255,.5) 1px, transparent 2px), linear-gradient(90deg, rgba(255,255,255,.5) 1px, transparent 2px), linear-gradient(rgba(255,255,255,.15) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.15) 1px, transparent 1px);
-	background-size: 5em 5em, 5em 5em, 1em 1em, 1em 1em;
-	background-position:-2px -2px, -2px -2px, -1px -1px, -1px -1px
-}
 
 #bar {
 	position: fixed;
@@ -178,11 +144,55 @@ img.restart { background-position: -3em -3em; }
 .error { color: #ff4a4a; }
 .warning { color: #ffee00; }
 
+
+
+#intro {
+	width: 50em;
+	max-width: 95%;
+	margin: auto;
+	background-color: white;
+	padding: 2em;
+	border-radius: 1em;
+	box-shadow: 0 0 0.25em rgba(255,255,255,0.4);
+}
+#intro h1, #intro h2 { text-align: center; }
+
+
+#main {
+	display: table;
+	display: none;
+	height: 400px;
+	overflow-y: auto;
+}
+#main #menubar, #main #output, #main #sidebar {
+	display: table-cell;
+	vertical-align: top;
+	background-color: #eeddcc;
+}
+#main #menubar { width: 20%; min-width: 150px; }
+#main #output { width: 60%; background-color: #ccddee; }
+#main #sidebar { width: 20%; min-width: 150px; background-color: #ddeecc; }
+.padded { padding: 1em; }
+#menubar li { }
+#menubar li a {
+	padding: 1em;
+	display: block;
+	text-decoration: none;
+	color: inherit;
+}
+#menubar li a:hover {
+	background-color: #eee;
+}
+p .cost {
+	font-weight: bold;
+	color: #009d00;
+}
+
 @media only screen and (max-width: 640px){
 	.baritem { padding: 0.25em 0.25em 0.25em 0; }
 	.baritem span { margin: 0; }
 	.barmenu .baritem span { margin: 0; }
 	#menu { left: 0; width: 100%; border-left: 0px; }
 	#menu .baritem span { margin-left: 0.5em; }
-	.togglemenu { padding-left: 0.25em; }
+	.togglebtn { padding-left: 0.25em; }
 }
