@@ -78,6 +78,7 @@ strong { font-weight: bold; }
 	padding: 0.25em 0.5em;
 	text-decoration: none;
 	display: block;
+	height: 1.5em;
 }
 .baritem:hover {
 	background-color: #404040;
@@ -148,13 +149,13 @@ img.icon,.ui-icon { background:url('../images/icons.png') no-repeat scroll trans
 img.menu { background-position: -4.5em 0; }
 img.cost { background-position: -1.5em 0; }
 img.mass { background-position: -1.5em -1.5em; }
-img.time { background-position: -3em -10.5em; }
+img.time { background-position: -1.5em -10.5em; }
 img.science { background-position: -1.5em -4.5em; }
 img.success { background-position: -1.5em -6em; }
 img.error { background-position: -1.5em -7.5em; }
 img.warning { background-position: -1.5em -9em; }
-img.globe { background-position: 0em -10.5em; }
-img.config { background-position: -1.5em -10.5em; }
+img.globe { background-position: -4.5em -4.5em; }
+img.config { background-position: -3em -10.5em; }
 img.load { background-position: -3em 0em; }
 img.save { background-position: -3em -1.5em; }
 img.help { background-position: -4.5em -3em; }

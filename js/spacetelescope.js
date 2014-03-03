@@ -353,7 +353,7 @@ if(typeof $==="undefined") $ = {};
 			this.fullscreen = true;
 			$('#page').addClass('fullscreen');
 		}
-		this.resize();
+		//this.resize();
 	}
 
 

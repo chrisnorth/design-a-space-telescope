@@ -14,7 +14,9 @@
 		"GBP": { "conv": 1 },
 		"USD": { "conv": 1.67 },
 		"EUR": { "conv": 1.21 },
-		"YEN": { "conv": 170.7 }
+		"JPY": { "conv": 170.7 },
+		"CAD": { "conv": 1.8461 },
+		"AUD": { "conv": 1.8642 }
 	},
 	"general": {
 		"deployablemirror": { "risk": 0.9 }

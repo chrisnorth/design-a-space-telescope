@@ -24,7 +24,9 @@
 			"GBP": { "symbol": "&pound;" },
 			"USD": { "symbol": "&dollar;" },
 			"EUR": { "symbol": "&euro;" },
-			"YEN": { "symbol": "&yen;" }
+			"JPY": { "symbol": "&yen;" },
+			"CAD": { "symbol": "C&dollar;" },
+			"AUD": { "symbol": "&dollar;" }
 		}
 	},
 	"options": {
