@@ -77,6 +77,14 @@ if(typeof $==="undefined") $ = {};
 
 		this.loadConfig(this.update);
 		this.loadLanguage(this.lang,this.update);
+		
+		$('a.togglemenu').on('click',{me:this},function(e){
+		console.log(e)
+			$('#menu').slideToggle()
+		});
+		$('.baritem .save').parent().on('click',{me:this},function(e){
+			e.data.me.save();
+		});
 
 		return this;
 	}
@@ -132,9 +140,14 @@ if(typeof $==="undefined") $ = {};
 			context: this,
 			error: function(){
 				console.log('Error loading '+l);
-				if(url.indexOf(this.lang) > 0){
-					console.log('Attempting to load '+this.langshort+' instead');
-					this.loadLanguage(this.langshort,fn);
+				if(this.lang.length == 2){
+					console.log('Attempting to load default (en) instead');
+					this.loadLanguage('en',fn);
+				}else{
+					if(url.indexOf(this.lang) > 0){
+						console.log('Attempting to load '+this.langshort+' instead');
+						this.loadLanguage(this.langshort,fn);
+					}
 				}
 			},
 			success: function(data){
@@ -176,7 +189,7 @@ if(typeof $==="undefined") $ = {};
 		var html = "<ul>";
 		console.log(this.data.rocket)
 		for(var l in this.data.rocket){
-			html += '<li><div class="rocket">'+this.phrases.options.rocket[l].label+'</div><div class="operator"><img src="'+this.data.operator[this.data.rocket[l].operator].img+'" alt="'+this.phrases.options.operator[this.data.rocket[l].operator].label+'" title="'+this.phrases.options.operator[this.data.rocket[l].operator].label+'"></div><div class="diameter"><strong>Diameter:</strong> '+this.formatLength(this.data.rocket[l].diameter)+'</div> <div class="currency"><strong>Cost:</strong> '+this.formatCurrency(this.data.rocket[l].cost)+'</div><div class="mass"><strong>Mass to LEO:</strong> '+this.formatMass(this.data.rocket[l].mass.LEO)+'<br /><strong>Mass beyond LEO:</strong> '+this.formatMass(this.data.rocket[l].mass.beyond)+'</div><div class="risk"><strong>Risk:</strong> '+(this.data.rocket[l].risk)+'</div>'
+			html += '<li><div class="rocket">'+this.phrases.options.rocket[l].label+'</div><div class="operator"><img src="'+this.data.operator[this.data.rocket[l].operator].img+'" alt="'+this.phrases.options.operator[this.data.rocket[l].operator].label+'" title="'+this.phrases.options.operator[this.data.rocket[l].operator].label+'"></div><div class="diameter"><strong>Diameter:</strong> '+this.formatLength(this.data.rocket[l].diameter)+'</div> <div class="currency"><strong>Cost:</strong> '+this.formatCurrency(this.data.rocket[l].cost)+'</div><div class="mass"><strong>Mass to LEO:</strong> '+this.formatMass(this.data.rocket[l].mass.LEO)+'<br /><strong>Mass beyond LEO:</strong> '+this.formatMass(this.data.rocket[l].mass.GTO)+'</div><div class="risk"><strong>Risk:</strong> '+(this.data.rocket[l].risk)+'</div>'
 			html += '<div class="sites"><strong>Sites:</strong> <br />'
 			for(var i = 0; i < this.data.rocket[l].sites.length; i++){
 				html += ''+this.phrases.options.site[this.data.rocket[l].sites[i]].label+'<br />';
@@ -240,6 +253,40 @@ if(typeof $==="undefined") $ = {};
 		}
 		return s+''+(n).toFixed(p)+''+append;
 	}
+
+	// Attempt to save a file
+	// Blob() requires browser >= Chrome 20, Firefox 13, IE 10, Opera 12.10 or Safari 6
+	SpaceTelescope.prototype.save = function(){
+
+		// Bail out if there is no Blob function
+		if(typeof Blob!=="function") return this;
+
+		var textToWrite = "blah";
+		var textFileAsBlob = new Blob([textToWrite], {type:'text/plain'});
+		var fileNameToSaveAs = "spacetelescope.txt";
+	
+		function destroyClickedElement(event){ document.body.removeChild(event.target); }
+
+		var downloadLink = document.createElement("a");
+		downloadLink.download = fileNameToSaveAs;
+		downloadLink.innerHTML = "Download File";
+		if(window.webkitURL != null){
+			// Chrome allows the link to be clicked
+			// without actually adding it to the DOM.
+			downloadLink.href = window.webkitURL.createObjectURL(textFileAsBlob);
+		}else{
+			// Firefox requires the link to be added to the DOM
+			// before it can be clicked.
+			downloadLink.href = window.URL.createObjectURL(textFileAsBlob);
+			downloadLink.onclick = destroyClickedElement;
+			downloadLink.style.display = "none";
+			document.body.appendChild(downloadLink);
+		}
+		downloadLink.click();
+
+		return this;
+	}
+
 
 	// Add commas every 10^3
 	function addCommas(nStr) {

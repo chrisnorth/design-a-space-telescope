@@ -1,57 +1,84 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<title>Space Telescope Designer</title>
-		<script type="text/javascript" src="js/jquery-1.11.0.min.js"></script>
-		<script type="text/javascript" src="js/spacetelescope.js"></script>
-		<script>
-		var spacetel;
-		$(document).ready(function(){
-			spacetel = $.spacetelescope({id:"image",width:455,height:333});
- 		});
-		</script>
-		<style>
-		/* http://meyerweb.com/eric/tools/css/reset/ 
-		   v2.0 | 20110126
-		   License: none (public domain)
-		*/
-		html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
-			margin: 0;
-			padding: 0;
-			border: 0;
-			font-size: 100%;
-			font: inherit;
-			vertical-align: baseline;
-		}
-		/* HTML5 display-role reset for older browsers */
-		article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section { display: block; }
-		body { line-height: 1; }
-		ol, ul { list-style: none; }
-		blockquote, q { quotes: none; }
-		blockquote:before, blockquote:after, q:before, q:after { content: ''; content: none; }
-		table { border-collapse: collapse; border-spacing: 0; }
-		/* End of reset */
-
-
-		body { margin: 1em; font-family: Helvetica, sans-serif; }
-		body.r2l { }
-		h1 { font-size: 1.6em; margin-bottom: 0.5em; }
-		h2 { font-size: 1.3em; margin-bottom: 0.5em; }
-		h3 { font-size: 1.15em; margin-bottom: 0.5em; }
-		h1, h2, h3 { font-weight: bold; }
-		li { margin-bottom: 1em; margin-right: 1em; display: inline-block; background-color: #eee; padding: 1em; }
-		li:last-child { margin-bottom: 0; }
-		strong { font-weight: bold; }
-		.rocket { font-weight: bold; font-size: 1.2em; text-align: center; }
-		.operator { margin-bottom: 0.5em; text-align: center; }
-		.operator img { width: 3em; height: 3em; }
-
-		</style>
-	</head>
-	<body>
-		<h1>Test</h1>
-		<div id="output">
-			<p>Test page</p>
+<head>
+	<title>Space Telescope Designer</title>
+	<link rel="stylesheet" media="screen" href="http://openfontlibrary.org/face/earthbound" type="text/css"/>
+	<script type="text/javascript" src="js/jquery-1.11.0.min.js"></script>
+	<script type="text/javascript" src="js/spacetelescope.js"></script>
+	<script>
+	var spacetel;
+	$(document).ready(function(){
+		spacetel = $.spacetelescope({id:"image",width:455,height:333});
+	});
+	</script>
+	<link media="all" href="css/style.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+	<div id="page">
+		<div id="intro">
+			<h1>Space Telescope Designer</h1>
+			<p>Designing a space telescope is an incredibly complex job, with many requirements that must be met. Some of these are because of the scientific discoveries that the astronomers would like to make, while others are  due to limits that the engineers put on the spacecraft. Beginning in the 1990s, astronomers and engineers  around the world were busy designing the Herschel Space Observatory. This project will help you explore  the kinds of decisions they had to make.</p>
+			<p>Your task is to design a space observatory. You will have to make a number of  decisions about what your space telescope will look like. If you are in a group, you could use a number of  roles, but you will need to work together for a final solution</p>
+			<h2>Choose a scenario</h2>
+			<ul>
+				<li>
+					<h3>Star Birth and Evolution</h3>
+					<p>A private organization has funded your group to research into the birth and evolution of stars in the distant and nearby Universe, with full analysis of the spectra of the event. The budget of your mission is <span class="cost" data="2000000000">&pound;2 billion</span>. You will need the appropriate instruments on board your satellite in order to observe such objects.</p>
+				</li>
+				<li>
+					<h3>Multi-wavelength Sky Mapper</h3>
+					<p>A government research grant has come through to take images of the sky in ultraviolet, visible and near-IR wavelengths from a satellite in space, in order to map stars, galaxies and other yet to be discovered phenomena. The budget of your mission is <span class="cost" data="400000000">&pound;400 million</span>.</p>
+				</li>
+			</ul>
 		</div>
-	</body>
+		<div id="designer">
+			<div id="bar">
+				<div class="barmenu">
+					<div class="baritem"><a href="#menu" class="togglemenu"><img src="images/cleardot.gif" class="icon menu" alt="menu" /></a>
+						<div id="menu">
+							<ul>
+								<li class="baritem"><a href="#"><img src="images/cleardot.gif" class="icon help" alt="help" /><span>Help</span></a></li>
+								<li class="baritem"><a href="#"><img src="images/cleardot.gif" class="icon config" alt="" /><span>Setup</span></a></li>
+								<li class="baritem"><a href="#"><img src="images/cleardot.gif" class="icon load" alt="load" /><span>Load</span></a></li>
+								<li class="baritem"><a href="#"><img src="images/cleardot.gif" class="icon save" alt="save" /><span>Save</span></a></li>
+								<li class="baritem"><a href="#"><img src="images/cleardot.gif" class="icon restart" alt="" /><span>Change scenario</span></a></li>
+							</ul>
+						</div>
+					</div>
+					<div class="baritem"><a href="#" class="language">[en]</a></div>
+					<div class="baritem"><a href="#"><img src="images/cleardot.gif" class="icon error" alt="error" /><span class="error">2</span></a></div>
+					<div class="baritem"><a href="#"><img src="images/cleardot.gif" class="icon warning" alt="warn" /><span class="warning">3</span></a></div>
+				</div>
+				<ul id="summary">
+					<li class="baritem"><a href="#"><img src="images/cleardot.gif" class="icon success" /><span class="success">0%</span></a></li>
+					<li class="baritem"><a href="#"><img src="images/cleardot.gif" class="icon time" /><span class="time">Feb 2014</span></a></li>
+					<li class="baritem"><a href="#"><img src="images/cleardot.gif" class="icon cost" /><span class="cost">&pound;0m</span></a></li>
+					<li class="baritem"><a href="#"><img src="images/cleardot.gif" class="icon mass" /><span class="mass">0 kg</span></a></li>
+					<li class="baritem"><a href="#"><img src="images/cleardot.gif" class="icon science" /><span class="science">0%</span></a></li>
+				</ul>
+			</div>
+			<div id="main">
+				<div id="menubar">
+					<ul>
+						<li><a href="#">Objectives</a></li>
+						<li><a href="#">Satellite</a></li>
+						<li><a href="#">Instruments</a></li>
+						<li><a href="#">Cooling</a></li>
+						<li><a href="#">Launch Vehicle</a></li>
+						<li><a href="#">Launch Site</a></li>
+						<li><a href="#">Orbit</a></li>
+						<li><a href="#">Proposal</a></li>
+					</ul>
+					<div class="padded"></div>
+				</div>
+				<div id="output">
+					<p>Test page</p>
+				</div>
+				<div id="sidebar">
+					<div class="padded">Images</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
 </html>
