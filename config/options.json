@@ -16,12 +16,15 @@
 		"EUR": { "conv": 1.21 },
 		"YEN": { "conv": 170.7 }
 	},
+	"general": {
+		"deployablemirror": { "risk": 0.9 }
+	},
 	"mirror": {
-		"0.5m": { "diameter": 0.5, "cost": 12, "mass": 3, "devtime": 0.5, "bus": { "diameter": 0.8, "cost": 100, "mass": 50, "devtime": 5 }, "passive": { "cost": 5, "mass": 20, "devtime": 0.5 }, "risk" : 0.99 },
-		"1.0m": { "diameter": 1, "cost": 25, "mass": 10, "devtime": 1, "bus": { "diameter": 1.4, "cost": 200, "mass": 100, "devtime": 5 }, "passive": { "cost": 10, "mass": 40, "devtime": 0.5 }, "risk" : 0.98 },
-		"2.0m": { "diameter": 2, "cost": 50, "mass": 30, "devtime": 1, "bus": { "diameter": 2.4, "cost": 500, "mass": 200, "devtime": 5 }, "passive": { "cost": 20, "mass": 100, "devtime": 1 }, "risk" : 0.97 },
-		"4.0m": { "diameter": 4, "cost": 200, "mass": 100, "devtime": 2, "bus": { "diameter": 4.4, "cost": 1000, "mass": 300, "devtime": 5 }, "passive": { "cost": 40, "mass": 200, "devtime": 1 }, "risk" : 0.95 },
-		"8.0m": { "diameter": 8, "cost": 1000, "mass": 300, "devtime": 2, "bus": { "diameter": 10, "cost": 2000, "mass": 400, "devtime": 2 }, "passive": { "cost": 80, "mass": 400, "devtime": 2 }, "risk" : 0.9 }
+		"0.5m": { "diameter": 0.5, "cost": 12, "mass": 3, "devtime": 0.5, "bus": { "diameter": 0.8, "cost": 100, "mass": 50, "devtime": 5, "instrumentslots": 2 }, "passive": { "cost": 5, "mass": 20, "devtime": 0.5 }, "risk" : 0.99 },
+		"1.0m": { "diameter": 1, "cost": 25, "mass": 10, "devtime": 1, "bus": { "diameter": 1.4, "cost": 200, "mass": 100, "devtime": 5, "instrumentslots": 4 }, "passive": { "cost": 10, "mass": 40, "devtime": 0.5 }, "risk" : 0.98 },
+		"2.0m": { "diameter": 2, "cost": 50, "mass": 30, "devtime": 1, "bus": { "diameter": 2.4, "cost": 500, "mass": 200, "devtime": 5, "instrumentslots": 4 }, "passive": { "cost": 20, "mass": 100, "devtime": 1 }, "risk" : 0.97 },
+		"4.0m": { "diameter": 4, "cost": 200, "mass": 100, "devtime": 2, "bus": { "diameter": 4.4, "cost": 1000, "mass": 300, "devtime": 5, "instrumentslots": 6 }, "passive": { "cost": 40, "mass": 200, "devtime": 1 }, "risk" : 0.95 },
+		"8.0m": { "diameter": 8, "cost": 1000, "mass": 300, "devtime": 2, "bus": { "diameter": 10, "cost": 2000, "mass": 400, "devtime": 2, "instrumentslots": 8 }, "passive": { "cost": 80, "mass": 400, "devtime": 2 }, "risk" : 0.9 }
 	},
 	"orbit": {
 		"LEO": { "obsfrac": 0.5, "period": 0.0625, "multiplier": { "passive": 1, "cryo": 0.7, "launchcost": 1.2 }, "fuellife": 10, "temperature": 400, "LEO": 1, "groundcost": 20, "risk": 0.9 },
@@ -33,18 +36,18 @@
 		"ES2": { "obsfrac": 1, "period": 365, "multiplier": { "passive": 1, "cryo": 1, "launchcost": 1 }, "fuellife": 10, "temperature": 300, "LEO": 0, "groundcost": 50, "risk": 0.95 }
 	},
 	"rocket": {
-		"ARI5": { "mass": { "LEO": 20000, "beyond": 9000 }, "diameter": 5.5, "cost": 100, "operator": "esa", "risk": 0.96, "sites": ["CSG"] },
-		"SOYZ": { "mass": { "LEO": 8000, "beyond": 4000 }, "diameter": 3, "cost": 60, "operator": "roscosmos", "risk": 0.98, "sites": ["BKR","PTK","CSG"] },
-		"DLT2": { "mass": { "LEO": 6000, "beyond": 2000 }, "diameter": 3, "cost": 30, "operator": "nasa", "risk": 0.99, "sites": ["KSC","VDB"] },
-		"DLT4": { "mass": { "LEO": 23000, "beyond": 13000 }, "diameter": 5, "cost": 200, "operator": "nasa", "risk": 0.95, "sites": ["KSC","VDB"] }, 
-		"PRTM": { "mass": { "LEO": 20000, "beyond": 5000 }, "diameter": 4, "cost": 60, "operator": "roscosmos", "risk": 0.88, "sites": ["BKR", "PTK"] }, 
-		"H2B4": { "mass": { "LEO": 15000, "beyond": 8000 }, "diameter": 5, "operator": "jaxa", "cost": 80, "risk": 0.95, "sites": ["TNG"] },  
-		"VEGA": { "mass": { "LEO": 2300, "beyond": 0 }, "diameter": 3, "operator": "esa", "cost": 23, "risk": 0.98, "sites": ["CSG"] },
-		"PEGA": { "mass": { "LEO": 400, "beyond": 0 }, "diameter": 1.2, "operator": "orbital", "cost": 15, "risk": 0.92, "sites": ["AIR"] },  
-		"LM3B": { "mass": { "LEO": 12000, "beyond": 5000 }, "diameter": 3.5, "operator": "cnsa", "cost": 30, "risk": 0.75, "sites": ["XCH"] },  
-		"ATLV": { "mass": { "LEO": 19000, "beyond": 9000 }, "diameter": 3.5, "operator": "nasa", "cost": 150, "risk": 0.98, "sites": ["KSC","VDB"] }, 
-		"FLC9": { "mass": { "LEO": 10000, "beyond": 7000 }, "diameter": 3.5, "operator": "spacex", "cost": 40, "risk": 0.97, "sites": ["KSC","VDB"] },
-		"PSLV": { "mass": { "LEO": 1750, "beyond": 1425 }, "diameter": 2.8, "operator": "isro", "cost": 11.4, "risk": 0.96, "sites": ["SDH"] }
+		"ARI5": { "mass": { "LEO": 20000, "GTO": 9000 }, "diameter": 5.5, "cost": 100, "operator": "esa", "risk": 0.96, "sites": ["CSG"] },
+		"SOYZ": { "mass": { "LEO": 8000, "GTO": 4000 }, "diameter": 3, "cost": 60, "operator": "roscosmos", "risk": 0.98, "sites": ["BKR","PTK","CSG"] },
+		"DLT2": { "mass": { "LEO": 6000, "GTO": 2000 }, "diameter": 3, "cost": 30, "operator": "nasa", "risk": 0.99, "sites": ["KSC","VDB"] },
+		"DLT4": { "mass": { "LEO": 23000, "GTO": 13000 }, "diameter": 5, "cost": 200, "operator": "nasa", "risk": 0.95, "sites": ["KSC","VDB"] }, 
+		"PRTM": { "mass": { "LEO": 20000, "GTO": 5000 }, "diameter": 4, "cost": 60, "operator": "roscosmos", "risk": 0.88, "sites": ["BKR", "PTK"] }, 
+		"H2B4": { "mass": { "LEO": 15000, "GTO": 8000 }, "diameter": 5, "operator": "jaxa", "cost": 80, "risk": 0.95, "sites": ["TNG"] },  
+		"VEGA": { "mass": { "LEO": 2300, "GTO": 0 }, "diameter": 3, "operator": "esa", "cost": 23, "risk": 0.98, "sites": ["CSG"] },
+		"PEGA": { "mass": { "LEO": 400, "GTO": 0 }, "diameter": 1.2, "operator": "orbital", "cost": 15, "risk": 0.92, "sites": ["AIR"] },  
+		"LM3B": { "mass": { "LEO": 12000, "GTO": 5000 }, "diameter": 3.5, "operator": "cnsa", "cost": 30, "risk": 0.75, "sites": ["XCH"] },  
+		"ATLV": { "mass": { "LEO": 19000, "GTO": 9000 }, "diameter": 3.5, "operator": "nasa", "cost": 150, "risk": 0.98, "sites": ["KSC","VDB"] }, 
+		"FLC9": { "mass": { "LEO": 10000, "GTO": 7000 }, "diameter": 3.5, "operator": "spacex", "cost": 40, "risk": 0.97, "sites": ["KSC","VDB"] },
+		"PSLV": { "mass": { "LEO": 3250, "HCO": 1600, "GTO": 1410 }, "diameter": 3.2, "operator": "isro", "cost": 11.4, "risk": 0.96, "sites": ["SDH"] }
 	},
 	"site": {
 		"CSG": { "LEO": 1, "operator": "esa", "risk": 0.98, "latitude": "5.23722", "longitude": -52.76056 },
@@ -77,9 +80,9 @@
 		"uv": { "temperature": 400, "cost": 50, "mass": 100 }
 	},
 	"instrument": {
-		"camera": { "multiplier": { "cost": 1, "mass": 1 }, "devtime": 0.5 },
-		"spectrometer": { "multiplier": { "cost": 1, "mass": 1 }, "devtime": 0.5 },
-		"both": { "multiplier": { "cost": 1.5, "mass": 1.5 }, "devtime": 1 }
+		"camera": { "multiplier": { "cost": 1, "mass": 1 }, "devtime": 0.5, "risk": 0.98 },
+		"spectrometer": { "multiplier": { "cost": 1, "mass": 1 }, "devtime": 0.5, "risk": 0.98 },
+		"both": { "multiplier": { "cost": 1.5, "mass": 1.5 }, "devtime": 1, "risk": 0.98 }
 	},
 	"cooling": {
 		"passive": {
