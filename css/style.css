@@ -25,15 +25,15 @@ html, head { padding: 0px; margin: 0px; }
 body {
 	color: #4D4E53; /* To match to RS Summer Exhibition 2013 site */
 	font-family: 'Earthbound', "Helvetica Neue", Helvetica, sans-serif;
+}
+body.r2l { }
+#page {
 	background-color:#269;
 	background-image: linear-gradient(rgba(255,255,255,.5) 1px, transparent 2px), linear-gradient(90deg, rgba(255,255,255,.5) 1px, transparent 2px), linear-gradient(rgba(255,255,255,.15) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.15) 1px, transparent 1px);
 	background-size: 5em 5em, 5em 5em, 1em 1em, 1em 1em;
 	background-position:-2px -2px, -2px -2px, -1px -1px, -1px -1px
 	margin: 0;
 	padding: 0px;
-}
-body.r2l { }
-#page {
 	margin: 0px;
 	padding: 3em 0 1em 0;
 	display: block;
@@ -72,10 +72,10 @@ strong { font-weight: bold; }
 }
 .baritem {
 	display: inline-block;
-	padding: 0.25em 0.5em;
 }
 .baritem a {
 	color: inherit;
+	padding: 0.25em 0.5em;
 	text-decoration: none;
 	display: block;
 }
@@ -109,7 +109,7 @@ img.icon {
 }
 .dropdown .baritem { float: none; display: block; }
 .dropdown li {
-	padding: 0.25em 1em;
+	padding: 0.5em 1em;
 }
 .dropdown.fullwidth {
 	width: 100%;
@@ -119,22 +119,26 @@ img.icon {
 #menu { z-index: 102; }
 #language { z-index: 101; }
 #bar { z-index: 100; }
-#summaryext { color: #efefef; vertical-align: top; z-index: 98; }
-#summaryext>ul { display:block; }
-#summaryext>ul>li { display: inline-block; float: left; width: 33.3%; min-height: 7em; padding: 0px; }
-#summaryext>ul>li:nth-child(3n+1) { clear: both;}
-#summaryext>h3, #summaryext>ul { margin: 0; }
-#summaryext h3 {
+#summaryext { z-index: 98; }
+#messages { z-index: 99; }
+.dropdown.fullwidth { color: #efefef; vertical-align: top; }
+.dropdown.fullwidth>ul { display:block; }
+.dropdown.fullwidth>ul>li { display: inline-block; float: left; width: 33.3%; min-height: 7em; padding: 0px; }
+.dropdown.fullwidth>ul>li:nth-child(3n+1) { clear: both;}
+.dropdown.fullwidth>h3, #summaryext>ul { margin: 0; }
+.dropdown.fullwidth h3 {
 	line-height: 1.5em;
 	border-bottom: 1px solid white;
 }
-#summaryext h3 img { margin-right: 0.25em; }
-#summaryext ul { display: block; }
-#summaryext ul.summary li { padding: 0.25em 0; }
-#summaryext ul.summary li ul { margin-top: 0.25em; }
-#summaryext ul.summary li ul li { padding: 0.25em 0 0.25em 1.5em; }
-#summaryext ul.summary li ul li:last-child { padding-bottom: 0; }
-#summaryext .value { float: right; }
+.dropdown.fullwidth h3 img { margin-right: 0.25em; }
+.dropdown.fullwidth ul { display: block; }
+.dropdown.fullwidth ul.summary li { padding: 0.25em 0; }
+.dropdown.fullwidth ul.summary li ul { margin-top: 0.25em; }
+.dropdown.fullwidth ul.summary li ul li { padding: 0.25em 0 0.25em 1.5em; }
+.dropdown.fullwidth ul.summary li ul li:last-child { padding-bottom: 0; }
+.dropdown.fullwidth .value { float: right; }
+
+#messages.dropdown.fullwidth>ul>li { float: none; width: 100%; clear: both; }
 
 
 /* Sprites */
@@ -144,7 +148,7 @@ img.icon,.ui-icon { background:url('../images/icons.png') no-repeat scroll trans
 img.menu { background-position: -4.5em 0; }
 img.cost { background-position: -1.5em 0; }
 img.mass { background-position: -1.5em -1.5em; }
-img.time { background-position: -1.5em -3em; }
+img.time { background-position: -3em -10.5em; }
 img.science { background-position: -1.5em -4.5em; }
 img.success { background-position: -1.5em -6em; }
 img.error { background-position: -1.5em -7.5em; }
@@ -155,6 +159,8 @@ img.load { background-position: -3em 0em; }
 img.save { background-position: -3em -1.5em; }
 img.help { background-position: -4.5em -3em; }
 img.restart { background-position: -3em -3em; }
+img.fullscreen { background-position: -4.5em -6em; }
+.fullscreen img.fullscreen { background-position: -4.5em -7.5em; }
 .success { color: #f6f6f6; }
 .cost { color: #76e300; }
 .time { color: #fac900; }

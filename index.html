@@ -33,8 +33,8 @@
 					<a href="#language" class="togglebtn togglelang">[en]</a>
 					<div id="language" class="dropdown"><ul></ul></div>
 				</div>
-				<div class="baritem"><a href="#"><img src="images/cleardot.gif" class="icon error" alt="error" /><span class="error">2</span></a></div>
-				<div class="baritem"><a href="#"><img src="images/cleardot.gif" class="icon warning" alt="warn" /><span class="warning">3</span></a></div>
+				<div class="baritem"><a href="#" class="togglemessages"><img src="images/cleardot.gif" class="icon error" alt="error" /><span class="error">2</span></a></div>
+				<div class="baritem"><a href="#" class="togglemessages"><img src="images/cleardot.gif" class="icon warning" alt="warn" /><span class="warning">3</span></a></div>
 			</div>
 			<ul id="summary">
 				<li class="baritem"><a href="#"><img src="images/cleardot.gif" class="icon success" /><span class="success">0%</span></a></li>
@@ -42,6 +42,26 @@
 				<li class="baritem"><a href="#"><img src="images/cleardot.gif" class="icon cost" /><span class="cost">&pound;0m</span></a></li>
 				<li class="baritem"><a href="#"><img src="images/cleardot.gif" class="icon mass" /><span class="mass">0 kg</span></a></li>
 				<li class="baritem"><a href="#"><img src="images/cleardot.gif" class="icon science" /><span class="science">0%</span></a></li>
+			</ul>
+		</div>
+		<div id="messages" class="dropdown fullwidth">
+			<ul>
+				<li>
+					<div class="padded">
+						<h3 class="error"><img src="images/cleardot.gif" class="icon error" /> Errors <span class="value">2</span></h3>
+						<ul class="summary">
+							<li>Blah</li>
+						</ul>
+					</div>
+				</li>
+				<li>
+					<div class="padded">
+						<h3 class="warning"><img src="images/cleardot.gif" class="icon warning" /> Warnings <span class="value">3</span></h3>
+						<ul class="summary">
+							<li>Blah</li>
+						</ul>
+					</div>
+				</li>
 			</ul>
 		</div>
 		<div id="summaryext" class="dropdown fullwidth">
@@ -65,7 +85,7 @@
 					</div>
 				</li><li>
 					<div class="padded">
-						<h3 class="time"><img src="images/cleardot.gif" class="icon time" /> Time <span class="value">0 months</span></h3>
+						<h3 class="time"><img src="images/cleardot.gif" class="icon time" /> Timeline <span class="value">0 months</span></h3>
 						<ul class="summary">
 							<li>Development (total): <span class="value time">0 months</span>
 								<ul>
@@ -122,7 +142,8 @@
 					<div class="padded">
 						<h3 class="science"><img src="images/cleardot.gif" class="icon science" /> Mission targets <span class="value">0%</span></h3>
 						<ul class="summary">
-							<li>Mission targets met: <span class="value science">0%</span></li>
+							<li>Mission target 1: <span class="value science">Fail<!--&#x2714; &#x2718--></span></li>
+							<li>Mission target 2: <span class="value science">Fail</span></li>
 						</ul>
 					</div>
 				</li>

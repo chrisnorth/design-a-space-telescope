@@ -22,6 +22,62 @@ if(typeof $==="undefined") $ = {};
 (function($) {
 
 
+	// Full Screen API - http://johndyer.name/native-fullscreen-javascript-api-plus-jquery-plugin/
+	var fullScreenApi = {
+		supportsFullScreen: false,
+		isFullScreen: function() { return false; },
+		requestFullScreen: function() {},
+		cancelFullScreen: function() {},
+		fullScreenEventName: '',
+		prefix: ''
+	},
+	browserPrefixes = 'webkit moz o ms khtml'.split(' ');
+	// check for native support
+	if (typeof document.cancelFullScreen != 'undefined') {
+		fullScreenApi.supportsFullScreen = true;
+	} else {
+		// check for fullscreen support by vendor prefix
+		for (var i = 0, il = browserPrefixes.length; i < il; i++ ) {
+			fullScreenApi.prefix = browserPrefixes[i];
+			if (typeof document[fullScreenApi.prefix + 'CancelFullScreen' ] != 'undefined' ) {
+				fullScreenApi.supportsFullScreen = true;
+				break;
+			}
+		}
+	}
+	// update methods to do something useful
+	if (fullScreenApi.supportsFullScreen) {
+		fullScreenApi.fullScreenEventName = fullScreenApi.prefix + 'fullscreenchange';
+		fullScreenApi.isFullScreen = function() {
+			switch (this.prefix) {
+				case '':
+					return document.fullScreen;
+				case 'webkit':
+					return document.webkitIsFullScreen;
+				default:
+					return document[this.prefix + 'FullScreen'];
+			}
+		}
+		fullScreenApi.requestFullScreen = function(el) {
+			return (this.prefix === '') ? el.requestFullScreen() : el[this.prefix + 'RequestFullScreen']();
+		}
+		fullScreenApi.cancelFullScreen = function(el) {
+			return (this.prefix === '') ? document.cancelFullScreen() : document[this.prefix + 'CancelFullScreen']();
+		}
+	}
+	// jQuery plugin
+	if (typeof jQuery != 'undefined') {
+		jQuery.fn.requestFullScreen = function() {
+			return this.each(function() {
+				if (fullScreenApi.supportsFullScreen) fullScreenApi.requestFullScreen(this);
+			});
+		};
+	}
+	// export api
+	window.fullScreenApi = fullScreenApi;
+	// End of Full Screen API
+
+
 	// Get the URL query string and parse it
 	$.query = function() {
 		var r = {length:0};
@@ -84,22 +140,41 @@ if(typeof $==="undefined") $ = {};
 		$('#language ul').html(list);
 
 		// Make menu toggles active
-		$('#summary a').on('click',{me:this},function(e){
-			$('#language').hide();
-			$('#menu').hide();
-			$('#summaryext').slideToggle();
-		});
-		$('a.togglemenu').on('click',{me:this},function(e){ $('#language').hide(); $('#menu').slideToggle(); });
-		$('a.togglelang').on('click',{me:this},function(e){ $('#menu').hide(); $('#language').slideToggle(); });
+		$('#summary a').on('click',{me:this},function(e){ e.data.me.toggleMenus('summaryext'); });
+		$('a.togglemessages').on('click',{me:this},function(e){ e.data.me.toggleMenus('messages'); });
+		$('a.togglemenu').on('click',{me:this},function(e){ e.data.me.toggleMenus('menu'); });
+		$('a.togglelang').on('click',{me:this},function(e){ e.data.me.toggleMenus('language'); });
+
 
 		// Add save event
 		$('.baritem .save').parent().on('click',{me:this},function(e){
 			e.data.me.save();
 		});
 
+
+		// Check if in an iframe
+		if(fullScreenApi.supportsFullScreen){
+			$('#menu ul').append('<li class="baritem"><a href="#" class="fullscreenbtn"><img src="images/cleardot.gif" class="icon fullscreen" alt="full" /> <span>Enter Fullscreen</span></li>');
+			// Bind the fullscreen function to the double-click event if the browser supports fullscreen
+			$('#menu li.baritem a.fullscreenbtn').on('click', {me:this}, function(e){
+				e.data.me.toggleFullScreen();
+			});
+		}
+
+
 		return this;
 	}
-	
+	SpaceTelescope.prototype.toggleMenus = function(id){
+		var m = $('.dropdown');
+		for(var i = 0; i < m.length ; i++){
+			if($(m[i]).attr('id') == id){
+				$(m[i]).slideToggle();
+			}else{
+				$(m[i]).hide();
+			}
+		}
+		return this;
+	}
 	SpaceTelescope.prototype.setVar = function(v,t){
 		if(typeof v==="string"){
 			if(this.i && typeof this.i[v]===t) this.settings[v] = this.i[v];
@@ -264,6 +339,23 @@ if(typeof $==="undefined") $ = {};
 		}
 		return s+''+(n).toFixed(p)+''+append;
 	}
+
+	SpaceTelescope.prototype.toggleFullScreen = function(){
+		// Get the container
+		this.elem = document.getElementById("page");
+
+		if(fullScreenApi.isFullScreen()){
+			fullScreenApi.cancelFullScreen(this.elem);
+			this.fullscreen = false;
+			$('#page').removeClass('fullscreen');
+		}else{
+			fullScreenApi.requestFullScreen(this.elem);
+			this.fullscreen = true;
+			$('#page').addClass('fullscreen');
+		}
+		this.resize();
+	}
+
 
 	// Attempt to save a file
 	// Blob() requires browser >= Chrome 20, Firefox 13, IE 10, Opera 12.10 or Safari 6
