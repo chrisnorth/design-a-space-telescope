@@ -1,0 +1,27 @@
+{
+	"scenarios": [
+		{
+			"name": "Star Birth and Evolution",
+			"description": "A private organization has funded your group to research into the birth and evolution of stars the distant and nearby Universe, with full analysis of the spectra of the event. The budget of your mission is <span class="cost" data="2000000000">&pound;2 billion</span>. You will need the appropriate instruments on board your satellite in order to observe such objects.",
+			"budget": 2000000000,
+			"requires": [
+				{ "instrument": "camera", "wavelength": "farir" },
+				{ "instrument": "spectrometer", "wavelength": "farir" },
+				{ "instrument": "camera", "wavelength": "submm" },
+				{ "instrument": "spectrometer", "wavelength": "submm" },
+				{ "mirror": 1 },
+				{ "lifetime": 4 }
+			]
+		},{
+			"name": "Multi-wavelength Sky Mapper",
+			"description": "A government research grant has come through to take images of the sky in ultraviolet, visible and near‐IR wavelengths from a satellite in space, in order to map stars, galaxies and other yet to be discovered phenomena. The budget of your mission is <span class="cost" data="400000000">&pound;400 million</span>.",
+			"budget": 400000000,
+			"requires": [
+				{ "instrument": "camera", "wavelength": "uv" },
+				{ "instrument": "camera", "wavelength": "optical" },
+				{ "instrument": "camera", "wavelength": "nearir" },
+				{ "mirror": 0.5 }
+			]
+		}
+	]
+}
