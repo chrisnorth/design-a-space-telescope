@@ -87,14 +87,13 @@ strong { font-weight: bold; }
 	transition: all 0.4s ease-in-out;
 }
 .baritem span { margin: 0 0 0 0.25em; }
-.baritem img {
+.barmenu .baritem { float: right; }
+img.icon {
 	width:1.5em;
 	height:1.5em;
 	margin: 0;
 	float: left;
 }
-.barmenu .baritem { float: right; }
-
 .dropdown {
 	display: none;
 	z-index: 100;
@@ -110,12 +109,32 @@ strong { font-weight: bold; }
 }
 .dropdown .baritem { float: none; display: block; }
 .dropdown li {
-	padding: 0.5em 1em;
+	padding: 0.25em 1em;
 }
-.dropdown li:hover {
-	background-color: #404040;
+.dropdown.fullwidth {
+	width: 100%;
+	left: 0px;
+	border-left: 0px;
 }
-
+#menu { z-index: 102; }
+#language { z-index: 101; }
+#bar { z-index: 100; }
+#summaryext { color: #efefef; vertical-align: top; z-index: 98; }
+#summaryext>ul { display:block; }
+#summaryext>ul>li { display: inline-block; float: left; width: 33.3%; min-height: 7em; padding: 0px; }
+#summaryext>ul>li:nth-child(3n+1) { clear: both;}
+#summaryext>h3, #summaryext>ul { margin: 0; }
+#summaryext h3 {
+	line-height: 1.5em;
+	border-bottom: 1px solid white;
+}
+#summaryext h3 img { margin-right: 0.25em; }
+#summaryext ul { display: block; }
+#summaryext ul.summary li { padding: 0.25em; }
+#summaryext ul.summary li ul { margin-top: 0.25em; }
+#summaryext ul.summary li ul li { padding: 0.25em 0 0.25em 1.5em; }
+#summaryext ul.summary li ul li:last-child { padding-bottom: 0; }
+#summaryext .value { float: right; }
 
 
 /* Sprites */
@@ -188,6 +207,12 @@ p .cost {
 	color: #009d00;
 }
 
+@media only screen and (max-width: 1024px){
+	#summaryext>ul>li { width: 50%; }
+	#summaryext>ul>li:nth-child(3n+1) { clear: none; }
+	#summaryext>ul>li:nth-child(2n+1) { clear: both; }
+
+}
 @media only screen and (max-width: 640px){
 	.baritem { padding: 0.25em 0.25em 0.25em 0; }
 	.baritem span { margin: 0; }
@@ -195,4 +220,7 @@ p .cost {
 	#menu { left: 0; width: 100%; border-left: 0px; }
 	#menu .baritem span { margin-left: 0.5em; }
 	.togglebtn { padding-left: 0.25em; }
+	#summaryext>ul>li { width: 100%; }
+	#summaryext>ul>li { clear: both; float: none; }
+	.padded { padding: 0.5em; }
 }

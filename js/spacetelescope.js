@@ -80,10 +80,15 @@ if(typeof $==="undefined") $ = {};
 		
 		// Build language list
 		var list = "";
-		for(l in this.langs) list += '<li class="baritem"><a href="#">'+this.langs[l]+' ['+l+']</a></li>'
+		for(l in this.langs) list += '<li class="baritem"><a href="#" title="'+this.langs[l]+'">'+this.langs[l]+' ['+l+']</a></li>'
 		$('#language ul').html(list);
 
 		// Make menu toggles active
+		$('#summary a').on('click',{me:this},function(e){
+			$('#language').hide();
+			$('#menu').hide();
+			$('#summaryext').slideToggle();
+		});
 		$('a.togglemenu').on('click',{me:this},function(e){ $('#language').hide(); $('#menu').slideToggle(); });
 		$('a.togglelang').on('click',{me:this},function(e){ $('#menu').hide(); $('#language').slideToggle(); });
 
