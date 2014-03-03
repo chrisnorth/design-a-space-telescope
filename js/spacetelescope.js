@@ -78,10 +78,16 @@ if(typeof $==="undefined") $ = {};
 		this.loadConfig(this.update);
 		this.loadLanguage(this.lang,this.update);
 		
-		$('a.togglemenu').on('click',{me:this},function(e){
-		console.log(e)
-			$('#menu').slideToggle()
-		});
+		// Build language list
+		var list = "";
+		for(l in this.langs) list += '<li class="baritem"><a href="#">'+this.langs[l]+' ['+l+']</a></li>'
+		$('#language ul').html(list);
+
+		// Make menu toggles active
+		$('a.togglemenu').on('click',{me:this},function(e){ $('#language').hide(); $('#menu').slideToggle(); });
+		$('a.togglelang').on('click',{me:this},function(e){ $('#menu').hide(); $('#language').slideToggle(); });
+
+		// Add save event
 		$('.baritem .save').parent().on('click',{me:this},function(e){
 			e.data.me.save();
 		});

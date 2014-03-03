@@ -8,7 +8,7 @@
 	<script>
 	var spacetel;
 	$(document).ready(function(){
-		spacetel = $.spacetelescope({id:"image",width:455,height:333});
+		spacetel = $.spacetelescope({id:"image",width:455,height:333,langs:{'en':'English','cy':'Cymraeg','he':'&#1506;&#1489;&#1512;&#1497;&#1514;'}});
 	});
 	</script>
 	<link media="all" href="css/style.css" rel="stylesheet" type="text/css"/>
@@ -34,8 +34,9 @@
 		<div id="designer">
 			<div id="bar">
 				<div class="barmenu">
-					<div class="baritem"><a href="#menu" class="togglemenu"><img src="images/cleardot.gif" class="icon menu" alt="menu" /></a>
-						<div id="menu">
+					<div class="baritem">
+						<a href="#menu" class="togglemenu"><img src="images/cleardot.gif" class="icon menu" alt="menu" /></a>
+						<div id="menu" class="dropdown">
 							<ul>
 								<li class="baritem"><a href="#"><img src="images/cleardot.gif" class="icon help" alt="help" /><span>Help</span></a></li>
 								<li class="baritem"><a href="#"><img src="images/cleardot.gif" class="icon config" alt="" /><span>Setup</span></a></li>
@@ -45,7 +46,10 @@
 							</ul>
 						</div>
 					</div>
-					<div class="baritem"><a href="#" class="language">[en]</a></div>
+					<div class="baritem">
+						<a href="#language" class="togglelang">[en]</a>
+						<div id="language" class="dropdown"><ul></ul></div>
+					</div>
 					<div class="baritem"><a href="#"><img src="images/cleardot.gif" class="icon error" alt="error" /><span class="error">2</span></a></div>
 					<div class="baritem"><a href="#"><img src="images/cleardot.gif" class="icon warning" alt="warn" /><span class="warning">3</span></a></div>
 				</div>

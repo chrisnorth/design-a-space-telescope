@@ -100,7 +100,7 @@ body {
 	border-bottom: 1px solid rgba(255,255,255,0.8);
 	box-shadow: 0.1em 0.2em 0.25em rgba(0,0,0,0.3);
 }
-#bar, #menu { background-color: rgba(0,0,0,0.85); }
+#bar, .dropdown { background-color: rgba(0,0,0,0.85); }
 .barmenu {
 	float: right;
 }
@@ -129,7 +129,7 @@ body {
 }
 .barmenu .baritem { float: right; }
 
-#menu {
+.dropdown {
 	display: none;
 	z-index: 100;
 	position: absolute;
@@ -142,11 +142,11 @@ body {
 	border-top: 0px;
 	border-right: 0px;
 }
-#menu .baritem { float: none; display: block; }
-#menu li {
+.dropdown .baritem { float: none; display: block; }
+.dropdown li {
 	padding: 0.5em 1em;
 }
-#menu li:hover {
+.dropdown li:hover {
 	background-color: #404040;
 }
 
