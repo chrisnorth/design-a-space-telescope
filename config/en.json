@@ -6,19 +6,24 @@
 		"translator": "Chris North"
 	},
 	"title": "Space Telescope Designer!",
+	"intro": "<p>Yo! Designing a space telescope is an incredibly complex job, with many requirements that must be met. Some of these are because of the scientific discoveries that the astronomers would like to make, while others are due to limits that the engineers put on the spacecraft. Beginning in the 1990s, astronomers and engineers around the world were busy designing the Herschel Space Observatory. This project will help you explore the kinds of decisions they had to make.</p><p>Your task is to design a space observatory. You will have to make a number of decisions about what your space telescope will look like. If you are in a group, you could use a number of roles, but you will need to work together for a final solution</p>",
 	"ui": {
-		"million": " million",
-		"billion": "Bn",
+		"million": { "full": " million", "compact": "m" },
+		"billion": { "full": " billion", "compact": "Bn" },
 		"units": {
 			"km": { "unit": " km" },
 			"m": { "unit": " m" },
 			"mm": { "unit": " mm" },
 			"ft": { "unit": " ft" },
 			"t": { "unit": " t" },
+			"K": { "unit": " K" },
+			"C": { "unit": "&deg;C" },
+			"F": { "unit": "&deg;F" },
 			"kg": { "unit": " kg" },
 			"lb": { "unit": " lb" },
 			"years": { "unit": " yrs" },
-			"months": { "unit": " months" }
+			"months": { "unit": " months" },
+			"days": { "unit": " days" }
 		},
 		"currency": {
 			"GBP": { "symbol": "&pound;" },
@@ -27,6 +32,77 @@
 			"JPY": { "symbol": "&yen;" },
 			"CAD": { "symbol": "C&dollar;" },
 			"AUD": { "symbol": "&dollar;" }
+		},
+		"warnings": {
+			"title": "Warnings"
+		},
+		"errors": {
+			"title": "Errors"
+		},
+		"menu": {
+			"title": "Menu",
+			"load": "Load file",
+			"save": "Save file",
+			"help": "Help",
+			"config": "Options",
+			"restart": "Change scenario",
+			"fullscreen": "Toggle fullscreen"
+		},
+		"summary": {
+			"success": {
+				"title": "Probability of success",
+				"site": "Launch site:",
+				"vehicle": "Launch vehicle:",
+				"deploy": "Deployment:",
+				"cooling": "Cooling system:",
+				"instruments": "Instruments:",
+				"mission": "Mission:"
+			},
+			"time": {
+				"title": "Timeline",
+				"dev": {
+					"title": "Development (total):",
+					"satellite": "Satellite structure:",
+					"mirror": "Mirror:",
+					"cooling": "Cooling system:",
+					"instruments": "Instruments:"
+				},
+				"launch": "Launch date:",
+				"mission": "Mission lifetime:",
+				"fuel": "Fuel lifetime:",
+				"end": "Mission end:"
+			},
+			"cost": {
+				"title": "Budget",
+				"dev": {
+					"title": "Development (total):",
+					"satellite": "Satellite structure:",
+					"mirror": "Mirror:",
+					"cooling": "Cooling system:",
+					"instruments": "Instruments:"
+				},
+				"operations": {
+					"title": "Operations (total):",
+					"launch": "Launch:",
+					"ground": "Ground control (per year):"
+				},
+				"total": "Total:"
+			},
+			"mass": {
+				"title": "Mass budget",
+				"satellite": "Satellite structure:",
+				"mirror": "Mirror:",
+				"cooling": {
+					"title": "Cooling system (total):",
+					"passive": "Passive cooling:",
+					"cryo": "Cryogenic cooling:",
+					"active": "Active cooling:"
+				},
+				"instruments": "All instruments:"
+			},
+			"science": {
+				"title": "Mission targets"
+			}
 		}
 	},
 	"options": {
@@ -124,6 +200,181 @@
 			"years_10": { "label": "10 yrs" },
 			"years_15": { "label": "15 yrs" },
 			"years_20": { "label": "20 yrs" }
+		}
+	},
+	"glossary": {
+		"title": "Glossary",
+		"about": "Use the glossary to find out more about specific topics.",
+		"roles": {
+			"title": "Roles",
+			"about": "If you are in a group, you could use a number of roles, but you will need to work together for a final solution:",
+			"engineer": {
+				"title": "Rocket Engineer",
+				"about": "The role of the engineer is to ensure that the mass and size of the structure does not surpass the limits of the launcher. The engineer must also select the appropriate launch site, and the orbit from which the satellite will observe."
+			},
+			"manager": {
+				"title": "Project Manager",
+				"about": "The role of the accountant is to ensure that the mission does not go over budget, and to ensure that the risk of overrunning in terms of budget is as low as possible."
+			},
+			"instrument": {
+				"title": "Instrument Scientist",
+				"about": "The instrument scientist is in charge of making sure the instruments on-board are appropriate for meeting the science goals, and to ensure that they will be able to meet the scientific requirements"
+			},
+			"mission": {
+				"title": "Mission Scientist",
+				"about": "The mission scientist will ensure that the satellite's mirror and cooling system are suitable for the mission to succeed."
+			}
+		},
+		"structure": {
+			"title": "Satellite structure",
+			"about": "<p>Your colleagues are in the process of selecting various aspects of the mission design. Each of these will have an effect on the cost, size, and mass of the whole project. Your task is to keep track of the cost, and mass of all the components, and ensure that they meet the requirements.</p><p>Linking all of the other parts together is the main satellite structure. This structure sometimes referred to as the “service module” or “satellite bus” also carries the power, propulsion and communication systems. The cost, size and mass of this structure will primarily depend on the mirror selected by the mission scientist, as shown in the table below. A deployable mirror also requires a much more complex satellite structure, which will be <strong>twice as expensive</strong> and <strong>twice as massive</strong>. However, it will also be <strong>half the diameter</strong>.</p><table><tr><th>Mirror diameter</th><th>Structure diameter</th><th>Structure cost</th><th>Structure mass</th></tr><tr><td>0.5 m</td><td>0.8 m</td><td>£100 million</td><td>50 kg</td></tr><tr><td>1 m</td><td>1.4 m</td><td>£200 million</td><td>100 kg</td></tr><tr><td>2 m</td><td>2.4 m</td><td>£500 million</td><td>200 kg</td></tr><tr><td>4 m</td><td>4.4 m</td><td>£1 billion</td><td>300 kg</td></tr><tr><td>8 m</td><td>10 m</td><td>£2 billion</td><td>400 kg</td></tr></table>"
+		},
+		"mirror": {
+			"title": "Telescope Mirror",
+			"about": "<p>Telescopes work by focusing light using either lenses or mirrors, or sometimes a combination of the two. Mirrors tend to be much lighter and easier to manufacture, and so almost all space telescopes - and large ground-based telescopes - use them instead of lenses.</p><p>The mirror of a telescope is one of the most important parts. It collects the light and focuses it onto the scientific instruments. Bigger mirrors are able to collect more light, and therefore see fainter objects more easily. They also have a higher resolution, and so can see finer detail.</p><p>The maximum possible resolution of a telescope is given by:</p><blockquote><em>R &asymp; 1.22&lambda;/<em>D</em></blockquote><p>where &lambda; is the wavelength of the light, <em>D</em> is the diameter of the telescope. The value of <em>R</em> is in radians. You can convert to other units using the following relations:</p><blockquote>1 radian = (180/&pi;) degrees; 1 degree = 60 arcminutes; 1 arcminute = 60 arcseconds</blockquote><p>This gives the maximum possible resolution that a telescope mirror can provide, and is called the &quot;diffraction limit&quot;. Note that it is different for different wavelengths. On <a href=\"#glossary\" class=\"glossarylink\" data=\"previous\">previous satellites</a>, not all instruments have taken advantage of this maximum resolution.</p>"
+		},
+		"previous": {
+			"title": "Previous missions",
+			"about": "Any satellite has to make scientific discoveries that are better than those that previous satellites have made. There have been a number of previous space telescopes launched to observe in a range of wavelengths, and some of the details are given below:",
+			"launch": "Launched:",
+			"operator": "Mission operators:",
+			"duration": "Mission duration:",
+			"instruments": "Instruments:",
+			"temperature": "Operating temperature:",
+			"diameter": "Mirror diameter:",
+			"mass": "Total satellite mass:",
+			"site": "Launch site:",
+			"vehicle": "Launch vehicle:",
+			"orbit": "Orbit:",
+			"cost": "Approximate cost:",
+			"notes": "Notes:",
+			"missions": {
+				"iras": {
+					"title": "Infrared Astronomy Satellite (IRAS)",
+					"launch": 1983,
+					"operator": "NASA",
+					"duration": { "value": 10, "units": "months", "dimension": "time" },
+					"instruments": "Mid-IR",
+					"temperature": { "value": 2, "units": "K", "dimension": "temperature" },
+					"diameter": { "value": 0.7, "units": "m", "dimension": "length" },
+					"mass": { "value": 800, "units": "kg", "dimension": "mass" },
+					"site": "Vandenberg Airforce Base, California, USA",
+					"vehicle": "Delta rocket",
+					"orbit": "Low-Earth orbit (900 km altitude)",
+					"cost": { "value": 400, "units": "GBP", "dimension": "currency" },
+					"image": { "src": "images/mission_iras.jpg" }
+				},
+				"iso": {
+					"title": "Infrared Space Observatory (ISO)",
+					"launch": 1995,
+					"operator": "ESA",
+					"duration": { "value": 2.5, "units": "years", "dimension": "time" },
+					"instruments": "Mid-IR, Near-IR",
+					"temperature": { "value": 2, "units": "K", "dimension": "temperature" },
+					"diameter": { "value": 0.6, "units": "m", "dimension": "length" },
+					"mass": { "value": 2400, "units": "kg", "dimension": "mass" },
+					"site": "Korou, French Guiana",
+					"vehicle": "Ariane 4",
+					"orbit": "High-Earth orbit (elliptical, ranging from 1000 - 70,000 km)",
+					"cost": { "value": 300, "units": "GBP", "dimension": "currency" },
+					"image": { "src": "images/mission_iso.jpg" }
+				},
+				"spitzer": {
+					"title": "Spitzer Space Telescope",
+					"launch": 2003,
+					"operator": "NASA",
+					"duration": { "value": 5.5, "units": "years", "dimension": "time" },
+					"instruments": "Mid-IR, Near-IR",
+					"temperature": { "value": 5, "units": "K", "dimension": "temperature" },
+					"diameter": { "value": 0.85, "units": "m", "dimension": "length" },
+					"mass": { "value": 860, "units": "kg", "dimension": "mass" },
+					"site": "Cape Canaveral, Florida, USA",
+					"vehicle": "Delta II rocket",
+					"orbit": "Earth-trailing orbit",
+					"cost": { "value": 800, "units": "GBP", "dimension": "currency" },
+					"notes": "Since further cooling is only required by the Mid-IR instruments, the Near-IR instruments continued to operate after the end of the nominal mission.",
+					"image": { "src": "images/mission_spitzer.jpg" }
+				},
+				"akari": {
+					"title": "Akari",
+					"launch": 2006,
+					"operator": "JAXA",
+					"duration": { "value": 1.5, "units": "years", "dimension": "time" },
+					"instruments": "Near-IR, Mid-IR, Far-IR",
+					"temperature": { "value": 2, "units": "K", "dimension": "temperature" },
+					"diameter": { "value": 0.7, "units": "m", "dimension": "length" },
+					"resolution": "44 arcseconds at 140 microns",
+					"mass": { "value": 950, "units": "kg", "dimension": "mass" },
+					"site": "Uchinoura Space Center, Japan",
+					"vehicle": "M-V rocket",
+					"orbit": "Low-Earth orbit (700 km altitude)",
+					"cost": { "value": 200, "units": "GBP", "dimension": "currency" },
+					"notes": "Cost excludes launch cost",
+					"image": { "src": "images/mission_akari.jpg" }
+				},
+				"herschel": {
+					"title": "Herschel Space Observatory",
+					"launch": 2009,
+					"operator": "ESA",
+					"duration": { "value": 3.5, "units": "years", "dimension": "time" },
+					"instruments": "Far-IR, Sub-mm",
+					"temperature": { "value": 0.3, "units": "K", "dimension": "temperature" },
+					"diameter": { "value": 3.5, "units": "m", "dimension": "length" },
+					"mass": { "value": 4000, "units": "kg", "dimension": "mass" },
+					"site": "Korou, French Guiana",
+					"vehicle": "Ariane 5",
+					"orbit": "Earth-Sun L2 point",
+					"cost": { "value": 1000, "units": "GBP", "dimension": "currency" },
+					"image": { "src": "images/mission_herschel.jpg" }
+				},
+				"hubble": {
+					"title": "Hubble Space Telescope",
+					"launch": 1990,
+					"operator": "NASA/ESA",
+					"duration": { "value": 20, "units": "years", "dimension": "time" },
+					"instruments": "Near-IR, Optical, UV",
+					"temperature": { "value": 300, "units": "K", "dimension": "temperature" },
+					"diameter": { "value": 2.4, "units": "m", "dimension": "length" },
+					"mass": { "value": 11000, "units": "kg", "dimension": "mass" },
+					"site": "Kennedy Space Centre",
+					"vehicle": "Space Shuttle Discovery",
+					"orbit": "Low-Earth orbit (600 km altitude)",
+					"cost": { "value": 2000, "units": "GBP", "dimension": "currency" },
+					"image": { "src": "images/mission_hubble.jpg" }
+				},
+				"galex": {
+					"title": "GALEX",
+					"launch": 2003,
+					"operator": "NASA",
+					"duration": { "value": 10, "units": "years", "dimension": "time" },
+					"instruments": "UV",
+					"temperature": { "value": 300, "units": "K", "dimension": "temperature" },
+					"diameter": { "value": 0.5, "units": "m", "dimension": "length" },
+					"mass": { "value": 280, "units": "kg", "dimension": "mass" },
+					"site": "Carrier Aircraft",
+					"vehicle": "Pegasus Rocket",
+					"orbit": "Low-Earth orbit (700 km altitude)",
+					"cost": { "value": 150, "units": "GBP", "dimension": "currency" },
+					"notes": "Cost excludes launch cost",
+					"image": { "src": "images/mission_galex.jpg" }
+				},
+				"wise": {
+					"title": "WISE",
+					"launch": 2010,
+					"operator": "NASA",
+					"duration": { "value": 1, "units": "years", "dimension": "time" },
+					"instruments": "Near-IR, Mid-IR",
+					"temperature": { "value": 300, "units": "K", "dimension": "temperature" },
+					"diameter": { "value": 0.4, "units": "m", "dimension": "length" },
+					"mass": { "value": 400, "units": "kg", "dimension": "mass" },
+					"site": "Vandenberg",
+					"vehicle": "Delta II rocket",
+					"orbit": "Sun-synchronous orbit (500 km altitude)",
+					"cost": { "value": 300, "units": "GBP", "dimension": "currency" },
+					"notes": "Cost excludes launch cost",
+					"image": { "src": "images/mission_wise.jpg" }
+				}
+			}
 		}
 	}
 }

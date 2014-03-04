@@ -172,7 +172,7 @@ img.fullscreen { background-position: -4.5em -6em; }
 
 
 
-#intro {
+#intro, #glossary {
 	width: 50em;
 	max-width: 95%;
 	margin: auto;
@@ -214,6 +214,34 @@ p .cost {
 	color: #009d00;
 }
 
+#glossary li {
+	margin-bottom: 0.5em;
+}
+#glossary table {
+	border-collapse: collapse;
+}
+#glossary table th { background-color: #404040; color: #e6e6e6; }
+#glossary table td, #glossary table th {
+	border: 1px solid #404040;
+	padding: 0.5em;
+	text-align: center;
+}
+#glossary blockquote {
+	text-align: center;
+	margin: 1em auto;
+}
+#glossary h3 { clear: both; }
+#glossary .key { font-weight: bold; }
+#glossary .mission {
+	padding-top: 2.5em;
+}
+#glossary .mission img {
+	float: right;
+	margin: 0 0 1em 1em;
+	width: 320px;
+}
+
+
 @media only screen and (max-width: 1024px){
 	#summaryext>ul>li { width: 50%; }
 	#summaryext>ul>li:nth-child(3n+1) { clear: none; }
@@ -221,7 +249,7 @@ p .cost {
 
 }
 @media only screen and (max-width: 640px){
-	.baritem { padding: 0.25em 0.25em 0.25em 0; }
+	.baritem a { padding: 0.25em 0.25em 0.25em 0; }
 	.baritem span { margin: 0; }
 	.barmenu .baritem span { margin: 0; }
 	#menu { left: 0; width: 100%; border-left: 0px; }
@@ -230,4 +258,8 @@ p .cost {
 	#summaryext>ul>li { width: 100%; }
 	#summaryext>ul>li { clear: both; float: none; }
 	.padded { padding: 0.5em; }
+}
+@media only screen and (max-width: 500px){
+	.baritem a { padding: 0.25em 0.1em 0.25em 0.1em; }
+	#summary .baritem img.icon, .baritem .togglewarnings img.icon, .baritem .toggleerrors img.icon { display: none; }
 }
