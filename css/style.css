@@ -21,13 +21,16 @@ div { box-sizing: border-box; -moz-box-sizing: border-box; }
 /* End of reset */
 
 
-html, head { padding: 0px; margin: 0px; }
+html, head { height: 100%; }
 body {
 	color: #4D4E53; /* To match to RS Summer Exhibition 2013 site */
 	font-family: 'Earthbound', "Helvetica Neue", Helvetica, sans-serif;
+	width: 100%;
+	height: 100%;
 }
 body.r2l { }
 #page {
+	min-height: 100%;
 	background-color:#269;
 	background-image: linear-gradient(rgba(255,255,255,.5) 1px, transparent 2px), linear-gradient(90deg, rgba(255,255,255,.5) 1px, transparent 2px), linear-gradient(rgba(255,255,255,.15) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.15) 1px, transparent 1px);
 	background-size: 5em 5em, 5em 5em, 1em 1em, 1em 1em;
