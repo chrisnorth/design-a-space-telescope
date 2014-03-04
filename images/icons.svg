@@ -68,9 +68,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="32"
-     inkscape:cx="29.842219"
-     inkscape:cy="56.868379"
+     inkscape:zoom="5.6568542"
+     inkscape:cx="14.932743"
+     inkscape:cy="26.478863"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -115,7 +115,7 @@
      transform="translate(0,-1036.3622)">
     <path
        inkscape:connector-curvature="0"
-       style="fill:#f6f6f6;fill-opacity:1;stroke:none"
+       style="fill:#202020;fill-opacity:1;stroke:none"
        d="m 1,1150.6122 5.75,5.75 -5.75,5.75 2.5,0 4.5,-4.5 4.5,4.5 2.5,0 -5.75,-5.75 5.75,-5.75 -2.5,0 -4.5,4.5 -4.5,-4.5 -2.5,0 z"
        id="path3910" />
     <path

@@ -110,6 +110,7 @@ if(typeof $==="undefined") $ = {};
 		// Set some variables
 		this.langurl = "config/%LANG%.json";
 		this.dataurl = "config/options.json";
+		this.scenariourl = "config/scenarios_%LANG%.json";
 		
 		this.settings = { 'length': 'm', 'currency': 'GBP', 'temperature':'K', 'mass':'kg', 'time': 'months', 'usecookies': false };
 
@@ -162,6 +163,11 @@ if(typeof $==="undefined") $ = {};
 			// Bind the fullscreen function to the double-click event if the browser supports fullscreen
 			$('.baritem .fullscreenbtn').parent().on('click', {me:this}, function(e){ e.data.me.toggleFullScreen().toggleMenus(); });
 		}
+
+		// Add events to glossary links
+		$('body').on('click','a.glossarylink',{me:this},function(e){
+			e.data.me.showGlossary($(this).attr('data'));
+		});
 
 
 		return this;
@@ -244,11 +250,33 @@ if(typeof $==="undefined") $ = {};
 				this.lang = l;
 				// Store the data
 				this.phrases = data;
+				this.loadScenarios(fn);
+			}
+		});
+		return this;
+	}
+
+
+	// Load the scenarios
+	SpaceTelescope.prototype.loadScenarios = function(fn){
+		var url = this.scenariourl.replace('%LANG%',this.langshort);
+		$.ajax({
+			url: url,
+			method: 'GET',
+			dataType: 'json',
+			context: this,
+			error: function(){
+				console.log('Error loading '+url);
+				if(typeof fn==="function") fn.call(this);
+			},
+			success: function(data){
+				this.scenarios = data.scenarios;
 				if(typeof fn==="function") fn.call(this);
 			}
 		});
 		return this;
 	}
+
 
 	// Update the page using the JSON response
 	SpaceTelescope.prototype.update = function(){
@@ -308,6 +336,15 @@ if(typeof $==="undefined") $ = {};
 
 		// Update introduction text
 		$('#introduction').html(d.intro);
+
+
+		var li = '';
+		var txt = '';
+		for(var i = 0; i < this.scenarios.length; i++){
+			txt = (typeof this.scenarios[i].description==="string") ? this.scenarios[i].description : "";
+			li += '<li><h3>'+this.scenarios[i].name+'</h3><p>'+txt.replace(/%COST%/,this.formatValue(this.scenarios[i].budget))+'</p></li>'
+		}
+		$('#scenarios').html(li);
 
 		return this;
 	}
@@ -377,7 +414,6 @@ if(typeof $==="undefined") $ = {};
 			if(this.data.currency[to]){
 				if(v.units != to){
 					// Step 1: convert to GBP
-console.log(v.units,to,v)
 					if(this.data.currency[v.units].conv) v.value /= this.data.currency[v.units].conv;
 					// Step 2: convert to new unit
 					if(this.data.currency[to].conv) v.value *= this.data.currency[to].conv;
@@ -394,7 +430,7 @@ console.log(v.units,to,v)
 	//  v - the value as an object e.g. { "value": 1, "units": "m", "dimension": "length" }
 	//  p - the number of decimal places to show in the output
 	SpaceTelescope.prototype.formatValue = function(v,p){
-		if(typeof v==="string") return v;
+		if(typeof v==="string" || typeof v==="number") return v;
 		if(typeof v==="object" && v.value){
 			if(v.dimension=="length") return this.formatLength(v,p);
 			else if(v.dimension=="mass") return this.formatMass(v,p)
@@ -444,6 +480,7 @@ console.log(v.units,to,v)
 		// Change the "million" to "billion" if the number if too big
 		if(v.value >= 1000){
 			v.value /= 1000;
+			p = 2;
 			append = (this.phrases.ui.billion.compact) ? this.phrases.ui.billion.compact : "";
 		}
 		return s+''+(v.value).toFixed(p)+''+append;
@@ -490,19 +527,55 @@ console.log(v.units,to,v)
 	}
 
 	SpaceTelescope.prototype.toggleGlossary = function(key){
+		if($('#intro').is(':visible')){
+			$('#intro').hide();
+			this.showGlossary(key);
+			$('#glossary').show();
+		}else{
+			$('#glossary').hide();
+			$('#intro').show();
+		}
+		return this;
+	}
+
+	SpaceTelescope.prototype.showGlossary = function(key){
 
 		var html = "";
 		var g = this.phrases.glossary;
-		var v,ul;
-		$('#intro').hide();	
-		if($('#glossary').length == 0) $('#page').append('<div id="glossary"></div>')
+		var v,ul,table,txt;
 
-		// Remove any existing events attached to glossary links
-		$('#glossary a.glossarylink').off('click');
+		if($('#glossary').length == 0) $('#page').append('<div id="glossary"></div>')
 
 		if(key){
 			html += '<p class="breadcrumb"><a href="#glossary" class="glossarylink" data="">'+g.title+'</a> &raquo; '+g[key].title+'</p>'
-			html += '<h2>'+g[key].title+'</h2><p>'+g[key].about+'</p>';
+
+			txt = g[key].about;
+			if(key=="mirror"){
+				table = '';
+				for(i in this.data.mirror){
+					table += '<tr>';
+					table += '<td>'+this.formatValue(this.data.mirror[i].diameter)+'</td>';
+					table += '<td>'+this.formatValue(this.data.mirror[i].mass)+'</td>';
+					table += '<td>'+this.formatValue(this.data.mirror[i].cost)+'</td>';
+					table += '</tr>';
+				}
+				txt = txt.replace(/\%MIRRORTABLE\%/,table);
+			}else if(key=="structure"){
+				table = '';
+				for(i in this.data.mirror){
+					table += '<tr>';
+					table += '<td>'+this.formatValue(this.data.mirror[i].diameter)+'</td>';
+					table += '<td>'+this.formatValue(this.data.mirror[i].bus.diameter)+'</td>';
+					table += '<td>'+this.formatValue(this.data.mirror[i].bus.cost)+'</td>';
+					table += '<td>'+this.formatValue(this.data.mirror[i].bus.mass)+'</td>';
+					table += '</tr>';
+				}
+				txt = txt.replace(/\%STRUCTURETABLE\%/,table);
+			}
+
+			if(txt.indexOf('<p>') < 0) txt = '<p>'+txt+'</p>';
+			html += '<h2>'+g[key].title+'</h2>'+txt;
+
 			if(key=="roles"){
 				for(k in g[key]){
 					if(k != "title" && k != "about" && typeof g[key][k].title==="string"){
@@ -510,22 +583,6 @@ console.log(v.units,to,v)
 					}
 				}
 			}else if(key=="previous"){
-				/*"spitzer": {
-					"title": "Spitzer Space Telescope",
-					"launch": 2003,
-					"operator": "NASA",
-					"duration": { "value": 5.5, "unit": "years" },
-					"instruments": "Mid-IR, Near-IR",
-					"temperature": { "value": 5, "unit": "K" },
-					"diameter": { "value": 0.85, "unit": "m" },
-					"mass": { "value": 860, "unit": "kg" },
-					"site": "Cape Canaveral, Florida, USA",
-					"vehicle": "Delta II rocket",
-					"orbit": "Earth-trailing orbit",
-					"cost": { "value": 800000000, "unit": "GBP" },
-					"notes": "Since further cooling is only required by the Mid-IR instruments, the Near-IR instruments continued to operate after the end of the nominal mission."
-				},*/
-
 				for(k in g[key]["missions"]){
 					if(typeof g[key]["missions"][k].title==="string"){
 						ul = '<ul>';
@@ -544,7 +601,6 @@ console.log(v.units,to,v)
 				}
 			}
 		}else{
-		
 			html += '<h2>'+this.phrases.glossary.title+'</h2><p>'+this.phrases.glossary.about+'</p><ul>';
 			for(k in this.phrases.glossary){
 				if(k != "title" && k != "about" && typeof this.phrases.glossary[k].title==="string"){
@@ -553,12 +609,17 @@ console.log(v.units,to,v)
 			}
 			html += '</ul>'
 		}
-		$('#glossary').html(html);
-		
-		// Add events to glossary
-		$('#glossary a.glossarylink').on('click',{me:this},function(e){
-			e.data.me.toggleGlossary($(this).attr('data'));
+
+		// Add closer
+		$('#glossary').html('<img src="images/cleardot.gif" class="icon close" />'+html);
+
+		// Add events to glossary close
+		$('#glossary img.close').on('click',{me:this},function(e){
+			e.data.me.toggleGlossary();		
 		});
+
+		$('#glossary').show();
+		$('#intro').hide();
 
 		return this;
 	}

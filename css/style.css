@@ -164,6 +164,7 @@ img.save { background-position: -3em -1.5em; }
 img.help { background-position: -4.5em -3em; }
 img.restart { background-position: -3em -3em; }
 img.fullscreen { background-position: -4.5em -6em; }
+img.close { background-position: 0em -10.5em; }
 .fullscreen img.fullscreen { background-position: -4.5em -7.5em; }
 .success { color: #f6f6f6; }
 .cost { color: #76e300; }
@@ -217,6 +218,10 @@ p .cost {
 	color: #009d00;
 }
 
+#glossary .close {
+	float: right;
+	cursor: pointer;
+}
 #glossary li {
 	margin-bottom: 0.5em;
 }
@@ -233,10 +238,10 @@ p .cost {
 	text-align: center;
 	margin: 1em auto;
 }
-#glossary h3 { clear: both; }
+#glossary h3 { clear: both; margin-top: 1em; }
 #glossary .key { font-weight: bold; }
 #glossary .mission {
-	padding-top: 2.5em;
+	padding-top: 2em;
 }
 #glossary .mission img {
 	float: right;
