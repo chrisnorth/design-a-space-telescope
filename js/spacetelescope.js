@@ -108,11 +108,11 @@ if(typeof $==="undefined") $ = {};
 		this.i = inp;
 
 		// Set some variables
-		this.langurl = "config/%LANG%.json";
-		this.dataurl = "config/options.json";
-		this.scenariourl = "config/scenarios_%LANG%.json";
+		this.langurl = "config/%LANG%%MODE%.json";
+		this.dataurl = "config/options%MODE%.json";
+		this.scenariourl = "config/scenarios_%LANG%%MODE%.json";
 		
-		this.settings = { 'length': 'm', 'currency': 'GBP', 'temperature':'K', 'mass':'kg', 'time': 'months', 'usecookies': false };
+		this.settings = { 'length': 'm', 'currency': 'GBP', 'temperature':'K', 'mass':'kg', 'time': 'years', 'usecookies': false, 'mode': 'normal' };
 
 		this.init(inp);
 
@@ -133,6 +133,7 @@ if(typeof $==="undefined") $ = {};
 		this.setVar("mass","string");
 		this.setVar("temperature","string");
 		this.setVar("time","string");
+		this.setVar("mode","string");
 
 		this.loadConfig(this.update);
 		this.loadLanguage(this.lang,this.update);
@@ -156,7 +157,7 @@ if(typeof $==="undefined") $ = {};
 
 		// Add main menu events
 		$('.baritem .save').parent().on('click',{me:this},function(e){ e.data.me.save().toggleMenus(); });
-		$('.baritem .help').parent().on('click',{me:this},function(e){ e.data.me.toggleGlossary().toggleMenus(); });
+		$('.baritem .help').parent().on('click',{me:this},function(e){ e.data.me.toggleGuide().toggleMenus(); });
 		if(fullScreenApi.supportsFullScreen){
 			// Add the fullscreen toggle to the menu
 			$('#menu ul').append('<li class="baritem" data="fullscreen"><a href="#" class="fullscreenbtn"><img src="images/cleardot.gif" class="icon fullscreen" alt="full" /> <span></span></li>');
@@ -164,9 +165,9 @@ if(typeof $==="undefined") $ = {};
 			$('.baritem .fullscreenbtn').parent().on('click', {me:this}, function(e){ e.data.me.toggleFullScreen().toggleMenus(); });
 		}
 
-		// Add events to glossary links
-		$('body').on('click','a.glossarylink',{me:this},function(e){
-			e.data.me.showGlossary($(this).attr('data'));
+		// Add events to guide links
+		$('body').on('click','a.guidelink',{me:this},function(e){
+			e.data.me.showGuide($(this).attr('data'));
 		});
 
 
@@ -206,13 +207,14 @@ if(typeof $==="undefined") $ = {};
 	// Load the specified language
 	// If it fails and this was the long variation of the language (e.g. "en-gb" or "zh-yue"), try the short version (e.g. "en" or "zh")
 	SpaceTelescope.prototype.loadConfig = function(fn){
+		var url = this.dataurl.replace('%MODE%',this.getMode());
 		$.ajax({
-			url: this.dataurl,
+			url: url,
 			method: 'GET',
 			dataType: 'json',
 			context: this,
 			error: function(){
-				console.log('Error loading '+this.dataurl);
+				console.log('Error loading '+url);
 			},
 			success: function(data){
 				// Store the data
@@ -223,18 +225,23 @@ if(typeof $==="undefined") $ = {};
 		return this;
 	}
 
+	SpaceTelescope.prototype.getMode = function(){
+		return (this.settings.mode=="advanced") ? '_advanced' : '';
+	}
+	
 	// Load the specified language
 	// If it fails and this was the long variation of the language (e.g. "en-gb" or "zh-yue"), try the short version (e.g. "en" or "zh")
 	SpaceTelescope.prototype.loadLanguage = function(l,fn){
 		if(!l) l = this.langshort;
-		var url = this.langurl.replace('%LANG%',l);
+		var m = this.settings.mode;
+		var url = this.langurl.replace('%LANG%',l).replace('%MODE%',this.getMode());
 		$.ajax({
 			url: url,
 			method: 'GET',
 			dataType: 'json',
 			context: this,
 			error: function(){
-				console.log('Error loading '+l);
+				console.log('Error loading '+l+' ('+m+')');
 				if(this.lang.length == 2){
 					console.log('Attempting to load default (en) instead');
 					this.loadLanguage('en',fn);
@@ -259,14 +266,15 @@ if(typeof $==="undefined") $ = {};
 
 	// Load the scenarios
 	SpaceTelescope.prototype.loadScenarios = function(fn){
-		var url = this.scenariourl.replace('%LANG%',this.langshort);
+		var m = this.settings.mode;
+		var url = this.scenariourl.replace('%LANG%',this.langshort).replace('%MODE%',this.getMode());
 		$.ajax({
 			url: url,
 			method: 'GET',
 			dataType: 'json',
 			context: this,
 			error: function(){
-				console.log('Error loading '+url);
+				console.log('Error loading '+url+' ('+m+')');
 				if(typeof fn==="function") fn.call(this);
 			},
 			success: function(data){
@@ -305,9 +313,13 @@ if(typeof $==="undefined") $ = {};
 		$('body').attr('dir',(d.language.alignment=="right" ? 'rtl' : 'ltr')).removeClass('ltr rtl').addClass((d.language.alignment=="right" ? 'rtl' : 'ltr'));
 
 		var html = "<ul>";
-
 		for(var l in this.data.rocket){
-			html += '<li><div class="rocket">'+this.phrases.options.rocket[l].label+'</div><div class="operator"><img src="'+this.data.operator[this.data.rocket[l].operator].img+'" alt="'+this.phrases.options.operator[this.data.rocket[l].operator].label+'" title="'+this.phrases.options.operator[this.data.rocket[l].operator].label+'"></div><div class="diameter"><strong>Diameter:</strong> '+this.formatValue(this.data.rocket[l].diameter)+'</div> <div class="currency"><strong>Cost:</strong> '+this.formatValue(this.data.rocket[l].cost)+'</div><div class="mass"><strong>Mass to LEO:</strong> '+this.formatMass(this.data.rocket[l].mass.LEO)+'<br /><strong>Mass beyond LEO:</strong> '+this.formatMass(this.data.rocket[l].mass.GTO)+'</div><div class="risk"><strong>Risk:</strong> '+(this.data.rocket[l].risk)+'</div>'
+			html += '<li><div class="rocket">'+this.phrases.options.rocket[l].label+'</div><div class="operator"><img src="'+this.data.operator[this.data.rocket[l].operator].img+'" alt="'+this.phrases.options.operator[this.data.rocket[l].operator].label+'" title="'+this.phrases.options.operator[this.data.rocket[l].operator].label+'"></div><div class="diameter"><strong>Diameter:</strong> '+this.formatValue(this.data.rocket[l].diameter)+'</div> <div class="currency"><strong>Cost:</strong> '+this.formatValue(this.data.rocket[l].cost)+'</div>'
+			// Are we in basic or advanced mode?
+			if(this.data.rocket[l].mass.value) html += '<div class="mass"><strong>Mass:</strong> '+this.formatMass(this.data.rocket[l].mass)+'</div>';
+			else html += '<div class="mass"><strong>Mass to LEO:</strong> '+this.formatMass(this.data.rocket[l].mass.LEO)+'<br /><strong>Mass beyond LEO:</strong> '+this.formatMass(this.data.rocket[l].mass.GTO)+'</div>';
+
+			if(this.data.rocket[l].risk) html += '<div class="risk"><strong>Risk:</strong> '+(this.data.rocket[l].risk)+'</div>'
 			html += '<div class="sites"><strong>Sites:</strong> <br />'
 			for(var i = 0; i < this.data.rocket[l].sites.length; i++){
 				html += ''+this.phrases.options.site[this.data.rocket[l].sites[i]].label+'<br />';
@@ -361,17 +373,25 @@ if(typeof $==="undefined") $ = {};
 		if(typeof v.value==="string" && v.value != "inf") v.value = parseFloat(v.value,10);
 
 		if(v.dimension == "length"){
-			if(to == "ft" || to == "m" || to == "mm" || to == "km"){
+			if(to == "m" || to == "km" || to == "ft" || to == "mile" ){
 				if(v.units != to){
 					// Step 1: convert to SI
 					if(v.units == "ft") v.value /= 3.281;
-					else if(v.units == "mm") v.value /= 1000;
-					else if(v.units == "km") v.value /= 0.001;
+					if(v.units == "km") v.value /= 0.001;
+					if(v.units == "mile") v.value *= 1609;
 					// Step 2: convert to new unit
 					if(to == "ft") v.value *= 3.281;
-					else if(to == "mm") v.value *= 1000;
-					else if(to == "km") v.value *= 0.001;
+					if(to == "km") v.value *= 0.001;
+					if(to == "mile") v.value /= 1609;
 					v.units = to;
+				}
+				if(v.units=="m" && v.value > 1000){
+					v.value /= 1000;
+					v.units = "km";
+				}
+				if(v.units=="ft" && v.value > 5280){
+					v.value /= 5280;
+					v.units = "mile";
 				}
 			}
 		}else if(v.dimension == "mass"){
@@ -404,9 +424,13 @@ if(typeof $==="undefined") $ = {};
 					// Step 1: convert to SI
 					if(v.units == "months") v.value /= 12;
 					else if(v.units == "days") v.value /= 365.25;
+					else if(v.units == "hours") v.value /= 365.25*24;
+					else if(v.units == "minutes") v.value /= 365.25*24*60;
 					// Step 2: convert to new unit
 					if(to == "months") v.value *= 12;
 					else if(to == "days") v.value *= 365.25;
+					else if(to == "hours") v.value *= 365.25*24;
+					else if(to == "minutes") v.value *= 365.25*24*60;
 					v.units = to;
 				}
 			}
@@ -433,7 +457,7 @@ if(typeof $==="undefined") $ = {};
 	//  p - the number of decimal places to show in the output
 	SpaceTelescope.prototype.formatValue = function(v,p){
 		if(typeof v==="string" || typeof v==="number") return v;
-		if(typeof v==="object" && v.value){
+		if(typeof v==="object" && v.dimension){
 			if(v.dimension=="length") return this.formatLength(v,p);
 			else if(v.dimension=="mass") return this.formatMass(v,p)
 			else if(v.dimension=="currency") return this.formatCurrency(v,p)
@@ -451,7 +475,7 @@ if(typeof $==="undefined") $ = {};
 	SpaceTelescope.prototype.formatLength = function(v,p){
 		v = this.convertValue(v,(this.settings.length) ? this.settings.length : "m")
 		if(typeof p==="string") p = parseInt(p,10);
-		if(!p) p = 1;
+		if(typeof p!=="number") p = (v.units=="km" ? 0 : 1);
 		var unit = (this.phrases.ui.units[v.units]) ? this.phrases.ui.units[v.units].unit : "";
 		return ''+addCommas((v.value).toFixed(p))+''+unit;
 	}
@@ -463,7 +487,7 @@ if(typeof $==="undefined") $ = {};
 		v = this.convertValue(v,(this.settings.mass) ? this.settings.mass : "kg")
 		if(typeof p==="string") p = parseInt(p,10);
 		var unit = (this.phrases.ui.units[v.units]) ? this.phrases.ui.units[v.units].unit : "";
-		if(!p) p = (v.value > 1000) ? 0 : 1;
+		if(typeof p!=="number") p = (v.value > 1000) ? 0 : 1;
 		return ''+addCommas((v.value).toFixed(p))+''+unit;
 	}
 
@@ -473,7 +497,7 @@ if(typeof $==="undefined") $ = {};
 	SpaceTelescope.prototype.formatCurrency = function(v,p){
 		v = this.convertValue(v,(this.settings.currency) ? this.settings.currency : "GBP")
 		if(typeof p==="string") p = parseInt(p,10);
-		if(!p) p = 0;
+		if(typeof p!=="number") p = 0;
 
 		var append = (this.phrases.ui.million.compact) ? this.phrases.ui.million.compact : "";
 		var s = (this.phrases.ui.currency[v.units] && this.phrases.ui.currency[v.units].symbol) ? this.phrases.ui.currency[v.units].symbol : (this.phrases.ui.currency["GBP"].symbol ? this.phrases.ui.currency["GBP"].symbol : "");
@@ -483,9 +507,11 @@ if(typeof $==="undefined") $ = {};
 		// Change the "million" to "billion" if the number if too big
 		if(v.value >= 1000){
 			v.value /= 1000;
+			append = (this.phrases.ui.billion.compact) ? this.phrases.ui.billion.compact : "";
+		}
+		if(p == 0){
 			if(v.value < 100) p = 1;
 			if(v.value < 10) p = 2;
-			append = (this.phrases.ui.billion.compact) ? this.phrases.ui.billion.compact : "";
 		}
 		return s+''+(v.value).toFixed(p)+''+append;
 	}
@@ -497,7 +523,7 @@ if(typeof $==="undefined") $ = {};
 	SpaceTelescope.prototype.formatTemperature = function(v,p){
 		v = this.convertValue(v,(this.settings.temperature) ? this.settings.temperature : "K")
 		if(typeof p==="string") p = parseInt(p,10);
-		if(!p) p = (v.value > 1000) ? 0 : 1;
+		if(typeof p!=="number") p = (v.value > 1000) ? 0 : 1;
 		var unit = (this.phrases.ui.units[v.units]) ? this.phrases.ui.units[v.units].unit : "";
 		return ''+addCommas((v.value).toFixed(p))+''+unit;
 	}
@@ -506,9 +532,9 @@ if(typeof $==="undefined") $ = {};
 	//  v - the { "value": 1, "units": "m", "dimension": "length" } object
 	//  p - the number of decimal places to show in the output
 	SpaceTelescope.prototype.formatTime = function(v,p){
-		v = this.convertValue(v,(this.settings.time) ? this.settings.time : "months")
+		if(v.units=="years" && v.value < 5) v = this.convertValue(v,"months");
 		if(typeof p==="string") p = parseInt(p,10);
-		if(!p) p = (v.value >= 6) ? 0 : 1;
+		if(typeof p!=="number") p = (v.value >= 6) ? 0 : 1;
 		var unit = (this.phrases.ui.units[v.units]) ? this.phrases.ui.units[v.units].unit : "";
 		return ''+addCommas((v.value).toFixed(p))+''+unit;
 	}
@@ -530,38 +556,49 @@ if(typeof $==="undefined") $ = {};
 		return this;
 	}
 
-	SpaceTelescope.prototype.toggleGlossary = function(key){
+	SpaceTelescope.prototype.toggleGuide = function(key){
 		if($('#intro').is(':visible')){
 			$('#intro').hide();
-			this.showGlossary(key);
-			$('#glossary').show();
+			this.showGuide(key);
+			$('#guide').show();
 		}else{
-			$('#glossary').hide();
+			$('#guide').hide();
 			$('#intro').show();
 		}
 		return this;
 	}
 
-	SpaceTelescope.prototype.showGlossary = function(key){
+	SpaceTelescope.prototype.showGuide = function(key){
 
 		var html = "";
-		var g = this.phrases.glossary;
+		var g = this.phrases.guide;
 		var v,ul,table,txt;
 
-		if($('#glossary').length == 0) $('#page').append('<div id="glossary"></div>')
+		if($('#guide').length == 0) $('#page').append('<div id="guide"></div>')
 
 		if(key){
-			html += '<p class="breadcrumb"><a href="#glossary" class="glossarylink" data="">'+g.title+'</a> &raquo; '+g[key].title+'</p>'
+			html += '<p class="breadcrumb"><a href="#guide" class="guidelink" data="">'+g.title+'</a> &raquo; '+g[key].title+'</p>'
 
 			txt = g[key].about;
 			if(key=="mirror"){
 				table = '';
-				for(i in this.data.mirror){
-					table += '<tr>';
-					table += '<td>'+this.formatValue(this.data.mirror[i].diameter)+'</td>';
-					table += '<td>'+this.formatValue(this.data.mirror[i].mass)+'</td>';
-					table += '<td>'+this.formatValue(this.data.mirror[i].cost)+'</td>';
-					table += '</tr>';
+				if(this.settings.mode=="advanced"){
+					for(i in this.data.mirror){
+						table += '<tr>';
+						table += '<td>'+this.formatValue(this.data.mirror[i].diameter)+'</td>';
+						table += '<td>'+this.formatValue(this.data.mirror[i].mass)+'</td>';
+						table += '<td>'+this.formatValue(this.data.mirror[i].cost)+'</td>';
+						table += '<td>'+this.formatValue(this.data.mirror[i].devtime)+'</td>';
+						table += '</tr>';
+					}
+				}else{
+					for(i in this.data.mirror){
+						table += '<tr>';
+						table += '<td>'+this.formatValue(this.data.mirror[i].diameter)+'</td>';
+						table += '<td>'+this.formatValue(this.data.mirror[i].mass)+'</td>';
+						table += '<td>'+this.formatValue(this.data.mirror[i].cost)+'</td>';
+						table += '</tr>';
+					}				
 				}
 				txt = txt.replace(/\%MIRRORTABLE\%/,table);
 			}else if(key=="structure"){
@@ -575,6 +612,112 @@ if(typeof $==="undefined") $ = {};
 					table += '</tr>';
 				}
 				txt = txt.replace(/\%STRUCTURETABLE\%/,table);
+			}else if(key=="cooling"){
+				table = '';
+				if(this.settings.mode=="advanced"){
+					for(i in this.data.cooling.cryogenic){
+						if(i != "none"){
+							table += '<tr>';
+							table += '<td>'+this.formatValue(this.data.cooling.cryogenic[i].life)+'</td>';
+							table += '<td>'+this.formatValue(this.data.cooling.cryogenic[i].cost)+'</td>';
+							table += '<td>'+this.formatValue(this.data.cooling.cryogenic[i].mass)+'</td>';
+							table += '</tr>';
+						}
+					}
+					txt = txt.replace(/\%ACTIVELIFE\%/,this.formatValue(this.data.cooling.active.yes.life));
+					txt = txt.replace(/\%ACTIVEMASS\%/,this.formatValue(this.data.cooling.active.yes.mass));
+					txt = txt.replace(/\%ACTIVECOST\%/,this.formatValue(this.data.cooling.active.yes.cost));
+
+				}else{
+					for(i in this.data.cooling){
+						table += '<tr>';
+						table += '<td>'+this.formatValue(this.data.cooling[i].temperature)+'</td>';
+						table += '<td>'+this.formatValue(this.data.cooling[i].cost)+'</td>';
+						table += '<td>'+this.formatValue(this.data.cooling[i].mass)+'</td>';
+						table += '</tr>';
+					}
+				}
+				txt = txt.replace(/\%COOLINGTABLE\%/,table);
+			}else if(key=="instruments"){
+				table = '';
+
+				for(i in this.data.wavelengths){
+					if(i != "none"){
+						table += '<tr>';
+						table += '<td>'+this.phrases.options.wavelengths[i].label+'</td>';
+						table += '<td>'+this.formatValue(this.data.wavelengths[i].temperature)+'</td>';
+						table += '</tr>';
+					}
+				}
+				txt = txt.replace(/\%WAVELENGTHTABLE\%/,table);
+
+				if(this.settings.mode=="advanced"){
+					table = '';
+					for(i in this.data.instrument){
+						if(i != "none"){
+							table += '<tr>';
+							table += '<td>'+this.phrases.options.instrument[i].label+'</td>';
+							table += '<td>'+this.formatValue(this.data.instrument[i].mass)+'</td>';
+							table += '<td>'+this.formatValue(this.data.instrument[i].cost)+'</td>';
+							table += '<td>'+this.formatValue(this.data.instrument[i].devtime)+'</td>';
+							table += '</tr>';
+						}
+					}
+					txt = txt.replace(/\%INSTRUMENTTABLE\%/,table);
+				}
+			}else if(key=="orbit"){
+				table = '';
+				for(i in this.data.orbit){
+					table += '<tr>';
+					table += '<td>'+this.phrases.options.orbit[i].label+'</td>';
+					table += '<td>'+(this.phrases.options.orbit[i].altitude ? this.phrases.options.orbit[i].altitude : '')+this.formatValue(this.data.orbit[i].altitude,0)+'</td>';
+					table += '<td>'+this.formatValue(this.data.orbit[i].period)+'</td>';
+					table += '<td>'+(this.data.orbit[i].obsfrac*100)+'%</td>';
+					table += '<td>'+this.formatValue(this.data.orbit[i].temperature)+'</td>';
+					table += '</tr>';
+					txt = txt.replace("%"+i+"LABEL%",this.phrases.options.orbit[i].label);
+					txt = txt.replace("%"+i+"GROUNDCOST%",this.formatValue(this.data.orbit[i].groundcost));
+					txt = txt.replace("%"+i+"FUELLIFE%",this.formatValue(this.data.orbit[i].fuellife));
+					txt = txt.replace("%"+i+"ALTITUDE%",this.formatValue(this.data.orbit[i].altitude));
+					txt = txt.replace("%"+i+"PERIOD%",this.formatValue(this.data.orbit[i].period));
+					txt = txt.replace("%"+i+"CRYOREDUCTION%",(100*(1-this.data.orbit[i].multiplier.cryo)).toFixed(0)+"%");
+				}
+				txt = txt.replace(/\%ORBITTABLE\%/,table);
+			}else if(key=="rocket"){
+				table = '';
+				for(i in this.data.rocket){
+					table += '<tr>';
+					table += '<td>'+this.phrases.options.rocket[i].label+'</td>';
+					table += '<td>'+this.formatValue(this.data.rocket[i].diameter,0)+'</td>';
+					table += '<td>'+this.formatValue(this.data.rocket[i].mass.LEO,0)+'</td>';
+					table += '<td>'+this.formatValue(this.data.rocket[i].mass.GTO,0)+'</td>';
+					table += '<td>'+this.formatValue(this.data.rocket[i].cost,0)+'</td>';
+					table += '<td>'+this.phrases.options.operator[this.data.rocket[i].operator].label+'</td>';
+					if(this.settings.mode=="advanced") table += '<td>'+(this.data.rocket[i].risk*100)+'%</td>';
+					table += '</tr>';
+				}
+				txt = txt.replace(/\%ROCKETTABLE\%/,table);
+			}else if(key=="site"){
+				table = '';
+				for(i in this.data.site){
+					table += '<tr>';
+					table += '<td>'+this.phrases.options.site[i].label+'</td>';
+					table += '<td>'+this.phrases.options.site[i].trajectories+'</td>';
+					table += '<td>';
+					var rs = '';
+					for(var r in this.data.rocket){
+						for(var s=0; s < this.data.rocket[r].sites.length; s++){
+							if(this.data.rocket[r].sites[s]==i){
+								if(rs.length > 0) rs += ', ';
+								rs += ''+this.phrases.options.rocket[r].label+''
+							}
+						}
+					}
+					table += rs;
+					table += '</td>';
+					table += '</tr>';
+				}
+				txt = txt.replace(/\%SITETABLE\%/,table);
 			}
 
 			if(txt.indexOf('<p>') < 0) txt = '<p>'+txt+'</p>';
@@ -605,24 +748,24 @@ if(typeof $==="undefined") $ = {};
 				}
 			}
 		}else{
-			html += '<h2>'+this.phrases.glossary.title+'</h2><p>'+this.phrases.glossary.about+'</p><ul>';
-			for(k in this.phrases.glossary){
-				if(k != "title" && k != "about" && typeof this.phrases.glossary[k].title==="string"){
-					html += '<li><a href="#glossary" class="glossarylink" data="'+k+'">'+this.phrases.glossary[k].title+'</a></li>';
+			html += '<h2>'+this.phrases.guide.title+'</h2><p>'+this.phrases.guide.about+'</p><ul>';
+			for(k in this.phrases.guide){
+				if(k != "title" && k != "about" && typeof this.phrases.guide[k].title==="string"){
+					html += '<li><a href="#guide" class="guidelink" data="'+k+'">'+this.phrases.guide[k].title+'</a></li>';
 				}
 			}
 			html += '</ul>'
 		}
 
 		// Add closer
-		$('#glossary').html('<img src="images/cleardot.gif" class="icon close" />'+html);
+		$('#guide').html('<img src="images/cleardot.gif" class="icon close" />'+html);
 
-		// Add events to glossary close
-		$('#glossary img.close').on('click',{me:this},function(e){
-			e.data.me.toggleGlossary();		
+		// Add events to guide close
+		$('#guide img.close').on('click',{me:this},function(e){
+			e.data.me.toggleGuide();		
 		});
 
-		$('#glossary').show();
+		$('#guide').show();
 		$('#intro').hide();
 
 		return this;

@@ -6,7 +6,7 @@
 		"translator": "Chris North"
 	},
 	"title": "Space Telescope Designer!",
-	"intro": "<p>Yo! Designing a space telescope is an incredibly complex job, with many requirements that must be met. Some of these are because of the scientific discoveries that the astronomers would like to make, while others are due to limits that the engineers put on the spacecraft. Beginning in the 1990s, astronomers and engineers around the world were busy designing the <a href=\"#herschel\" class=\"glossarylink\" data=\"previous\">Herschel Space Observatory</a>. This project will help you explore the kinds of decisions they had to make.</p><p>Your task is to design a space observatory. You will have to make a number of decisions about what your space telescope will look like. If you are in a group, you could use a number of roles, but you will need to work together for a final solution</p>",
+	"intro": "<p>Yo! Designing a space telescope is an incredibly complex job, with many requirements that must be met. Some of these are because of the scientific discoveries that the astronomers would like to make, while others are due to limits that the engineers put on the spacecraft. Beginning in the 1990s, astronomers and engineers around the world were busy designing the <a href=\"#herschel\" class=\"guidelink\" data=\"previous\">Herschel Space Observatory</a>. This project will help you explore the kinds of decisions they had to make.</p><p>Your task is to design a space observatory. You will have to make a number of decisions about what your space telescope will look like. If you are in a group, you could use a number of roles, but you will need to work together for a final solution</p>",
 	"ui": {
 		"million": { "full": " million", "compact": "m" },
 		"billion": { "full": " billion", "compact": "Bn" },
@@ -15,6 +15,7 @@
 			"m": { "unit": " m" },
 			"mm": { "unit": " mm" },
 			"ft": { "unit": " ft" },
+			"mile": { "unit": " miles" },
 			"t": { "unit": " t" },
 			"K": { "unit": " K" },
 			"C": { "unit": "&deg;C" },
@@ -23,7 +24,9 @@
 			"lb": { "unit": " lb" },
 			"years": { "unit": " yrs" },
 			"months": { "unit": " months" },
-			"days": { "unit": " days" }
+			"days": { "unit": " days" },
+			"hours": { "unit": " hours" },
+			"minutes": { "unit": " minutes" }
 		},
 		"currency": {
 			"GBP": { "symbol": "&pound;" },
@@ -114,13 +117,13 @@
 			"mirror_8.0" : { "label": "8.0 m" }
 		},
 		"orbit": {
-			"LEO": { "label": "Low Earth Orbit", "altitude": "<1000", "launchreq": "Requires ability to de-orbit" },
-			"HEO": { "label": "High Earth Orbit", "altitude": ">1000", "launchreq": "" },
-			"SNS": { "label": "Sun-synchronous Orbit", "altitude": "<1000", "launchreq": "Requires ability to de-orbit" },
-			"GEO": { "label": "Geostationary Orbit", "altitude": "40000", "launchreq": "" },
-			"ETR": { "label": "Earth-Trailing", "altitude": "10000000", "launchreq": "" },
-			"EM2": { "label": "Earth-Moon L2", "altitude": "400000", "launchreq": "Requires relay satellite" },
-			"ES2": { "label": "Earth-Sun L2", "altitude": "1500000", "launchreq": "" }
+			"LEO": { "label": "Low Earth Orbit", "altitude": "<", "launchreq": "Requires ability to de-orbit" },
+			"HEO": { "label": "High Earth Orbit", "altitude": ">", "launchreq": "" },
+			"SNS": { "label": "Sun-synchronous Orbit", "altitude": "<", "launchreq": "Requires ability to de-orbit" },
+			"GEO": { "label": "Geostationary Orbit", "launchreq": "" },
+			"ETR": { "label": "Earth-Trailing", "launchreq": "" },
+			"EM2": { "label": "Earth-Moon L2", "launchreq": "Requires relay satellite" },
+			"ES2": { "label": "Earth-Sun L2", "launchreq": "" }
 		},
 		"rocket": {
 			"ARI5": { "label": "Ariane 5" },
@@ -147,15 +150,15 @@
 			"spacex": { "label": "SpaceX (Private)" }
 		},
 		"site": {
-			"CSG": { "label": "Guiana Space Centre" },
-			"BKR": { "label": "Baikonur" },
-			"PTK": { "label": "Plesetsk Cosmodrome" },
-			"KSC": { "label": "Kennedy Space Centre" },
-			"VDB": { "label": "Vandenberg Air Force Base" },
-			"XCH": { "label": "Xichang Satellite Launch Center" },
-			"TNG": { "label": "Tanegashima Space Center" },
-			"SDH": { "label": "Satish Dhawan Space Centre" },
-			"AIR": { "label": "Carrier Aircraft" }
+			"CSG": { "label": "Guiana Space Centre, French Guiana", "trajectories": "North, East" },
+			"BKR": { "label": "Baikonur, Russia", "trajectories": "North, East" },
+			"PTK": { "label": "Plesetsk Cosmodrome, Russia", "trajectories": "North" },
+			"KSC": { "label": "Kennedy Space Centre, Florida", "trajectories": "East" },
+			"VDB": { "label": "Vandenberg Air Force Base, California", "trajectories": "North" },
+			"XCH": { "label": "Xichang Satellite Launch Center, China", "trajectories": "North, East" },
+			"TNG": { "label": "Tanegashima Space Center, Japan", "trajectories": "South, East" },
+			"SDH": { "label": "Satish Dhawan Space Centre, India", "trajectories": "South, East" },
+			"AIR": { "label": "Carrier Aircraft", "trajectories": "Any" }
 		},
 		"wavelengths": {
 			"none": { "label": "None" },
@@ -202,9 +205,9 @@
 			"years_20": { "label": "20 yrs" }
 		}
 	},
-	"glossary": {
-		"title": "Glossary",
-		"about": "Use the glossary to find out more about specific topics.",
+	"guide": {
+		"title": "Guide",
+		"about": "Use the guide to find out more about specific topics.",
 		"roles": {
 			"title": "Roles",
 			"about": "If you are in a group, you could use a number of roles, but you will need to work together for a final solution:",
@@ -231,7 +234,31 @@
 		},
 		"mirror": {
 			"title": "Telescope Mirror",
-			"about": "<p>Telescopes work by focusing light using either lenses or mirrors, or sometimes a combination of the two. Mirrors tend to be much lighter and easier to manufacture, and so almost all space telescopes - and large ground-based telescopes - use them instead of lenses.</p><p>The mirror of a telescope is one of the most important parts. It collects the light and focuses it onto the scientific instruments. Bigger mirrors are able to collect more light, and therefore see fainter objects more easily. They also have a higher resolution, and so can see finer detail.</p><p>The maximum possible resolution of a telescope is given by:</p><blockquote><em>R &asymp; 1.22&lambda;/<em>D</em></blockquote><p>where &lambda; is the wavelength of the light, <em>D</em> is the diameter of the telescope. The value of <em>R</em> is in radians. You can convert to other units using the following relations:</p><blockquote>1 radian = (180/&pi;) degrees; 1 degree = 60 arcminutes; 1 arcminute = 60 arcseconds</blockquote><p>This gives the maximum possible resolution that a telescope mirror can provide, and is called the &quot;diffraction limit&quot;. Note that it is different for different wavelengths. On <a href=\"#glossary\" class=\"glossarylink\" data=\"previous\">previous satellites</a>, not all instruments have taken advantage of this maximum resolution.</p><h3>Diameter</h3><p>A larger mirror will collect more light, however a smaller mirror will collect light at a faster rate. The size of  the mirror is also a factor in the resolution of the detected light. The following formula describes the  resolution of the telescope:  where R is the resolution, is the wavelength of the observed light, and D is the  diameter of the telescope.</p><table><tr><th>Mirror diameter</th><th>Mass</th><th>Cost</th></tr>%MIRRORTABLE%</table><h3>Deployable</h3><p>A deployable mirror will mean a smaller structure can be used to support the mirror, and also a smaller  rocket. However, this does not mean a lighter structure, a deployable mirror will have <strong>double the mass</strong> and <strong>4 times the cost</strong> of a non-deployable mirror.</p><h3>UV Quality</h3><p>A mirror used for observing at ultraviolet wavelengths will need to be far more highly polished than a  mirror used for longer wavelengths. As a result, a UV quality mirror is <strong>twice as expensive to build</strong>.</p>"
+			"about": "<p>Telescopes work by focusing light using either lenses or mirrors, or sometimes a combination of the two. Mirrors tend to be much lighter and easier to manufacture, and so almost all space telescopes - and large ground-based telescopes - use them instead of lenses.</p><p>The mirror of a telescope is one of the most important parts. It collects the light and focuses it onto the scientific instruments. Bigger mirrors are able to collect more light, and therefore see fainter objects more easily. They also have a higher resolution, and so can see finer detail.</p><p>The maximum possible resolution of a telescope is given by:</p><blockquote><em>R &asymp; 1.22&lambda;/<em>D</em></blockquote><p>where &lambda; is the wavelength of the light, <em>D</em> is the diameter of the telescope. The value of <em>R</em> is in radians. You can convert to other units using the following relations:</p><blockquote>1 radian = (180/&pi;) degrees; 1 degree = 60 arcminutes; 1 arcminute = 60 arcseconds</blockquote><p>This gives the maximum possible resolution that a telescope mirror can provide, and is called the &quot;diffraction limit&quot;. Note that it is different for different wavelengths. On <a href=\"#guide\" class=\"guidelink\" data=\"previous\">previous satellites</a>, not all instruments have taken advantage of this maximum resolution.</p><h3>Diameter</h3><p>A larger mirror will collect more light, however a smaller mirror will collect light at a faster rate. The size of  the mirror is also a factor in the resolution of the detected light. The following formula describes the  resolution of the telescope:  where R is the resolution, is the wavelength of the observed light, and D is the  diameter of the telescope.</p><table><tr><th>Mirror diameter</th><th>Mass</th><th>Cost</th></tr>%MIRRORTABLE%</table><h3>Deployable</h3><p>A deployable mirror will mean a smaller structure can be used to support the mirror, and also a smaller  rocket. However, this does not mean a lighter structure, a deployable mirror will have <strong>double the mass</strong> and <strong>4 times the cost</strong> of a non-deployable mirror.</p><h3>UV Quality</h3><p>A mirror used for observing at ultraviolet wavelengths will need to be far more highly polished than a  mirror used for longer wavelengths. As a result, a UV quality mirror is <strong>twice as expensive to build</strong>.</p>"
+		},
+		"cooling": {
+			"title": "Cooling",
+			"about": "<p>A cooling system may be required for your satellite, particularly for instruments observing longer wavelengths.</p><p>You will need to choose the appropriate cooling temperature for the instruments on board the satellite; the temperature and their cost and mass are as follows:</p><table><tr><th>Temperature</th><th>Cost</th><th>Mass</th></tr>%COOLINGTABLE%</table>"
+		},
+		"instruments": {
+			"title": "Instrument selection",
+			"about": "<p>The instruments on board the satellite will dictate the type of science that can be carried out by the telescope. Different wavelengths will observe different objects in the universe, as shown in the table below. The light from objects in the distant Universe is stretched by a phenomenon called redshift. This means that a given wavelength is sensitive to different objects in the nearby and distant Universe.</p><table><tr><th>Type</th><th>Wavelength</th><th>Our Galaxy and nearby galaxies</th><th>Distant Universe</th></tr><tr><td>Sub-mm</td><td>300–1000 &micro;m</td><td>Birth of stars<br />Very cold dust</td><td>Birth of stars<br />Cool dust</td></tr><tr><td>Far-IR</td><td>30–300 &micro;m</td><td>Cool dust<br />Birth of stars<br />Outermost regions of the solar system (Uranus, Neptune, Kuiper Belt, comets)<br />Birth of stars<br />Warm dust around young stars</td><td></td></tr><tr><td>Mid-IR</td><td>3–30 &micro;m</td><td>Warm dust around young stars<br />Formation of planets<br />Inner Solar System (Mars, Jupiter, Saturn, Asteroids)</td><td>The first stars (100 million years after Big Bang)</td></tr><tr><td>Near-IR</td><td>0.8 – 3 &micro;m</td><td>Cool stars (red dwarfs, red giants)<br />Near-Earth objects</td><td>The first galaxies in the Universe (400 million years after the Big Bang)</td></tr><tr><td>Optical</td><td>0.4–0.8 &micro;m</td><td>Most Stars<br />Nearby galaxies</td><td>Hot, young stars</td></tr><tr><td>UV</td><td>0.1–0.4 &micro;m</td><td>Hot, young stars</td><td>Very hot regions</td></tr></table><p>Some instruments need to operate at low temperatures. In general, the instrument must be cooler than the objects it is looking at. The temperature requirements of the different instruments are given below.</p><table><tr><th>Instrument wavelength</th><th>Temperature requirement</th></tr>%WAVELENGTHTABLE%</table>"
+		},
+		"orbit": {
+			"title": "Satellite orbit",
+			"about": "<p>The orbit selected will take into account many different factors. From an observing point of view, an appropriate Observing Fraction is needed. In terms of cost, a higher altitude will mean a more expensive Ground Control cost. Some orbits have additional requirements, such as a relay satellite or the ability to safely de-orbit the mission.</p><table><tr><th>Orbit Selection</th><th>Orbit Altitude</th><th>Orbit Period</th><th>Observing Fraction</th><th>Ambient Temperature</th></tr>%ORBITTABLE%</table><p>The period of an orbit depends on the mass of the body it is orbiting and the distance from its centre.</p><p>The gravitational pull from the central object is given by Newton's law of gravity:</p><blockquote>F = G M m / r<sup>2</sup></blockquote><p>Where G is Newton's gravitational constant (6.67&times;10<sup>–11</sup> N m<sup>2</sup> kg<sup>-2</sup>), M is the mass of the central object (e.g. the Earth), m is the mass of the orbiting object (e.g. the satellite), and r is the distance from the centre of each.</p><p>Assuming the orbit is circular, this gravitational force acts as a centripetal force, which is related to the velocity, v, of the orbiting object by:</p><blockquote>F = m v<sup>2</sup> / r</blockquote><h3>Low Earth-orbit</h3><p>These are satellites in orbit around the Earth, typically less than %LEOALTITUDE% above the surface and with an orbital period of %LEOPERIOD%. To reduce space debris in the future, a satellite in low-Earth orbit must be fitted with the ability to de-orbit safely at the end of the mission, which <strong>increases the launch cost by 20%</strong>. For half of each orbit, the satellite is between the Earth and the Sun, and so <strong>can only observe for around 50% of the time</strong>. The small amount of drag from the Earth's atmosphere <strong>means that the fuel lifetime is %LEOFUELLIFE%</strong>. This orbit is suitable for <strong>all types of cooling systems</strong>, though the proximity of the Earth <strong>reduces the cryogenic lifetime by %LEOCRYOREDUCTION%</strong>. Ground control costs are <strong>%LEOGROUNDCOST% per year</strong>.</p><h3>Geostationary orbit</h3><p>A satellite in geostationary orbit remains above the same place on the Earth's surface at all times, since it orbits roughly once every %GEOPERIOD%. This requires it to be at an altitude of around %GEOALTITUDE%. Since it spends half its time between the Earth and the Sun a satellite in geostationary orbit can typically <strong>only observe for around 50% of the time</strong>. Since the satellite is in a high orbit the <strong>fuel lifetime is %GEOFUELLIFE%</strong>. Ground control costs are <strong>%GEOGROUNDCOST% per year</strong>.</p><h3>Earth-Sun L2 point</h3><p>The &quot;L2&quot; point of the Earth-Sun system is the position at which a satellite with orbit the Sun at the same rate as the Earth, despite being %ES2ALTITUDE% further away. This is because of the slight increase in centripetal force due to the Earth's gravitational pull. Since the Earth and the Sun are constantly in the same direction, the satellite can observe 100% of the time. Relatively large amounts of fuel are required to maintain orbit at an L2 point, so the <strong>fuel lifetime is %ES2FUELLIFE%</strong>. Ground control costs are <strong>%ES2GROUNDCOST% per year</strong>.</p>"
+		},
+		"lifetime": {
+			"title": "Operational lifetime",
+			"about": "<p>The operational lifetime of the mission will add to the cost required to run the satellite. It may be limited by the fuel or coolant supply.</p>"
+		},
+		"rocket": {
+			"title": "Launch Vehicle",
+			"about": "<p>There are numerous launch vehicles and launch sites to use for your satellite from. However, different launch vehicles are launched form different sites, and the two must be compatible.</p><p>Different launchers have different sizes and have different limits in terms of the mass they can carry. The mass carried depends the on the orbit chosen. It is advisable for the satellite mass to below 80% of maximum mass for the chosen launch vehicle. The maximum mass is lower for launches beyond low Earth orbit, and some launches are not able to achieve particular orbits. Some operators are a little more efficient than others in terms of cost in order to launch satellites, and other launchers.</p><table><tr><th>Launch vehicle</th><th>Diameter</th><th>Maximum mass to LEO</th><th>Maximum mass beyond LEO</th><th>Launch cost</th><th>Operator</th></tr>%ROCKETTABLE%</table>"
+		},
+		"site": {
+			"title": "Launch site",
+			"about": "<p>Different sites also effect the type of Orbit available, asss a rocket cannot be launched and immediately fly over a highly populated regions. To reach orbits beyond low-Earth orbit, a rocket must be launched in the direction of the Earth’s rotation.</p><table><tr><th>Launch site</th><th>Launch trajectories</th><th>Launch vehicles supported</th></tr>%SITETABLE%</table>"
 		},
 		"previous": {
 			"title": "Previous missions",

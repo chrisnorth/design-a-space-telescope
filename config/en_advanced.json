@@ -1,0 +1,422 @@
+{
+	"language": {
+		"code": "en",
+		"name": "English",
+		"alignment": "left",
+		"translator": "Chris North"
+	},
+	"title": "Space Telescope Designer!",
+	"intro": "<p>Yo! Designing a space telescope is an incredibly complex job, with many requirements that must be met. Some of these are because of the scientific discoveries that the astronomers would like to make, while others are due to limits that the engineers put on the spacecraft. Beginning in the 1990s, astronomers and engineers around the world were busy designing the <a href=\"#herschel\" class=\"guidelink\" data=\"previous\">Herschel Space Observatory</a>. This project will help you explore the kinds of decisions they had to make.</p><p>Your task is to design a space observatory. You will have to make a number of decisions about what your space telescope will look like. If you are in a group, you could use a number of roles, but you will need to work together for a final solution</p>",
+	"ui": {
+		"million": { "full": " million", "compact": "m" },
+		"billion": { "full": " billion", "compact": "Bn" },
+		"units": {
+			"km": { "unit": " km" },
+			"m": { "unit": " m" },
+			"mm": { "unit": " mm" },
+			"ft": { "unit": " ft" },
+			"mile": { "unit": " miles" },
+			"t": { "unit": " t" },
+			"K": { "unit": " K" },
+			"C": { "unit": "&deg;C" },
+			"F": { "unit": "&deg;F" },
+			"kg": { "unit": " kg" },
+			"lb": { "unit": " lb" },
+			"years": { "unit": " yrs" },
+			"months": { "unit": " months" },
+			"days": { "unit": " days" },
+			"hours": { "unit": " hours" },
+			"minutes": { "unit": " minutes" }
+		},
+		"currency": {
+			"GBP": { "symbol": "&pound;" },
+			"USD": { "symbol": "&dollar;" },
+			"EUR": { "symbol": "&euro;" },
+			"JPY": { "symbol": "&yen;" },
+			"CAD": { "symbol": "C&dollar;" },
+			"AUD": { "symbol": "&dollar;" }
+		},
+		"warnings": {
+			"title": "Warnings"
+		},
+		"errors": {
+			"title": "Errors"
+		},
+		"menu": {
+			"title": "Menu",
+			"load": "Load file",
+			"save": "Save file",
+			"help": "Help",
+			"config": "Options",
+			"restart": "Change scenario",
+			"fullscreen": "Toggle fullscreen"
+		},
+		"summary": {
+			"success": {
+				"title": "Probability of success",
+				"site": "Launch site:",
+				"vehicle": "Launch vehicle:",
+				"deploy": "Deployment:",
+				"cooling": "Cooling system:",
+				"instruments": "Instruments:",
+				"mission": "Mission:"
+			},
+			"time": {
+				"title": "Timeline",
+				"dev": {
+					"title": "Development (total):",
+					"satellite": "Satellite structure:",
+					"mirror": "Mirror:",
+					"cooling": "Cooling system:",
+					"instruments": "Instruments:"
+				},
+				"launch": "Launch date:",
+				"mission": "Mission lifetime:",
+				"fuel": "Fuel lifetime:",
+				"end": "Mission end:"
+			},
+			"cost": {
+				"title": "Budget",
+				"dev": {
+					"title": "Development (total):",
+					"satellite": "Satellite structure:",
+					"mirror": "Mirror:",
+					"cooling": "Cooling system:",
+					"instruments": "Instruments:"
+				},
+				"operations": {
+					"title": "Operations (total):",
+					"launch": "Launch:",
+					"ground": "Ground control (per year):"
+				},
+				"total": "Total:"
+			},
+			"mass": {
+				"title": "Mass budget",
+				"satellite": "Satellite structure:",
+				"mirror": "Mirror:",
+				"cooling": {
+					"title": "Cooling system (total):",
+					"passive": "Passive cooling:",
+					"cryo": "Cryogenic cooling:",
+					"active": "Active cooling:"
+				},
+				"instruments": "All instruments:"
+			},
+			"science": {
+				"title": "Mission targets"
+			}
+		}
+	},
+	"options": {
+		"mirror": {
+			"mirror_0.5" : { "label": "0.5 m" },
+			"mirror_1.0" : { "label": "1.0 m" },
+			"mirror_2.0" : { "label": "2.0 m" },
+			"mirror_4.0" : { "label": "4.0 m" },
+			"mirror_8.0" : { "label": "8.0 m" }
+		},
+		"orbit": {
+			"LEO": { "label": "Low Earth Orbit", "altitude": "<", "launchreq": "Requires ability to de-orbit" },
+			"HEO": { "label": "High Earth Orbit", "altitude": ">", "launchreq": "" },
+			"SNS": { "label": "Sun-synchronous Orbit", "altitude": "<", "launchreq": "Requires ability to de-orbit" },
+			"GEO": { "label": "Geostationary Orbit", "launchreq": "" },
+			"ETR": { "label": "Earth-Trailing", "launchreq": "" },
+			"EM2": { "label": "Earth-Moon L2", "launchreq": "Requires relay satellite" },
+			"ES2": { "label": "Earth-Sun L2", "launchreq": "" }
+		},
+		"rocket": {
+			"ARI5": { "label": "Ariane 5" },
+			"SOYZ": { "label": "Soyuz" },
+			"DLT2": { "label": "Delta II" },
+			"DLT4": { "label": "Delta IV" },
+			"PRTM": { "label": "Proton-M" },
+			"H2B4": { "label": "H-2B" },
+			"VEGA": { "label": "Vega" },
+			"PEGA": { "label": "Pegasus" },
+			"LM3B": { "label": "Long March 3B" },
+			"ATLV": { "label": "Atlas V" },
+			"FLC9": { "label": "Falcon 9" },
+			"PSLV": { "label": "PSLV" }
+		},
+		"operator": {
+			"nasa": { "label": "NASA (USA)" },
+			"roscosmos": { "label": "Roscosmos (Russia)" },
+			"esa": { "label": "ESA (Europe)" },
+			"jaxa": { "label": "JAXA (Japan)" },
+			"orbital": { "label": "Orbital (Private)" },
+			"cnsa": { "label": "CNSA (China)" },
+			"isro": { "label": "ISRO (India)" },
+			"spacex": { "label": "SpaceX (Private)" }
+		},
+		"site": {
+			"CSG": { "label": "Guiana Space Centre, French Guiana", "trajectories": "North, East" },
+			"BKR": { "label": "Baikonur, Russia", "trajectories": "North, East" },
+			"PTK": { "label": "Plesetsk Cosmodrome, Russia", "trajectories": "North" },
+			"KSC": { "label": "Kennedy Space Centre, Florida", "trajectories": "East" },
+			"VDB": { "label": "Vandenberg Air Force Base, California", "trajectories": "North" },
+			"XCH": { "label": "Xichang Satellite Launch Center, China", "trajectories": "North, East" },
+			"TNG": { "label": "Tanegashima Space Center, Japan", "trajectories": "South, East" },
+			"SDH": { "label": "Satish Dhawan Space Centre, India", "trajectories": "South, East" },
+			"AIR": { "label": "Carrier Aircraft", "trajectories": "Any" }
+		},
+		"wavelengths": {
+			"none": { "label": "None" },
+			"submm": { "label": "sub-mm" },
+			"farir": { "label": "Far-IR" },
+			"midir": { "label": "Mid-IR" },
+			"nearir": { "label": "Near-IR" },
+			"optical": { "label": "Optical" },
+			"uv": { "label": "UV" }
+		},
+		"instrument": {
+			"camera": { "label": "Camera" },
+			"spectrometer": { "label": "Spectrometer" },
+			"both": { "label": "Both" }
+		},
+		"cooling": {
+			"passive": {
+				"yes": { "label": "Yes" },
+				"no": { "label": "No" }
+			},
+			"cryogenic": {
+				"none": { "label": "None" },
+				"years_2": { "label": "2yr" },
+				"years_4": { "label": "4yr" },
+				"years_8": { "label": "8yr" }
+			},
+			"active": {
+				"yes": { "label": "Yes" },
+				"no": { "label": "No" }
+			}
+		},
+		"mission": {
+			"years_1": { "label": "1 yr" },
+			"years_2": { "label": "2 yrs" },
+			"years_3": { "label": "3 yrs" },
+			"years_4": { "label": "4 yrs" },
+			"years_5": { "label": "5 yrs" },
+			"years_6": { "label": "6 yrs" },
+			"years_7": { "label": "7 yrs" },
+			"years_8": { "label": "8 yrs" },
+			"years_9": { "label": "9 yrs" },
+			"years_10": { "label": "10 yrs" },
+			"years_15": { "label": "15 yrs" },
+			"years_20": { "label": "20 yrs" }
+		}
+	},
+	"guide": {
+		"title": "Guide",
+		"about": "Use the guide to find out more about specific topics.",
+		"roles": {
+			"title": "Roles",
+			"about": "If you are in a group, you could use a number of roles, but you will need to work together for a final solution:",
+			"engineer": {
+				"title": "Rocket Engineer",
+				"about": "The role of the engineer is to ensure that the mass and size of the structure does not surpass the limits of the launcher. The engineer must also select the appropriate launch site, and the orbit from which the satellite will observe."
+			},
+			"manager": {
+				"title": "Project Manager",
+				"about": "The role of the accountant is to ensure that the mission does not go over budget, and to ensure that the risk of overrunning in terms of budget is as low as possible."
+			},
+			"instrument": {
+				"title": "Instrument Scientist",
+				"about": "The instrument scientist is in charge of making sure the instruments on-board are appropriate for meeting the science goals, and to ensure that they will be able to meet the scientific requirements"
+			},
+			"mission": {
+				"title": "Mission Scientist",
+				"about": "The mission scientist will ensure that the satellite's mirror and cooling system are suitable for the mission to succeed."
+			}
+		},
+		"structure": {
+			"title": "Satellite structure",
+			"about": "<p>Your colleagues are in the process of selecting various aspects of the mission design. Each of these will have an effect on the cost, size, mass and development time of the whole project. Your task is to keep track of the cost, mass, and development time of all the components, and ensure that they meet the requirements.</p><p>Linking all of the other parts together is the main satellite structure. This structure, sometimes referred to as the “service module” or “satellite bus” also carries the power, propulsion and communication systems. The cost, size and mass of this structure will primarily depend on the mirror selected by the mission scientist, as shown in the table below. <strong>The development time of the satellite structure is 5 years</strong>. A deployable mirror also requires a much more complex satellite structure, which will be <strong>twice as expensive</strong> and <strong>twice as massive</strong>. However, it will also be <strong>half the diameter</strong>.</p><table><tr><th>Mirror diameter</th><th>Structure diameter</th><th>Structure cost</th><th>Structure mass</th></tr>%STRUCTURETABLE%</table>"
+		},
+		"mirror": {
+			"title": "Telescope Mirror",
+			"about": "<p>Telescopes work by focusing light using either lenses or mirrors, or sometimes a combination of the two. Mirrors tend to be much lighter and easier to manufacture, and so almost all space telescopes - and large ground-based telescopes - use them instead of lenses.</p><p>The mirror of a telescope is one of the most important parts. It collects the light and focuses it onto the scientific instruments. Bigger mirrors are able to collect more light, and therefore see fainter objects more easily. They also have a higher resolution, and so can see finer detail.</p><p>The maximum possible resolution of a telescope is given by:</p><blockquote><em>R &asymp; 1.22&lambda;/<em>D</em></blockquote><p>where &lambda; is the wavelength of the light, <em>D</em> is the diameter of the telescope. The value of <em>R</em> is in radians. You can convert to other units using the following relations:</p><blockquote>1 radian = (180/&pi;) degrees; 1 degree = 60 arcminutes; 1 arcminute = 60 arcseconds</blockquote><p>This gives the maximum possible resolution that a telescope mirror can provide, and is called the &quot;diffraction limit&quot;. Note that it is different for different wavelengths. On <a href=\"#guide\" class=\"guidelink\" data=\"previous\">previous satellites</a>, not all instruments have taken advantage of this maximum resolution.</p><h3>Diameter</h3><p>A larger mirror will collect more light, however a smaller mirror will collect light at a faster rate. The size of the mirror is also a factor in the resolution of the detected light:</p><table><tr><th>Mirror diameter</th><th>Mass</th><th>Cost</th><th>Development Time</th></tr>%MIRRORTABLE%</table><h3>Deployable</h3><p>A deployable mirror will mean a smaller structure can be used to support the mirror, and also a smaller rocket. However, this does not mean a lighter structure, a deployable mirror will have <strong>double the mass</strong> and <strong>4 times the cost</strong> of a non-deployable mirror. It also takes <strong>twice as long for development</strong>, and carries a higher risk of failure or delay.</p><h3>UV Quality</h3><p>A mirror used for observing at ultraviolet wavelengths will need to be far more highly polished than a  mirror used for longer wavelengths. As a result, a UV quality mirror is <strong>twice as expensive to build</strong>.</p>"
+		},
+		"cooling": {
+			"title": "Cooling",
+			"about": "<p>A cooling system may be required for your satellite, particularly for instruments observing longer wavelengths. A number of cooling options are available, all as effective as each other. More than one cooling system may be needed to reach the required temperature. The possibility of failure or delays with the cooling means that more complex systems carry a higher risk.</p><h3>Passive Cooling</h3><p>The most basic method of the three options, which cools the instruments by 90%. This method is also the cheapest, lightest and most enduring of the three possible cooling systems.</p><h3>Cryogenic Lifetime</h3><p>Cryogenics (super-cold liquids and gases) can be used to cool the instruments a further 90%. Such technologies cost much more than passive cooling, and have a limited lifetime because the cryogenics gradually disappear into space. Each 2 years of lifetime requires more cryogenic liquid and so will add mass to the satellite. A longer mission also means a greater risk of encountering problems. The <strong>development time is 1 year</strong>, regardless of the expected lifetime.</p><table><tr><th>Lifetime</th><th>Cost</th><th>Mass</th></tr>%COOLINGTABLE%</table><h3>Active Cooling</h3><p>The most complex, and expensive method to cool the instruments, and achieves an additional factor of 90% cooling. This method is much more expensive in the short term in comparison with a cryogenic system, costing <strong>%ACTIVECOST% to design and build</strong>, but may be cost-effective in the long term. It is much lighter, <strong>weighing only %ACTIVEMASS%</strong>. Although an active cooling system does not consume liquids or gases, the complex nature of the equipment means that it only has an expected <strong>lifetime of %ACTIVELIFE%</strong>.</p>"
+		},
+		"instruments": {
+			"title": "Instrument selection",
+			"about": "<p>The instruments on board the satellite will dictate the type of science that can be carried out by the telescope. Different wavelengths will observe different objects in the universe, as shown in the table below. The light from objects in the distant Universe is stretched by a phenomenon called redshift. This means that a given wavelength is sensitive to different objects in the nearby and distant Universe.</p><table><tr><th>Type</th><th>Wavelength</th><th>Our Galaxy and nearby galaxies</th><th>Distant Universe</th></tr><tr><td>Sub-mm</td><td>300–1000 &micro;m</td><td>Birth of stars<br />Very cold dust</td><td>Birth of stars<br />Cool dust</td></tr><tr><td>Far-IR</td><td>30–300 &micro;m</td><td>Cool dust<br />Birth of stars<br />Outermost regions of the solar system (Uranus, Neptune, Kuiper Belt, comets)<br />Birth of stars<br />Warm dust around young stars</td><td></td></tr><tr><td>Mid-IR</td><td>3–30 &micro;m</td><td>Warm dust around young stars<br />Formation of planets<br />Inner Solar System (Mars, Jupiter, Saturn, Asteroids)</td><td>The first stars (100 million years after Big Bang)</td></tr><tr><td>Near-IR</td><td>0.8 – 3 &micro;m</td><td>Cool stars (red dwarfs, red giants)<br />Near-Earth objects</td><td>The first galaxies in the Universe (400 million years after the Big Bang)</td></tr><tr><td>Optical</td><td>0.4–0.8 &micro;m</td><td>Most Stars<br />Nearby galaxies</td><td>Hot, young stars</td></tr><tr><td>UV</td><td>0.1–0.4 &micro;m</td><td>Hot, young stars</td><td>Very hot regions</td></tr></table><p>The variation of objects studied at different wavelengths is largely due to their different temperatures. An object of a given temperature will typically emit light at a broad range of frequencies, but the strongest emission will be at a wavelength given by Wein's Displacement Law:</p><blockquote>&lambda;<sub>peak</sub> &times; T = w</blockquote><p>where &lambda;<sub>peak</sub> is the wavelength (in metres) at which the emission is brightest, T is the object temperature in Kelvin, and w is Wein's displacement constant, which has a value of 0.0029 m.K.</p><p>The Kelvin temperature scale is similar to the Celsius temperature scale, but begins at &minus;273&deg;C. This is known as absolute zero, and is the coldest temperature it is physically possible for an object to achieve. To convert from Celsius to Kelvin, simply add 273.</p><p>There are two general types of instruments in astronomy. One is a &quot;camera&quot;, which takes pictures of objects. The other is a &quot;spectrometer&quot;, which splits the light into a range of wavelengths in order to look for the signatures of specific atoms and molecules.</p><p>Some instruments need to operate at low temperatures. In general, the instrument must be cooler than the objects it is looking at. The temperature requirements of the different instruments are given below.</p><table><tr><th>Instrument wavelength</th><th>Temperature requirement</th></tr>%WAVELENGTHTABLE%</table><p>There are three options for each instrument, a camera, a spectrometer or both. A camera will give you an image of the observed light, whereas a spectrometer will give a spectra-analysis of the light detected, giving the chemical composition of the observed objects, amongst other types of information. A camera and a spectrometer both cost and have the same mass, however to have both will be more expensive in both cost and mass.</p><table><tr><th>Instrument type</th><th>Mass</th><th>Cost</th><th>Development time</th></tr>%INSTRUMENTTABLE%</table>"
+		},
+		"orbit": {
+			"title": "Satellite orbit",
+			"about": "<p>The orbit selected will take into account many different factors. From an observing point of view, an appropriate Observing Fraction is needed. In terms of cost, a higher altitude will mean a more expensive Ground Control cost. Some orbits have additional requirements, such as a relay satellite or the ability to safely de-orbit the mission.</p><table><tr><th>Orbit Selection</th><th>Orbit Altitude</th><th>Orbit Period</th><th>Observing Fraction</th><th>Ambient Temperature</th></tr>%ORBITTABLE%</table><p>The period of an orbit depends on the mass of the body it is orbiting and the distance from its centre.</p><p>The gravitational pull from the central object is given by Newton's law of gravity:</p><blockquote>F = G M m / r<sup>2</sup></blockquote><p>Where G is Newton's gravitational constant (6.67&times;10<sup>–11</sup> N m<sup>2</sup> kg<sup>-2</sup>), M is the mass of the central object (e.g. the Earth), m is the mass of the orbiting object (e.g. the satellite), and r is the distance from the centre of each.</p><p>Assuming the orbit is circular, this gravitational force acts as a centripetal force, which is related to the velocity, v, of the orbiting object by:</p><blockquote>F = m v<sup>2</sup> / r</blockquote><h3>%LEOLABEL%</h3><p>These are satellites in orbit around the Earth, typically less than %LEOALTITUDE% above the surface and with an orbital period of %LEOPERIOD%. To reduce space debris in the future, a satellite in low-Earth orbit must be fitted with the ability to de-orbit safely at the end of the mission, which <strong>increases the launch cost by 20%</strong>. For half of each orbit, the satellite is between the Earth and the Sun, and so <strong>can only observe for around 50% of the time</strong>. The small amount of drag from the Earth's atmosphere <strong>means that the fuel lifetime is %LEOFUELLIFE%</strong>. This orbit is suitable for <strong>all types of cooling systems</strong>, though the proximity of the Earth <strong>reduces the cryogenic lifetime by %LEOCRYOREDUCTION%</strong>. Ground control costs are <strong>%LEOGROUNDCOST% per year</strong>.</p><h3>%HEOLABEL%</h3><p>Satellites in high-Earth orbit are typically <strong>more than %HEOALTITUDE% from the surface</strong>. They are often in highly elliptical orbits, which allows them to <strong>observe for 75% of the time</strong>. Since the satellite is higher than one in low-Earth orbit, the <strong>fuel will last %HEOFUELLIFE%</strong>. This orbit is suitable for <strong>all types of cooling systems</strong>. Ground control costs are <strong>%HEOGROUNDCOST% per year</strong>.</p><h3>%SNSLABEL%</h3><p>A sun-synchronous orbit is a particular type of low-Earth orbit which allows the satellite to remain in sunlight the entire time. This increases the ambient temperature, but means that the satellite can <strong>observe 100% of the time</strong>. As with a normal low-Earth orbits, the satellite must be fitted with the ability to de-orbit safely at the end of the mission, which <strong>increases the launch cost by 20%</strong>. The small amount of drag from the Earth's atmosphere means that the <strong>fuel lifetime is %SNSFUELLIFE%</strong>. This orbit is suitable for <strong>all types of cooling systems</strong>. Ground control costs are <strong>%SNSGROUNDCOST% per year</strong>.</p><h3>%GEOLABEL%</h3><p>A satellite in geostationary orbit remains above the same place on the Earth's surface at all times, since it orbits roughly once every %GEOPERIOD%. This requires it to be at an altitude of around %GEOALTITUDE%. Since it spends half its time between the Earth and the Sun a satellite in geostationary orbit can typically <strong>only observe for around 50% of the time</strong>. Such long periods in the Sun make such an orbit <strong>unsuitable for passive or cryogenic cooling</strong>. Since the satellite is in a high orbit the <strong>fuel lifetime is %GEOFUELLIFE%</strong>. Ground control costs are <strong>%GEOGROUNDCOST% per year</strong>.</p><h3>%ETRLABEL%</h3><p>Some satellites can be put into orbit around the Sun rather than the Earth. They orbit the Sun slightly more slowly than the Earth does, and so gradually trail behind, reaching a distance of around 10 million km after a year. Their distance from the Earth means that they can <strong>observe 100% of the time</strong>. Since such an orbit requires very few course adjustments the <strong>fuel lifetime is %ETRFUELLIFE%</strong>. This orbit is suitable for <strong>all types of cooling systems</strong>. Ground control costs are <strong>%ETRGROUNDCOST% per year</strong>.</p><h3>%EM2LABEL%</h3><p>The &quot;L2&quot; point, or 2nd Lagrangian point, is a position on the far side of the Moon which orbits the Earth at the same rate as the Moon. While the satellite is well away from the Earth, its position behind the Moon requires a relay satellite to be placed in orbit around the Moon, which <strong>increases the launch costs by 50%</strong>. Since the satellite spends half of each orbit between the Moon and the Sun, it can only <strong>observe 50% of the time</strong>. Since it spends long durations in sunlight, such an orbit is <strong>unsuitable for passive or cryogenic cooling</strong>. Relatively large amounts of fuel are required to maintain orbit at an L2 point, so the <strong>fuel lifetime is %EM2FUELLIFE%</strong>. Ground control costs are <strong>%EM2GROUNDCOST% per year</strong>.</p><h3>%ES2LABEL%</h3><p>The &quot;L2&quot; point of the Earth-Sun system is the position at which a satellite with orbit the Sun at the same rate as the Earth, despite being %ES2ALTITUDE% further away. This is because of the slight increase in centripetal force due to the Earth's gravitational pull. Since the Earth and the Sun are constantly in the same direction, the satellite can observe 100% of the time. Relatively large amounts of fuel are required to maintain orbit at an L2 point, so the <strong>fuel lifetime is %ES2FUELLIFE%</strong>. This orbit is <strong>suitable for all types of cooling systems</strong>. Ground control costs are <strong>%ES2GROUNDCOST% per year</strong>.</p>"
+		},
+		"lifetime": {
+			"title": "Operational lifetime",
+			"about": "<p>The operational lifetime of the mission will add to the cost required to run the satellite. It may be limited by the fuel or coolant supply. A longer mission will also mean a higher risk of failure of delay.</p>"
+		},
+		"rocket": {
+			"title": "Launch vehicle",
+			"about": "<p>There are numerous launch vehicles and launch sites to use for your satellite from. However, different launch vehicles are launched form different sites, and the two must be compatible.</p><p>Different launchers have different sizes and have different limits in terms of the mass they can carry. The mass carried depends the on the orbit chosen. It is advisable for the satellite mass to below 80% of maximum mass for the chosen launch vehicle. The maximum mass is lower for launches beyond low or high Earth orbit, and some launches are not able to achieve higher orbits. Some operators are a little more efficient than others in terms of cost in order to launch satellites, and other launchers also have varied Success Probabilities, which in turn affects the risk.</p><table><tr><th>Launch vehicle</th><th>Diameter</th><th>Maximum mass to LEO</th><th>Maximum mass beyond LEO</th><th>Launch cost</th><th>Operator</th><th>Success Rate</th></tr>%ROCKETTABLE%</table>"
+		},
+		"site": {
+			"title": "Launch site",
+			"about": "<p>Different sites also effect the type of Orbit available, asss a rocket cannot be launched and immediately fly over a highly populated regions. To reach orbits beyond low-Earth orbit, a rocket must be launched in the direction of the Earth’s rotation.</p><table><tr><th>Launch site</th><th>Launch trajectories</th><th>Launch vehicles supported</th></tr>%SITETABLE%</table>"
+		},
+		"previous": {
+			"title": "Previous missions",
+			"about": "Any satellite has to make scientific discoveries that are better than those that previous satellites have made. There have been a number of previous space telescopes launched to observe in a range of wavelengths, and some of the details are given below:",
+			"launch": "Launched:",
+			"operator": "Mission operators:",
+			"duration": "Mission duration:",
+			"instruments": "Instruments:",
+			"cooling": "Cooling:",
+			"temperature": "Operating temperature:",
+			"coolant": "Coolant:",
+			"diameter": "Mirror diameter:",
+			"mass": "Total satellite mass:",
+			"site": "Launch site:",
+			"vehicle": "Launch vehicle:",
+			"orbit": "Orbit:",
+			"cost": "Approximate cost:",
+			"notes": "Notes:",
+			"missions": {
+				"iras": {
+					"title": "Infrared Astronomy Satellite (IRAS)",
+					"launch": 1983,
+					"operator": "NASA",
+					"duration": { "value": 10, "units": "months", "dimension": "time" },
+					"instruments": "Mid-IR (camera), Mid-IR (spectrometer)",
+					"cooling": "Passive and Cryogenic",
+					"coolant": "600 litres liquid helium",
+					"temperature": { "value": 2, "units": "K", "dimension": "temperature" },
+					"diameter": { "value": 0.7, "units": "m", "dimension": "length" },
+					"mass": { "value": 800, "units": "kg", "dimension": "mass" },
+					"site": "Vandenberg Airforce Base, California, USA",
+					"vehicle": "Delta rocket",
+					"orbit": "Low-Earth orbit (900 km altitude)",
+					"cost": { "value": 400, "units": "GBP", "dimension": "currency" },
+					"image": { "src": "images/mission_iras.jpg" }
+				},
+				"iso": {
+					"title": "Infrared Space Observatory (ISO)",
+					"launch": 1995,
+					"operator": "ESA",
+					"duration": { "value": 2.5, "units": "years", "dimension": "time" },
+					"instruments": "Near-IR (camera), Mid-IR (camera), Mid-IR (spectrometer)",
+					"cooling": "Passive and Cryogenic",
+					"coolant": "2300 litres liquid helium",
+					"temperature": { "value": 2, "units": "K", "dimension": "temperature" },
+					"diameter": { "value": 0.6, "units": "m", "dimension": "length" },
+					"mass": { "value": 2400, "units": "kg", "dimension": "mass" },
+					"site": "Korou, French Guiana",
+					"vehicle": "Ariane 4",
+					"orbit": "High-Earth orbit (elliptical, ranging from 1000 - 70,000 km)",
+					"cost": { "value": 300, "units": "GBP", "dimension": "currency" },
+					"image": { "src": "images/mission_iso.jpg" }
+				},
+				"spitzer": {
+					"title": "Spitzer Space Telescope",
+					"launch": 2003,
+					"operator": "NASA",
+					"duration": { "value": 5.5, "units": "years", "dimension": "time" },
+					"instruments": "Near-IR (camera), Mid-IR (spectrometer), Mid-IR (camera)",
+					"cooling": "Passive and Cryogenic",
+					"coolant": "340 litres liquid helium",
+					"temperature": { "value": 5, "units": "K", "dimension": "temperature" },
+					"diameter": { "value": 0.85, "units": "m", "dimension": "length" },
+					"mass": { "value": 860, "units": "kg", "dimension": "mass" },
+					"site": "Cape Canaveral, Florida, USA",
+					"vehicle": "Delta II rocket",
+					"orbit": "Earth-trailing orbit",
+					"cost": { "value": 800, "units": "GBP", "dimension": "currency" },
+					"notes": "Since further cooling is only required by the Mid-IR instruments, the Near-IR instruments continued to operate after the end of the nominal mission.",
+					"image": { "src": "images/mission_spitzer.jpg" }
+				},
+				"akari": {
+					"title": "Akari",
+					"launch": 2006,
+					"operator": "JAXA",
+					"duration": { "value": 1.5, "units": "years", "dimension": "time" },
+					"instruments": "Near-IR (camera), Mid-IR (camera), Far-IR (camera)",
+					"cooling": "Passive and Cryogenic",
+					"coolant": "170 litres liquid helium",
+					"temperature": { "value": 2, "units": "K", "dimension": "temperature" },
+					"diameter": { "value": 0.7, "units": "m", "dimension": "length" },
+					"resolution": "44 arcseconds at 140 microns",
+					"mass": { "value": 950, "units": "kg", "dimension": "mass" },
+					"site": "Uchinoura Space Center, Japan",
+					"vehicle": "M-V rocket",
+					"orbit": "Low-Earth orbit (700 km altitude)",
+					"cost": { "value": 200, "units": "GBP", "dimension": "currency" },
+					"notes": "Cost excludes launch cost",
+					"image": { "src": "images/mission_akari.jpg" }
+				},
+				"herschel": {
+					"title": "Herschel Space Observatory",
+					"launch": 2009,
+					"operator": "ESA",
+					"duration": { "value": 3.5, "units": "years", "dimension": "time" },
+					"instruments": "Far-IR (camera and spectrometer), Sub-mm (camera and spectrometer), Far-IR and Sub-mm (spectrometer)",
+					"cooling": "Passive, Cryogenic, and Active",
+					"coolant": "2300 litres liquid helium",
+					"temperature": { "value": 0.3, "units": "K", "dimension": "temperature" },
+					"diameter": { "value": 3.5, "units": "m", "dimension": "length" },
+					"mass": { "value": 4000, "units": "kg", "dimension": "mass" },
+					"site": "Korou, French Guiana",
+					"vehicle": "Ariane 5",
+					"orbit": "Earth-Sun L2 point",
+					"cost": { "value": 1000, "units": "GBP", "dimension": "currency" },
+					"image": { "src": "images/mission_herschel.jpg" }
+				},
+				"hubble": {
+					"title": "Hubble Space Telescope",
+					"launch": 1990,
+					"operator": "NASA/ESA",
+					"duration": { "value": 20, "units": "years", "dimension": "time" },
+					"instruments": "Near-IR (camera and spectrometer), Optical (camera), Optical (camera and spectrometer), UV (spectrometer)",
+					"cooling": "Passive",
+					"temperature": { "value": 300, "units": "K", "dimension": "temperature" },
+					"diameter": { "value": 2.4, "units": "m", "dimension": "length" },
+					"mass": { "value": 11000, "units": "kg", "dimension": "mass" },
+					"site": "Kennedy Space Centre",
+					"vehicle": "Space Shuttle Discovery",
+					"orbit": "Low-Earth orbit (600 km altitude)",
+					"cost": { "value": 2000, "units": "GBP", "dimension": "currency" },
+					"image": { "src": "images/mission_hubble.jpg" }
+				},
+				"galex": {
+					"title": "GALEX",
+					"launch": 2003,
+					"operator": "NASA",
+					"duration": { "value": 10, "units": "years", "dimension": "time" },
+					"instruments": "UV (camera)",
+					"cooling": "Passive",
+					"temperature": { "value": 300, "units": "K", "dimension": "temperature" },
+					"diameter": { "value": 0.5, "units": "m", "dimension": "length" },
+					"mass": { "value": 280, "units": "kg", "dimension": "mass" },
+					"site": "Carrier Aircraft",
+					"vehicle": "Pegasus Rocket",
+					"orbit": "Low-Earth orbit (700 km altitude)",
+					"cost": { "value": 150, "units": "GBP", "dimension": "currency" },
+					"notes": "Cost excludes launch cost",
+					"image": { "src": "images/mission_galex.jpg" }
+				},
+				"wise": {
+					"title": "WISE",
+					"launch": 2010,
+					"operator": "NASA",
+					"duration": { "value": 1, "units": "years", "dimension": "time" },
+					"instruments": "Near-IR (camera), Mid-IR (camera)",
+					"cooling": "Passive",
+					"temperature": { "value": 300, "units": "K", "dimension": "temperature" },
+					"diameter": { "value": 0.4, "units": "m", "dimension": "length" },
+					"mass": { "value": 400, "units": "kg", "dimension": "mass" },
+					"site": "Vandenberg",
+					"vehicle": "Delta II rocket",
+					"orbit": "Sun-synchronous orbit (500 km altitude)",
+					"cost": { "value": 300, "units": "GBP", "dimension": "currency" },
+					"notes": "Cost excludes launch cost",
+					"image": { "src": "images/mission_wise.jpg" }
+				}
+			}
+		}
+	}
+}
