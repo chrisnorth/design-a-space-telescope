@@ -15,11 +15,61 @@
 		},{
 			"name": "Multi-wavelength Sky Mapper",
 			"description": "A government research grant has come through to take images of the sky in ultraviolet, visible and near‐IR wavelengths from a satellite in space, in order to map stars, galaxies and other yet to be discovered phenomena. The budget of your mission is <span class=\"cost\">%COST%</span>.",
-			"budget": { "value": 400, "units": "GBP", "dimension": "currency" },
+			"budget": { "value": 800, "units": "GBP", "dimension": "currency" },
 			"requires": [
 				{ "instrument": "camera", "wavelength": "uv" },
 				{ "instrument": "camera", "wavelength": "optical" },
 				{ "instrument": "camera", "wavelength": "nearir" },
+				{ "mirror": 0.5 }
+			]
+		},{
+			"name": "Interstellar Dust",
+			"description": "A university has approached your group to design a mission for satellite telescope in order to analyse the spectra of interstellar dust in nearby galaxies. The budget of your mission is <span class=\"cost\">%COST%</span>. You will need the appropriate instruments on board the telescope in order to carry out the mission.",
+			"budget": { "value": 9000, "units": "GBP", "dimension": "currency" },
+			"requires": [
+				{ "mirror": 0.5 }
+			]
+		},{
+			"name": "Planet Formation",
+			"description": "A private rocket company, <em>SpaceX</em>, has approached your group to launch a telescope into space in order to study the formation of planets. The resolution must be at least four times better than previous equivalent missions, and you must use their rocket. The budget for your mission is <span class=\"cost\">%COST%</span>.",
+			"budget": { "value": 4000, "units": "GBP", "dimension": "currency" },
+			"requires": [
+				{ "rocket": "FLC9" },
+				{ "mirror": 2 }
+			]
+		},{
+			"name": "Infrared All-sky",
+			"description": "A funding agency is providing funding to perform an all-sky survey from near infrared to far infrared. The budget of your mission is <span class=\"cost\">%COST%</span>.",
+			"budget": { "value": 1200, "units": "GBP", "dimension": "currency" },
+			"requires": [
+				{ "instrument": "camera", "wavelength": "nearir" },
+				{ "instrument": "camera", "wavelength": "midir" },
+				{ "instrument": "camera", "wavelength": "farir" },
+				{ "mirror": 0.5 }
+			]
+		},{
+			"name": "Nearby Galaxy Explorer",
+			"description": "Your group has received funding to send a telescope on board a satellite into space with the main objective of analysing stars in a nearby galaxy at very high resolution. The budget of your mission is <span class=\"cost\">%COST%</span>. Your group will need to use the appropriate instruments in order to collect data if it is to be analysed.",
+			"budget": { "value": 10000, "units": "GBP", "dimension": "currency" },
+			"requires": [
+				{ "instrument": "camera", "wavelength": "nearir" },
+				{ "instrument": "camera", "wavelength": "optical" },
+				{ "instrument": "camera", "wavelength": "uv" },
+				{ "mirror": 8 }
+			]
+		},{
+			"name": "Near-Earth Asteroid Study",
+			"description": "The government has asked you to design a satellite to take images of near-Earth asteroids. The mission should last for as long as possible. The European Space Agency will provide the launch and operations cost, also up to a total of <span class=\"cost\">%COST%</span>, but you have to use their launch site.",
+			"budget": { "value": 700, "units": "GBP", "dimension": "currency" },
+			"requires": [
+				{ "mirror": 0.5 },
+				{ "site": "CSG" }
+			]
+		},{
+			"name": "Freedom",
+			"description": "Your budget is limitless. Your only objective is to launch a working telescope.",
+			"budget": { "value": 100000000, "units": "GBP", "dimension": "currency" },
+			"requires": [
 				{ "mirror": 0.5 }
 			]
 		}

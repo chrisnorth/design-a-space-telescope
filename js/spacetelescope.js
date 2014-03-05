@@ -358,7 +358,7 @@ if(typeof $==="undefined") $ = {};
 		// If the input isn't the sort of thing we expect we just return it
 		if(typeof v != "object") return v;
 
-		if(typeof v.value==="string") v.value = parseFloat(v.value,10);
+		if(typeof v.value==="string" && v.value != "inf") v.value = parseFloat(v.value,10);
 
 		if(v.dimension == "length"){
 			if(to == "ft" || to == "m" || to == "mm" || to == "km"){
@@ -413,10 +413,12 @@ if(typeof $==="undefined") $ = {};
 		}else if(v.dimension == "currency"){
 			if(this.data.currency[to]){
 				if(v.units != to){
-					// Step 1: convert to GBP
-					if(this.data.currency[v.units].conv) v.value /= this.data.currency[v.units].conv;
-					// Step 2: convert to new unit
-					if(this.data.currency[to].conv) v.value *= this.data.currency[to].conv;
+					if(v.value != "inf"){
+						// Step 1: convert to GBP
+						if(this.data.currency[v.units].conv) v.value /= this.data.currency[v.units].conv;
+						// Step 2: convert to new unit
+						if(this.data.currency[to].conv) v.value *= this.data.currency[to].conv;
+					}
 					v.units = to;
 				}
 			}
@@ -473,14 +475,16 @@ if(typeof $==="undefined") $ = {};
 		if(typeof p==="string") p = parseInt(p,10);
 		if(!p) p = 0;
 
-
 		var append = (this.phrases.ui.million.compact) ? this.phrases.ui.million.compact : "";
 		var s = (this.phrases.ui.currency[v.units] && this.phrases.ui.currency[v.units].symbol) ? this.phrases.ui.currency[v.units].symbol : (this.phrases.ui.currency["GBP"].symbol ? this.phrases.ui.currency["GBP"].symbol : "");
+
+		if(v.value == "inf" || v.value >= 1000000) return '&infin;';
 
 		// Change the "million" to "billion" if the number if too big
 		if(v.value >= 1000){
 			v.value /= 1000;
-			p = 2;
+			if(v.value < 100) p = 1;
+			if(v.value < 10) p = 2;
 			append = (this.phrases.ui.billion.compact) ? this.phrases.ui.billion.compact : "";
 		}
 		return s+''+(v.value).toFixed(p)+''+append;
