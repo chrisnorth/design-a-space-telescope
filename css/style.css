@@ -124,6 +124,7 @@ img.icon {
 #language { z-index: 101; }
 #bar { z-index: 100; }
 #summaryext { z-index: 98; }
+#summary { height: 2em; overflow: hidden; }
 #messages { z-index: 99; }
 .dropdown.fullwidth { color: #efefef; vertical-align: top; }
 .dropdown.fullwidth>ul { display:block; }
@@ -187,6 +188,8 @@ img.close { background-position: 0em -10.5em; }
 }
 #intro h1, #intro h2 { text-align: center; }
 
+#scenarios li { list-style-type: decimal-leading-zero; margin-left: 2em; }
+#scenarios li h3 { font-size: 1em; }
 
 #main {
 	display: table;
@@ -225,29 +228,37 @@ p .cost {
 #guide li {
 	margin-bottom: 0.5em;
 }
-#guide table {
-	border-collapse: collapse;
-}
+#guide table { border-collapse: collapse; margin: 0 auto 1em; }
 #guide table th { background-color: #404040; color: #e6e6e6; }
 #guide table td, #guide table th {
 	border: 1px solid #404040;
 	padding: 0.5em;
 	text-align: center;
 }
+#guide .tablewrapper { max-width: 100%; overflow: hidden; overflow-x: auto; margin-bottom: 1em; }
+#guide .tablewrapper table { margin-bottom: 0; }
+
 #guide blockquote {
 	text-align: center;
 	margin: 1em auto;
 }
 #guide h3 { clear: both; margin-top: 1em; }
 #guide .key { font-weight: bold; }
-#guide .mission {
-	padding-top: 2em;
+#guide .mission { padding-top: 2em; }
+#guide figure {
+	text-align: center;
+	width: 290px;
+	max-width: 100%;
+	margin: auto;
 }
-#guide .mission img {
-	float: right;
-	margin: 0 0 1em 1em;
-	width: 320px;
-}
+#guide figure.fullwidth, #guide .fullwidth figure { width: 100%; }
+#guide figure img { width: 100%; }
+#guide figure.right { float: right; margin: 0 0 1em 1em; }
+#guide figure.four { width: 100%; }
+#guide figure.four figure { float: left; width: 23.5%; margin-right: 2%; }
+#guide figure.four figure:last-child { margin-right: 0; }
+#guide figure figcaption { font-size: 0.8em; }
+.clearall { clear: both; }
 
 
 @media only screen and (max-width: 1024px){
@@ -266,8 +277,17 @@ p .cost {
 	#summaryext>ul>li { width: 100%; }
 	#summaryext>ul>li { clear: both; float: none; }
 	.padded { padding: 0.5em; }
+	#guide figure.four figure { width: 49%; margin-right: 2%; }
+	#guide figure.four figure:nth-child(2n) { margin-right: 0; }
 }
 @media only screen and (max-width: 500px){
 	.baritem a { padding: 0.25em 0.1em 0.25em 0.1em; }
 	#summary .baritem img.icon, .baritem .togglewarnings img.icon, .baritem .toggleerrors img.icon { display: none; }
+	#page { padding-top: 2em; padding-bottom: 0px; }
+	#intro, #guide { padding: 1.5em; width: 100%; max-width: 100%; border-radius: 0px; }
+	#guide figure.left,#guide figure.right, #guide figure.four figure {
+		float: none;
+		width: 100%;
+		margin: 0 0 1em 0;
+	}
 }

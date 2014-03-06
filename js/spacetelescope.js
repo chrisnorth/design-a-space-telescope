@@ -502,7 +502,7 @@ if(typeof $==="undefined") $ = {};
 		var append = (this.phrases.ui.million.compact) ? this.phrases.ui.million.compact : "";
 		var s = (this.phrases.ui.currency[v.units] && this.phrases.ui.currency[v.units].symbol) ? this.phrases.ui.currency[v.units].symbol : (this.phrases.ui.currency["GBP"].symbol ? this.phrases.ui.currency["GBP"].symbol : "");
 
-		if(v.value == "inf" || v.value >= 1000000) return '&infin;';
+		if(v.value == "inf" || v.value >= 1e15) return '&infin;';
 
 		// Change the "million" to "billion" if the number if too big
 		if(v.value >= 1000){
@@ -721,7 +721,7 @@ if(typeof $==="undefined") $ = {};
 			}
 
 			if(txt.indexOf('<p>') < 0) txt = '<p>'+txt+'</p>';
-			html += '<h2>'+g[key].title+'</h2>'+txt;
+			html += '<h2>'+g[key].title+'</h2>'+txt+'<div class="clearall" /></div>';
 
 			if(key=="roles"){
 				for(k in g[key]){
@@ -741,7 +741,7 @@ if(typeof $==="undefined") $ = {};
 						}
 						ul += '</ul>';
 						html += '<div id="'+k+'" class="mission"><h3>'+g[key]["missions"][k].title+'</h3>';
-						if(g[key]["missions"][k]["image"]) html += '<img src="'+g[key]["missions"][k]["image"].src+'" alt="'+g[key]["missions"][k]["title"]+'" />';
+						if(g[key]["missions"][k]["image"]) html += '<figure class=\"right\"><img src="'+g[key]["missions"][k]["image"].src+'" alt="'+g[key]["missions"][k]["title"]+'" /><figcaption>'+g[key]["missions"][k]["title"]+'</figcaption></figure>';
 						html += '</div>';
 						html += ul;
 					}

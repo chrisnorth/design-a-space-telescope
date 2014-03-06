@@ -66,12 +66,10 @@
 				{ "site": "CSG" }
 			]
 		},{
-			"name": "Unlimited Scope",
-			"description": "Your budget is limitless. Your only objective is to launch a working telescope.",
-			"budget": { "value": 100000000, "units": "GBP", "dimension": "currency" },
-			"requires": [
-				{ "mirror": 0.5 }
-			]
+			"name": "Freedom",
+			"description": "Don't worry about money; you can spend as much as you like.",
+			"budget": { "value": 1e20, "units": "GBP", "dimension": "currency" },
+			"requires": []
 		}
 	]
 }
