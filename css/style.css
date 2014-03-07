@@ -183,6 +183,7 @@ img.close { background-position: 0em -10.5em; }
 	margin: auto;
 	background-color: white;
 	padding: 2em;
+	line-height: 1.5em;
 	border-radius: 1em;
 	box-shadow: 0 0 0.25em rgba(255,255,255,0.4);
 }
@@ -225,10 +226,12 @@ p .cost {
 	float: right;
 	cursor: pointer;
 }
+#guide ul.index li { margin-right: 1em; width: calc(50% - 0.5em); display: inline-block; vertical-align: top; }
+#guide ul.index li:nth-child(2n) { margin-right: 0; }
 #guide li {
 	margin-bottom: 0.5em;
 }
-#guide table { border-collapse: collapse; margin: 0 auto 1em; }
+#guide table { border-collapse: collapse; margin: 0 auto 1em; max-width: 100%; }
 #guide table th { background-color: #404040; color: #e6e6e6; }
 #guide table td, #guide table th {
 	border: 1px solid #404040;
@@ -255,7 +258,7 @@ p .cost {
 #guide figure img { width: 100%; }
 #guide figure.right { float: right; margin: 0 0 1em 1em; }
 #guide figure.four { width: 100%; }
-#guide figure.four figure { float: left; width: 23.5%; margin-right: 2%; }
+#guide figure.four figure { float: left; width: 23%; width: calc(25% - 0.75em); margin-right: 1em; }
 #guide figure.four figure:last-child { margin-right: 0; }
 #guide figure figcaption { font-size: 0.8em; }
 .clearall { clear: both; }
@@ -277,8 +280,10 @@ p .cost {
 	#summaryext>ul>li { width: 100%; }
 	#summaryext>ul>li { clear: both; float: none; }
 	.padded { padding: 0.5em; }
-	#guide figure.four figure { width: 49%; margin-right: 2%; }
+	#guide figure.four figure { width: 48%; width: calc(50% - 0.5em); }
 	#guide figure.four figure:nth-child(2n) { margin-right: 0; }
+	#guide table { width: 100%; }
+	#guide table td, #guide table th { padding: 0.25em; }
 }
 @media only screen and (max-width: 500px){
 	.baritem a { padding: 0.25em 0.1em 0.25em 0.1em; }

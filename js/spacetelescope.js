@@ -167,6 +167,7 @@ if(typeof $==="undefined") $ = {};
 
 		// Add events to guide links
 		$('body').on('click','a.guidelink',{me:this},function(e){
+			e.preventDefault();
 			e.data.me.showGuide($(this).attr('data'));
 		});
 
@@ -748,10 +749,10 @@ if(typeof $==="undefined") $ = {};
 				}
 			}
 		}else{
-			html += '<h2>'+this.phrases.guide.title+'</h2><p>'+this.phrases.guide.about+'</p><ul>';
+			html += '<h2>'+this.phrases.guide.title+'</h2><p>'+this.phrases.guide.about+'</p><ul class="index">';
 			for(k in this.phrases.guide){
 				if(k != "title" && k != "about" && typeof this.phrases.guide[k].title==="string"){
-					html += '<li><a href="#guide" class="guidelink" data="'+k+'">'+this.phrases.guide[k].title+'</a></li>';
+					html += '<li><a href="#guide" class="guidelink" data="'+k+'">'+this.phrases.guide[k].title+'</a><br />'+(typeof this.phrases.guide[k].summary==="string" ? this.phrases.guide[k].summary : "")+'</li>';
 				}
 			}
 			html += '</ul>'
