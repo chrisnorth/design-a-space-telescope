@@ -167,7 +167,7 @@ if(typeof $==="undefined") $ = {};
 
 		// Add events to guide links
 		$('body').on('click','a.guidelink',{me:this},function(e){
-			e.preventDefault();
+			//e.preventDefault();
 			e.data.me.showGuide($(this).attr('data'));
 		});
 
@@ -542,16 +542,16 @@ if(typeof $==="undefined") $ = {};
 
 	SpaceTelescope.prototype.toggleFullScreen = function(){
 		// Get the container
-		this.elem = document.getElementById("page");
+		this.elem = document.getElementById("application");
 
 		if(fullScreenApi.isFullScreen()){
 			fullScreenApi.cancelFullScreen(this.elem);
 			this.fullscreen = false;
-			$('#page').removeClass('fullscreen');
+			$('#application').removeClass('fullscreen');
 		}else{
 			fullScreenApi.requestFullScreen(this.elem);
 			this.fullscreen = true;
-			$('#page').addClass('fullscreen');
+			$('#application').addClass('fullscreen');
 		}
 		//this.resize();
 		return this;
@@ -578,7 +578,7 @@ if(typeof $==="undefined") $ = {};
 		if($('#guide').length == 0) $('#page').append('<div id="guide"></div>')
 
 		if(key){
-			html += '<p class="breadcrumb"><a href="#guide" class="guidelink" data="">'+g.title+'</a> &raquo; '+g[key].title+'</p>'
+			html += '<div id="'+key+'"></div><p class="breadcrumb"><a href="#guide" class="guidelink" data="">'+g.title+'</a> &raquo; '+g[key].title+'</p>'
 
 			txt = g[key].about;
 			if(key=="mirror"){
@@ -752,7 +752,7 @@ if(typeof $==="undefined") $ = {};
 			html += '<h2>'+this.phrases.guide.title+'</h2><p>'+this.phrases.guide.about+'</p><ul class="index">';
 			for(k in this.phrases.guide){
 				if(k != "title" && k != "about" && typeof this.phrases.guide[k].title==="string"){
-					html += '<li><a href="#guide" class="guidelink" data="'+k+'">'+this.phrases.guide[k].title+'</a><br />'+(typeof this.phrases.guide[k].summary==="string" ? this.phrases.guide[k].summary : "")+'</li>';
+					html += '<li><a href="#'+k+'" class="guidelink" data="'+k+'">'+this.phrases.guide[k].title+'</a><br />'+(typeof this.phrases.guide[k].summary==="string" ? this.phrases.guide[k].summary : "")+'</li>';
 				}
 			}
 			html += '</ul>'

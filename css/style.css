@@ -26,23 +26,36 @@ body {
 	color: #4D4E53; /* To match to RS Summer Exhibition 2013 site */
 	font-family: 'Earthbound', "Helvetica Neue", Helvetica, sans-serif;
 	width: 100%;
-	height: 100%;
+	height: calc(100% - 2em);
 }
 body.r2l { }
-#page {
-	min-height: 100%;
+#application {
 	background-color:#269;
 	background-image: linear-gradient(rgba(255,255,255,.5) 1px, transparent 2px), linear-gradient(90deg, rgba(255,255,255,.5) 1px, transparent 2px), linear-gradient(rgba(255,255,255,.15) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.15) 1px, transparent 1px);
 	background-size: 5em 5em, 5em 5em, 1em 1em, 1em 1em;
-	background-position:-2px -2px, -2px -2px, -1px -1px, -1px -1px
-	margin: 0;
-	padding: 0px;
-	margin: 0px;
-	padding: 3em 0 1em 0;
-	display: block;
+	background-position:-2px -2px, -2px -2px, -1px -1px, -1px -1px;
 	-moz-box-shadow: inset 0 0 5em #000000;
 	-webkit-box-shadow: inset 0 0 5em #000000;
 	box-shadow: inset 0 0 5em #000000;
+	min-height: calc(100%);
+}
+#application.fullscreen {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	overflow-y: auto;
+}
+#page {
+	padding: 0;
+	margin: 0;
+	margin-top: 2em;
+	padding: 2em 0 2em 0;
+	display: block;
+}
+
+.fullscreen #page {
+	top: 2em;
+	z-index: 100;
 }
 h1 { font-size: 2em; margin-bottom: 0.5em; }
 h2 { font-size: 1.5em; margin-bottom: 0.5em; }
@@ -112,7 +125,7 @@ img.icon {
 	border-right: 0px;
 }
 .dropdown .baritem { float: none; display: block; }
-.dropdown li {
+.dropdown .baritem a {
 	padding: 0.5em 1em;
 }
 .dropdown.fullwidth {
