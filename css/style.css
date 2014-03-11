@@ -326,6 +326,7 @@ body.showguide #page { margin: 0em; }
 @media only screen and (max-width: 500px){
 	.baritem a { padding: 0.25em 0.1em 0.25em 0.1em; }
 	#summary .baritem img.icon, .baritem .togglewarnings img.icon, .baritem .toggleerrors img.icon { display: none; }
+	.dropdown { top: 2em; }
 	#page { padding-top: 0em; padding-bottom: 0px; }
 	#intro, #guide { padding: 1.5em; width: 100%; max-width: 100%; border-radius: 0px; }
 	#guide figure.left,#guide figure.right, #guide figure.four figure {

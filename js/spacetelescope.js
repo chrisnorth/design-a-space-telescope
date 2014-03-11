@@ -190,7 +190,7 @@ if(typeof $==="undefined") $ = {};
 		});
 
 		// Attach specific keypress events
-		this.registerKey('h',function(){ this.toggleGuide() });
+		this.registerKey('h',function(){ this.toggleGuide(); });
 
 		if(this.pushstate){
 			var _obj = this;
@@ -651,6 +651,7 @@ if(typeof $==="undefined") $ = {};
 
 		if($('#intro').is(':visible')){
 			$('#intro').hide();
+			$('#summaryext').hide()
 			if(!key) key = "guide";
 			this.showGuide(key);
 			if(this.pushstate) history.pushState({},"Guide","#"+key);
