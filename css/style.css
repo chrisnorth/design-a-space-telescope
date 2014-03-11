@@ -256,11 +256,9 @@ body.showguide #page { margin: 0em; }
     display:block;
     height: 1em;
 }
-#guide ul.index li { margin-right: 1em; width: calc(50% - 0.5em); display: inline-block; vertical-align: top; }
+#guide li { margin-bottom: 0.5em; }
+#guide ul.index li { margin-right: 1em; width: calc(50% - 0.5em); display: inline-block; vertical-align: top; margin-bottom: 1em; }
 #guide ul.index li:nth-child(2n) { margin-right: 0; }
-#guide li {
-	margin-bottom: 0.5em;
-}
 #guide table { border-collapse: collapse; margin: 0 auto 1em; max-width: 100%; }
 #guide table th { background-color: #404040; color: #e6e6e6; }
 #guide table td, #guide table th {
@@ -314,6 +312,7 @@ body.showguide #page { margin: 0em; }
 	#guide figure.four figure:nth-child(2n) { margin-right: 0; }
 	#guide table { width: 100%; }
 	#guide table td, #guide table th { padding: 0.25em; }
+	#summary { height: 2em; overflow: hidden; }
 }
 @media only screen and (max-width: 500px){
 	.baritem a { padding: 0.25em 0.1em 0.25em 0.1em; }

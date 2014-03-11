@@ -801,9 +801,9 @@ if(typeof $==="undefined") $ = {};
 							}
 						}
 						ul += '</ul>';
-						html += '<div id="'+k+'" class="mission"><h3>'+g[key]["missions"][k].title+'</h3>';
+						html += '<h3 id="'+k+'">'+g[key]["missions"][k].title+'</h3>';
 						if(g[key]["missions"][k]["image"]) html += '<figure class=\"right\"><img src="'+g[key]["missions"][k]["image"].src+'" alt="'+g[key]["missions"][k]["title"]+'" /><figcaption>'+g[key]["missions"][k]["title"]+'</figcaption></figure>';
-						html += '</div>';
+						html += '';
 						html += ul;
 					}
 				}
