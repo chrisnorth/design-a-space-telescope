@@ -92,12 +92,9 @@ strong { font-weight: bold; }
 	box-shadow: 0.1em 0.2em 0.25em rgba(0,0,0,0.3);
 }
 #bar, .dropdown { background-color: rgba(0,0,0,0.85); }
-.barmenu {
-	float: right;
-}
-.baritem {
-	display: inline-block;
-}
+.barmenu { float: right; }
+.rtl .barmenu { float: left; }
+.baritem { display: inline-block; }
 .baritem a {
 	color: inherit;
 	padding: 0.5em 0.5em;
@@ -113,13 +110,16 @@ strong { font-weight: bold; }
 	transition: all 0.4s ease-in-out;
 }
 .baritem span { margin: 0 0 0 0.25em; }
+.rtl .baritem span { margin: 0 0.25em 0 0; }
 .barmenu .baritem { float: right; }
+.rtl .barmenu .baritem { float: left; }
 img.icon {
 	width:1.5em;
 	height:1.5em;
 	margin: 0;
 	float: left;
 }
+.rtl img.icon { float: right; }
 .dropdown {
 	display: none;
 	z-index: 100;
@@ -133,15 +133,10 @@ img.icon {
 	border-top: 0px;
 	border-right: 0px;
 }
-.dropdown .baritem { float: none; display: block; }
-.dropdown .baritem a {
-	padding: 0.5em 1em;
-}
-.dropdown.fullwidth {
-	width: 100%;
-	left: 0px;
-	border-left: 0px;
-}
+.rtl .dropdown { left: 0; border-right: 1px solid rgba(255,255,255,0.8); border-left: 0px; right: auto; }
+.dropdown .baritem, .rtl .dropdown .baritem { float: none; display: block; }
+.dropdown .baritem a { padding: 0.5em 1em; }
+.dropdown.fullwidth { width: 100%; left: 0px; border-left: 0px; }
 #menu { z-index: 102; }
 #language { z-index: 101; }
 #bar { z-index: 100; }
@@ -260,6 +255,7 @@ body.showguide #page { margin: 0em; }
 #guide .guidetop { display: block; }
 #guide .guidetop p { margin-bottom: 0px; }
 #guide .close { float: right; cursor: pointer; }
+.rtl #guide .close { float: left; }
 /* Hack to stop anchor tags sitting behind the fixed header */
 #guide h2[id]:before,#guide h3[id]:before,#guide div[id]:before {
     content:"";
