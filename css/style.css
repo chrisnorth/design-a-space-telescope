@@ -182,10 +182,11 @@ img.error { background-position: -1.5em -7.5em; }
 img.warning { background-position: -1.5em -9em; }
 img.globe { background-position: -4.5em -4.5em; }
 img.config { background-position: -3em -10.5em; }
-img.load { background-position: -3em 0em; }
 img.save { background-position: -3em -1.5em; }
+img.load { background-position: -3em -3em; }
+img.back { background-position: -3em -4.5em; }
+img.restart { background-position: -4.5em -1.5em; }
 img.help { background-position: -4.5em -3em; }
-img.restart { background-position: -3em -3em; }
 img.fullscreen { background-position: -4.5em -6em; }
 img.close { background-position: 0em -10.5em; }
 .fullscreen img.fullscreen { background-position: -4.5em -7.5em; }
