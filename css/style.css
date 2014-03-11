@@ -164,6 +164,9 @@ img.icon {
 .dropdown.fullwidth ul.summary li ul li:last-child { padding-bottom: 0; }
 .dropdown.fullwidth .value { float: right; }
 
+#options li { margin-top: 1em; }
+#options li select { float: right; }
+.rtl #options li select { float: left; }
 
 
 /* Sprites */

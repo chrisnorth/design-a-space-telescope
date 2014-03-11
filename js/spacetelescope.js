@@ -461,7 +461,7 @@ if(typeof $==="undefined") $ = {};
 			html = '<li>'+this.phrases.ui.options[o]+' <select id="change'+o+'" name="'+o+'">';
 			if(o=="currency"){
 				for(var c in this.phrases.ui[o]){
-					html += '<option value="'+c+'"'+(c==this.settings.currency ? ' selected="selected"' : '')+'>'+this.phrases.ui.currency[c].symbol+' '+c+'</option>';
+					html += '<option value="'+c+'"'+(c==this.settings.currency ? ' selected="selected"' : '')+'>'+c+' '+this.phrases.ui.currency[c].symbol+'</option>';
 				}
 			}else{
 				for(var c in this.phrases.ui.units){
