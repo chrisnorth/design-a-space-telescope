@@ -95,6 +95,10 @@ if(typeof $==="undefined") $ = {};
 		return r;
 	};
 
+	// Elements with the class "accessible" are intended for people who don't 
+	// have Javascript enabled. If we are here they obviously do have Javascript.
+	document.write('<style type="text/css">.noscriptmsg { display: none; }</style>');
+	
 
 	// Control and generate the sound.
 	function SpaceTelescope(inp){
@@ -114,7 +118,11 @@ if(typeof $==="undefined") $ = {};
 		
 		// Allow keyboard events
 		this.keys = new Array();
-		
+
+		// Do we update the address bar?
+		this.pushstate = !!(window.history && history.pushState);
+
+		// Default settings
 		this.settings = { 'length': 'm', 'currency': 'GBP', 'temperature':'K', 'mass':'kg', 'time': 'years', 'usecookies': false, 'mode': 'normal' };
 
 		this.init(inp);
@@ -171,7 +179,7 @@ if(typeof $==="undefined") $ = {};
 		// Add events to guide links
 		$('body').on('click','a.guidelink',{me:this},function(e){
 			//e.preventDefault();
-			e.data.me.showGuide($(this).attr('data'));
+			if($(this).attr('href').indexOf('#')==0) e.data.me.showGuide($(this).attr('href').substr(1));
 		});
 
 		// Attach event to keypresses
@@ -184,6 +192,27 @@ if(typeof $==="undefined") $ = {};
 		// Attach specific keypress events
 		this.registerKey('h',function(){ this.toggleGuide() });
 
+		if(this.pushstate){
+			var _obj = this;
+			window.onpopstate = function(event) {
+				_obj.navigate();
+			};
+		}
+
+
+		$('.scriptonly').removeClass('scriptonly');
+		
+		return this;
+	}
+	
+	// Work out where we are based on the anchor tag
+	SpaceTelescope.prototype.navigate = function(){
+
+		var a = location.href.split("#")[1];
+		if(typeof a==="string"){
+			if(!(a=="guide" || a.indexOf('guide_')==0)) a = "";
+			this.showGuide(a);
+		}
 		return this;
 	}
 
@@ -350,12 +379,7 @@ if(typeof $==="undefined") $ = {};
 		// Is this the first time we've called this function since page load?
 		if(!this.loaded){
 			// Executed on page load with URL containing an anchor tag.
-			var anchor = location.href.split("#")[1];
-			var a = anchor.split('.');
-			if(typeof anchor==="string" && this.phrases.guide[a[0]]){
-				this.toggleGuide(a[0]);
-				if($('#'+anchor).length > 0) $('html,body').animate({ scrollTop: $('#'+anchor).offset().top },250);
-			}
+			this.navigate();
 			this.loaded = true;
 		}
 		
@@ -627,224 +651,246 @@ if(typeof $==="undefined") $ = {};
 
 		if($('#intro').is(':visible')){
 			$('#intro').hide();
+			if(!key) key = "guide";
 			this.showGuide(key);
+			if(this.pushstate) history.pushState({},"Guide","#"+key);
 		}else{
 			$('#intro').show();
 			this.closeGuide();
+			if(this.pushstate) history.pushState({},"","#");
 		}
+
 		return this;
 	}
 
 	SpaceTelescope.prototype.closeGuide = function(){
 		$('body').removeClass('showguide');
 		$('#guide').hide();
+		$('#intro').show();
 		return this;
 	}
 
 	SpaceTelescope.prototype.showGuide = function(key){
 
-		$('body').addClass('showguide');
-		$('#guide').show();
+		// Split the input by '.'
+		if(typeof key==="string"){
+			var a = key.split('_');
+			if(a.length > 1 && this.phrases.guide[a[1]]) key = a[1];
+		}
 
 		var html = "";
 		var g = this.phrases.guide;
 		var v,ul,table,txt;
 
-		if($('#guide').length == 0) $('#page').append('<div id="guide"></div>')
 
 		if(key){
 
-			html += '<div class="guidetop"><span class="breadcrumb"><a href="#guide" class="guidelink" data="">'+g.title+'</a> &raquo; '+g[key].title+'</span></div>'
+			$('body').addClass('showguide');
+			$('#guide').show();
 
-			txt = g[key].about;
-			if(key=="mirror"){
-				table = '';
-				if(this.settings.mode=="advanced"){
-					for(i in this.data.mirror){
-						table += '<tr>';
-						table += '<td>'+this.formatValue(this.data.mirror[i].diameter)+'</td>';
-						table += '<td>'+this.formatValue(this.data.mirror[i].mass)+'</td>';
-						table += '<td>'+this.formatValue(this.data.mirror[i].cost)+'</td>';
-						table += '<td>'+this.formatValue(this.data.mirror[i].devtime)+'</td>';
-						table += '</tr>';
-					}
-				}else{
-					for(i in this.data.mirror){
-						table += '<tr>';
-						table += '<td>'+this.formatValue(this.data.mirror[i].diameter)+'</td>';
-						table += '<td>'+this.formatValue(this.data.mirror[i].mass)+'</td>';
-						table += '<td>'+this.formatValue(this.data.mirror[i].cost)+'</td>';
-						table += '</tr>';
-					}				
-				}
-				txt = txt.replace(/\%MIRRORTABLE\%/,table);
-			}else if(key=="structure"){
-				table = '';
-				for(i in this.data.mirror){
-					table += '<tr>';
-					table += '<td>'+this.formatValue(this.data.mirror[i].diameter)+'</td>';
-					table += '<td>'+this.formatValue(this.data.mirror[i].bus.diameter)+'</td>';
-					table += '<td>'+this.formatValue(this.data.mirror[i].bus.cost)+'</td>';
-					table += '<td>'+this.formatValue(this.data.mirror[i].bus.mass)+'</td>';
-					table += '</tr>';
-				}
-				txt = txt.replace(/\%STRUCTURETABLE\%/,table);
-			}else if(key=="cooling"){
-				table = '';
-				if(this.settings.mode=="advanced"){
-					for(i in this.data.cooling.cryogenic){
-						if(i != "none"){
-							table += '<tr>';
-							table += '<td>'+this.formatValue(this.data.cooling.cryogenic[i].life)+'</td>';
-							table += '<td>'+this.formatValue(this.data.cooling.cryogenic[i].cost)+'</td>';
-							table += '<td>'+this.formatValue(this.data.cooling.cryogenic[i].mass)+'</td>';
-							table += '</tr>';
-						}
-					}
-					txt = txt.replace(/\%ACTIVELIFE\%/,this.formatValue(this.data.cooling.active.yes.life));
-					txt = txt.replace(/\%ACTIVEMASS\%/,this.formatValue(this.data.cooling.active.yes.mass));
-					txt = txt.replace(/\%ACTIVECOST\%/,this.formatValue(this.data.cooling.active.yes.cost));
+			if($('#guide').length == 0) $('#page').append('<div id="guide"></div>')
 
-				}else{
-					for(i in this.data.cooling){
-						table += '<tr>';
-						table += '<td>'+this.formatValue(this.data.cooling[i].temperature)+'</td>';
-						table += '<td>'+this.formatValue(this.data.cooling[i].cost)+'</td>';
-						table += '<td>'+this.formatValue(this.data.cooling[i].mass)+'</td>';
-						table += '</tr>';
+
+			if(key=="guide"){
+			
+				html += '<h2>'+this.phrases.guide.title+'</h2><p>'+this.phrases.guide.about+'</p><ul class="index">';
+				for(k in this.phrases.guide){
+					if(k != "title" && k != "about" && typeof this.phrases.guide[k].title==="string"){
+						html += '<li><a href="#guide_'+k+'" class="guidelink">'+this.phrases.guide[k].title+'</a><br />'+(typeof this.phrases.guide[k].summary==="string" ? this.phrases.guide[k].summary : "")+'</li>';
 					}
 				}
-				txt = txt.replace(/\%COOLINGTABLE\%/,table);
-			}else if(key=="instruments"){
-				table = '';
+				html += '</ul>'
+			
+			}else if(g[key]){
 
-				for(i in this.data.wavelengths){
-					if(i != "none"){
-						table += '<tr>';
-						table += '<td>'+this.phrases.options.wavelengths[i].label+'</td>';
-						table += '<td>'+this.formatValue(this.data.wavelengths[i].temperature)+'</td>';
-						table += '</tr>';
-					}
-				}
-				txt = txt.replace(/\%WAVELENGTHTABLE\%/,table);
-
-				if(this.settings.mode=="advanced"){
+				html += '<div class="guidetop"><span class="breadcrumb"><a href="#guide" class="guidelink">'+g.title+'</a> &raquo; '+g[key].title+'</span></div>'
+	
+				txt = g[key].about;
+				if(key=="mirror"){
 					table = '';
-					for(i in this.data.instrument){
-						if(i != "none"){
+					if(this.settings.mode=="advanced"){
+						for(i in this.data.mirror){
 							table += '<tr>';
-							table += '<td>'+this.phrases.options.instrument[i].label+'</td>';
-							table += '<td>'+this.formatValue(this.data.instrument[i].mass)+'</td>';
-							table += '<td>'+this.formatValue(this.data.instrument[i].cost)+'</td>';
-							table += '<td>'+this.formatValue(this.data.instrument[i].devtime)+'</td>';
+							table += '<td>'+this.formatValue(this.data.mirror[i].diameter)+'</td>';
+							table += '<td>'+this.formatValue(this.data.mirror[i].mass)+'</td>';
+							table += '<td>'+this.formatValue(this.data.mirror[i].cost)+'</td>';
+							table += '<td>'+this.formatValue(this.data.mirror[i].devtime)+'</td>';
+							table += '</tr>';
+						}
+					}else{
+						for(i in this.data.mirror){
+							table += '<tr>';
+							table += '<td>'+this.formatValue(this.data.mirror[i].diameter)+'</td>';
+							table += '<td>'+this.formatValue(this.data.mirror[i].mass)+'</td>';
+							table += '<td>'+this.formatValue(this.data.mirror[i].cost)+'</td>';
+							table += '</tr>';
+						}				
+					}
+					txt = txt.replace(/\%MIRRORTABLE\%/,table);
+				}else if(key=="structure"){
+					table = '';
+					for(i in this.data.mirror){
+						table += '<tr>';
+						table += '<td>'+this.formatValue(this.data.mirror[i].diameter)+'</td>';
+						table += '<td>'+this.formatValue(this.data.mirror[i].bus.diameter)+'</td>';
+						table += '<td>'+this.formatValue(this.data.mirror[i].bus.cost)+'</td>';
+						table += '<td>'+this.formatValue(this.data.mirror[i].bus.mass)+'</td>';
+						table += '</tr>';
+					}
+					txt = txt.replace(/\%STRUCTURETABLE\%/,table);
+				}else if(key=="cooling"){
+					table = '';
+					if(this.settings.mode=="advanced"){
+						for(i in this.data.cooling.cryogenic){
+							if(i != "none"){
+								table += '<tr>';
+								table += '<td>'+this.formatValue(this.data.cooling.cryogenic[i].life)+'</td>';
+								table += '<td>'+this.formatValue(this.data.cooling.cryogenic[i].cost)+'</td>';
+								table += '<td>'+this.formatValue(this.data.cooling.cryogenic[i].mass)+'</td>';
+								table += '</tr>';
+							}
+						}
+						txt = txt.replace(/\%ACTIVELIFE\%/,this.formatValue(this.data.cooling.active.yes.life));
+						txt = txt.replace(/\%ACTIVEMASS\%/,this.formatValue(this.data.cooling.active.yes.mass));
+						txt = txt.replace(/\%ACTIVECOST\%/,this.formatValue(this.data.cooling.active.yes.cost));
+	
+					}else{
+						for(i in this.data.cooling){
+							table += '<tr>';
+							table += '<td>'+this.formatValue(this.data.cooling[i].temperature)+'</td>';
+							table += '<td>'+this.formatValue(this.data.cooling[i].cost)+'</td>';
+							table += '<td>'+this.formatValue(this.data.cooling[i].mass)+'</td>';
 							table += '</tr>';
 						}
 					}
-					txt = txt.replace(/\%INSTRUMENTTABLE\%/,table);
-				}
-			}else if(key=="orbit"){
-				table = '';
-				for(i in this.data.orbit){
-					table += '<tr>';
-					table += '<td>'+this.phrases.options.orbit[i].label+'</td>';
-					table += '<td>'+(this.phrases.options.orbit[i].altitude ? this.phrases.options.orbit[i].altitude : '')+this.formatValue(this.data.orbit[i].altitude,0)+'</td>';
-					table += '<td>'+this.formatValue(this.data.orbit[i].period)+'</td>';
-					table += '<td>'+(this.data.orbit[i].obsfrac*100)+'%</td>';
-					table += '<td>'+this.formatValue(this.data.orbit[i].temperature)+'</td>';
-					table += '</tr>';
-					txt = txt.replace("%"+i+"ANCHOR%",'orbit.'+i);
-					txt = txt.replace("%"+i+"LABEL%",this.phrases.options.orbit[i].label);
-					txt = txt.replace("%"+i+"GROUNDCOST%",this.formatValue(this.data.orbit[i].groundcost));
-					txt = txt.replace("%"+i+"FUELLIFE%",this.formatValue(this.data.orbit[i].fuellife));
-					txt = txt.replace("%"+i+"ALTITUDE%",this.formatValue(this.data.orbit[i].altitude));
-					txt = txt.replace("%"+i+"PERIOD%",this.formatValue(this.data.orbit[i].period));
-					txt = txt.replace("%"+i+"CRYOREDUCTION%",(100*(1-this.data.orbit[i].multiplier.cryo)).toFixed(0)+"%");
-				}
-				txt = txt.replace(/\%ORBITTABLE\%/,table);
-			}else if(key=="rocket"){
-				table = '';
-				for(i in this.data.rocket){
-					table += '<tr>';
-					table += '<td>'+this.phrases.options.rocket[i].label+'</td>';
-					table += '<td>'+this.formatValue(this.data.rocket[i].diameter,0)+'</td>';
-					table += '<td>'+this.formatValue(this.data.rocket[i].mass.LEO,0)+'</td>';
-					table += '<td>'+this.formatValue(this.data.rocket[i].mass.GTO,0)+'</td>';
-					table += '<td>'+this.formatValue(this.data.rocket[i].cost,0)+'</td>';
-					table += '<td>'+this.phrases.options.operator[this.data.rocket[i].operator].label+'</td>';
-					if(this.settings.mode=="advanced") table += '<td>'+(this.data.rocket[i].risk*100)+'%</td>';
-					table += '</tr>';
-				}
-				txt = txt.replace(/\%ROCKETTABLE\%/,table);
-			}else if(key=="site"){
-				table = '';
-				for(i in this.data.site){
-					table += '<tr>';
-					table += '<td>'+this.phrases.options.site[i].label+'</td>';
-					table += '<td>'+this.phrases.options.site[i].trajectories+'</td>';
-					table += '<td>';
-					var rs = '';
-					for(var r in this.data.rocket){
-						for(var s=0; s < this.data.rocket[r].sites.length; s++){
-							if(this.data.rocket[r].sites[s]==i){
-								if(rs.length > 0) rs += ', ';
-								rs += ''+this.phrases.options.rocket[r].label+''
-							}
+					txt = txt.replace(/\%COOLINGTABLE\%/,table);
+				}else if(key=="instruments"){
+					table = '';
+	
+					for(i in this.data.wavelengths){
+						if(i != "none"){
+							table += '<tr>';
+							table += '<td>'+this.phrases.options.wavelengths[i].label+'</td>';
+							table += '<td>'+this.formatValue(this.data.wavelengths[i].temperature)+'</td>';
+							table += '</tr>';
 						}
 					}
-					table += rs;
-					table += '</td>';
-					table += '</tr>';
-				}
-				txt = txt.replace(/\%SITETABLE\%/,table);
-			}
-
-			if(txt.indexOf('<p>') < 0) txt = '<p>'+txt+'</p>';
-			html += '<h2 id="'+key+'">'+g[key].title+'</h2>'+txt+'<div class="clearall" /></div>';
-
-			if(key=="roles"){
-				for(k in g[key]){
-					if(k != "title" && k != "about" && typeof g[key][k].title==="string"){
-						html += '<h3>'+g[key][k].title+'</h3><p>'+g[key][k].about+'</p>';
-					}
-				}
-			}else if(key=="previous"){
-				for(k in g[key]["missions"]){
-					if(typeof g[key]["missions"][k].title==="string"){
-						ul = '<ul>';
-						for(i in g[key]["missions"][k]){
-							if(i != "title" && i != "image"){
-								v = this.formatValue(g[key]["missions"][k][i]);
-								ul += '<li><span class="key">'+g[key][i]+'</span> <span class="value">'+v+'</span></li>';
+					txt = txt.replace(/\%WAVELENGTHTABLE\%/,table);
+	
+					if(this.settings.mode=="advanced"){
+						table = '';
+						for(i in this.data.instrument){
+							if(i != "none"){
+								table += '<tr>';
+								table += '<td>'+this.phrases.options.instrument[i].label+'</td>';
+								table += '<td>'+this.formatValue(this.data.instrument[i].mass)+'</td>';
+								table += '<td>'+this.formatValue(this.data.instrument[i].cost)+'</td>';
+								table += '<td>'+this.formatValue(this.data.instrument[i].devtime)+'</td>';
+								table += '</tr>';
 							}
 						}
-						ul += '</ul>';
-						html += '<h3 id="'+key+'.'+k+'">'+g[key]["missions"][k].title+'</h3>';
-						if(g[key]["missions"][k]["image"]) html += '<figure class=\"right\"><img src="'+g[key]["missions"][k]["image"].src+'" alt="'+g[key]["missions"][k]["title"]+'" /><figcaption>'+g[key]["missions"][k]["title"]+'</figcaption></figure>';
-						html += '';
-						html += ul;
+						txt = txt.replace(/\%INSTRUMENTTABLE\%/,table);
+					}
+				}else if(key=="orbit"){
+					table = '';
+					for(i in this.data.orbit){
+						table += '<tr>';
+						table += '<td>'+this.phrases.options.orbit[i].label+'</td>';
+						table += '<td>'+(this.phrases.options.orbit[i].altitude ? this.phrases.options.orbit[i].altitude : '')+this.formatValue(this.data.orbit[i].altitude,0)+'</td>';
+						table += '<td>'+this.formatValue(this.data.orbit[i].period)+'</td>';
+						table += '<td>'+(this.data.orbit[i].obsfrac*100)+'%</td>';
+						table += '<td>'+this.formatValue(this.data.orbit[i].temperature)+'</td>';
+						table += '</tr>';
+						txt = txt.replace("%"+i+"ANCHOR%",'guide_orbit_'+i);
+						txt = txt.replace("%"+i+"LABEL%",this.phrases.options.orbit[i].label);
+						txt = txt.replace("%"+i+"GROUNDCOST%",this.formatValue(this.data.orbit[i].groundcost));
+						txt = txt.replace("%"+i+"FUELLIFE%",this.formatValue(this.data.orbit[i].fuellife));
+						txt = txt.replace("%"+i+"ALTITUDE%",this.formatValue(this.data.orbit[i].altitude));
+						txt = txt.replace("%"+i+"PERIOD%",this.formatValue(this.data.orbit[i].period));
+						txt = txt.replace("%"+i+"CRYOREDUCTION%",(100*(1-this.data.orbit[i].multiplier.cryo)).toFixed(0)+"%");
+					}
+					txt = txt.replace(/\%ORBITTABLE\%/,table);
+				}else if(key=="rocket"){
+					table = '';
+					for(i in this.data.rocket){
+						table += '<tr>';
+						table += '<td>'+this.phrases.options.rocket[i].label+'</td>';
+						table += '<td>'+this.formatValue(this.data.rocket[i].diameter,0)+'</td>';
+						table += '<td>'+this.formatValue(this.data.rocket[i].mass.LEO,0)+'</td>';
+						table += '<td>'+this.formatValue(this.data.rocket[i].mass.GTO,0)+'</td>';
+						table += '<td>'+this.formatValue(this.data.rocket[i].cost,0)+'</td>';
+						table += '<td>'+this.phrases.options.operator[this.data.rocket[i].operator].label+'</td>';
+						if(this.settings.mode=="advanced") table += '<td>'+(this.data.rocket[i].risk*100)+'%</td>';
+						table += '</tr>';
+					}
+					txt = txt.replace(/\%ROCKETTABLE\%/,table);
+				}else if(key=="site"){
+					table = '';
+					for(i in this.data.site){
+						table += '<tr>';
+						table += '<td>'+this.phrases.options.site[i].label+'</td>';
+						table += '<td>'+this.phrases.options.site[i].trajectories+'</td>';
+						table += '<td>';
+						var rs = '';
+						for(var r in this.data.rocket){
+							for(var s=0; s < this.data.rocket[r].sites.length; s++){
+								if(this.data.rocket[r].sites[s]==i){
+									if(rs.length > 0) rs += ', ';
+									rs += ''+this.phrases.options.rocket[r].label+''
+								}
+							}
+						}
+						table += rs;
+						table += '</td>';
+						table += '</tr>';
+					}
+					txt = txt.replace(/\%SITETABLE\%/,table);
+				}
+	
+				if(txt.indexOf('<p>') < 0) txt = '<p>'+txt+'</p>';
+				html += '<h2 id="guide_'+key+'">'+g[key].title+'</h2>'+txt+'<div class="clearall" /></div>';
+	
+				if(key=="roles"){
+					for(k in g[key]){
+						if(k != "title" && k != "about" && typeof g[key][k].title==="string"){
+							html += '<h3>'+g[key][k].title+'</h3><p>'+g[key][k].about+'</p>';
+						}
+					}
+				}else if(key=="previous"){
+					for(k in g[key]["missions"]){
+						if(typeof g[key]["missions"][k].title==="string"){
+							ul = '<ul>';
+							for(i in g[key]["missions"][k]){
+								if(i != "title" && i != "image"){
+									v = this.formatValue(g[key]["missions"][k][i]);
+									ul += '<li><span class="key">'+g[key][i]+'</span> <span class="value">'+v+'</span></li>';
+								}
+							}
+							ul += '</ul>';
+							html += '<h3 id="guide_'+key+'_'+k+'">'+g[key]["missions"][k].title+'</h3>';
+							if(g[key]["missions"][k]["image"]) html += '<figure class=\"right\"><img src="'+g[key]["missions"][k]["image"].src+'" alt="'+g[key]["missions"][k]["title"]+'" /><figcaption>'+g[key]["missions"][k]["title"]+'</figcaption></figure>';
+							html += '';
+							html += ul;
+						}
 					}
 				}
 			}
+
+			// Add closer
+			$('#guide').html('<a href="#"><img src="images/cleardot.gif" class="icon close" /></a>'+html);
+	
+			// Add events to guide close
+			$('#guide a img.close').on('click',{me:this},function(e){
+				e.data.me.toggleGuide();		
+			});
+	
+			$('#guide').show();
+			$('#intro').hide();
+	
+
 		}else{
-			html += '<h2>'+this.phrases.guide.title+'</h2><p>'+this.phrases.guide.about+'</p><ul class="index">';
-			for(k in this.phrases.guide){
-				if(k != "title" && k != "about" && typeof this.phrases.guide[k].title==="string"){
-					html += '<li><a href="#'+k+'" class="guidelink" data="'+k+'">'+this.phrases.guide[k].title+'</a><br />'+(typeof this.phrases.guide[k].summary==="string" ? this.phrases.guide[k].summary : "")+'</li>';
-				}
-			}
-			html += '</ul>'
+			this.closeGuide();		
 		}
-
-		// Add closer
-		$('#guide').html('<img src="images/cleardot.gif" class="icon close" />'+html);
-
-		// Add events to guide close
-		$('#guide img.close').on('click',{me:this},function(e){
-			e.data.me.toggleGuide();		
-		});
-
-		$('#guide').show();
-		$('#intro').hide();
 
 		return this;
 	}

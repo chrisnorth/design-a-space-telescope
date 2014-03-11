@@ -197,7 +197,16 @@ img.close { background-position: 0em -10.5em; }
 .error { color: #ff4a4a; }
 .warning { color: #ffee00; }
 
-
+.scriptonly {
+	display: none;
+}
+.noscriptmsg {
+	margin: -4em 0 2em 0;
+	padding: 0.5em 1em;
+	background-color: #fac900;
+	color: #202020;
+	text-align: center;
+}
 
 #intro, #guide {
 	width: 50em;
@@ -326,4 +335,5 @@ body.showguide #page { margin: 0em; }
 	}
 	#guide ul.index li { margin-right: 0em; width: 100%; }
 	#bar { padding: 0 0.25em; }
+	.noscriptmsg { margin-top: -2em; margin-bottom: 0; }
 }
