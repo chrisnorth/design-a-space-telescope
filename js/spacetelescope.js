@@ -476,7 +476,7 @@ if(typeof $==="undefined") $ = {};
 		}
 
 		// Add closer
-		this.addCloser($('#options'),{me:this},function(e){ e.data.me.showView(); });
+		this.addCloser($('#options'),{me:this},function(e){ console.log('click'); e.data.me.showView(); });
 
 		return this;
 	}
@@ -687,13 +687,13 @@ if(typeof $==="undefined") $ = {};
 		$('#summaryext').hide();
 
 		if(view=="guide"){
-			$('#guide').show();
+			$('#guide').show().find('a').eq(0).focus();
 			$('body').addClass('showguide');
 		}else if(view=="messages"){
 			$('#messages').show();
 			$('body').addClass('showmessages');
 		}else if(view=="options"){
-			$('#options').show();
+			$('#options').show().find('a').eq(0).focus();
 			$('body').addClass('showoptions');
 		}else if(view="intro"){
 			$('#intro').show();
@@ -959,10 +959,10 @@ if(typeof $==="undefined") $ = {};
 	//  fn - the callback function to attach to the click event
 	SpaceTelescope.prototype.addCloser = function(el,data,fn){
 
-		if(el.find('.close').length==0) el.prepend('<a href="#"><img src="images/cleardot.gif" class="icon close" /></a>');
+		if(el.find('.close').length==0) el.prepend('<a href="#" class="close"><img src="images/cleardot.gif" class="icon close" /></a>');
 
 		// Add events to guide close
-		el.find('a img.close').on('click',data,fn);
+		el.find('a img.close').parent().on('click',data,fn);
 
 		return this;
 	}
