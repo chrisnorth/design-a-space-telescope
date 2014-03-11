@@ -169,6 +169,7 @@ if(typeof $==="undefined") $ = {};
 		// Add main menu events
 		$('.baritem .save').parent().on('click',{me:this},function(e){ e.data.me.save().toggleMenus(); });
 		$('.baritem .help').parent().on('click',{me:this},function(e){ e.data.me.toggleGuide().toggleMenus(); });
+		$('.baritem .options').parent().on('click',{me:this},function(e){ e.data.me.updateOptions().showView('options').toggleMenus(); });
 		if(fullScreenApi.supportsFullScreen){
 			// Add the fullscreen toggle to the menu
 			$('#menu ul').append('<li class="baritem" data="fullscreen"><a href="#" class="fullscreenbtn"><img src="images/cleardot.gif" class="icon fullscreen" alt="full" /> <span></span></li>');
@@ -207,11 +208,10 @@ if(typeof $==="undefined") $ = {};
 	
 	// Work out where we are based on the anchor tag
 	SpaceTelescope.prototype.navigate = function(){
-
+		console.log('navigate')
 		var a = location.href.split("#")[1];
 		if(typeof a==="string"){
-			if(!(a=="guide" || a.indexOf('guide_')==0)) a = "";
-			this.showGuide(a);
+			if((a.indexOf('guide')==0 && a.length==5) || a.indexOf('guide_')==0) this.showGuide(a);
 		}
 		return this;
 	}
@@ -267,6 +267,7 @@ if(typeof $==="undefined") $ = {};
 		}
 		return this;
 	}
+
 	SpaceTelescope.prototype.setVar = function(v,t){
 		if(typeof v==="string"){
 			if(this.i && typeof this.i[v]===t) this.settings[v] = this.i[v];
@@ -446,6 +447,36 @@ if(typeof $==="undefined") $ = {};
 		//	li += '<li><h3>'+this.scenarios[i].name+'</h3><p>'+txt.replace(/%COST%/,this.formatValue(this.scenarios[i].budget))+'</p></li>'
 		}
 		$('#scenarios').html(li);
+
+		return this;
+	}
+	
+	SpaceTelescope.prototype.updateOptions = function(){
+
+		$('#options').html('<h3>'+this.phrases.ui.menu.options+'</h3><form id="optionform"><ul></ul>');
+
+		// Loop over options
+		for(var o in this.phrases.ui.options){
+		
+			html = '<li>'+this.phrases.ui.options[o]+' <select id="change'+o+'" name="'+o+'">';
+			if(o=="currency"){
+				for(var c in this.phrases.ui[o]){
+					html += '<option value="'+c+'"'+(c==this.settings.currency ? ' selected="selected"' : '')+'>'+this.phrases.ui.currency[c].symbol+' '+c+'</option>';
+				}
+			}else{
+				for(var c in this.phrases.ui.units){
+					if(this.phrases.ui.units[c].dimension==o && this.phrases.ui.units[c].selectable) html += '<option value="'+c+'"'+(c==this.settings[o] ? ' selected="selected"' : '')+'>'+this.phrases.ui.units[c].label+'</option>';
+				}			
+			}
+			html += '</select></li>'
+			$('#options ul').append(html);
+
+			// Add change events
+			$('form#optionform #change'+o).on('change',{me:this,o:o},function(e){ e.data.me.settings[e.data.o] = $(this).val(); });
+		}
+
+		// Add closer
+		this.addCloser($('#options'),{me:this},function(e){ e.data.me.showView(); });
 
 		return this;
 	}
@@ -647,24 +678,49 @@ if(typeof $==="undefined") $ = {};
 		return this;
 	}
 
+	SpaceTelescope.prototype.showView = function(view){
+
+		$('body').removeClass('showguide showintro showoptions showmessages');
+
+		// Hide everything
+		$('.view').hide();
+		$('#summaryext').hide();
+
+		if(view=="guide"){
+			$('#guide').show();
+			$('body').addClass('showguide');
+		}else if(view=="messages"){
+			$('#messages').show();
+			$('body').addClass('showmessages');
+		}else if(view=="options"){
+			$('#options').show();
+			$('body').addClass('showoptions');
+		}else if(view="intro"){
+			$('#intro').show();
+			$('body').addClass('showintro');
+		}
+
+		if(this.pushstate) history.pushState({},"Guide","#"+view);
+		return this;
+	}
+	
 	SpaceTelescope.prototype.toggleGuide = function(key){
 
-		if($('#intro').is(':visible')){
-			$('#intro').hide();
-			$('#summaryext').hide()
+		console.log('toggleGuide',key)
+
+		if(!$('#guide').is(':visible')){
+			this.showView('guide');
 			if(!key) key = "guide";
 			this.showGuide(key);
-			if(this.pushstate) history.pushState({},"Guide","#"+key);
 		}else{
-			$('#intro').show();
-			this.closeGuide();
-			if(this.pushstate) history.pushState({},"","#");
+			this.showView();
 		}
 
 		return this;
 	}
 
 	SpaceTelescope.prototype.closeGuide = function(){
+		console.log('closeGuide')
 		$('body').removeClass('showguide');
 		$('#guide').hide();
 		$('#intro').show();
@@ -672,6 +728,8 @@ if(typeof $==="undefined") $ = {};
 	}
 
 	SpaceTelescope.prototype.showGuide = function(key){
+
+		console.log('showGuide')
 
 		// Split the input by '.'
 		if(typeof key==="string"){
@@ -689,7 +747,7 @@ if(typeof $==="undefined") $ = {};
 			$('body').addClass('showguide');
 			$('#guide').show();
 
-			if($('#guide').length == 0) $('#page').append('<div id="guide"></div>')
+			if($('#guide').length == 0) $('#page').append('<div id="guide" class="view"></div>')
 
 
 			if(key=="guide"){
@@ -878,13 +936,11 @@ if(typeof $==="undefined") $ = {};
 			}
 
 			// Add closer
-			$('#guide').html('<a href="#"><img src="images/cleardot.gif" class="icon close" /></a>'+html);
-	
+			$('#guide').html(html);
+
 			// Add events to guide close
-			$('#guide a img.close').on('click',{me:this},function(e){
-				e.data.me.toggleGuide();		
-			});
-	
+			this.addCloser($('#guide'),{me:this},function(e){ e.data.me.toggleGuide(); });
+
 			$('#guide').show();
 			$('#intro').hide();
 	
@@ -896,6 +952,21 @@ if(typeof $==="undefined") $ = {};
 		return this;
 	}
 
+	// Add a close button to the element
+	// Inputs:
+	//  el - jQuery DOM element
+	//  data - the data to send to the click event
+	//  fn - the callback function to attach to the click event
+	SpaceTelescope.prototype.addCloser = function(el,data,fn){
+
+		if(el.find('.close').length==0) el.prepend('<a href="#"><img src="images/cleardot.gif" class="icon close" /></a>');
+
+		// Add events to guide close
+		el.find('a img.close').on('click',data,fn);
+
+		return this;
+	}
+	
 	// Attempt to save a file
 	// Blob() requires browser >= Chrome 20, Firefox 13, IE 10, Opera 12.10 or Safari 6
 	SpaceTelescope.prototype.save = function(){

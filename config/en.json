@@ -11,22 +11,22 @@
 		"million": { "full": " million", "compact": "m" },
 		"billion": { "full": " billion", "compact": "Bn" },
 		"units": {
-			"km": { "unit": " km" },
-			"m": { "unit": " m" },
-			"mm": { "unit": " mm" },
-			"ft": { "unit": " ft" },
-			"mile": { "unit": " miles" },
-			"t": { "unit": " t" },
-			"K": { "unit": " K" },
-			"C": { "unit": "&deg;C" },
-			"F": { "unit": "&deg;F" },
-			"kg": { "unit": " kg" },
-			"lb": { "unit": " lb" },
-			"years": { "unit": " yrs" },
-			"months": { "unit": " months" },
-			"days": { "unit": " days" },
-			"hours": { "unit": " hours" },
-			"minutes": { "unit": " minutes" }
+			"km": { "unit": " km", "label": "Kilometres", "dimension": "length" },
+			"m": { "unit": " m", "label": "Metres", "dimension": "length", "selectable": 1 },
+			"mm": { "unit": " mm", "label": "Millimetres", "dimension": "length" },
+			"ft": { "unit": " ft", "label": "Feet", "dimension": "length", "selectable": 1 },
+			"mile": { "unit": " miles", "label": "Miles", "dimension": "length" },
+			"K": { "unit": " K", "label": "Kelvin", "dimension": "temperature", "selectable": 1 },
+			"C": { "unit": "&deg;C", "label": "Celcius", "dimension": "temperature", "selectable": 1 },
+			"F": { "unit": "&deg;F", "label": "Farenheit", "dimension": "temperature", "selectable": 1 },
+			"kg": { "unit": " kg", "label": "Kilograms", "dimension": "mass", "selectable": 1 },
+			"lb": { "unit": " lb", "label": "Pounds", "dimension": "mass", "selectable": 1 },
+			"t": { "unit": " t", "label": "Metric tonnes", "dimension": "mass" },
+			"years": { "unit": " yrs", "label": "Years", "dimension": "time" },
+			"months": { "unit": " months", "label": "Months", "dimension": "time" },
+			"days": { "unit": " days", "label": "Days", "dimension": "time" },
+			"hours": { "unit": " hours", "label": "Hours", "dimension": "time" },
+			"minutes": { "unit": " minutes", "label": "Minutes", "dimension": "time" }
 		},
 		"currency": {
 			"GBP": { "symbol": "&pound;" },
@@ -47,9 +47,15 @@
 			"load": "Load file",
 			"save": "Save file",
 			"help": "Guide",
-			"config": "Options",
+			"options": "Options",
 			"restart": "Change scenario",
 			"fullscreen": "Toggle fullscreen"
+		},
+		"options": {
+			"currency": "Currency:",
+			"temperature": "Temperature units:",
+			"length": "Length units:",
+			"mass": "Mass units:"
 		},
 		"summary": {
 			"success": {
