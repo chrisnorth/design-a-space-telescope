@@ -347,6 +347,18 @@ if(typeof $==="undefined") $ = {};
 		this.updateLanguage();
 		$('#language.dropdown').hide()
 		
+		// Is this the first time we've called this function since page load?
+		if(!this.loaded){
+			// Executed on page load with URL containing an anchor tag.
+			var anchor = location.href.split("#")[1];
+			var a = anchor.split('.');
+			if(typeof anchor==="string" && this.phrases.guide[a[0]]){
+				this.toggleGuide(a[0]);
+				if($('#'+anchor).length > 0) $('html,body').animate({ scrollTop: $('#'+anchor).offset().top },250);
+			}
+			this.loaded = true;
+		}
+		
 		return this;
 	}
 
@@ -548,6 +560,8 @@ if(typeof $==="undefined") $ = {};
 	//  v - the { "value": 1, "units": "m", "dimension": "length" } object
 	//  p - the number of decimal places to show in the output
 	SpaceTelescope.prototype.formatCurrency = function(v,p){
+		// Make a copy of the original so that we don't overwrite it
+		v=JSON.parse(JSON.stringify(v));
 		v = this.convertValue(v,(this.settings.currency) ? this.settings.currency : "GBP")
 		if(typeof p==="string") p = parseInt(p,10);
 		if(typeof p!=="number") p = 0;
@@ -610,6 +624,7 @@ if(typeof $==="undefined") $ = {};
 	}
 
 	SpaceTelescope.prototype.toggleGuide = function(key){
+
 		if($('#intro').is(':visible')){
 			$('#intro').hide();
 			this.showGuide(key);
@@ -638,6 +653,7 @@ if(typeof $==="undefined") $ = {};
 		if($('#guide').length == 0) $('#page').append('<div id="guide"></div>')
 
 		if(key){
+
 			html += '<div class="guidetop"><span class="breadcrumb"><a href="#guide" class="guidelink" data="">'+g.title+'</a> &raquo; '+g[key].title+'</span></div>'
 
 			txt = g[key].about;
@@ -736,6 +752,7 @@ if(typeof $==="undefined") $ = {};
 					table += '<td>'+(this.data.orbit[i].obsfrac*100)+'%</td>';
 					table += '<td>'+this.formatValue(this.data.orbit[i].temperature)+'</td>';
 					table += '</tr>';
+					txt = txt.replace("%"+i+"ANCHOR%",'orbit.'+i);
 					txt = txt.replace("%"+i+"LABEL%",this.phrases.options.orbit[i].label);
 					txt = txt.replace("%"+i+"GROUNDCOST%",this.formatValue(this.data.orbit[i].groundcost));
 					txt = txt.replace("%"+i+"FUELLIFE%",this.formatValue(this.data.orbit[i].fuellife));
@@ -801,7 +818,7 @@ if(typeof $==="undefined") $ = {};
 							}
 						}
 						ul += '</ul>';
-						html += '<h3 id="'+k+'">'+g[key]["missions"][k].title+'</h3>';
+						html += '<h3 id="'+key+'.'+k+'">'+g[key]["missions"][k].title+'</h3>';
 						if(g[key]["missions"][k]["image"]) html += '<figure class=\"right\"><img src="'+g[key]["missions"][k]["image"].src+'" alt="'+g[key]["missions"][k]["title"]+'" /><figcaption>'+g[key]["missions"][k]["title"]+'</figcaption></figure>';
 						html += '';
 						html += ul;
