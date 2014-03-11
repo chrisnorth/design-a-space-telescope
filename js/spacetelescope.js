@@ -112,6 +112,9 @@ if(typeof $==="undefined") $ = {};
 		this.dataurl = "config/options%MODE%.json";
 		this.scenariourl = "config/scenarios_%LANG%%MODE%.json";
 		
+		// Allow keyboard events
+		this.keys = new Array();
+		
 		this.settings = { 'length': 'm', 'currency': 'GBP', 'temperature':'K', 'mass':'kg', 'time': 'years', 'usecookies': false, 'mode': 'normal' };
 
 		this.init(inp);
@@ -171,7 +174,56 @@ if(typeof $==="undefined") $ = {};
 			e.data.me.showGuide($(this).attr('data'));
 		});
 
+		// Attach event to keypresses
+		$(document).bind('keypress',{me:this},function(e){
+			if(!e) e = window.event;
+			var code = e.keyCode || e.charCode || e.which || 0;
+			e.data.me.keypress(code,e);
+		});
 
+		// Attach specific keypress events
+		this.registerKey('h',function(){ this.toggleGuide() });
+
+		return this;
+	}
+
+	// Process keypress events
+	SpaceTelescope.prototype.keypress = function(charCode,event){
+		if(!event) event = { altKey: false };
+		for(var i = 0 ; i < this.keys.length ; i++){
+			if(this.keys[i].charCode == charCode && event.altKey == this.keys[i].altKey){
+				this.keys[i].fn.call(this,{event:event});
+				break;
+			}
+		}
+	}
+	// Register keyboard commands and associated functions
+	SpaceTelescope.prototype.registerKey = function(charCode,fn,txt){
+		if(typeof fn!="function") return this;
+		if(typeof charCode!="object") charCode = [charCode];
+		var aok, ch, c, i, alt, str;
+		for(c = 0 ; c < charCode.length ; c++){
+			alt = false;
+			if(typeof charCode[c]=="string"){
+				if(charCode[c].indexOf('alt')==0){
+					str = charCode[c];
+					alt = true;
+					charCode[c] = charCode[c].substring(4);
+				}else str = charCode[c];
+				ch = charCode[c].charCodeAt(0);
+			}else{
+				ch = charCode[c];
+				if(ch==37) str = "&larr;";
+				else if(ch==32) str = "space";
+				else if(ch==38) str = "up";
+				else if(ch==39) str = "&rarr;";
+				else if(ch==40) str = "down";
+				else str = String.fromCharCode(ch);
+			}
+			aok = true;
+			for(i = 0 ; i < this.keys.length ; i++){ if(this.keys.charCode == ch && this.keys.altKey == alt) aok = false; }
+			if(aok) this.keys.push({'str':str,'charCode':ch,'char':String.fromCharCode(ch),'fn':fn,'txt':txt,'altKey':alt});
+		}
 		return this;
 	}
 
@@ -355,7 +407,7 @@ if(typeof $==="undefined") $ = {};
 		var txt = '';
 		for(var i = 0; i < this.scenarios.length; i++){
 			txt = (typeof this.scenarios[i].description==="string") ? this.scenarios[i].description : "";
-			li += '<li><h3>'+this.scenarios[i].name+'</h3><p>'+txt.replace(/%COST%/,this.formatValue(this.scenarios[i].budget))+'</p></li>'
+		//	li += '<li><h3>'+this.scenarios[i].name+'</h3><p>'+txt.replace(/%COST%/,this.formatValue(this.scenarios[i].budget))+'</p></li>'
 		}
 		$('#scenarios').html(li);
 
@@ -561,15 +613,23 @@ if(typeof $==="undefined") $ = {};
 		if($('#intro').is(':visible')){
 			$('#intro').hide();
 			this.showGuide(key);
-			$('#guide').show();
 		}else{
-			$('#guide').hide();
 			$('#intro').show();
+			this.closeGuide();
 		}
 		return this;
 	}
 
+	SpaceTelescope.prototype.closeGuide = function(){
+		$('body').removeClass('showguide');
+		$('#guide').hide();
+		return this;
+	}
+
 	SpaceTelescope.prototype.showGuide = function(key){
+
+		$('body').addClass('showguide');
+		$('#guide').show();
 
 		var html = "";
 		var g = this.phrases.guide;
@@ -578,7 +638,7 @@ if(typeof $==="undefined") $ = {};
 		if($('#guide').length == 0) $('#page').append('<div id="guide"></div>')
 
 		if(key){
-			html += '<div id="'+key+'"></div><p class="breadcrumb"><a href="#guide" class="guidelink" data="">'+g.title+'</a> &raquo; '+g[key].title+'</p>'
+			html += '<div class="guidetop"><span class="breadcrumb"><a href="#guide" class="guidelink" data="">'+g.title+'</a> &raquo; '+g[key].title+'</span></div>'
 
 			txt = g[key].about;
 			if(key=="mirror"){
@@ -722,7 +782,7 @@ if(typeof $==="undefined") $ = {};
 			}
 
 			if(txt.indexOf('<p>') < 0) txt = '<p>'+txt+'</p>';
-			html += '<h2>'+g[key].title+'</h2>'+txt+'<div class="clearall" /></div>';
+			html += '<h2 id="'+key+'">'+g[key].title+'</h2>'+txt+'<div class="clearall" /></div>';
 
 			if(key=="roles"){
 				for(k in g[key]){
