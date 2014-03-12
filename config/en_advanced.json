@@ -51,6 +51,12 @@
 			"restart": "Change scenario",
 			"fullscreen": "Toggle fullscreen"
 		},
+		"options": {
+			"currency": "Currency:",
+			"temperature": "Temperature units:",
+			"length": "Length units:",
+			"mass": "Mass units:"
+		},
 		"summary": {
 			"success": {
 				"title": "Probability of success",
