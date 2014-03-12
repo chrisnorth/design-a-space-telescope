@@ -104,9 +104,10 @@
 					</div>
 				</li><li>
 					<div class="padded">
-						<h3 class="cost"><img src="images/cleardot.gif" class="icon cost" /> Budget <span class="value">&pound;0m</span></h3>
+						<h3 class="cost"><img src="images/cleardot.gif" class="icon cost" /> Funds available <span class="value">&pound;1.7Bn</span></h3>
 						<ul class="summary">
-							<li>Development (total): <span class="value cost">&pound;0m</span>
+							<li>Initial funding: <span class="value cost">&pound;2Bn</span></li>
+							<li>Development (total): <span class="value cost">&pound;200m</span>
 								<ul>
 									<li>Satellite structure: <span class="value cost">&pound;0m</span></li>
 									<li>Mirror: <span class="value cost">&pound;0m</span></li>
@@ -114,13 +115,13 @@
 									<li>Instruments: <span class="value cost">&pound;0m</span></li>
 								</ul>
 							</li>
-							<li>Operations (total): <span class="value cost">&pound;0m</span>
+							<li>Operations (total): <span class="value cost">&pound;100m</span>
 								<ul>
 									<li>Launch: <span class="value cost">&pound;0m</span></li>
 									<li>Ground control (per year): <span class="value cost">&pound;0m</span></li>
 								</ul>
 							</li>
-							<li>Total: <span class="value cost">&pound;0m</span></li>
+							<li>Total costs: <span class="value cost">&pound;300m</span></li>
 						</ul>
 					</div>
 				</li><li>
@@ -156,8 +157,16 @@
 			<div id="intro" class="view">
 				<h1>Space Telescope Designer</h1>
 				<div id="introduction">
-				<p>Designing a space telescope is an incredibly complex job, with many requirements that must be met. Some of these are because of the scientific discoveries that the astronomers would like to make, while others are  due to limits that the engineers put on the spacecraft. Beginning in the 1990s, astronomers and engineers  around the world were busy designing the Herschel Space Observatory. This project will help you explore  the kinds of decisions they had to make.</p>
-				<p>Your task is to design a space observatory. You will have to make a number of  decisions about what your space telescope will look like. If you are in a group, you could use a number of  roles, but you will need to work together for a final solution</p>
+<!--#if expr="${HTTP_ACCEPT_LANGUAGE} = /^en-GB/"-->
+<!--#include file="fragments/intro_en-GB.html" -->
+<!--#elif expr="${HTTP_ACCEPT_LANGUAGE} = /^en/"-->
+<!--#include file="fragments/intro_en.html" -->
+<!--#elif expr="${HTTP_ACCEPT_LANGUAGE} = /^cy/"-->
+<!--#include file="fragments/intro_cy.html" -->
+<!--#elif expr="${HTTP_ACCEPT_LANGUAGE} = /^he/"-->
+<!--#include file="fragments/intro_he.html" -->
+<!--#else -->
+<!--#endif -->
 				</div>
 				<h2>Choose a scenario</h2>
 				<ul id="scenarios">

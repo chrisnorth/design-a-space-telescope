@@ -16,10 +16,20 @@
 			"name": "Multi-wavelength Sky Mapper",
 			"description": "A government research grant has come through to take images of the sky in ultraviolet, visible and near‐IR wavelengths from a satellite in space, in order to map stars, galaxies and other yet to be discovered phenomena. The budget of your mission is <span class=\"cost\">%COST%</span>.",
 			"budget": { "value": 800, "units": "GBP", "dimension": "currency" },
-			"requires": [
+			"science": [
 				{ "instrument": "camera", "wavelength": "uv" },
 				{ "instrument": "camera", "wavelength": "optical" },
 				{ "instrument": "camera", "wavelength": "nearir" },
+			],
+			"requires": [
+				{
+					"science": [
+						{ "instrument": "camera", "wavelength": "uv" },
+						{ "instrument": "camera", "wavelength": "optical" },
+						{ "instrument": "camera", "wavelength": "nearir" }
+					],
+					"target": ""
+				},
 				{ "mirror": 0.5 }
 			]
 		},{

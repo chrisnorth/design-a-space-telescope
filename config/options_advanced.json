@@ -46,9 +46,9 @@
 		"PTK": { "LEO": 0, "operator": "roscosmos", "risk": 0.95, "latitude": 62.70889, "longitude": 40.29389 },
 		"KSC": { "LEO": 1, "operator": "nasa", "risk": 0.98, "latitude": 28.524058, "longitude": -80.65085 },
 		"VDB": { "LEO": 0, "operator": "nasa", "risk": 0.98, "latitude": 34.73278, "longitude": -120.56806 },
-		"XCH": { "LEO": 1, "operator": "cnsa", "risk": 0.9, "latitude": 28.2460167, "longitude": 102.0265556 },
+		"XCH": { "LEO": 1, "operator": "cnsa", "risk": 0.90, "latitude": 28.2460167, "longitude": 102.0265556 },
 		"TNG": { "LEO": 1, "operator": "jaxa", "risk": 0.98, "latitude": 30.40000, "longitude": 130.97000 },
-		"SDH": { "LEO": 1, "operator": "isro", "risk": 0.0, "latitude": 13.7199389, "longitude": 80.2304250 },
+		"SDH": { "LEO": 1, "operator": "isro", "risk": 0.90, "latitude": 13.7199389, "longitude": 80.2304250 },
 		"AIR": { "LEO": 0, "operator": "orbital", "risk": 0.98 }
 	},
 	"operator": {
