@@ -90,8 +90,25 @@ strong { font-weight: bold; }
 	padding: 0em;
 	border-bottom: 1px solid rgba(255,255,255,0.8);
 	box-shadow: 0.1em 0.2em 0.25em rgba(0,0,0,0.3);
+	background-color: #101010;
+	background-image:-moz-linear-gradient(top,#101010,#202020);
+	background-image:-webkit-gradient(linear,0 0,0 100%,from(#101010),to(#202020));
+	background-image:-webkit-linear-gradient(top,#101010,#202020);
+	background-image:-o-linear-gradient(top,#101010,#202020);
+	background-image:linear-gradient(to bottom,#101010,#202020);
+	background-repeat:repeat-x;
 }
 #bar, .dropdown { background-color: rgba(0,0,0,0.85); }
+.dropdown {
+	box-shadow: 0.1em 0.2em 0.25em rgba(0,0,0,0.3);
+	background-color: #202020;
+	background-image:-moz-linear-gradient(top,#202020,#101010);
+	background-image:-webkit-gradient(linear,0 0,0 100%,from(#202020),to(#101010));
+	background-image:-webkit-linear-gradient(top,#202020,#101010);
+	background-image:-o-linear-gradient(top,#202020,#101010);
+	background-image:linear-gradient(to bottom,#202020,#101010);
+	background-repeat:repeat-x;
+}
 .barmenu { float: right; }
 .rtl .barmenu { float: left; }
 .baritem { display: inline-block; }
@@ -199,6 +216,14 @@ img.close { background-position: 0em -10.5em; }
 .error { color: #ff4a4a; }
 .warning { color: #ffee00; }
 
+/*
+a.toggletime:hover { padding-bottom: 0.3em; border-bottom: 0.2em solid #fac900; }
+a.togglesuccess:hover { padding-bottom: 0.3em; border-bottom: 0.2em solid #f6f6f6; }
+a.togglecost:hover { padding-bottom: 0.3em; border-bottom: 0.2em solid #76e300; }
+a.togglemass:hover { padding-bottom: 0.3em; border-bottom: 0.2em solid #e0caff; }
+a.togglescience:hover { padding-bottom: 0.3em; border-bottom: 0.2em solid #69dfff; }
+*/
+
 .scriptonly {
 	display: none;
 }
@@ -282,19 +307,10 @@ body.showguide #page { margin: 0em; }
 #guide table th a { color: #66aada; }
 #guide .tablewrapper { max-width: 100%; overflow: hidden; overflow-x: auto; margin-bottom: 1em; }
 #guide .tablewrapper table { margin-bottom: 0; }
-
-#guide blockquote {
-	text-align: center;
-	margin: 1em auto;
-}
+#guide blockquote { text-align: center; margin: 1em auto; }
 #guide h3 { clear: both; margin-top: 1em; }
 #guide .key { font-weight: bold; }
-#guide figure {
-	text-align: center;
-	width: 290px;
-	max-width: 100%;
-	margin: auto;
-}
+#guide figure { text-align: center; width: 290px; max-width: 100%; margin: auto; }
 #guide figure.fullwidth, #guide .fullwidth figure { width: 100%; }
 #guide figure img { width: 100%; }
 #guide figure.right { float: right; margin: 0 0 1em 1em; }
@@ -302,6 +318,8 @@ body.showguide #page { margin: 0em; }
 #guide figure.four figure { float: left; width: 23%; width: -webkit-calc(25% - 0.75em); width: calc(25% - 0.75em); margin-right: 1em; }
 #guide figure.four figure:last-child { margin-right: 0; }
 #guide figure figcaption { font-size: 0.8em; }
+#guide ol li { list-style-type: decimal; margin-left: 1.5em; }
+#guide .equation { margin:auto; text-align: center; }
 .clearall { clear: both; }
 
 

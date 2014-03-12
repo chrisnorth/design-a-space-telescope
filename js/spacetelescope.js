@@ -254,7 +254,7 @@ if(typeof $==="undefined") $ = {};
 	}
 
 	SpaceTelescope.prototype.toggleMenus = function(id){
-console.log('toggleMenus',id)
+
 		var m = $('.dropdown');
 		for(var i = 0; i < m.length ; i++){
 			if($(m[i]).attr('id') == id){
@@ -595,6 +595,7 @@ console.log('toggleMenus',id)
 		if(typeof p==="string") p = parseInt(p,10);
 		if(typeof p!=="number") p = (v.units=="km" ? 0 : 1);
 		var unit = (this.phrases.ui.units[v.units]) ? this.phrases.ui.units[v.units].unit : "";
+		if(v.value > 1e15) return powerOfTen(v.value,unit);
 		return ''+addCommas((v.value).toFixed(p))+''+unit;
 	}
 
@@ -606,7 +607,8 @@ console.log('toggleMenus',id)
 		if(typeof p==="string") p = parseInt(p,10);
 		var unit = (this.phrases.ui.units[v.units]) ? this.phrases.ui.units[v.units].unit : "";
 		if(typeof p!=="number") p = (v.value > 1000) ? 0 : 1;
-		return ''+addCommas((v.value).toFixed(p))+''+unit;
+		if(v.value > 1e15) return powerOfTen(v.value,unit);
+		else return ''+addCommas((v.value).toFixed(p))+''+unit;
 	}
 
 	// Inputs:
@@ -659,6 +661,13 @@ console.log('toggleMenus',id)
 		return ''+addCommas((v.value).toFixed(p))+''+unit;
 	}
 
+	// Display really large numbers as powers of ten
+	function powerOfTen(v,u){
+		var p = Math.floor(Math.log10(v));
+		var a = Math.round(v/Math.pow(10,p))
+		return ''+a+'&times;10<sup>'+p+'</sup>'+u;
+	}
+	
 	SpaceTelescope.prototype.toggleFullScreen = function(){
 		// Get the container
 		this.elem = document.getElementById("application");
@@ -751,7 +760,7 @@ console.log('toggleMenus',id)
 
 		var html = "";
 		var g = this.phrases.guide;
-		var v,ul,table,txt;
+		var v,ul,table,txt,q;
 
 
 		if(key){
@@ -872,6 +881,9 @@ console.log('toggleMenus',id)
 						table += '<td>'+(this.data.orbit[i].obsfrac*100)+'%</td>';
 						table += '<td>'+this.formatValue(this.data.orbit[i].temperature)+'</td>';
 						table += '</tr>';
+					}
+					txt = txt.replace("%ORBITTABLE%",table);
+					for(i in this.data.orbit){
 						txt = txt.replace("%"+i+"ANCHOR%",'guide_orbit_'+i);
 						txt = txt.replace("%"+i+"LABEL%",this.phrases.options.orbit[i].label);
 						txt = txt.replace("%"+i+"GROUNDCOST%",this.formatValue(this.data.orbit[i].groundcost));
@@ -880,7 +892,6 @@ console.log('toggleMenus',id)
 						txt = txt.replace("%"+i+"PERIOD%",this.formatValue(this.data.orbit[i].period));
 						txt = txt.replace("%"+i+"CRYOREDUCTION%",(100*(1-this.data.orbit[i].multiplier.cryo)).toFixed(0)+"%");
 					}
-					txt = txt.replace(/\%ORBITTABLE\%/,table);
 				}else if(key=="rocket"){
 					table = '';
 					for(i in this.data.rocket){
@@ -918,7 +929,11 @@ console.log('toggleMenus',id)
 					txt = txt.replace(/\%SITETABLE\%/,table);
 				}
 	
+				// Wrap in a paragraph tag if it isn't already
 				if(txt.indexOf('<p>') < 0) txt = '<p>'+txt+'</p>';
+
+				// Add any questions
+
 				html += '<h2 id="guide_'+key+'">'+g[key].title+'</h2>'+txt+'<div class="clearall" /></div>';
 	
 				if(key=="roles"){
@@ -947,8 +962,19 @@ console.log('toggleMenus',id)
 				}
 			}
 
+			if(g[key] && g[key].questions){
+				q = '<h3 id="guide_'+key+'_questions">Questions</h3><ol>';
+				for(i = 0; i < g[key].questions.length; i++){
+					q += '<li>'+g[key].questions[i].label.replace('%EARTHRADIUS%',this.formatValue({value:6500,units:'km',dimension:'length'})).replace('%EARTHMASS%',this.formatValue({value:6e24,units:'kg',dimension:'mass'}))+'</li>'
+				}
+				q += '</ol>';
+				html += q;
+			}
+
 			// Add closer
 			$('#guide').html(html);
+
+			if(html.indexOf('script')>= 0 && MathJax) MathJax.Hub.Queue(["Typeset",MathJax.Hub,'guide']);
 
 			// Add events to guide close
 			this.addCloser($('#guide'),{me:this},function(e){ e.data.me.toggleGuide(); });
