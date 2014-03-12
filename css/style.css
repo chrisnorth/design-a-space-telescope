@@ -179,8 +179,8 @@ img.icon {
 .dropdown.fullwidth ul.summary li ul { margin-top: 0.25em; }
 .dropdown.fullwidth ul.summary li ul li { padding: 0.25em 0 0.25em 1.5em; }
 .dropdown.fullwidth ul.summary li ul li:last-child { padding-bottom: 0; }
-.dropdown.fullwidth .value { float: right; font-weight: bold; }
-.dropdown.fullwidth ul.summary ul .value { font-weight: 200; }
+.dropdown.fullwidth .value { float: right; }
+.dropdown.fullwidth ul.summary ul .value { color: inherit; }
 
 #options li { margin-top: 1em; }
 #options li select { float: right; }
