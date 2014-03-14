@@ -2,7 +2,7 @@
 	"scenarios": [
 		{
 			"name": "Star Birth and Evolution",
-			"description": "A private organization has funded your group to research into the birth and evolution of stars the distant and nearby Universe, with full analysis of the spectra of the event. The budget of your mission is <span class=\"cost\">%COST%</span>. You will need the appropriate instruments on board your satellite in order to observe such objects.",
+			"description": "A private organization has funded your group to research into the birth and evolution of stars in the distant and nearby Universe, with full analysis of the spectra of the event. The budget of your mission is <span class=\"cost\">%COST%</span>. You will need the appropriate instruments on board your satellite in order to observe such objects.",
 			"budget": { "value": 2000, "units": "GBP", "dimension": "currency" },
 			"requires": [
 				{ "instrument": "camera", "wavelength": "farir" },
@@ -16,21 +16,17 @@
 			"name": "Multi-wavelength Sky Mapper",
 			"description": "A government research grant has come through to take images of the sky in ultraviolet, visible and near‐IR wavelengths from a satellite in space, in order to map stars, galaxies and other yet to be discovered phenomena. The budget of your mission is <span class=\"cost\">%COST%</span>.",
 			"budget": { "value": 800, "units": "GBP", "dimension": "currency" },
-			"science": [
-				{ "instrument": "camera", "wavelength": "uv" },
-				{ "instrument": "camera", "wavelength": "optical" },
-				{ "instrument": "camera", "wavelength": "nearir" },
-			],
 			"requires": [
 				{
-					"science": [
-						{ "instrument": "camera", "wavelength": "uv" },
-						{ "instrument": "camera", "wavelength": "optical" },
-						{ "instrument": "camera", "wavelength": "nearir" }
+					"instruments": [
+						{ "instrument": "camera", "wavelength": "uv", "label": "A UV camera", "error": "You don't have a UV camera" },
+						{ "instrument": "camera", "wavelength": "optical", "label": "A optical camera", "error": "You don't have an optical camera" },
+						{ "instrument": "camera", "wavelength": "nearir", "label": "A nearir camera", "error": "You can't observe warm dust" }
 					],
-					"target": ""
+					"label": "You need wavelength coverage from UV to Near IR",
+					"error": "You are not able to observe the required wavelengths"
 				},
-				{ "mirror": 0.5 }
+				{ "mirror": 0.5, "label": "You need a mirror", "error": "You have not selected a mirror" }
 			]
 		},{
 			"name": "Interstellar Dust",

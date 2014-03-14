@@ -69,8 +69,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="5.6568545"
-     inkscape:cx="54.756576"
-     inkscape:cy="17.738167"
+     inkscape:cx="23.467102"
+     inkscape:cy="51.492959"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -104,7 +104,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -434,21 +434,6 @@
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="ccsscscscccccccccscsccccccsscscssssssssssssssssssss" />
     <path
-       style="fill:#f6f6f6;fill-opacity:1;stroke:none"
-       d="m 24.5,1103.8622 c -0.552285,0 -1,0.4477 -1,1 0,0.5523 0.447715,1 1,1 0.552285,0 1,-0.4477 1,-1 0,-0.5523 -0.447715,-1 -1,-1 z"
-       id="path4506"
-       inkscape:connector-curvature="0" />
-    <path
-       style="fill:#f6f6f6;fill-opacity:1;stroke:none"
-       d="m 20.5,1107.8622 c -0.552285,0 -1,0.4477 -1,1 0,0.5523 0.447715,1 1,1 0.552285,0 1,-0.4477 1,-1 0,-0.5523 -0.447715,-1 -1,-1 z"
-       id="path4504"
-       inkscape:connector-curvature="0" />
-    <path
-       style="fill:#f6f6f6;fill-opacity:1;stroke:none"
-       d="m 23.5,1110.8622 c -0.552285,0 -1,0.4477 -1,1 0,0.5523 0.447715,1 1,1 0.552285,0 1,-0.4477 1,-1 0,-0.5523 -0.447715,-1 -1,-1 z"
-       id="rect4430"
-       inkscape:connector-curvature="0" />
-    <path
        sodipodi:nodetypes="zzzzz"
        inkscape:connector-curvature="0"
        id="path4474"
@@ -537,31 +522,10 @@
        style="fill:#f6f6f6;fill-opacity:1;stroke:none"
        inkscape:connector-curvature="0" />
     <path
-       id="path3920"
-       d="m 19,1106.3622 c -0.5,0 -1,0.5 -1,1 l 0,6 c 0,0.5 0.5,1 1,1 l 6,0 c 0.5,0 1,-0.5 1,-1 l 0,-6 c 0,-0.5 -0.5,-1 -1,-1 z m 0.5,1 5,0 c 0.335756,0 0.5,0.173 0.5,0.5 l 0,5 c 0,0.327 -0.164243,0.5 -0.5,0.5 l -5,0 c -0.335778,0 -0.621214,-0.2708 -0.613636,-0.5977 L 19,1107.8622 c 0.0076,-0.3269 0.164243,-0.5 0.5,-0.5 z"
-       style="fill:#f6f6f6;fill-opacity:1;stroke:none"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="ssssssssssssssssss" />
-    <path
-       style="fill:#f6f6f6;fill-opacity:1;stroke:none"
-       d="M 23 66 C 22.5 66 22 66.5 22 67 L 22 70 L 22.9375 70 L 23 67.5 C 23.0076 67.1731 23.164243 67 23.5 67 L 28.5 67 C 28.835756 67 29 67.173 29 67.5 L 29 72.5 C 29 72.827 28.835757 73 28.5 73 L 26 73 L 26 74 L 29 74 C 29.5 74 30 73.5 30 73 L 30 67 C 30 66.5 29.5 66 29 66 L 23 66 z "
+       style="fill:#ffffff;fill-opacity:1;stroke:none"
+       d="M 23 66 C 22.5 66 22 66.5 22 67 L 22 70 L 19 70 C 18.5 70 18 70.5 18 71 L 18 77 C 18 77.5 18.5 78 19 78 L 25 78 C 25.5 78 26 77.5 26 77 L 26 74 L 29 74 C 29.5 74 30 73.5 30 73 L 30 67 C 30 66.5 29.5 66 29 66 L 23 66 z M 23.5 67 L 28.5 67 C 28.835756 67 29 67.173 29 67.5 L 29 72.5 C 29 72.827 28.835757 73 28.5 73 L 26 73 L 26 71 C 26 70.5 25.5 70 25 70 L 22.9375 70 L 23 67.5 C 23.0076 67.1731 23.164243 67 23.5 67 z M 24.5 67.5 C 23.947715 67.5 23.5 67.9477 23.5 68.5 C 23.5 69.0523 23.947715 69.5 24.5 69.5 C 25.052285 69.5 25.5 69.0523 25.5 68.5 C 25.5 67.9477 25.052285 67.5 24.5 67.5 z M 27.5 67.5 C 26.947715 67.5 26.5 67.9477 26.5 68.5 C 26.5 69.0523 26.947715 69.5 27.5 69.5 C 28.052285 69.5 28.5 69.0523 28.5 68.5 C 28.5 67.9477 28.052285 67.5 27.5 67.5 z M 27.5 70.5 C 26.947715 70.5 26.5 70.9477 26.5 71.5 C 26.5 72.0523 26.947715 72.5 27.5 72.5 C 28.052285 72.5 28.5 72.0523 28.5 71.5 C 28.5 70.9477 28.052285 70.5 27.5 70.5 z M 19.5 71 L 24.5 71 C 24.835756 71 25 71.173 25 71.5 L 25 76.5 C 25 76.827 24.835757 77 24.5 77 L 19.5 77 C 19.164222 77 18.867422 76.73315 18.875 76.40625 L 19 71.5 C 19.0076 71.1731 19.164243 71 19.5 71 z M 20.5 71.5 C 19.947715 71.5 19.5 71.9477 19.5 72.5 C 19.5 73.0523 19.947715 73.5 20.5 73.5 C 21.052285 73.5 21.5 73.0523 21.5 72.5 C 21.5 71.9477 21.052285 71.5 20.5 71.5 z M 22 73 C 21.447715 73 21 73.4477 21 74 C 21 74.5523 21.447715 75 22 75 C 22.552285 75 23 74.5523 23 74 C 23 73.4477 22.552285 73 22 73 z M 23.5 74.5 C 22.947715 74.5 22.5 74.9477 22.5 75.5 C 22.5 76.0523 22.947715 76.5 23.5 76.5 C 24.052285 76.5 24.5 76.0523 24.5 75.5 C 24.5 74.9477 24.052285 74.5 23.5 74.5 z "
        transform="translate(0,1036.3622)"
-       id="path3924" />
-    <path
-       inkscape:connector-curvature="0"
-       id="path3929"
-       d="m 27.5,1103.8622 c -0.552285,0 -1,0.4477 -1,1 0,0.5523 0.447715,1 1,1 0.552285,0 1,-0.4477 1,-1 0,-0.5523 -0.447715,-1 -1,-1 z"
-       style="fill:#f6f6f6;fill-opacity:1;stroke:none" />
-    <path
-       style="fill:#f6f6f6;fill-opacity:1;stroke:none"
-       d="m 27.5,1106.8622 c -0.552285,0 -1,0.4477 -1,1 0,0.5523 0.447715,1 1,1 0.552285,0 1,-0.4477 1,-1 0,-0.5523 -0.447715,-1 -1,-1 z"
-       id="path3931"
-       inkscape:connector-curvature="0" />
-    <path
-       inkscape:connector-curvature="0"
-       id="path3933"
-       d="m 22,1109.3622 c -0.552285,0 -1,0.4477 -1,1 0,0.5523 0.447715,1 1,1 0.552285,0 1,-0.4477 1,-1 0,-0.5523 -0.447715,-1 -1,-1 z"
-       style="fill:#f6f6f6;fill-opacity:1;stroke:none" />
+       id="path4506" />
     <path
        sodipodi:nodetypes="ccccccccccccc"
        inkscape:connector-curvature="0"

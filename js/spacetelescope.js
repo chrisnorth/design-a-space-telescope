@@ -169,7 +169,7 @@ if(typeof $==="undefined") $ = {};
 		// Add main menu events
 		$('.baritem .save').parent().on('click',{me:this},function(e){ e.data.me.save().toggleMenus(); });
 		$('.baritem .help').parent().on('click',{me:this},function(e){ e.data.me.toggleGuide().toggleMenus(); });
-		$('.baritem .options').parent().on('click',{me:this},function(e){ e.data.me.updateOptions().showView('options').toggleMenus(); });
+		$('.baritem .options').parent().on('click',{me:this},function(e){ e.data.me.showView('options').toggleMenus(); });
 		if(fullScreenApi.supportsFullScreen){
 			// Add the fullscreen toggle to the menu
 			$('#menu ul').append('<li class="baritem" data="fullscreen"><a href="#" class="fullscreenbtn"><img src="images/cleardot.gif" class="icon fullscreen" alt="full" /> <span></span></li>');
@@ -184,20 +184,23 @@ if(typeof $==="undefined") $ = {};
 		});
 
 		// Attach event to keypresses
-		$(document).bind('keypress',{me:this},function(e){
+		$(document).on('keypress',{me:this},function(e){
 			if(!e) e = window.event;
 			var code = e.keyCode || e.charCode || e.which || 0;
 			e.data.me.keypress(code,e);
 		});
 
 		// Attach specific keypress events
-		this.registerKey('h',function(){ this.toggleGuide(); });
+		this.registerKey(['g','?'],function(){ this.toggleGuide(); });
+		this.registerKey(['o'],function(){ this.showView('options'); });
 
 		if(this.pushstate){
 			var _obj = this;
 			window.onpopstate = function(e){ _obj.navigate(e); };
 		}
 
+		// Make sure the menu stays attached to the menu bar (unless scrolling down)
+		$(document).on('scroll',{me:this},function(e){ e.data.me.scrollMenus(); });
 
 		$('.scriptonly').removeClass('scriptonly');
 		
@@ -257,15 +260,31 @@ if(typeof $==="undefined") $ = {};
 
 		var m = $('.dropdown');
 		for(var i = 0; i < m.length ; i++){
-			if($(m[i]).attr('id') == id){
-				$(m[i]).slideToggle();
-			}else{
-				$(m[i]).hide();
-			}
+			if($(m[i]).attr('id') == id) $(m[i]).slideToggle();
+			else $(m[i]).hide();
 		}
+		this.positionMenus();
 		return this;
 	}
 
+	SpaceTelescope.prototype.positionMenus = function(id){
+		$('.dropdown.fullwidth').css({'top':window.scrollY+$('#bar').outerHeight()});
+		return this;
+	}
+
+	SpaceTelescope.prototype.scrollMenus = function(id){
+		$('.dropdown.fullwidth:visible').each(function(){
+			var t = parseInt($(this).css('top'));
+			var h = $('#bar').outerHeight();
+			var y = window.scrollY;
+			//if(y < t && y > h) $('.dropdown').css({'top':y-h});
+			if(t <= h) $('.dropdown').css({'top':h});
+			if(t > y+h) $('.dropdown').css({'top':y+h});
+		});
+		return this;
+	}
+
+	
 	SpaceTelescope.prototype.setVar = function(v,t){
 		if(typeof v==="string"){
 			if(this.i && typeof this.i[v]===t) this.settings[v] = this.i[v];
@@ -436,15 +455,17 @@ if(typeof $==="undefined") $ = {};
 
 		// Update introduction text
 		$('#introduction').html(d.intro);
-
+		$('#introduction').append('<div class="centre"><a href="#scenarios" class="button fancybtn">Choose a mission<!--LANGUAGE--></a></div>');
+		$('#introduction .button').on('click',{me:this},function(e){ e.data.me.showView('scenarios'); });
 
 		var li = '';
 		var txt = '';
 		for(var i = 0; i < this.scenarios.length; i++){
 			txt = (typeof this.scenarios[i].description==="string") ? this.scenarios[i].description : "";
-		//	li += '<li><h3>'+this.scenarios[i].name+'</h3><p>'+txt.replace(/%COST%/,this.formatValue(this.scenarios[i].budget))+'</p></li>'
+			li += '<li><h3>'+this.scenarios[i].name+'</h3><p>'+txt.replace(/%COST%/,'<span class="convertable" data-value="'+this.scenarios[i].budget.value+'" data-units="'+this.scenarios[i].budget.units+'" data-dimension="'+this.scenarios[i].budget.dimension+'">'+this.formatValue(this.scenarios[i].budget)+'</span>')+'</p><a href="#" class="button">Start building</a></li>'
 		}
-		$('#scenarios').html(li);
+		$('#scenariolist').html(li);
+		$('#scenariolist').before('<h2><!--LANGUAGE-->Choose a mission</h2>');
 
 		return this;
 	}
@@ -470,12 +491,26 @@ if(typeof $==="undefined") $ = {};
 			$('#options ul').append(html);
 
 			// Add change events
-			$('form#optionform #change'+o).on('change',{me:this,o:o},function(e){ e.data.me.settings[e.data.o] = $(this).val(); });
+			$('form#optionform #change'+o).on('change',{me:this,o:o},function(e){ e.data.me.settings[e.data.o] = $(this).val(); e.data.me.updateUnits(); });
 		}
 
 		// Add closer
 		this.addCloser($('#options'),{me:this},function(e){ console.log('click'); e.data.me.showView(); });
 
+		return this;
+	}
+
+	SpaceTelescope.prototype.updateUnits = function(){
+		var els = $('.convertable');
+		var el,val,v,u,d;
+		
+		for(var i = 0; i < els.length ; i++){
+			el = $(els[i]);
+			v = el.attr('data-value');
+			u = el.attr('data-units');
+			d = el.attr('data-dimension');
+			if(v && u && d) el.html(this.formatValue({ 'value': v, 'units': u, 'dimension': d }));
+		}
 		return this;
 	}
 
@@ -626,6 +661,10 @@ if(typeof $==="undefined") $ = {};
 
 		if(v.value == "inf" || v.value >= 1e15) return '&infin;';
 
+		// Correct for sign of currency (we can have negative values)
+		var d = (v.value < 0) ? '-' : '';
+		v.value = Math.abs(v.value);
+
 		// Change the "million" to "billion" if the number if too big
 		if(v.value >= 1000){
 			v.value /= 1000;
@@ -635,7 +674,8 @@ if(typeof $==="undefined") $ = {};
 			if(v.value < 100) p = 1;
 			if(v.value < 10) p = 2;
 		}
-		return s+''+(v.value).toFixed(p)+''+append;
+		var val = (v.value).toFixed(p).replace(/\.0+/,'');
+		return d+s+val+append;
 	}
 
 
@@ -685,6 +725,17 @@ if(typeof $==="undefined") $ = {};
 		return this;
 	}
 
+
+	SpaceTelescope.prototype.toggleView = function(view){
+
+		console.log('toggleView',view)
+
+		if(!$('#'+view).is(':visible')) this.showView(view);
+		else this.showView();
+
+		return this;
+	}
+
 	SpaceTelescope.prototype.showView = function(view,e){
 
 		console.log('showView',view,e)
@@ -708,6 +759,7 @@ if(typeof $==="undefined") $ = {};
 				$('#messages').show();
 				$('body').addClass('showmessages');
 			}else if(view=="options"){
+				this.updateOptions();
 				$('#summaryext').hide();
 				$('#options').show().find('a').eq(0).focus();
 				$('body').addClass('showoptions');
@@ -715,6 +767,10 @@ if(typeof $==="undefined") $ = {};
 				$('#summaryext').hide();
 				$('#intro').show();
 				$('body').addClass('showintro');
+			}else if(view=="scenarios"){
+				$('#summaryext').hide();
+				$('#scenarios').show();
+				$('body').addClass('showscenarios');
 			}
 		}else{
 			$('#intro').show();
@@ -997,7 +1053,12 @@ if(typeof $==="undefined") $ = {};
 	//  fn - the callback function to attach to the click event
 	SpaceTelescope.prototype.addCloser = function(el,data,fn){
 
+		var a = location.href.split("#")[1];
+
 		if(el.find('.close').length==0) el.prepend('<a href="#" class="close"><img src="images/cleardot.gif" class="icon close" /></a>');
+
+		// Update link to point back to the previous anchor tag
+		if(a!=el.attr('id')) el.find('a.close').attr('href',"#"+a);
 
 		// Add events to guide close
 		el.find('a img.close').parent().on('click',data,fn);

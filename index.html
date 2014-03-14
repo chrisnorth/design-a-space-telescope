@@ -2,7 +2,6 @@
 <html>
 <head>
 	<title>Space Telescope Designer</title>
-	<link rel="stylesheet" media="screen" href="http://openfontlibrary.org/face/earthbound" type="text/css"/>
 	<script type="text/javascript" src="js/jquery-1.11.0.min.js"></script>
 	<script type="text/javascript" src="js/spacetelescope.js"></script>
 	<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
@@ -12,7 +11,8 @@
 		spacetel = $.spacetelescope({id:"image",width:455,height:333,langs:{'en':'English','cy':'Cymraeg','he':'&#1506;&#1489;&#1512;&#1497;&#1514;'}});
 	});
 	</script>
-	<link media="all" href="css/style.css" rel="stylesheet" type="text/css"/>
+	<link rel="stylesheet" media="all" href="css/fonts.css" type="text/css"/>
+	<link rel="stylesheet" media="all" href="css/style.css" type="text/css"/>
 </head>
 <body>
 	<div id="application">
@@ -37,13 +37,7 @@
 				<div class="baritem"><a href="#messages" class="toggleerrors"><img src="images/cleardot.gif" class="icon error" alt="error" /><span class="error">2</span></a></div>
 				<div class="baritem"><a href="#messages" class="togglewarnings"><img src="images/cleardot.gif" class="icon warning" alt="warn" /><span class="warning">3</span></a></div>
 			</div>
-			<ul id="summary">
-				<li class="baritem"><a href="#summaryext" class="togglesuccess"><img src="images/cleardot.gif" class="icon success" /><span class="success">90%</span></a></li>
-				<li class="baritem"><a href="#summaryext" class="toggletime"><img src="images/cleardot.gif" class="icon time" /><span class="time">18 months</span></a></li>
-				<li class="baritem"><a href="#summaryext" class="togglecost"><img src="images/cleardot.gif" class="icon cost" /><span class="cost">&pound;1.7Bn</span></a></li>
-				<li class="baritem"><a href="#summaryext" class="togglemass"><img src="images/cleardot.gif" class="icon mass" /><span class="mass">500 kg</span></a></li>
-				<li class="baritem"><a href="#summaryext" class="togglescience"><img src="images/cleardot.gif" class="icon science" /><span class="science">75%</span></a></li>
-			</ul>
+			<ul id="summary"><li class="baritem"><a href="#summaryext" class="togglesuccess"><img src="images/cleardot.gif" class="icon success" /><span class="success">90%</span></a></li><li class="baritem"><a href="#summaryext" class="toggletime"><img src="images/cleardot.gif" class="icon time" /><span class="time">18 months</span></a></li><li class="baritem"><a href="#summaryext" class="togglecost"><img src="images/cleardot.gif" class="icon cost" /><span class="cost convertable" data-value="1700" data-units="GBP" data-dimension="currency">&pound;1.7Bn</span></a></li><li class="baritem"><a href="#summaryext" class="togglemass"><img src="images/cleardot.gif" class="icon mass" /><span class="mass convertable" data-value="500" data-units="kg" data-dimension="mass">500 kg</span></a></li><li class="baritem"><a href="#summaryext" class="togglescience"><img src="images/cleardot.gif" class="icon science" /><span class="science">75%</span></a></li></ul>
 		</div>
 		<div id="messages" class="dropdown fullwidth">
 			<ul>
@@ -69,7 +63,7 @@
 			<ul>
 				<li>
 					<div class="padded">
-						<h3 class="success"><img src="images/cleardot.gif" class="icon success" /> Probability of success <span class="value">90%</span></h3>
+						<h3 class="success"><img src="images/cleardot.gif" class="icon success" /> Success probability <span class="value">90%</span></h3>
 						<ul class="summary">
 							<li>Launch site: <span class="value success">98%</span></li>
 							<li>Launch vehicle: <span class="value success">98%</span></li>
@@ -104,41 +98,41 @@
 					</div>
 				</li><li>
 					<div class="padded">
-						<h3 class="cost"><img src="images/cleardot.gif" class="icon cost" /> Funds available <span class="value">&pound;1.7Bn</span></h3>
+						<h3 class="cost"><img src="images/cleardot.gif" class="icon cost" /> Funds available <span class="value convertable" data-value="1700" data-units="GBP" data-dimension="currency">&pound;1.7Bn</span></h3>
 						<ul class="summary">
-							<li>Initial funding: <span class="value cost">&pound;2Bn</span></li>
-							<li>Development (total): <span class="value cost">-&pound;200m</span>
+							<li>Initial funding: <span class="value cost convertable" data-value="2000" data-units="GBP" data-dimension="currency">&pound;2Bn</span></li>
+							<li>Development (total): <span class="value cost convertable" data-value="-200" data-units="GBP" data-dimension="currency">-&pound;200m</span>
 								<ul>
-									<li>Satellite structure: <span class="value cost">-&pound;0m</span></li>
-									<li>Mirror: <span class="value cost">-&pound;0m</span></li>
-									<li>Cooling system: <span class="value cost">-&pound;0m</span></li>
-									<li>Instruments: <span class="value cost">-&pound;0m</span></li>
+									<li>Satellite structure: <span class="value cost convertable" data-value="0" data-units="GBP" data-dimension="currency">-&pound;0m</span></li>
+									<li>Mirror: <span class="value cost convertable" data-value="0" data-units="GBP" data-dimension="currency">-&pound;0m</span></li>
+									<li>Cooling system: <span class="value cost convertable" data-value="0" data-units="GBP" data-dimension="currency">-&pound;0m</span></li>
+									<li>Instruments: <span class="value cost convertable" data-value="0" data-units="GBP" data-dimension="currency">-&pound;0m</span></li>
 								</ul>
 							</li>
-							<li>Operations (total): <span class="value cost">-&pound;100m</span>
+							<li>Operations (total): <span class="value cost convertable" data-value="-100" data-units="GBP" data-dimension="currency">-&pound;100m</span>
 								<ul>
-									<li>Launch: <span class="value cost">-&pound;50m</span></li>
-									<li>Ground control (per year): <span class="value cost">-&pound;10m</span></li>
+									<li>Launch: <span class="value cost convertable" data-value="-50" data-units="GBP" data-dimension="currency">-&pound;50m</span></li>
+									<li>Ground control (per year): <span class="value cost convertable" data-value="-10" data-units="GBP" data-dimension="currency">-&pound;10m</span></li>
 								</ul>
 							</li>
-							<li>Total costs: <span class="value cost">-&pound;300m</span></li>
-							<li>Funds available: <span class="value cost">&pound;1.7Bn</span></li>
+							<li>Total costs: <span class="value cost convertable" data-value="-300" data-units="GBP" data-dimension="currency">-&pound;300m</span></li>
+							<li>Funds available: <span class="value cost convertable" data-value="1700" data-units="GBP" data-dimension="currency">&pound;1.7Bn</span></li>
 						</ul>
 					</div>
 				</li><li>
 					<div class="padded">
-						<h3 class="mass"><img src="images/cleardot.gif" class="icon mass" /> Mass budget <span class="value">500 kg</span></h3>
+						<h3 class="mass"><img src="images/cleardot.gif" class="icon mass" /> Mass budget <span class="value convertable" data-value="500" data-units="kg" data-dimension="mass">500 kg</span></h3>
 						<ul class="summary">
-							<li>Satellite structure: <span class="value mass">200 kg</span></li>
-							<li>Mirror: <span class="value mass">200 kg</span></li>
-							<li>Cooling system (total): <span class="value mass">50 kg</span>
+							<li>Satellite structure: <span class="value mass convertable" data-value="200" data-units="kg" data-dimension="mass">200 kg</span></li>
+							<li>Mirror: <span class="value mass convertable" data-value="200" data-units="kg" data-dimension="mass">200 kg</span></li>
+							<li>Cooling system (total): <span class="value mass convertable" data-value="50" data-units="kg" data-dimension="mass">50 kg</span>
 								<ul>
-									<li>Passive cooling: <span class="value mass">0 kg</span></li>
-									<li>Cryogenic cooling: <span class="value mass">0 kg</span></li>
-									<li>Active cooling: <span class="value mass">0 kg</span></li>
+									<li>Passive cooling: <span class="value mass convertable" data-value="0" data-units="kg" data-dimension="mass">0 kg</span></li>
+									<li>Cryogenic cooling: <span class="value mass convertable" data-value="0" data-units="kg" data-dimension="mass">0 kg</span></li>
+									<li>Active cooling: <span class="value mass convertable" data-value="0" data-units="kg" data-dimension="mass">0 kg</span></li>
 								</ul>
 							</li>
-							<li>All instruments: <span class="value mass">50 kg</span></li>
+							<li>All instruments: <span class="value mass convertable" data-value="50" data-units="kg" data-dimension="mass">50 kg</span></li>
 						</ul>
 					</div>
 				</li><li>
@@ -157,12 +151,13 @@
 							<li>Launch vehicle: <span class="value profile">Delta IV</span></li>
 							<li>Number of instruments: <span class="value profile">2</span></li>
 						</ul>
+<!--<p>A private organization has funded your group to research into the birth and evolution of stars in the distant and nearby Universe, with full analysis of the spectra of the event. The budget of your mission is <span class="cost"><span class="convertable" data-value="2000" data-units="GBP" data-dimension="currency">&pound;2Bn</span></span>. You will need the appropriate instruments on board your satellite in order to observe such objects.</p>-->
 					</div>
 				</li>
 			</ul>
 		</div>
 		<div id="page">
-			<div class="noscriptmsg">Unfortunately this interactive activity requires Javascript. Without Javascript nothing will work. Sorry about that.</div>
+			<div class="noscriptmsg">The interactive web version of this activity requires Javascript. Sorry about that.</div>
 			<div id="options" class="view"></div>
 			<div id="intro" class="view">
 				<h1>Space Telescope Designer</h1>
@@ -176,10 +171,30 @@
 <!--#elif expr="${HTTP_ACCEPT_LANGUAGE} = /^he/"-->
 <!--#include file="fragments/intro_he.html" -->
 <!--#else -->
+					<p>Designing a space telescope is an incredibly complex job, with many requirements that must be met. Some of these are because of the scientific discoveries that the astronomers would like to make, while others are due to limits that the engineers put on the spacecraft.</p>
+					<p>Beginning in the 1990s, astronomers and engineers around the world were busy designing the Herschel Space Observatory. This activity will help you explore the kinds of decisions they made as you design your own space telescope. You will need:</p>
+					<h3>Key Stage 4</h3>
+					<ul class="files">
+						<li class="xls"><a href="old_version/Spreadsheets/TelescopeDatasheetKS4.xls">Telescope Datasheet</a> [Excel] (61 kB)</li>
+						<li class="doc"><a href="old_version/Student_guides/SpaceTelescopeDesigner_StudentGuide_KS4.docx">Student Guide</a> [MS Word] (4.5 MB)</li>
+						<li class="doc"><a href="old_version/Student_guides/DesignASpaceTelescope_Example_Proposal_LetterKS4.docx">Example Proposal Letter</a> [MS Word] (258 kB)</li>
+					</ul>
+					<h3>A-level</h3>
+					<ul class="files">
+						<li class="xls"><a href="old_version/Spreadsheets/TelescopeDatasheetKS5.xls">Telescope Datasheet</a> [Excel] (66 kB)</li>
+						<li class="doc"><a href="old_version/Student_guides/SpaceTelescopeDesigner_StudentGuide_KS5.docx">Student Guide</a> [MS Word] (4.9 MB)</li>
+						<li class="doc"><a href="old_version/Student_guides/DesignASpaceTelescope_Example_Proposal_LetterKS5.docx">Example Proposal Letter</a> [MS Word] (262 kB)</li>
+						<li class="doc"><a href="old_version/Student_guides/Instrument_Scientist_Workflow.docx">Workflow: Instrument Scientist</a> [MS Word] (119 kB)</li>
+						<li class="doc"><a href="old_version/Student_guides/Satellite_orbit_Workflow.docx">Workflow: Satellite Orbit</a> [MS Word] (201 kB)</li>
+						<li class="doc"><a href="old_version/Student_guides/Telescope_Mirror_Workflow.docx">Workflow: Telescope Mirror</a> [MS Word] (106 kB)</li>
+					</ul>
 <!--#endif -->
 				</div>
-				<h2>Choose a scenario</h2>
-				<ul id="scenarios">
+
+				
+			</div>
+			<div id="scenarios" class="view">
+				<ul id="scenariolist">
 				</ul>
 			</div>
 			<div id="designer" class="view">
