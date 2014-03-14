@@ -641,7 +641,7 @@ if(typeof $==="undefined") $ = {};
 		v = this.convertValue(v,(this.settings.mass) ? this.settings.mass : "kg")
 		if(typeof p==="string") p = parseInt(p,10);
 		var unit = (this.phrases.ui.units[v.units]) ? this.phrases.ui.units[v.units].unit : "";
-		if(typeof p!=="number") p = (v.value > 1000) ? 0 : 1;
+		if(typeof p!=="number") p = (v.value > 10) ? 0 : 1;
 		if(v.value > 1e15) return powerOfTen(v.value,unit);
 		else return ''+addCommas((v.value).toFixed(p))+''+unit;
 	}
@@ -674,7 +674,7 @@ if(typeof $==="undefined") $ = {};
 			if(v.value < 100) p = 1;
 			if(v.value < 10) p = 2;
 		}
-		var val = (v.value).toFixed(p).replace(/\.0+$/,'');
+		var val = (v.value).toFixed(p).replace(/(\.[1-9])0+$/,"$1");
 		return d+s+val+append;
 	}
 

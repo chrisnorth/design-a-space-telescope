@@ -202,7 +202,7 @@ img.icon {
 .dropdown.fullwidth ul.summary ul .value { color: inherit; }
 
 #options li { margin-top: 1em; }
-#options li select { float: right; }
+#options li select { float: right; font-size: 1em; font-family: Arial, sans-serif; }
 .rtl #options li select { float: left; }
 
 
