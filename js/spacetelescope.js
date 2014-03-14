@@ -458,11 +458,12 @@ if(typeof $==="undefined") $ = {};
 		$('#introduction').append('<div class="centre"><a href="#scenarios" class="button fancybtn">Choose a mission<!--LANGUAGE--></a></div>');
 		$('#introduction .button').on('click',{me:this},function(e){ e.data.me.showView('scenarios'); });
 
+		//centre($('#intro'))
 		var li = '';
 		var txt = '';
 		for(var i = 0; i < this.scenarios.length; i++){
 			txt = (typeof this.scenarios[i].description==="string") ? this.scenarios[i].description : "";
-			li += '<li><h3>'+this.scenarios[i].name+'</h3><p>'+txt.replace(/%COST%/,'<span class="convertable" data-value="'+this.scenarios[i].budget.value+'" data-units="'+this.scenarios[i].budget.units+'" data-dimension="'+this.scenarios[i].budget.dimension+'">'+this.formatValue(this.scenarios[i].budget)+'</span>')+'</p><a href="#" class="button">Start building</a></li>'
+			li += '<li><h3>'+this.scenarios[i].name+'</h3><p>'+txt.replace(/%COST%/,'<span class="convertable" data-value="'+this.scenarios[i].budget.value+'" data-units="'+this.scenarios[i].budget.units+'" data-dimension="'+this.scenarios[i].budget.dimension+'">'+this.formatValue(this.scenarios[i].budget)+'</span>')+'</p><a href="#" class="button">Choose this mission<!--LANGUAGE--></a></li>'
 		}
 		$('#scenariolist').html(li);
 		$('#scenariolist').before('<h2><!--LANGUAGE-->Choose a mission</h2>');
@@ -641,9 +642,9 @@ if(typeof $==="undefined") $ = {};
 		v = this.convertValue(v,(this.settings.mass) ? this.settings.mass : "kg")
 		if(typeof p==="string") p = parseInt(p,10);
 		var unit = (this.phrases.ui.units[v.units]) ? this.phrases.ui.units[v.units].unit : "";
-		if(typeof p!=="number") p = (v.value > 10) ? 0 : 1;
+		if(typeof p!=="number") p = (v.value >= 1000) ? 0 : 1;
 		if(v.value > 1e15) return powerOfTen(v.value,unit);
-		else return ''+addCommas((v.value).toFixed(p))+''+unit;
+		else return ''+addCommas((v.value).toFixed(p)).replace(/\.0+$/,'').replace(/(\.[1-9])0+$/,"$1")+''+unit;
 	}
 
 	// Inputs:
@@ -674,7 +675,7 @@ if(typeof $==="undefined") $ = {};
 			if(v.value < 100) p = 1;
 			if(v.value < 10) p = 2;
 		}
-		var val = (v.value).toFixed(p).replace(/(\.[1-9])0+$/,"$1");
+		var val = (v.value).toFixed(p).replace(/\.0+$/,'').replace(/(\.[1-9])0+$/,"$1");
 		return d+s+val+append;
 	}
 
@@ -1058,7 +1059,7 @@ if(typeof $==="undefined") $ = {};
 		if(el.find('.close').length==0) el.prepend('<a href="#" class="close"><img src="images/cleardot.gif" class="icon close" /></a>');
 
 		// Update link to point back to the previous anchor tag
-		if(a!=el.attr('id')) el.find('a.close').attr('href',"#"+a);
+		if(el.attr('id').indexOf(a)!=0) el.find('a.close').attr('href',"#"+a);
 
 		// Add events to guide close
 		el.find('a img.close').parent().on('click',data,fn);
@@ -1136,6 +1137,25 @@ if(typeof $==="undefined") $ = {};
 	function htmlDecode(input){
 		return $('<div />').html(input).text();
 	}
+	
+	
+	function centre(lb){
+		var wide = $(window).width();
+		var tall = $(window).height();
+		var l = 0;
+		var t = 0;
+		if(lb.css('max-width').indexOf('px') > 0){
+			l = ((wide-lb.outerWidth())/2);
+			lb.css({left:((wide-lb.outerWidth())/2)+'px'});
+			if($(window).height() > lb.height()){
+				//t = (window.scrollY+(tall-lb.outerHeight())/2);
+				t = ((tall-lb.outerHeight())/2 + $(window).scrollTop());
+				$('body').css('overflow-y','hidden');
+			}
+		}
+		lb.css({left:l+"px",top:t+'px','position':'absolute'});
+	}
+
 
 	// Functions for getting, setting and deleting cookies
 	function setCookie(name,value,days){

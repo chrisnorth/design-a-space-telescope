@@ -6,7 +6,7 @@
 		"translator": "Chris North"
 	},
 	"title": "Space Telescope Designer!",
-	"intro": "<p>Yo! Designing a space telescope is an incredibly complex job, with many requirements that must be met. Some of these are because of the scientific discoveries that the astronomers would like to make, while others are due to limits that the engineers put on the spacecraft. Beginning in the 1990s, astronomers and engineers around the world were busy designing the <a href=\"#guide_previous_herschel\" class=\"guidelink\">Herschel Space Observatory</a>. This project will help you explore the kinds of decisions they had to make.</p><p>Your task is to design a space observatory. You will have to make a number of decisions about what your space telescope will look like. If you are in a group, you could use a number of <a href=\"#guide_roles\" class=\"guidelink\">roles</a>, but you will need to work together for a final solution.</p>",
+	"intro": "<p>Designing a space telescope is an incredibly complex job, with many requirements that must be met. Some of these are because of the scientific discoveries that astronomers would like to make, while others are due to limits that engineers put on the spacecraft.</p><p>In the early 1990s, astronomers and engineers around the world started designing the <a href=\"#guide_previous_herschel\" class=\"guidelink\">Herschel Space Observatory</a>. After years of building and testing, Herschel launched in 2009. This project will help you explore the kinds of decisions the astronomers and engineers had to make as you design your own space telescope. Can <em>you</em> launch a telescope that will push back the frontiers of knowledge?</p>",
 	"ui": {
 		"million": { "full": " million", "compact": "m" },
 		"billion": { "full": " billion", "compact": "Bn" },
@@ -21,7 +21,6 @@
 			"F": { "unit": "&deg;F", "label": "Farenheit", "dimension": "temperature", "selectable": 1 },
 			"kg": { "unit": " kg", "label": "Kilograms", "dimension": "mass", "selectable": 1 },
 			"lb": { "unit": " lb", "label": "Pounds", "dimension": "mass", "selectable": 1 },
-			"t": { "unit": " t", "label": "Metric tonnes", "dimension": "mass" },
 			"years": { "unit": " yrs", "label": "Years", "dimension": "time" },
 			"months": { "unit": " months", "label": "Months", "dimension": "time" },
 			"days": { "unit": " days", "label": "Days", "dimension": "time" },
@@ -214,6 +213,11 @@
 	"guide": {
 		"title": "Guide",
 		"about": "Use the guide to find out more about specific topics.",
+		"intro": {
+			"title": "Introduction",
+			"summary": "An introduction to get you started.",
+			"about": "<p>Designing a space telescope is an incredibly complex job, with many requirements that must be met. Some of these are because of the scientific discoveries that astronomers would like to make, while others are due to limits that engineers put on the spacecraft.</p><p>In the early 1990s, astronomers and engineers around the world started designing the <a href=\"#guide_previous_herschel\" class=\"guidelink\">Herschel Space Observatory</a>. After years of designing, building and testing, Herschel launched in 2009. This project will help you explore the kinds of decisions the astronomers and engineers had to make as you design your own space telescope. If you are in a group, you could use a number of <a href=\"#guide_roles\" class=\"guidelink\">roles</a>, but you will need to work together to complete your mission.</p>"
+		},
 		"roles": {
 			"title": "Roles",
 			"summary": "It takes a range of people to build and operate a space mission.",

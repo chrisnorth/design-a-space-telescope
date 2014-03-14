@@ -73,7 +73,7 @@
 			]
 		},{
 			"name": "Freedom",
-			"description": "Don't worry about money; you can spend as much as you like.",
+			"description": "There is no need to worry about money. Spend as much as you like.",
 			"budget": { "value": 1e20, "units": "GBP", "dimension": "currency" },
 			"requires": []
 		}

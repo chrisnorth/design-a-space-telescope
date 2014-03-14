@@ -14,7 +14,7 @@
 			]
 		},{
 			"name": "Multi-wavelength Sky Mapper",
-			"description": "A government research grant has come through to take images of the sky in ultraviolet, visible and nearby wavelengths from a satellite in space, in order to map stars, galaxies and other yet to be discovered phenomena. The budget of your mission is £400 million <span class=\"cost\">%COST%</span>.",
+			"description": "A government research grant has come through to take images of the sky in ultraviolet, visible and nearby wavelengths from a satellite in space, in order to map stars, galaxies and other yet to be discovered phenomena. The budget of your mission is <span class=\"cost\">%COST%</span>.",
 			"budget": { "value": 400, "units": "GBP", "dimension": "currency" },
 			"requires": [
 				{ "instrument": "camera", "wavelength": "uv" },
@@ -67,7 +67,7 @@
 			]
 		},{
 			"name": "Freedom",
-			"description": "Don't worry about money; you can spend as much as you like.",
+			"description": "There is no need to worry about money. Spend as much as you like.",
 			"budget": { "value": 1e20, "units": "GBP", "dimension": "currency" },
 			"requires": []
 		}
