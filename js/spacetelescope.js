@@ -674,7 +674,7 @@ if(typeof $==="undefined") $ = {};
 			if(v.value < 100) p = 1;
 			if(v.value < 10) p = 2;
 		}
-		var val = (v.value).toFixed(p).replace(/\.0+/,'');
+		var val = (v.value).toFixed(p).replace(/\.0+$/,'');
 		return d+s+val+append;
 	}
 
