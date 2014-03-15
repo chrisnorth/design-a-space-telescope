@@ -28,12 +28,12 @@
 			"minutes": { "unit": " minutes", "label": "Minutes", "dimension": "time" }
 		},
 		"currency": {
-			"GBP": { "symbol": "&pound;" },
-			"USD": { "symbol": "&dollar;" },
-			"EUR": { "symbol": "&euro;" },
-			"JPY": { "symbol": "&yen;" },
-			"CAD": { "symbol": "C&dollar;" },
-			"AUD": { "symbol": "&dollar;" }
+			"GBP": { "symbol": "&pound;", "label": "British Pounds" },
+			"USD": { "symbol": "&dollar;", "label": "US Dollars" },
+			"EUR": { "symbol": "&euro;", "label": "Euros" },
+			"JPY": { "symbol": "&yen;", "label": "Japanese Yen" },
+			"CAD": { "symbol": "C&dollar;", "label": "Canadian Dollars" },
+			"AUD": { "symbol": "&dollar;", "label": "Austrialian Dollars" }
 		},
 		"warnings": {
 			"title": "Warnings"

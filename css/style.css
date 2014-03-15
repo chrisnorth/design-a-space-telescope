@@ -273,9 +273,9 @@ a.togglescience:hover { padding-bottom: 0.3em; border-bottom: 0.2em solid #69dff
 #intro h1, #intro h2 { text-align: center; }
 
 #scenarios li { list-style-type: decimal-leading-zero; margin-left: 2em; }
-#scenariolist li { list-style: none; margin-left: 0px; margin-right: 2em; margin-bottom: 2em; vertical-align: top; border: 1px solid black; width: 48%; width: calc(50% - 3em - 2px); display: inline-block; padding: 1em; background-color: #f6f6f6; }
+#scenariolist li { list-style: none; margin-left: 0px; margin-right: 2em; margin-bottom: 2em; vertical-align: top; border: 1px solid black; width: 48%; width: calc(50% - 1em - 2px); display: inline-block; background-color: #f6f6f6; }
 #scenariolist li:nth-child(2n) { margin-right: 0px; }
-#scenarios li h3 { font-size: 1em; }
+#scenarios li h3 { font-size: 1.1em; }
 
 #main {
 	display: table;
@@ -430,7 +430,7 @@ input.button { padding: 6px 8px; /* Bug fix for Firefox over-riding the line-hei
 
 }
 @media only screen and (max-width: 700px){
-	.baritem a { padding: 0.25em; }
+	.baritem a { padding: 0.5em 0.25em; }
 	.baritem span { margin: 0; }
 	.barmenu .baritem span { margin: 0; }
 	#menu { left: 0; width: 100%; border-left: 0px; }
@@ -443,14 +443,15 @@ input.button { padding: 6px 8px; /* Bug fix for Firefox over-riding the line-hei
 	#guide figure.four figure:nth-child(2n) { margin-right: 0; }
 	#guide table { width: 100%; }
 	#guide table td, #guide table th { padding: 0.25em; }
-	#summary { height: 2em; overflow: hidden; }
+	#summary { height: 2.5em; overflow: hidden; }
 }
 @media only screen and (max-width: 550px){
+	#application { background-image: url('../images/bg_small.jpg'); }
 	#bar { padding: 0; }
-	.baritem a { padding: 0.25em 0.2em 0.25em 0.2em; }
+	.dropdown .baritem a { padding: 1em 1em; }
 	#summary .baritem img.icon, .baritem .togglewarnings img.icon, .baritem .toggleerrors img.icon { display: none; }
-	.dropdown { top: 2em; }
-	#page { padding-top: 0em; padding-bottom: 0px; }
+	.dropdown { top: 2.5em; }
+	#page { padding-top: 0em; padding-bottom: 0px; margin-top: 2.5em; }
 	.view, #intro, #guide, #scenarios { padding: 1.5em; width: 100%; max-width: 100%; border-radius: 0px; }
 	#guide figure.left,#guide figure.right, #guide figure.four figure {
 		float: none;

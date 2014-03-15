@@ -463,7 +463,7 @@ if(typeof $==="undefined") $ = {};
 		var txt = '';
 		for(var i = 0; i < this.scenarios.length; i++){
 			txt = (typeof this.scenarios[i].description==="string") ? this.scenarios[i].description : "";
-			li += '<li><h3>'+this.scenarios[i].name+'</h3><p>'+txt.replace(/%COST%/,'<span class="convertable" data-value="'+this.scenarios[i].budget.value+'" data-units="'+this.scenarios[i].budget.units+'" data-dimension="'+this.scenarios[i].budget.dimension+'">'+this.formatValue(this.scenarios[i].budget)+'</span>')+'</p><a href="#" class="button">Choose this mission<!--LANGUAGE--></a></li>'
+			li += '<li><div class="padded"><h3>'+this.scenarios[i].name+'</h3><p>'+txt.replace(/%COST%/,'<span class="convertable" data-value="'+this.scenarios[i].budget.value+'" data-units="'+this.scenarios[i].budget.units+'" data-dimension="'+this.scenarios[i].budget.dimension+'">'+this.formatValue(this.scenarios[i].budget)+'</span>')+'</p><a href="#" class="button">Choose this mission<!--LANGUAGE--></a></div></li>'
 		}
 		$('#scenariolist').html(li);
 		$('#scenariolist').before('<h2><!--LANGUAGE-->Choose a mission</h2>');
@@ -481,7 +481,7 @@ if(typeof $==="undefined") $ = {};
 			html = '<li><label for="change'+o+'">'+this.phrases.ui.options[o]+'</label> <select id="change'+o+'" name="change'+o+'">';
 			if(o=="currency"){
 				for(var c in this.phrases.ui[o]){
-					html += '<option value="'+c+'"'+(c==this.settings.currency ? ' selected="selected"' : '')+'>'+c+' '+this.phrases.ui.currency[c].symbol+'</option>';
+					html += '<option value="'+c+'"'+(c==this.settings.currency ? ' selected="selected"' : '')+'>'+this.phrases.ui.currency[c].label+' '+this.phrases.ui.currency[c].symbol+'</option>';
 				}
 			}else{
 				for(var c in this.phrases.ui.units){
@@ -845,23 +845,13 @@ if(typeof $==="undefined") $ = {};
 				txt = g[key].about;
 				if(key=="mirror"){
 					table = '';
-					if(this.settings.mode=="advanced"){
-						for(i in this.data.mirror){
-							table += '<tr>';
-							table += '<td>'+this.formatValue(this.data.mirror[i].diameter)+'</td>';
-							table += '<td>'+this.formatValue(this.data.mirror[i].mass)+'</td>';
-							table += '<td>'+this.formatValue(this.data.mirror[i].cost)+'</td>';
-							table += '<td>'+this.formatValue(this.data.mirror[i].devtime)+'</td>';
-							table += '</tr>';
-						}
-					}else{
-						for(i in this.data.mirror){
-							table += '<tr>';
-							table += '<td>'+this.formatValue(this.data.mirror[i].diameter)+'</td>';
-							table += '<td>'+this.formatValue(this.data.mirror[i].mass)+'</td>';
-							table += '<td>'+this.formatValue(this.data.mirror[i].cost)+'</td>';
-							table += '</tr>';
-						}				
+					for(i in this.data.mirror){
+						table += '<tr>';
+						table += '<td>'+this.formatValue(this.data.mirror[i].diameter)+'</td>';
+						table += '<td>'+this.formatValue(this.data.mirror[i].mass)+'</td>';
+						table += '<td>'+this.formatValue(this.data.mirror[i].cost)+'</td>';
+						if(this.settings.mode=="advanced") table += '<td>'+this.formatValue(this.data.mirror[i].devtime)+'</td>';
+						table += '</tr>';
 					}
 					txt = txt.replace(/\%MIRRORTABLE\%/,table);
 				}else if(key=="structure"){
@@ -1059,7 +1049,7 @@ if(typeof $==="undefined") $ = {};
 		if(el.find('.close').length==0) el.prepend('<a href="#" class="close"><img src="images/cleardot.gif" class="icon close" /></a>');
 
 		// Update link to point back to the previous anchor tag
-		if(el.attr('id').indexOf(a)!=0) el.find('a.close').attr('href',"#"+a);
+		if(el.attr('id')!="guide" && el.attr('id').indexOf(a)!=0) el.find('a.close').attr('href',"#"+a);
 
 		// Add events to guide close
 		el.find('a img.close').parent().on('click',data,fn);
