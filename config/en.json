@@ -8,8 +8,8 @@
 	"title": "Space Telescope Designer!",
 	"intro": "<p>Designing a space telescope is an incredibly complex job, with many requirements that must be met. Some of these are because of the scientific discoveries that astronomers would like to make, while others are due to limits that engineers put on the spacecraft.</p><p>In the early 1990s, astronomers and engineers around the world started designing the <a href=\"#guide_previous_herschel\" class=\"guidelink\">Herschel Space Observatory</a>. After years of building and testing, Herschel launched in 2009. This project will help you explore the kinds of decisions the astronomers and engineers had to make as you design your own space telescope. Can <em>you</em> launch a telescope that will push back the frontiers of knowledge?</p>",
 	"ui": {
-		"million": { "full": " million", "compact": "m" },
-		"billion": { "full": " billion", "compact": "Bn" },
+		"million": { "full": " million", "compact": " m" },
+		"billion": { "full": " billion", "compact": " Bn" },
 		"units": {
 			"km": { "unit": " km", "label": "Kilometres", "dimension": "length" },
 			"m": { "unit": " m", "label": "Metres", "dimension": "length", "selectable": 1 },
@@ -42,13 +42,13 @@
 			"title": "Errors"
 		},
 		"menu": {
-			"title": "Menu",
-			"load": "Load file",
-			"save": "Save file",
-			"help": "Guide",
-			"options": "Options",
-			"restart": "Change scenario",
-			"fullscreen": "Toggle fullscreen"
+			"title": "Toggle menu",
+			"load": { "label": "Load file", "title": "Load a previously saved file" },
+			"save": { "label": "Save file", "title": "Save your progress" },
+			"help": { "label": "Guide", "title": "View the student guide" },
+			"options": { "label": "Options", "title": "Change units etc" },
+			"restart": { "label": "Change scenario", "title": "" },
+			"fullscreen": { "label": "Toggle fullscreen", "title": "Switch between viewing fullscreen or in a standard browser window" }
 		},
 		"options": {
 			"currency": "Currency:",
@@ -58,7 +58,7 @@
 		},
 		"summary": {
 			"success": {
-				"title": "Probability of success",
+				"title": "Success probability",
 				"site": "Launch site:",
 				"vehicle": "Launch vehicle:",
 				"deploy": "Deployment:",
@@ -67,7 +67,7 @@
 				"mission": "Mission:"
 			},
 			"time": {
-				"title": "Timeline",
+				"title": "Time until launch",
 				"dev": {
 					"title": "Development (total):",
 					"satellite": "Satellite structure:",
@@ -81,7 +81,7 @@
 				"end": "Mission end:"
 			},
 			"cost": {
-				"title": "Budget",
+				"title": "Funds available",
 				"dev": {
 					"title": "Development (total):",
 					"satellite": "Satellite structure:",
@@ -113,102 +113,153 @@
 			}
 		}
 	},
-	"options": {
-		"mirror": {
-			"mirror_0.5" : { "label": "0.5 m" },
-			"mirror_1.0" : { "label": "1.0 m" },
-			"mirror_2.0" : { "label": "2.0 m" },
-			"mirror_4.0" : { "label": "4.0 m" },
-			"mirror_8.0" : { "label": "8.0 m" }
+	"designer": {
+		"objectives": {
+			"label": "Objectives",
+			"help": ""
 		},
-		"orbit": {
-			"LEO": { "label": "Low Earth Orbit", "altitude": "<", "launchreq": "Requires ability to de-orbit" },
-			"HEO": { "label": "High Earth Orbit", "altitude": ">", "launchreq": "" },
-			"SNS": { "label": "Sun Synchronous Orbit", "altitude": "<", "launchreq": "Requires ability to de-orbit" },
-			"GEO": { "label": "Geostationary Orbit", "launchreq": "" },
-			"ETR": { "label": "Earth-Trailing", "launchreq": "" },
-			"EM2": { "label": "Earth-Moon L2", "launchreq": "Requires relay satellite" },
-			"ES2": { "label": "Earth-Sun L2", "launchreq": "" }
-		},
-		"rocket": {
-			"ARI5": { "label": "Ariane 5" },
-			"SOYZ": { "label": "Soyuz" },
-			"DLT2": { "label": "Delta II" },
-			"DLT4": { "label": "Delta IV" },
-			"PRTM": { "label": "Proton-M" },
-			"H2B4": { "label": "H-2B" },
-			"VEGA": { "label": "Vega" },
-			"PEGA": { "label": "Pegasus" },
-			"LM3B": { "label": "Long March 3B" },
-			"ATLV": { "label": "Atlas V" },
-			"FLC9": { "label": "Falcon 9" },
-			"PSLV": { "label": "PSLV" }
-		},
-		"operator": {
-			"nasa": { "label": "NASA (USA)" },
-			"roscosmos": { "label": "Roscosmos (Russia)" },
-			"esa": { "label": "ESA (Europe)" },
-			"jaxa": { "label": "JAXA (Japan)" },
-			"orbital": { "label": "Orbital (Private)" },
-			"cnsa": { "label": "CNSA (China)" },
-			"isro": { "label": "ISRO (India)" },
-			"spacex": { "label": "SpaceX (Private)" }
-		},
-		"site": {
-			"CSG": { "label": "Guiana Space Centre, French Guiana", "trajectories": "North, East" },
-			"BKR": { "label": "Baikonur, Russia", "trajectories": "North, East" },
-			"PTK": { "label": "Plesetsk Cosmodrome, Russia", "trajectories": "North" },
-			"KSC": { "label": "Kennedy Space Centre, Florida", "trajectories": "East" },
-			"VDB": { "label": "Vandenberg Air Force Base, California", "trajectories": "North" },
-			"XCH": { "label": "Xichang Satellite Launch Center, China", "trajectories": "North, East" },
-			"TNG": { "label": "Tanegashima Space Center, Japan", "trajectories": "South, East" },
-			"SDH": { "label": "Satish Dhawan Space Centre, India", "trajectories": "South, East" },
-			"AIR": { "label": "Carrier Aircraft", "trajectories": "Any" }
-		},
-		"wavelengths": {
-			"none": { "label": "None" },
-			"submm": { "label": "sub-mm" },
-			"farir": { "label": "Far-IR" },
-			"midir": { "label": "Mid-IR" },
-			"nearir": { "label": "Near-IR" },
-			"optical": { "label": "Optical" },
-			"uv": { "label": "UV" }
+		"satellite": {
+			"label": "Satellite",
+			"help": "",
+			"options": {
+				"diameter": { "label": "Mirror diameter", "help": "The diameter of the telescope mirror." },
+				"deployable": { "label": "Deployable structure?", "help": "Creates a more compact structure for launch but is more expensive." },
+				"uv": { "label": "UV quality?", "help": "Make the mirror surface of a higher quality. Required if you wish to make observations at UV wavelengths." }
+			},
+			"questions": []
 		},
 		"instrument": {
-			"camera": { "label": "Camera" },
-			"spectrometer": { "label": "Spectrometer" },
-			"both": { "label": "Both" }
+			"label": "Instruments",
+			"help": "",
+			"options": {
+				"camera": { "label": "Camera" },
+				"spectrometer": { "label": "Spectrometer" },
+				"both": { "label": "Both" }
+			},
+			"questions": []
 		},
 		"cooling": {
-			"passive": {
-				"yes": { "label": "Yes" },
-				"no": { "label": "No" }
+			"label": "Cooling",
+			"help": "",	
+			"options": {
+				"passive": {
+					"yes": { "label": "Yes" },
+					"no": { "label": "No" }
+				},
+				"cryogenic": {
+					"none": { "label": "None" },
+					"years_2": { "label": "2yr" },
+					"years_4": { "label": "4yr" },
+					"years_8": { "label": "8yr" }
+				},
+				"active": {
+					"yes": { "label": "Yes" },
+					"no": { "label": "No" }
+				}
 			},
-			"cryogenic": {
-				"none": { "label": "None" },
-				"years_2": { "label": "2yr" },
-				"years_4": { "label": "4yr" },
-				"years_8": { "label": "8yr" }
-			},
-			"active": {
-				"yes": { "label": "Yes" },
-				"no": { "label": "No" }
-			}
+			"questions": []
 		},
-		"mission": {
-			"years_1": { "label": "1 yr" },
-			"years_2": { "label": "2 yrs" },
-			"years_3": { "label": "3 yrs" },
-			"years_4": { "label": "4 yrs" },
-			"years_5": { "label": "5 yrs" },
-			"years_6": { "label": "6 yrs" },
-			"years_7": { "label": "7 yrs" },
-			"years_8": { "label": "8 yrs" },
-			"years_9": { "label": "9 yrs" },
-			"years_10": { "label": "10 yrs" },
-			"years_15": { "label": "15 yrs" },
-			"years_20": { "label": "20 yrs" }
+		"rocket": {
+			"label": "Launch vehicle",
+			"help": "",
+			"select": "Select this launch vehicle",
+			"diameter": "Payload diameter",
+			"cost": "Launch cost",
+			"mass": "Mass",
+			"massLEO": "Mass to LEO",
+			"massGTO": "Mass beyond LEO",
+			"risk": "Launch probability",
+			"sites": "Sites",
+			"options": {
+				"ARI5": { "label": "Ariane 5" },
+				"SOYZ": { "label": "Soyuz" },
+				"DLT2": { "label": "Delta II" },
+				"DLT4": { "label": "Delta IV" },
+				"PRTM": { "label": "Proton-M" },
+				"H2B4": { "label": "H-2B" },
+				"VEGA": { "label": "Vega" },
+				"PEGA": { "label": "Pegasus" },
+				"LM3B": { "label": "Long March 3B" },
+				"ATLV": { "label": "Atlas V" },
+				"FLC9": { "label": "Falcon 9" },
+				"PSLV": { "label": "PSLV" }
+			},
+			"questions": []
+		},
+		"site": {
+			"label": "Launch site",
+			"help": "",
+			"options": {
+				"CSG": { "label": "Guiana Space Centre, French Guiana", "trajectories": "North, East" },
+				"BKR": { "label": "Baikonur, Russia", "trajectories": "North, East" },
+				"PTK": { "label": "Plesetsk Cosmodrome, Russia", "trajectories": "North" },
+				"KSC": { "label": "Kennedy Space Centre, Florida", "trajectories": "East" },
+				"VDB": { "label": "Vandenberg Air Force Base, California", "trajectories": "North" },
+				"XCH": { "label": "Xichang Satellite Launch Center, China", "trajectories": "North, East" },
+				"TNG": { "label": "Tanegashima Space Center, Japan", "trajectories": "South, East" },
+				"SDH": { "label": "Satish Dhawan Space Centre, India", "trajectories": "South, East" },
+				"AIR": { "label": "Carrier Aircraft", "trajectories": "Any" }
+			},
+			"questions": []
+		},
+		"orbit": {
+			"label": "Orbit",
+			"help": "",
+			"options": {
+				"LEO": { "label": "Low Earth Orbit", "altitude": "<", "launchreq": "Requires ability to de-orbit" },
+				"HEO": { "label": "High Earth Orbit", "altitude": ">", "launchreq": "" },
+				"SNS": { "label": "Sun Synchronous Orbit", "altitude": "<", "launchreq": "Requires ability to de-orbit" },
+				"GEO": { "label": "Geostationary Orbit", "launchreq": "" },
+				"ETR": { "label": "Earth-Trailing", "launchreq": "" },
+				"EM2": { "label": "Earth-Moon L2", "launchreq": "Requires relay satellite" },
+				"ES2": { "label": "Earth-Sun L2", "launchreq": "" }
+			},
+			"questions": []
+		},
+		"proposal": {
+			"label": "Proposal",
+			"help": ""
+		},
+		"launch": {
+			"label": "Launch",
+			"help": ""
+		},
+		"options": {
+			"label": "Options"
 		}
+	},
+	"operator": {
+		"nasa": { "label": "NASA (USA)" },
+		"roscosmos": { "label": "Roscosmos (Russia)" },
+		"esa": { "label": "ESA (Europe)" },
+		"jaxa": { "label": "JAXA (Japan)" },
+		"orbital": { "label": "Orbital (Private)" },
+		"cnsa": { "label": "CNSA (China)" },
+		"isro": { "label": "ISRO (India)" },
+		"spacex": { "label": "SpaceX (Private)" }
+	},
+	"wavelengths": {
+		"none": { "label": "None" },
+		"submm": { "label": "sub-mm" },
+		"farir": { "label": "Far-IR" },
+		"midir": { "label": "Mid-IR" },
+		"nearir": { "label": "Near-IR" },
+		"optical": { "label": "Optical" },
+		"uv": { "label": "UV" }
+	},
+	"mission": {
+		"years_1": { "label": "1 yr" },
+		"years_2": { "label": "2 yrs" },
+		"years_3": { "label": "3 yrs" },
+		"years_4": { "label": "4 yrs" },
+		"years_5": { "label": "5 yrs" },
+		"years_6": { "label": "6 yrs" },
+		"years_7": { "label": "7 yrs" },
+		"years_8": { "label": "8 yrs" },
+		"years_9": { "label": "9 yrs" },
+		"years_10": { "label": "10 yrs" },
+		"years_15": { "label": "15 yrs" },
+		"years_20": { "label": "20 yrs" }
 	},
 	"guide": {
 		"title": "Guide",

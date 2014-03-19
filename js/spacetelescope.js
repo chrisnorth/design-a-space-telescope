@@ -159,8 +159,29 @@ if(typeof $==="undefined") $ = {};
 		for(var i = 0; i < list.length; i++) $(list[i]).on('click',{me:this},function(e){ e.data.me.loadLanguage($(this).attr('data'),e.data.me.update); });
 
 
+		// Update Designer
+		var sections = ['objectives','satellite','instruments','cooling','vehicle','site','orbit','proposal'];
+		var html;
+
+		html = "";
+		for(var i = 0; i < sections.length; i++) html += '<div id="designer_'+sections[i]+'"></div>';
+		$('#output').html(html)
+
+		html = '<ul>'
+		for(var i = 0; i < sections.length; i++){
+			html += '<li><a href="#designer_'+sections[i]+'" class="toggle'+sections[i]+'"></a></li>';
+			$('#designer_'+sections[i]).html('<h2><a href="#designer_'+sections[i]+'" class="toggle'+sections[i]+'"></a></h2><div class="options"></div><div class="questions"></div>');
+		}
+		html += '</ul>';
+		$('#menubar').html(html)
+
+
+
+
+
+
 		// Make menu toggles active
-		$('#summary a').on('click',{me:this},function(e){ e.preventDefault(); e.data.me.toggleMenus('summaryext'); });
+		$('#summary a').on('click',{me:this},function(e){ e.data.me.toggleMenus('summaryext',$(this).attr('href')); });
 		$('a.togglewarnings,a.toggleerrors').on('click',{me:this},function(e){ e.preventDefault(); e.data.me.toggleMenus('messages'); });
 		$('a.togglemenu').on('click',{me:this},function(e){ e.preventDefault(); e.data.me.toggleMenus('menu'); });
 		$('a.togglelang').on('click',{me:this},function(e){ e.preventDefault(); e.data.me.toggleMenus('language'); });
@@ -172,7 +193,7 @@ if(typeof $==="undefined") $ = {};
 		$('.baritem .options').parent().on('click',{me:this},function(e){ e.data.me.showView('options').toggleMenus(); });
 		if(fullScreenApi.supportsFullScreen){
 			// Add the fullscreen toggle to the menu
-			$('#menu ul').append('<li class="baritem" data="fullscreen"><a href="#" class="fullscreenbtn"><img src="images/cleardot.gif" class="icon fullscreen" alt="full" /> <span></span></li>');
+			$('#menu ul').append('<li class="baritem" data="fullscreen"><a href="#" class="fullscreenbtn"><img src="images/cleardot.gif" class="icon fullscreen" alt="" /> <span></span></li>');
 			// Bind the fullscreen function to the double-click event if the browser supports fullscreen
 			$('.baritem .fullscreenbtn').parent().on('click', {me:this}, function(e){ e.data.me.toggleFullScreen().toggleMenus(); });
 		}
@@ -201,6 +222,8 @@ if(typeof $==="undefined") $ = {};
 
 		// Make sure the menu stays attached to the menu bar (unless scrolling down)
 		$(document).on('scroll',{me:this},function(e){ e.data.me.scrollMenus(); });
+
+		//$('.dropdown li:last-child a').on('blur',{me:this},function(e){ console.log('Blur'); e.data.me.toggleMenus(); });
 
 		$('.scriptonly').removeClass('scriptonly');
 		
@@ -256,14 +279,16 @@ if(typeof $==="undefined") $ = {};
 		return this;
 	}
 
-	SpaceTelescope.prototype.toggleMenus = function(id){
+	SpaceTelescope.prototype.toggleMenus = function(id,a){
 
 		var m = $('.dropdown');
+		
 		for(var i = 0; i < m.length ; i++){
-			if($(m[i]).attr('id') == id) $(m[i]).slideToggle();
+			if($(m[i]).attr('id') == id) $(m[i]).toggle(0,function(){ if(a && a.indexOf('#') >= 0){ var t = parseInt($('#'+a.split("#")[1]).offset().top,10)-$('#bar').outerHeight(); $(window).scrollTop(t); } });
 			else $(m[i]).hide();
 		}
 		this.positionMenus();
+		
 		return this;
 	}
 
@@ -419,28 +444,76 @@ if(typeof $==="undefined") $ = {};
 		// Set language direction via attribute and a CSS class
 		$('body').attr('dir',(d.language.alignment=="right" ? 'rtl' : 'ltr')).removeClass('ltr rtl').addClass((d.language.alignment=="right" ? 'rtl' : 'ltr'));
 
-		var html = "<ul>";
+
+		// Update main area
+		var html = "";
+		
+		$('#designer_objectives .options').html(html)
+
+
+		// Update the satellite section
+		html = '<form><ul class="padded">';
+		html += '<li><label for="mirror_diameter">'+this.phrases.designer.satellite.options.diameter.label+'</label><select id="mirror_diameter" name="mirror_diameter">';
+		for(var m in this.data.mirror) html += '<option>'+this.formatValue(this.data.mirror[m].diameter)+'</option>';
+		html += '</select></li>';
+		html += '<li><label for="mirror_deployable">'+this.phrases.designer.satellite.options.deployable.label+'</label><input id="mirror_deployable" name="mirror_deployable" type="checkbox" /></li>';
+		html += '<li><label for="mirror_uv">'+this.phrases.designer.satellite.options.uv.label+'</label><input id="mirror_uv" name="mirror_uv" type="checkbox" /></li>';
+		html += '</ul></form>';
+		$('#designer_satellite .options').html(html);
+
+
+		// Update the cooling section
+		html = '<form><ul class="padded">';
+		html += '</ul></form>';
+		$('#designer_cooling .options').html(html);
+
+
+
+		// Update the launch vehicle section
+		html = '<form><ul class="padded">';
 		for(var l in this.data.rocket){
-			html += '<li><div class="rocket">'+this.phrases.options.rocket[l].label+'</div><div class="operator"><img src="'+this.data.operator[this.data.rocket[l].operator].img+'" alt="'+this.phrases.options.operator[this.data.rocket[l].operator].label+'" title="'+this.phrases.options.operator[this.data.rocket[l].operator].label+'"></div><div class="diameter"><strong>Diameter:</strong> '+this.formatValue(this.data.rocket[l].diameter)+'</div> <div class="currency"><strong>Cost:</strong> '+this.formatValue(this.data.rocket[l].cost)+'</div>'
+			html += '<li><div class="rocket">'+this.phrases.designer.rocket.options[l].label+'</div><div class="operator"><img src="'+this.data.operator[this.data.rocket[l].operator].img+'" alt="'+this.phrases.operator[this.data.rocket[l].operator].label+'" title="'+this.phrases.operator[this.data.rocket[l].operator].label+'"></div><div class="diameter"><strong>'+this.phrases.designer.rocket.diameter+':</strong> '+this.formatValue(this.data.rocket[l].diameter)+'</div> <div class="currency"><strong>'+this.phrases.designer.rocket.cost+':</strong> '+this.formatValue(this.data.rocket[l].cost)+'</div>';
 			// Are we in basic or advanced mode?
-			if(this.data.rocket[l].mass.value) html += '<div class="mass"><strong>Mass:</strong> '+this.formatMass(this.data.rocket[l].mass)+'</div>';
-			else html += '<div class="mass"><strong>Mass to LEO:</strong> '+this.formatMass(this.data.rocket[l].mass.LEO)+'<br /><strong>Mass beyond LEO:</strong> '+this.formatMass(this.data.rocket[l].mass.GTO)+'</div>';
+			if(this.data.rocket[l].mass.value) html += '<div class="mass"><strong>'+this.phrases.designer.rocket.mass+':</strong> '+this.formatMass(this.data.rocket[l].mass)+'</div>';
+			else html += '<div class="mass"><strong>'+this.phrases.designer.rocket.massLEO+':</strong> '+this.formatMass(this.data.rocket[l].mass.LEO)+'<br /><strong>'+this.phrases.designer.rocket.massGTO+':</strong> '+this.formatMass(this.data.rocket[l].mass.GTO)+'</div>';
 
-			if(this.data.rocket[l].risk) html += '<div class="risk"><strong>Risk:</strong> '+(this.data.rocket[l].risk)+'</div>'
-			html += '<div class="sites"><strong>Sites:</strong> <br />'
+			if(this.data.rocket[l].risk) html += '<div class="risk"><strong>'+this.phrases.designer.rocket.risk+':</strong> '+(this.data.rocket[l].risk)+'</div>'
+			html += '<div class="sites"><strong>'+this.phrases.designer.rocket.sites+':</strong> <br />'
 			for(var i = 0; i < this.data.rocket[l].sites.length; i++){
-				html += ''+this.phrases.options.site[this.data.rocket[l].sites[i]].label+'<br />';
+				html += ''+this.phrases.designer.site.options[this.data.rocket[l].sites[i]].label+'<br />';
 			}
-			html += '</div></li>';
+			html += '</div><input type="radio" name="vehicle_rocket" value="'+l+'" /><a href="#" class="button">'+this.phrases.designer.rocket.select+'</a></li>';
 		}
-		html += "</ul>";
-		$('#output').html(html);
+		html += "</ul></form>";
+		$('#designer_vehicle .options').html(html);
 
-		// Update menu
+
+		// Update the instruments section
+		html = '<form><ul class="padded">';
+		html += '<li><label for="instruments">'+this.phrases.designer.instrument.label+'</label><select id="instruments" name="instruments">';
+		for(var m in this.data.instrument) html += '<option>'+this.phrases.designer.instrument.options[m].label+'</option>';
+		html += '</select></li>';
+		html += "</ul></form>";
+		$('#designer_instruments .options').html(html);
+
+
+		// Update designer toggle buttons
+		$('.toggleobjectives').text(this.phrases.designer.objectives.label);
+		$('.togglesatellite').text(this.phrases.designer.satellite.label);
+		$('.toggleinstruments').text(this.phrases.designer.instrument.label);
+		$('.togglecooling').text(this.phrases.designer.cooling.label);
+		$('.togglevehicle').text(this.phrases.designer.rocket.label);
+		$('.togglesite').text(this.phrases.designer.site.label);
+		$('.toggleorbit').text(this.phrases.designer.orbit.label);
+		$('.toggleproposal').text(this.phrases.designer.proposal.label);
+
+
+
+		// Update menu items
 		$('.togglemenu').attr('title',d.ui.menu.title);
 		$('#menu ul li').each(function(i){
 			var id = $(this).attr('data');
-			$(this).find('span').html(d.ui.menu[id])
+			$(this).find('a').attr('title',d.ui.menu[id].title).find('span').html(d.ui.menu[id].label)
 		})
 
 
@@ -463,10 +536,13 @@ if(typeof $==="undefined") $ = {};
 		var txt = '';
 		for(var i = 0; i < this.scenarios.length; i++){
 			txt = (typeof this.scenarios[i].description==="string") ? this.scenarios[i].description : "";
-			li += '<li><div class="padded"><h3>'+this.scenarios[i].name+'</h3><p>'+txt.replace(/%COST%/,'<span class="convertable" data-value="'+this.scenarios[i].budget.value+'" data-units="'+this.scenarios[i].budget.units+'" data-dimension="'+this.scenarios[i].budget.dimension+'">'+this.formatValue(this.scenarios[i].budget)+'</span>')+'</p><a href="#" class="button">Choose this mission<!--LANGUAGE--></a></div></li>'
+			li += '<li><div class="padded"><h3>'+this.scenarios[i].name+'</h3><p>'+txt.replace(/%COST%/,'<span class="convertable" data-value="'+this.scenarios[i].budget.value+'" data-units="'+this.scenarios[i].budget.units+'" data-dimension="'+this.scenarios[i].budget.dimension+'">'+this.formatValue(this.scenarios[i].budget)+'</span>')+'</p><a href="#" class="button" title="'+this.scenarios[i].name+'">Choose this mission<!--LANGUAGE--></a></div></li>'
 		}
 		$('#scenariolist').html(li);
 		$('#scenariolist').before('<h2><!--LANGUAGE-->Choose a mission</h2>');
+		
+		// Update values to be consistent with current user preferences
+		this.updateUnits();
 
 		return this;
 	}
@@ -741,20 +817,26 @@ if(typeof $==="undefined") $ = {};
 
 		console.log('showView',view,e)
 
-		// Don't do anything for certain views
-		if(view=="summaryext" || view=="messages" || view=="menu" || view=="language") return this;
-
 		$('body').removeClass('showguide showintro showoptions showmessages');
 
 		// Hide everything
 		$('.view').hide();
 
-		if(typeof view==="string" && view.length > 0){
+
+		if(typeof view==="string" && view.length > 0 && view.indexOf("summaryext")!=0){
+
+			// Don't do anything for certain views
+			if(view=="messages" || view=="menu" || view=="language") return this;
+
 			if((view.indexOf('guide')==0 && view.length==5) || view.indexOf('guide_')==0){
 				$('#summaryext').hide();
 				this.showGuide(view);
 				$('#guide').show().find('a').eq(0).focus();
 				$('body').addClass('showguide');
+			}else if((view.indexOf('designer')==0 && view.length==5) || view.indexOf('designer_')==0){
+				$('#summaryext').hide();
+				$('#designer').show().find('a').eq(0).focus();
+				$('body').addClass('showdesigner');
 			}else if(view=="messages"){
 				$('#summaryext').hide();
 				$('#messages').show();
@@ -897,7 +979,7 @@ if(typeof $==="undefined") $ = {};
 					for(i in this.data.wavelengths){
 						if(i != "none"){
 							table += '<tr>';
-							table += '<td>'+this.phrases.options.wavelengths[i].label+'</td>';
+							table += '<td>'+this.phrases.wavelengths[i].label+'</td>';
 							table += '<td>'+this.formatValue(this.data.wavelengths[i].temperature)+'</td>';
 							table += '</tr>';
 						}
@@ -909,7 +991,7 @@ if(typeof $==="undefined") $ = {};
 						for(i in this.data.instrument){
 							if(i != "none"){
 								table += '<tr>';
-								table += '<td>'+this.phrases.options.instrument[i].label+'</td>';
+								table += '<td>'+this.phrases.designer.instrument.options[i].label+'</td>';
 								table += '<td>'+this.formatValue(this.data.instrument[i].mass)+'</td>';
 								table += '<td>'+this.formatValue(this.data.instrument[i].cost)+'</td>';
 								table += '<td>'+this.formatValue(this.data.instrument[i].devtime)+'</td>';
@@ -922,8 +1004,8 @@ if(typeof $==="undefined") $ = {};
 					table = '';
 					for(i in this.data.orbit){
 						table += '<tr>';
-						table += '<td>'+this.phrases.options.orbit[i].label+'</td>';
-						table += '<td>'+(this.phrases.options.orbit[i].altitude ? this.phrases.options.orbit[i].altitude : '')+this.formatValue(this.data.orbit[i].altitude,0)+'</td>';
+						table += '<td>'+this.phrases.designer.orbit.options[i].label+'</td>';
+						table += '<td>'+(this.phrases.designer.orbit.options[i].altitude ? this.phrases.designer.orbit.options[i].altitude : '')+this.formatValue(this.data.orbit[i].altitude,0)+'</td>';
 						table += '<td>'+this.formatValue(this.data.orbit[i].period)+'</td>';
 						table += '<td>'+(this.data.orbit[i].obsfrac*100)+'%</td>';
 						table += '<td>'+this.formatValue(this.data.orbit[i].temperature)+'</td>';
@@ -932,7 +1014,7 @@ if(typeof $==="undefined") $ = {};
 					txt = txt.replace("%ORBITTABLE%",table);
 					for(i in this.data.orbit){
 						txt = txt.replace("%"+i+"ANCHOR%",'guide_orbit_'+i);
-						txt = txt.replace("%"+i+"LABEL%",this.phrases.options.orbit[i].label);
+						txt = txt.replace("%"+i+"LABEL%",this.phrases.designer.orbit.options[i].label);
 						txt = txt.replace("%"+i+"GROUNDCOST%",this.formatValue(this.data.orbit[i].groundcost));
 						txt = txt.replace("%"+i+"FUELLIFE%",this.formatValue(this.data.orbit[i].fuellife));
 						txt = txt.replace("%"+i+"ALTITUDE%",this.formatValue(this.data.orbit[i].altitude));
@@ -943,12 +1025,12 @@ if(typeof $==="undefined") $ = {};
 					table = '';
 					for(i in this.data.rocket){
 						table += '<tr>';
-						table += '<td>'+this.phrases.options.rocket[i].label+'</td>';
+						table += '<td>'+this.phrases.designer.rocket.options[i].label+'</td>';
 						table += '<td>'+this.formatValue(this.data.rocket[i].diameter,0)+'</td>';
 						table += '<td>'+this.formatValue(this.data.rocket[i].mass.LEO,0)+'</td>';
 						table += '<td>'+this.formatValue(this.data.rocket[i].mass.GTO,0)+'</td>';
 						table += '<td>'+this.formatValue(this.data.rocket[i].cost,0)+'</td>';
-						table += '<td>'+this.phrases.options.operator[this.data.rocket[i].operator].label+'</td>';
+						table += '<td>'+this.phrases.operator[this.data.rocket[i].operator].label+'</td>';
 						if(this.settings.mode=="advanced") table += '<td>'+(this.data.rocket[i].risk*100)+'%</td>';
 						table += '</tr>';
 					}
@@ -957,15 +1039,15 @@ if(typeof $==="undefined") $ = {};
 					table = '';
 					for(i in this.data.site){
 						table += '<tr>';
-						table += '<td>'+this.phrases.options.site[i].label+'</td>';
-						table += '<td>'+this.phrases.options.site[i].trajectories+'</td>';
+						table += '<td>'+this.phrases.designer.site.options[i].label+'</td>';
+						table += '<td>'+this.phrases.designer.site.options[i].trajectories+'</td>';
 						table += '<td>';
 						var rs = '';
 						for(var r in this.data.rocket){
 							for(var s=0; s < this.data.rocket[r].sites.length; s++){
 								if(this.data.rocket[r].sites[s]==i){
 									if(rs.length > 0) rs += ', ';
-									rs += ''+this.phrases.options.rocket[r].label+''
+									rs += ''+this.phrases.designer.rocket.options[r].label+''
 								}
 							}
 						}
@@ -1046,7 +1128,7 @@ if(typeof $==="undefined") $ = {};
 
 		var a = location.href.split("#")[1];
 
-		if(el.find('.close').length==0) el.prepend('<a href="#" class="close"><img src="images/cleardot.gif" class="icon close" /></a>');
+		if(el.find('.close').length==0) el.prepend('<a href="#" class="close" title="Close"><img src="images/cleardot.gif" class="icon close" /></a>');
 
 		// Update link to point back to the previous anchor tag
 		if(el.attr('id')!="guide" && el.attr('id').indexOf(a)!=0) el.find('a.close').attr('href',"#"+a);

@@ -8,8 +8,8 @@
 	"title": "Space Telescope Designer!",
 	"intro": "<p>Designing a space telescope is an incredibly complex job, with many requirements that must be met. Some of these are because of the scientific discoveries that astronomers would like to make, while others are due to limits that engineers put on the spacecraft.</p><p>In the early 1990s, astronomers and engineers around the world started designing the <a href=\"#guide_previous_herschel\" class=\"guidelink\">Herschel Space Observatory</a>. After years of building and testing, Herschel launched in 2009. This project will help you explore the kinds of decisions the astronomers and engineers had to make as you design your own space telescope. Can <em>you</em> launch a telescope that will push back the frontiers of knowledge?</p>",
 	"ui": {
-		"million": { "full": " million", "compact": "m" },
-		"billion": { "full": " billion", "compact": "Bn" },
+		"million": { "full": " million", "compact": " m" },
+		"billion": { "full": " billion", "compact": " Bn" },
 		"units": {
 			"km": { "unit": " km", "label": "Kilometres", "dimension": "length" },
 			"m": { "unit": " m", "label": "Metres", "dimension": "length", "selectable": 1 },
@@ -42,13 +42,13 @@
 			"title": "Errors"
 		},
 		"menu": {
-			"title": "Menu",
-			"load": "Load file",
-			"save": "Save file",
-			"help": "Guide",
-			"options": "Options",
-			"restart": "Change scenario",
-			"fullscreen": "Toggle fullscreen"
+			"title": "Toggle menu",
+			"load": { "label": "Load file", "title": "Load a previously saved file" },
+			"save": { "label": "Save file", "title": "Save your progress" },
+			"help": { "label": "Guide", "title": "View the student guide" },
+			"options": { "label": "Options", "title": "Change units etc" },
+			"restart": { "label": "Change scenario", "title": "Change the aim of your mission" },
+			"fullscreen": { "label": "Toggle fullscreen", "title": "Switch between viewing fullscreen or as a standard browser window" }
 		},
 		"options": {
 			"currency": "Currency:",
@@ -58,7 +58,7 @@
 		},
 		"summary": {
 			"success": {
-				"title": "Probability of success",
+				"title": "Success probability",
 				"site": "Launch site:",
 				"vehicle": "Launch vehicle:",
 				"deploy": "Deployment:",
@@ -67,7 +67,7 @@
 				"mission": "Mission:"
 			},
 			"time": {
-				"title": "Timeline",
+				"title": "Time until launch",
 				"dev": {
 					"title": "Development (total):",
 					"satellite": "Satellite structure:",
@@ -81,7 +81,7 @@
 				"end": "Mission end:"
 			},
 			"cost": {
-				"title": "Budget",
+				"title": "Funds available",
 				"dev": {
 					"title": "Development (total):",
 					"satellite": "Satellite structure:",
@@ -114,12 +114,11 @@
 		}
 	},
 	"options": {
-		"mirror": {
-			"mirror_0.5" : { "label": "0.5 m" },
-			"mirror_1.0" : { "label": "1.0 m" },
-			"mirror_2.0" : { "label": "2.0 m" },
-			"mirror_4.0" : { "label": "4.0 m" },
-			"mirror_8.0" : { "label": "8.0 m" }
+		"satellite": {
+			"title": "Satellite",
+			"diameter": { "label": "Mirror diameter", "help": "The diameter of the telescope mirror." },
+			"deployable": { "label": "Deployable structure?", "help": "Creates a more compact structure for launch but is more expensive." },
+			"uv": { "label": "UV quality?", "help": "Make the mirror surface of a higher quality. Required if you wish to make observations at UV wavelengths." }
 		},
 		"orbit": {
 			"LEO": { "label": "Low Earth Orbit", "altitude": "<", "launchreq": "Requires ability to de-orbit" },
