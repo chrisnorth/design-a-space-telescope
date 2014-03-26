@@ -3,77 +3,148 @@
 		{
 			"name": "Star Birth and Evolution",
 			"description": "A private organization has funded your group to research into the birth and evolution of stars in the distant and nearby Universe, with full analysis of the spectra of the event. The budget of your mission is <span class=\"cost\">%COST%</span>. You will need the appropriate instruments on board your satellite in order to observe such objects.",
+			"funder": "Private Organization",
 			"budget": { "value": 2000, "units": "GBP", "dimension": "currency" },
-			"requires": [
-				{ "instrument": "camera", "wavelength": "farir" },
-				{ "instrument": "spectrometer", "wavelength": "farir" },
-				{ "instrument": "camera", "wavelength": "submm" },
-				{ "instrument": "spectrometer", "wavelength": "submm" },
-				{ "mirror": 1 },
-				{ "lifetime": 4 }
-			]
+			"requires": [{
+				"instruments": [{ 
+					"instrument": "camera",
+					"wavelength": "farir"
+				},{
+					"instrument": "spectrometer",
+					"wavelength": "farir"
+				},{
+					"instrument": "camera",
+					"wavelength": "submm"
+				},{
+					"instrument": "spectrometer",
+					"wavelength": "submm"
+				}],
+				"label": "Wavelength coverage from sub-mm to far-infrared",
+				"error": "You are not able to observe the required wavelengths"
+			},{
+				"mirror": 1,
+				"label": "You need a mirror.",
+				"error": "You have not selected a suitable mirror."
+			},{
+				"lifetime": 4,
+				"label": "Mission lifetime (4 years)",
+				"error": "Your mission will not observe for a long enough time."
+			}]
 		},{
 			"name": "Multi-wavelength Sky Mapper",
 			"description": "A government research grant has come through to take images of the sky in ultraviolet, visible and near‐IR wavelengths from a satellite in space, in order to map stars, galaxies and other yet to be discovered phenomena. The budget of your mission is <span class=\"cost\">%COST%</span>.",
+			"funder": "Government",
 			"budget": { "value": 800, "units": "GBP", "dimension": "currency" },
-			"requires": [
-				{
-					"instruments": [
-						{ "instrument": "camera", "wavelength": "uv", "label": "A UV camera", "error": "You don't have a UV camera" },
-						{ "instrument": "camera", "wavelength": "optical", "label": "A optical camera", "error": "You don't have an optical camera" },
-						{ "instrument": "camera", "wavelength": "nearir", "label": "A nearir camera", "error": "You can't observe warm dust" }
-					],
-					"label": "You need wavelength coverage from UV to Near IR",
-					"error": "You are not able to observe the required wavelengths"
-				},
-				{ "mirror": 0.5, "label": "You need a mirror", "error": "You have not selected a mirror" }
-			]
+			"requires": [{
+				"instruments": [{
+					"instrument": "camera",
+					"wavelength": "uv",
+					"label": "A UV camera",
+					"error": "You don't have a UV camera"
+				},{
+					"instrument": "camera",
+					"wavelength": "optical",
+					"label": "An optical camera",
+					"error": "You don't have an optical camera"
+				},{ 
+					"instrument": "camera",
+					"wavelength": "nearir",
+					"label": "A nearir camera",
+					"error": "You can't observe warm dust"
+				}],
+				"label": "Wavelength coverage from UV to Near IR",
+				"error": "You are not able to observe the required wavelengths"
+			},{
+				"mirror": 0.5,
+				"label": "You need a mirror",
+				"error": "You have not selected a mirror"
+			}]
 		},{
 			"name": "Interstellar Dust",
 			"description": "A university has approached your group to design a mission for satellite telescope in order to analyse the spectra of interstellar dust in nearby galaxies. The budget of your mission is <span class=\"cost\">%COST%</span>. You will need the appropriate instruments on board the telescope in order to carry out the mission.",
+			"funder": "University",
 			"budget": { "value": 9000, "units": "GBP", "dimension": "currency" },
-			"requires": [
-				{ "mirror": 0.5 }
-			]
+			"requires": [{
+				"mirror": 0.5,
+				"label": "You need a mirror.",
+				"error": "You have not selected a suitable mirror."
+			}]
 		},{
 			"name": "Planet Formation",
 			"description": "A private rocket company, <em>SpaceX</em>, has approached your group to launch a telescope into space in order to study the formation of planets. The resolution must be at least four times better than previous equivalent missions, and you must use their rocket. The budget for your mission is <span class=\"cost\">%COST%</span>.",
+			"funder": "SpaceX",
 			"budget": { "value": 4000, "units": "GBP", "dimension": "currency" },
-			"requires": [
-				{ "rocket": "FLC9" },
-				{ "mirror": 2 }
-			]
+			"requires": [{
+				"rocket": "FLC9",
+				"label": "You must use a SpaceX rocket.",
+				"error": "You have not chosen a SpaceX rocket."
+			},{
+				"mirror": 2,
+				"label": "A resolution at least four times better than previous equivalent missions.",
+				"error": "You have not selected a suitable mirror to acheive the required resolution."
+ 			}]
 		},{
 			"name": "Infrared All-sky",
 			"description": "A funding agency is providing funding to perform an all-sky survey from near infrared to far infrared. The budget of your mission is <span class=\"cost\">%COST%</span>.",
+			"funder": "Funding Agency",
 			"budget": { "value": 1200, "units": "GBP", "dimension": "currency" },
-			"requires": [
-				{ "instrument": "camera", "wavelength": "nearir" },
-				{ "instrument": "camera", "wavelength": "midir" },
-				{ "instrument": "camera", "wavelength": "farir" },
-				{ "mirror": 0.5 }
-			]
+			"requires": [{
+				"instruments": [{
+					"instrument": "camera",
+					"wavelength": "nearir"
+				},{
+					"instrument": "camera",
+					"wavelength": "midir"
+				},{
+					"instrument": "camera",
+					"wavelength": "farir"
+				}]
+			},{
+				"mirror": 0.5,
+				"label": "You need a mirror.",
+				"error": "You have not selected a suitable mirror."
+			}]
 		},{
 			"name": "Nearby Galaxy Explorer",
 			"description": "Your group has received funding to send a telescope on board a satellite into space with the main objective of analysing stars in a nearby galaxy at very high resolution. The budget of your mission is <span class=\"cost\">%COST%</span>. Your group will need to use the appropriate instruments in order to collect data if it is to be analysed.",
+			"funder": "",
 			"budget": { "value": 10000, "units": "GBP", "dimension": "currency" },
-			"requires": [
-				{ "instrument": "camera", "wavelength": "nearir" },
-				{ "instrument": "camera", "wavelength": "optical" },
-				{ "instrument": "camera", "wavelength": "uv" },
-				{ "mirror": 8 }
-			]
+			"requires": [{
+				"instruments": [{
+					"instrument": "camera",
+					"wavelength": "nearir"
+				},{
+					"instrument": "camera",
+					"wavelength": "optical",
+					"label": "An optical camera",
+					"error": "You don't have an optical camera"
+				},{
+					"instrument": "camera",
+					"wavelength": "uv"
+				}]
+			},{
+				"mirror": 8,
+				"label": "The resolution must be as high as possible.",
+				"error": "You have not selected a suitable mirror to acheive the required resolution."
+			}]
 		},{
 			"name": "Near-Earth Asteroid Study",
 			"description": "The government has asked you to design a satellite to take images of near-Earth asteroids. The mission should last for as long as possible. The European Space Agency will provide the launch and operations cost, also up to a total of <span class=\"cost\">%COST%</span>, but you have to use their launch site.",
+			"funder": "Government",
 			"budget": { "value": 700, "units": "GBP", "dimension": "currency" },
-			"requires": [
-				{ "mirror": 0.5 },
-				{ "site": "CSG" }
-			]
+			"requires": [{
+				"mirror": 0.5,
+				"label": "You need a mirror.",
+				"error": "You have not selected a suitable mirror."
+			},{
+				"site": "CSG",
+				"label": "You must use a European Space Agency launch site.",
+				"error": "You have no funding for your chosen launch site."
+			}]
 		},{
 			"name": "Freedom",
 			"description": "There is no need to worry about money. Spend as much as you like.",
+			"funder": "",
 			"budget": { "value": 1e20, "units": "GBP", "dimension": "currency" },
 			"requires": []
 		}

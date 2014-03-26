@@ -67,7 +67,7 @@
 				"mission": "Mission:"
 			},
 			"time": {
-				"title": "Time until launch",
+				"title": "Timeline",
 				"dev": {
 					"title": "Development (total):",
 					"satellite": "Satellite structure:",
@@ -81,7 +81,8 @@
 				"end": "Mission end:"
 			},
 			"cost": {
-				"title": "Funds available",
+				"title": "Budget",
+				"initial": "Initial funding",
 				"dev": {
 					"title": "Development (total):",
 					"satellite": "Satellite structure:",
@@ -94,7 +95,8 @@
 					"launch": "Launch:",
 					"ground": "Ground control (per year):"
 				},
-				"total": "Total:"
+				"total": "Total costs:",
+				"available": "Funds available:"
 			},
 			"mass": {
 				"title": "Mass budget",
@@ -106,7 +108,7 @@
 					"cryo": "Cryogenic cooling:",
 					"active": "Active cooling:"
 				},
-				"instruments": "All instruments:"
+				"instruments": "Instruments (total):"
 			},
 			"science": {
 				"title": "Mission targets"
@@ -115,12 +117,13 @@
 	},
 	"designer": {
 		"objectives": {
-			"label": "Objectives",
-			"help": ""
+			"label": "Mission overview",
+			"help": "Review your mission"
 		},
 		"satellite": {
 			"label": "Satellite",
-			"help": "",
+			"help": "Determine the properties of your telescope mirror",
+			"about": "The size and type of <a href=\"#guide_mirror\" class=\"guidelink\">mirror</a> on your satellite will determine the quality of the measurements you can make.",
 			"options": {
 				"diameter": { "label": "Mirror diameter", "help": "The diameter of the telescope mirror." },
 				"deployable": { "label": "Deployable structure?", "help": "Creates a more compact structure for launch but is more expensive." },
@@ -130,39 +133,34 @@
 		},
 		"instrument": {
 			"label": "Instruments",
-			"help": "",
+			"help": "Choose your scientific instruments",
+			"about": "To get any results from your mission you will need <a href=\"#guide_instruments\" class=\"guidelink\">scientific instruments</a>. Select a type of instrument and give it a name if you wish. When you are happy with your instrument choice, press the <strong>&plus;</strong> button to add it to your satellite.",
 			"options": {
-				"camera": { "label": "Camera" },
-				"spectrometer": { "label": "Spectrometer" },
-				"both": { "label": "Both" }
+				"instrument": {
+					"camera": { "label": "Camera" },
+					"spectrometer": { "label": "Spectrometer" },
+					"both": { "label": "Camera and Spectrometer" }
+				},
+				"label": "New instrument",
+				"add": "Add this instrument",
+				"name": "Instrument name"
 			},
 			"questions": []
 		},
 		"cooling": {
 			"label": "Cooling",
-			"help": "",	
+			"help": "Apply cooling to your instruments",
+			"about": "Apply cooling to your instruments.",
 			"options": {
-				"passive": {
-					"yes": { "label": "Yes" },
-					"no": { "label": "No" }
-				},
-				"cryogenic": {
-					"none": { "label": "None" },
-					"years_2": { "label": "2yr" },
-					"years_4": { "label": "4yr" },
-					"years_8": { "label": "8yr" }
-				},
-				"active": {
-					"yes": { "label": "Yes" },
-					"no": { "label": "No" }
-				}
+				"label": "Cooling temperature"
 			},
 			"questions": []
 		},
 		"rocket": {
 			"label": "Launch vehicle",
-			"help": "",
+			"help": "Choose your rocket",
 			"select": "Select this launch vehicle",
+			"height": "Height",
 			"diameter": "Payload diameter",
 			"cost": "Launch cost",
 			"mass": "Mass",
@@ -188,7 +186,7 @@
 		},
 		"site": {
 			"label": "Launch site",
-			"help": "",
+			"help": "Choose the launch site",
 			"options": {
 				"CSG": { "label": "Guiana Space Centre, French Guiana", "trajectories": "North, East" },
 				"BKR": { "label": "Baikonur, Russia", "trajectories": "North, East" },
@@ -204,7 +202,7 @@
 		},
 		"orbit": {
 			"label": "Orbit",
-			"help": "",
+			"help": "Choose the type of orbit",
 			"options": {
 				"LEO": { "label": "Low Earth Orbit", "altitude": "<", "launchreq": "Requires ability to de-orbit" },
 				"HEO": { "label": "High Earth Orbit", "altitude": ">", "launchreq": "" },
@@ -218,7 +216,8 @@
 		},
 		"proposal": {
 			"label": "Proposal",
-			"help": ""
+			"help": "Complete your mission proposal document",
+			"doc": "<h2>%FUNDER% Proposal Form</h2><p class=\"letter_date\">%DATE%<\/p><p>Dear %TO%,<\/p><p>We would like to propose a project to send a telescope into space on board a telescope. The aim of the mission is to %AIM%<\/p><p>Previous similar missions are %PREVIOUS%. This mission will advance on these by %ADVANCE%<\/p><h3>Instruments<\/h3><p>The instruments on board will be %INSTRUMENTS% They will allow the science goals to be met by %GOALS%<\/p><h3>Mirror<\/h3><p>The main mirror of the telescope will be %MIRROR% . This will allow the instruments to achieve resolutions from %RESLOW% to %RESHIGH%.<\/p><h3>Cooling System<\/h3><p>The minimum operating temperature required by the instruments is %REQTEMPERATURE%. The temperature on board the satellite will be %TEMPERATURE%. <\/p><h3>Mass budget<\/h3><p>The total mass of the satellite will be %MASS%. The breakdown from the individual components is given below<\/p><ul><li>Satellite Structure: %MASSSATELLITE%</li><li>Mirror: %MASSMIRROR%</li><li>Cooling System: %MASSCOOLING%</li><li>Instruments: %MASSINSTRUMENTS%</li></ul><h3>Orbit Selection<\/h3><p>The satellite will observe from %ORBIT%, at a distance of %DISTANCE% from Earth. The orbital period will be %PERIOD%, and the maximum fuel lifetime for maintaining such an orbit is %FUEL%. The mission duration will be %DURATION%.<\/p><h3>Launch vehicle and site<\/h3><p>To reach orbit, the satellite will be launched on a %VEHICLE%, operated by %OPERATOR%, from %SITE%.  The maximum capacity of this launch vehicle is %LAUNCHMASS%.<\/p><h3>Budget<\/h3><p>The total cost of the mission will be %COST%.<\/p><ul><li>Satellite Structure: %COSTSATELLITE%</li><li>Mirror: %COSTMIRROR%</li><li>Cooling System: %COSTCOOLING%</li><li>Instruments: %COSTINSTRUMENTS%</li><li>Development cost: %COSTDEV%</li><li>Launch cost: %COSTLAUNCH%</li><li>Ground control cost: %COSTGROUND%</li><li>Operations cost: %COSTOPERATIONS%</li></ul><br /><p>Kind Regards,<\/p><p>%NAME%<\/p>"
 		},
 		"launch": {
 			"label": "Launch",
