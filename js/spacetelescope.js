@@ -269,6 +269,7 @@ if(typeof $==="undefined") $ = {};
 		$(document).on('change','#designer_vehicle .options .selector input',{me:this},function(e){
 			$('#designer_vehicle .info>li').removeClass('selected');
 			$('#designer_vehicle .info>li.'+$(this).attr('data')).addClass('selected').find('input').trigger('click');
+			console.log($('#designer_vehicle input[name=vehicle_rocket]:checked').val())
 		});
 
 		$(document).on('click','#designer_vehicle .options .info>li',{me:this},function(e){
@@ -547,7 +548,7 @@ if(typeof $==="undefined") $ = {};
 		var w = 100/n;
 		for(var l in this.data.rocket){
 			li = $('#designer_vehicle .options li').eq(i);
-			li.attr({'data':l}).css({'width':w+'%','max-width':w+'%'});
+			li.attr({'data':l}).css({'width':w+'%','width':'calc(100%/'+n+')'});
 			r = this.data.rocket[l];
 			li.find('.image img').attr({'src':r.img,'alt':rk.options[l].label,'title':rk.options[l].label});
 			li.find('.selector label').html(rk.options[l].label);
