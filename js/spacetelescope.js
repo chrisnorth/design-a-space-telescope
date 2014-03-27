@@ -237,10 +237,15 @@ if(typeof $==="undefined") $ = {};
 		$('#designer_cooling .options').html('<form><ul class="padded"><li><label for="cooling"></label><select id="cooling" name="cooling"></select></li></ul></form>');
 
 		// Update the launch vehicle section
-		html = '<div class="images"></div>'
-		html += '<form><ul class="padded">';
+		html = '<div class="padded">'
+		//html += '<div class="images"></div>'
+		html += '<form><ul class="info">';
 		for(var l in this.data.rocket){
-			html += '<li><div class="rocket"></div><div class="operator"><img src="" alt="" title="" /></div>';
+			html += '<li class="'+l+'" data="'+l+'">';
+			html += '<div class="image"><img src="" alt="" title="" /></div><div class="operator"><img src="" alt="" title=""style="max-width:100%;" /></div>';
+			html += '<div class="details">';
+			html += '<div class="rocket"></div>';
+			html += '<div class="operator"><strong></strong> <span class="value"></span></div>';
 			html += '<div class="height"><strong></strong> <span class="value"></span></div>';
 			html += '<div class="diameter"><strong></strong> <span class="value"></span></div>';
 			html += '<div class="currency"><strong></strong> <span class="value"></span></div>';
@@ -249,15 +254,27 @@ if(typeof $==="undefined") $ = {};
 			else html += '<div class="massLEO"><strong></strong> <span class="value"></span></div><div class="massGTO"><strong></strong> <span class="value"></span></div>';
 
 			if(this.data.rocket[l].risk) html += '<div class="risk"><strong></strong> <span class="value"></span></div>'
-			html += '<div class="sites"><strong></strong> <br /><span class="value"></span></div>'
-			html += '<input type="radio" name="vehicle_rocket" /><a href="#" class="button"></a></li>';
+			html += '<div class="sites"><strong></strong> <span class="value"></span></div>';
+			html += '<div class="clearall"></div>';
+			html += '</div>';
+			html += '<div class="selector"><input type="radio" name="vehicle_rocket" id="vehicle_rocket_'+l+'" data="'+l+'" /><label for="vehicle_rocket_'+l+'"></label></div>';
+			html += '</li>';
 		}
-		html += "</ul></form>";
+		html += '</ul></form><div class="vehicle_details"></div></div>';
 		$('#designer_vehicle .options').html(html);
-		$('#designer_vehicle .options .button').on('click',{me:this},function(e){
+		$(document).on('click','#designer_vehicle .options .button',{me:this},function(e){
 			e.preventDefault();
-			$(this).parent().parent().find('li').removeClass('selected');
-			$(this).parent().addClass('selected').find('input').trigger('click');
+			$('#designer_vehicle .info>li.'+$(this).attr('data')).find('input').trigger('click');
+		});
+		$(document).on('change','#designer_vehicle .options .selector input',{me:this},function(e){
+			$('#designer_vehicle .info>li').removeClass('selected');
+			$('#designer_vehicle .info>li.'+$(this).attr('data')).addClass('selected').find('input').trigger('click');
+		});
+
+		$(document).on('click','#designer_vehicle .options .info>li',{me:this},function(e){
+			$('.withinfo').removeClass('withinfo');
+			$(this).addClass('withinfo');
+			$('#designer_vehicle .vehicle_details').html($(this).find('.details').html()).addClass('padded')
 		});
 
 		// Build proposal document holder
@@ -530,10 +547,14 @@ if(typeof $==="undefined") $ = {};
 		var w = 100/n;
 		for(var l in this.data.rocket){
 			li = $('#designer_vehicle .options li').eq(i);
+			li.attr({'data':l}).css({'width':w+'%','max-width':w+'%'});
 			r = this.data.rocket[l];
-			imgs += '<div style="display:inline-block;width:'+w+'%;"><img src="'+r.img+'" alt="'+rk.options[l].label+'" title="'+rk.options[l].label+'"  style="width:100%;" /><br /><img src="'+this.data.operator[r.operator].img+'" alt="'+d.operator[r.operator].label+'" title="'+d.operator[r.operator].label+'" style="max-width:100%;" /></div>';
+			li.find('.image img').attr({'src':r.img,'alt':rk.options[l].label,'title':rk.options[l].label});
+			li.find('.selector label').html(rk.options[l].label);
 			li.find('.rocket').html(rk.options[l].label);
 			li.find('.operator img').attr({'src':this.data.operator[r.operator].img,'alt':d.operator[r.operator].label, 'title':d.operator[r.operator].label});
+			li.find('.details .operator strong').html(rk.operator);
+			li.find('.details .operator .value').html(d.operator[r.operator].label);
 			if(r.height){
 				li.find('.height strong').html(rk.height);
 				this.updateValue(li.find('.height .value'),r.height);
@@ -548,9 +569,9 @@ if(typeof $==="undefined") $ = {};
 				this.updateValue(li.find('.mass .value'),r.mass);
 			}else{
 				li.find('.massLEO strong').html(rk.massLEO);
-				this.updateValue(li.find('.massLEO .value'),r.massLEO);
+				this.updateValue(li.find('.massLEO .value'),r.mass.LEO);
 				li.find('.massGTO strong').html(rk.massGTO);
-				this.updateValue(li.find('.massGTO .value'),r.massGTO);
+				this.updateValue(li.find('.massGTO .value'),r.mass.GTO);
 			}
 			if(r.risk){
 				li.find('.risk strong').html(rk.risk);
@@ -566,7 +587,6 @@ if(typeof $==="undefined") $ = {};
 			
 			i++;
 		}
-		$('#designer_vehicle .options .images').html('<div class="padded" style="text-align:center;">'+imgs+'</div>');
 		if(d.designer.rocket.about) $('#designer_vehicle .about').html('<div class="padded">'+d.designer.rocket.about+'</div>');
 
 		// Update the instruments section

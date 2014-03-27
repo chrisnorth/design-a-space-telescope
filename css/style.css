@@ -89,9 +89,6 @@ h3 { font-size: 1.333em; margin-bottom: 0.5em; }
 h1, h2, h3 { font-weight: bold; }
 p { margin-bottom: 1em; line-height: 1.5em; }
 strong { font-weight: bold; }
-.rocket { font-weight: bold; font-size: 1.2em; text-align: center; }
-.operator { margin-bottom: 0.5em; text-align: center; }
-.operator img { width: 3em; height: 3em; }
 
 
 #bar {
@@ -337,18 +334,26 @@ a.togglescience:hover { padding-bottom: 0.3em; border-bottom: 0.2em solid #69dff
 
 .designer_inner { background-color: rgba(0,0,0,0.4); }
 #designer .designer_title { display:none; }
-#designer_vehicle li { margin: 0.5em 0; display: inline-block; background-color: #eee; padding: 1em; width: 100%; }
-#designer_vehicle li:last-child { margin-bottom: 0; }
-#designer_vehicle li.selected {
-	background-color: #ffffff;
-	-moz-transition: all 0.25s ease-in-out;
-	-o-transition: all 0.25s ease-in-out;
-	-webkit-transition: all 0.25s ease-in-out;
-	transition: all 0.25s ease-in-out;
+#designer_vehicle li {
+	cursor: pointer;
+	margin: 0;
+	display: inline-block;
 }
-#designer_vehicle li.selected .button { display: none; }
-#designer_vehicle input { display: none; }
-#designer_vehicle .images .padded div:hover { background-color: #ccc; }
+#designer_vehicle .selector { text-align: center; margin-bottom: 1em; }
+#designer_vehicle .selector label { display: none; }
+#designer_vehicle input { margin: auto; float: none; }
+#designer_vehicle li .details { display: none; }
+#designer_vehicle li:hover, #designer_vehicle li:focus, #designer_vehicle li.withinfo, #designer_vehicle .vehicle_details { background-color: #e6e6e6; }
+#designer_vehicle li.selected { }
+#designer_vehicle .image { display: inline-block; width: 100%; }
+#designer_vehicle .image img { width: auto; max-width: 100%; }
+#designer_vehicle li .operator { text-align: center; }
+#designer_vehicle li .operator img { width: 3em; height: 3em; }
+#designer_vehicle .vehicle_details .rocket { font-weight: bold; font-size: 1.2em; margin-bottom: 0.5em; }
+#designer_vehicle .vehicle_details .value { float: right; text-align: right; }
+#designer_vehicle .vehicle_details .details { clear: both; }
+#designer_vehicle .vehicle_details .button { margin: auto; float: right;}
+
 #main {
 	display: table;
 	width: 100%;
