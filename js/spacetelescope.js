@@ -22,6 +22,11 @@ if(typeof $==="undefined") $ = {};
 (function($) {
 
 
+	// shim layer with setTimeout fallback
+	window.requestAnimFrame = (function(){
+		return  window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || function( callback ){ window.setTimeout(callback, 1000 / 60); };
+	})();
+
 	// Full Screen API - http://johndyer.name/native-fullscreen-javascript-api-plus-jquery-plugin/
 	var fullScreenApi = {
 		supportsFullScreen: false,
@@ -110,6 +115,7 @@ if(typeof $==="undefined") $ = {};
 
 		this.q = $.query();
 		this.i = inp;
+		this.stage = "intro";
 
 		// Set some variables
 		this.langurl = "config/%LANG%%MODE%.json";
@@ -249,10 +255,7 @@ if(typeof $==="undefined") $ = {};
 			html += '<div class="height"><strong></strong> <span class="value"></span></div>';
 			html += '<div class="diameter"><strong></strong> <span class="value"></span></div>';
 			html += '<div class="currency"><strong></strong> <span class="value"></span></div>';
-			// Are we in basic or advanced mode?
-			if(this.data.rocket[l].mass.value) html += '<div class="mass"><strong></strong> <span class="value"></span></div>';
-			else html += '<div class="massLEO"><strong></strong> <span class="value"></span></div><div class="massGTO"><strong></strong> <span class="value"></span></div>';
-
+			html += '<div class="massLEO"><strong></strong> <span class="value"></span></div><div class="massGTO"><strong></strong> <span class="value"></span></div>';
 			if(this.data.rocket[l].risk) html += '<div class="risk"><strong></strong> <span class="value"></span></div>'
 			html += '<div class="sites"><strong></strong> <span class="value"></span></div>';
 			html += '<div class="clearall"></div>';
@@ -280,6 +283,8 @@ if(typeof $==="undefined") $ = {};
 
 		// Build proposal document holder
 		$('#designer_proposal .options').html('<div class="padded"><div class="doc"></div></div>');
+
+		$(document).on('click','#scenarios .button',{me:this},function(e){ e.data.me.chooseScenario($(this).attr('data')); });
 
 		return this;
 	}
@@ -469,7 +474,17 @@ if(typeof $==="undefined") $ = {};
 		return this;
 	}
 
-
+	// Select scenario
+	SpaceTelescope.prototype.chooseScenario = function(i){
+		this.scenario = this.scenarios[i];
+		this.stage = "designer";
+		console.log(this.scenario,this.stage);
+		$('#designer_objectives .options').html('<div class="padded"><blockquote class="padded">'+this.formatScenario(this.scenario)+'</blockquote></div>');
+		if(this.phrases.designer.objectives.about) $('#designer_objectives .about').html('<div class="padded">'+this.phrases.designer.objectives.about.replace(/%TITLE%/,this.scenario.name).replace(/%FUNDER%/,this.scenario.funder)+'</div>');
+		this.updateSummary();
+		return this;
+	}
+	
 	// Update the page using the JSON response
 	SpaceTelescope.prototype.update = function(){
 
@@ -560,20 +575,18 @@ if(typeof $==="undefined") $ = {};
 				li.find('.height strong').html(rk.height);
 				this.updateValue(li.find('.height .value'),r.height);
 			}
+
 			li.find('.diameter strong').html(rk.diameter);
 			this.updateValue(li.find('.diameter .value'),r.diameter);
+
 			li.find('.currency strong').html(rk.cost);
 			this.updateValue(li.find('.currency .value'),r.cost);
-			// Are we in basic or advanced mode?
-			if(r.mass.value){
-				li.find('.mass strong').html(rk.massLEO);
-				this.updateValue(li.find('.mass .value'),r.mass);
-			}else{
-				li.find('.massLEO strong').html(rk.massLEO);
-				this.updateValue(li.find('.massLEO .value'),r.mass.LEO);
-				li.find('.massGTO strong').html(rk.massGTO);
-				this.updateValue(li.find('.massGTO .value'),r.mass.GTO);
-			}
+
+			li.find('.massLEO strong').html(rk.massLEO);
+			this.updateValue(li.find('.massLEO .value'),r.mass.LEO);
+			li.find('.massGTO strong').html(rk.massGTO);
+			this.updateValue(li.find('.massGTO .value'),r.mass.GTO);
+
 			if(r.risk){
 				li.find('.risk strong').html(rk.risk);
 				this.updateValue(li.find('.risk .value'),r.risk);
@@ -641,10 +654,8 @@ if(typeof $==="undefined") $ = {};
 
 		var li = '';
 		var txt = '';
-		for(var i = 0; i < this.scenarios.length; i++){
-			txt = (typeof this.scenarios[i].description==="string") ? this.scenarios[i].description : "";
-			li += '<li><div class="padded"><h3>'+this.scenarios[i].name+'</h3><p>'+txt.replace(/%COST%/,'<span class="convertable" data-value="'+this.scenarios[i].budget.value+'" data-units="'+this.scenarios[i].budget.units+'" data-dimension="'+this.scenarios[i].budget.dimension+'">'+this.formatValue(this.scenarios[i].budget)+'</span>')+'</p><a href="#" class="button" title="'+this.scenarios[i].name+'">Choose this mission<!--LANGUAGE--></a></div></li>'
-		}
+		for(var i = 0; i < this.scenarios.length; i++) li += '<li><div class="padded">'+this.formatScenario(this.scenarios[i])+'<a href="#designer_objectives" class="button" title="'+this.scenarios[i].name+'" data="'+i+'">Choose this mission<!--LANGUAGE--></a></div></li>';
+
 		$('#scenariolist').html(li);
 		if($('#scenariolist h2').length==0) $('#scenariolist').before('<h2><!--LANGUAGE-->Choose a mission</h2>');
 		
@@ -653,7 +664,11 @@ if(typeof $==="undefined") $ = {};
 
 		return this;
 	}
-	
+
+	SpaceTelescope.prototype.formatScenario = function(s){
+		return '<h3>'+s.name+'</h3><p>'+((typeof s.description==="string") ? s.description : "").replace(/%COST%/,this.formatValueSpan(s.budget))+'</p>';
+	}
+
 	SpaceTelescope.prototype.updateOptions = function(){
 
 		$('#options').html('<h3>'+this.phrases.ui.menu.options.label+'</h3><form id="optionform"><ul></ul>');
@@ -733,11 +748,55 @@ if(typeof $==="undefined") $ = {};
 		else if(typeof key==="string") el = $('.'+key+'.value');
 
 		if(el.length > 0){
-			if(typeof value==="object") el.attr({'data-value':value.value,'data-units':value.units,'data-dimension':value.dimension}).html(this.formatValue(value));
+			if(typeof value==="object") el.attr({'data-value':value.value,'data-units':value.units,'data-dimension':value.dimension}).html(this.formatValue(value)).addClass('convertable');
 			else el.html(value);
 		}
 		return this;
 	}
+
+	// An animated version of updateValue. It will only animate if the original and final values
+	// share the same dimensions. Otherwise it simple changes the value.
+	// Inputs:
+	//   key - the CSS key
+	//   value - an object e.g. {'value': 10, 'units': 'kg', 'dimension': 'mass' }
+	//   ms - the number of milliseconds to animate the number change over
+	SpaceTelescope.prototype.animateValue = function(key,value,ms){
+		var el;
+		if(typeof key==="object") el = key;
+		else if(typeof key==="string") el = $('.'+key+'.value');
+
+		if(el.length > 0){
+
+			if(typeof value==="object"){
+				var _obj = this;
+				var steps = 20;
+				if(!ms) ms = 400;
+				var t = new Date();
+				var i = 0;
+				var orig = { 'value': parseFloat(el.attr('data-value'),10), 'units':el.attr('data-units'), 'dimension':el.attr('data-dimension') };
+				// We may need to convert the units
+				if(value.units!=orig.units) value = this.convertValue(value,orig.dimension);
+				// The animation frame
+				function frame(){
+					var diff = (new Date())-t;
+					if(diff > ms){
+						// We've finished so make sure the final values are set correctly
+						el.html(_obj.formatValue(value)).attr({'data-value':value.value,'data-units':value.units,'data-dimension':value.dimension}).addClass('convertable');
+					}else{
+						el.html(_obj.formatValue({ 'value': (orig.value+(value.value-orig.value)*(diff/ms)), 'units':orig.units, 'dimension':orig.dimension }));
+						requestAnimFrame(frame);
+					}	
+				}
+				if(orig.dimension==value.dimension) frame();
+				else el.html(this.formatValue(value)).attr({'data-value':value.value,'data-units':value.units,'data-dimension':value.dimension}).addClass('convertable');
+			}else{
+				el.html(value);
+			}
+		}
+		return this;
+	
+	}
+
 
 	SpaceTelescope.prototype.formatValueSpan = function(value,key){
 		key = (key) ? " "+key : "";
@@ -782,6 +841,12 @@ console.log('updateSummary')
 		var html = '';
 		var s = this.phrases.ui.summary;
 
+		var devcost = { 'value': -200, 'units': 'GBP', 'dimension': 'currency' };
+		var opcost = { 'value': -60, 'units': 'GBP', 'dimension': 'currency' };
+		var totalcost = this.sumValues(devcost,opcost);
+
+		var free = this.sumValues(this.scenario.budget,totalcost);
+		
 		// Update success items
 		var table = [{
 			"key": "success",
@@ -814,16 +879,16 @@ console.log('updateSummary')
 			}]
 		},{
 			"key": "cost_available",
-			"value": { 'value': 1740, 'units': 'GBP', 'dimension': 'currency' },
+			"value": free,
 			"title": s.cost.title,
 			"list": [{
 				'key': 'cost_initial',
 				'label': s.cost.initial,
-				'value': { 'value': 2000, 'units': 'GBP', 'dimension': 'currency' }
+				'value': this.scenario.budget
 			},{
 				'key': 'cost_dev_total',
 				'label': s.cost.dev.title,
-				'value': { 'value': -200, 'units': 'GBP', 'dimension': 'currency' },
+				'value': devcost,
 				'list': [{
 					'key': 'cost_dev_satellite',
 					'label': s.cost.dev.satellite,
@@ -844,7 +909,7 @@ console.log('updateSummary')
 			},{
 				'key': 'cost_operations_total',
 				'label': s.cost.operations.title,
-				'value': { 'value': -60, 'units': 'GBP', 'dimension': 'currency' },
+				'value': opcost,
 				'list': [{
 					'key': 'cost_operations_launch',
 					'label': s.cost.operations.launch,
@@ -857,11 +922,11 @@ console.log('updateSummary')
 			},{
 				'key': 'cost_total',
 				'label': s.cost.total,
-				'value': { 'value': -260, 'units': 'GBP', 'dimension': 'currency' }
+				'value': totalcost
 			},{
 				'key': 'cost_available',
 				'label': s.cost.available,
-				'value': { 'value': 1740, 'units': 'GBP', 'dimension': 'currency' }
+				'value': free
 			}]
 		},{
 			"key": "time_dev_total",
@@ -1053,6 +1118,31 @@ console.log('updateSummary')
 		return v;
 	}
 
+	// Sum an array of input values.
+	// Input:
+	//   An array of the form {'value':100,'units':'GBP','dimension':'currency'}
+	// Output:
+	//   A value object with the same dimension and units as the first input value
+	// Notes:
+	//   Only values with the same dimension will be summed
+	//   Input units can differ - this will take care of unit conversions
+	SpaceTelescope.prototype.sumValues = function(){
+		var args = Array.prototype.slice.call(arguments, 0);
+		var a;
+		if(args.length > 0){
+			var output = JSON.parse(JSON.stringify(args[0]));
+			output = this.convertValue(output,args[0].units);
+			for(var i = 1 ; i < args.length ; i++){
+				if(typeof args[i]==="object" && args[i].dimension && args[i].dimension===output.dimension){
+					a = this.convertValue(args[i],args[0].units);
+					output.value += a.value;
+				}
+			}
+			return output;
+		}
+		return args[0];
+	}
+	
 	// Format a value. This calls the appropriate format function for the dimension
 	// Inputs:
 	//  v - the value as an object e.g. { "value": 1, "units": "m", "dimension": "length" }
@@ -1217,6 +1307,9 @@ console.log('updateSummary')
 
 		$('body').removeClass('showguide showintro showoptions showmessages');
 
+		// Check which stage we are at and stop people seeing the designer if they haven't picked a scenario yet
+		if(view.indexOf('designer')==0 && (this.stage == "intro" || this.stage == "scenarios")) view = "scenarios";
+		if(view.indexOf('scenario')==0 && this.stage != "intro") view = "intro";
 
 		if((view.indexOf('guide')==0 && view.length==5) || view.indexOf('guide_')==0){
 			$('#summaryext').hide();
@@ -1242,16 +1335,19 @@ console.log('updateSummary')
 			}
 			this.updateBodyClass('showdesigner');
 			this.setScroll('#'+view);
+			this.stage = "designer";
 		}else if(view=="intro"){
 			$('#summaryext').hide();
 			$('#intro').show();
 			this.updateBodyClass('showintro');
+			this.stage = "intro";
 		}else if(view=="scenarios"){
 			$('#summaryext').hide();
 			$('#scenarios').show();
 			this.updateBodyClass('showscenarios');
+			this.stage = "scenarios";
 		}else{
-			$('#intro').show();
+			$('#'+this.stage).show();
 			this.updateBodyClass('showintro');
 		}
 

@@ -33,7 +33,12 @@
 			"EUR": { "symbol": "&euro;", "label": "Euros" },
 			"JPY": { "symbol": "&yen;", "label": "Japanese Yen" },
 			"CAD": { "symbol": "C&dollar;", "label": "Canadian Dollars" },
-			"AUD": { "symbol": "&dollar;", "label": "Austrialian Dollars" }
+			"AUD": { "symbol": "&dollar;", "label": "Austrialian Dollars" },
+			"CHF": { "symbol": "Fr.", "label": "Swiss Francs" },
+			"SEK": { "symbol": "kr", "label": "Swedish Krona" },
+			"CNY": { "symbol": "&yen;", "label": "Chinese Yuan" }, 
+			"INR": { "symbol": "&#8377;", "label": "Indian Rupees" }, 
+			"RUB": { "symbol": "RUB", "label": "Russian Ruble" }
 		},
 		"warnings": {
 			"title": "Warnings"

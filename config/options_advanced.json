@@ -5,7 +5,13 @@
 		"EUR": { "conv": 1.21 },
 		"JPY": { "conv": 170.7 },
 		"CAD": { "conv": 1.8461 },
-		"AUD": { "conv": 1.8642 }
+		"AUD": { "conv": 1.8642 },
+		"CHF": { "conv": 1.473 },
+		"SEK": { "conv": 10.7654 },
+		"SEK": { "conv": 10.7654 },
+		"INR": { "conv": 100.1 },
+		"CNY": { "conv": 10.327 },
+		"RUB": { "conv": 59.136 }
 	},
 	"general": {
 		"deployablemirror": { "risk": 0.9 }
