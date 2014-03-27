@@ -209,7 +209,7 @@ if(typeof $==="undefined") $ = {};
 
 		return this;
 	}
-	
+
 	SpaceTelescope.prototype.buildPage = function(){
 
 		console.log('buildPage')
@@ -237,9 +237,10 @@ if(typeof $==="undefined") $ = {};
 		$('#designer_cooling .options').html('<form><ul class="padded"><li><label for="cooling"></label><select id="cooling" name="cooling"></select></li></ul></form>');
 
 		// Update the launch vehicle section
-		html = '<form><ul class="padded">';
+		html = '<div class="images"></div>'
+		html += '<form><ul class="padded">';
 		for(var l in this.data.rocket){
-			html += '<li><div class="rocket"></div><div class="operator"><img src="" alt="" title=""></div>';
+			html += '<li><div class="rocket"></div><div class="operator"><img src="" alt="" title="" /></div>';
 			html += '<div class="height"><strong></strong> <span class="value"></span></div>';
 			html += '<div class="diameter"><strong></strong> <span class="value"></span></div>';
 			html += '<div class="currency"><strong></strong> <span class="value"></span></div>';
@@ -474,6 +475,24 @@ if(typeof $==="undefined") $ = {};
 		return this;
 	}
 
+	// Update the text of a specific dropdown select box
+	// TODO: Keep selected
+	SpaceTelescope.prototype.updateDropdown = function(dropdown){
+
+		var options = "";
+		var el;
+		if(dropdown=="mirror"){
+			el = $('#mirror_diameter');
+			for(var m in this.data.mirror) options += '<option>'+this.formatValue(this.data.mirror[m].diameter)+' ('+this.formatValue(this.data.mirror[m].cost)+')</option>';
+			el.html(options);
+		}else if(dropdown=="instruments"){
+			el = $('#instruments');
+			for(var m in this.data.instrument.options) options += '<option>'+this.phrases.designer.instrument.options.instrument[m].label+(this.data.instrument.options[m].cost ? ' ('+this.formatValue(this.data.instrument.options[m].cost)+')' : '')+'</option>';
+			el.html(options);
+		}
+		return this;
+	}
+	
 	SpaceTelescope.prototype.updateLanguage = function(){
 
 		if(!this.phrases || !this.data) return this;
@@ -497,9 +516,7 @@ if(typeof $==="undefined") $ = {};
 
 		// Update the satellite section
 		$('#designer_satellite .options .mirror_diameter label').html(d.designer.satellite.options.diameter.label)
-		html = "";
-		for(var m in this.data.mirror) html += '<option>'+this.formatValue(this.data.mirror[m].diameter)+' ('+this.formatValue(this.data.mirror[m].cost)+')</option>';
-		$('#designer_satellite .options .mirror_diameter select').html(html)
+		this.updateDropdown('mirror');
 		$('#designer_satellite .options .mirror_deployable label').html(d.designer.satellite.options.deployable.label);
 		$('#designer_satellite .options .mirror_uv label').html(d.designer.satellite.options.uv.label);
 		if(d.designer.satellite.about) $('#designer_satellite .about').html('<div class="padded">'+d.designer.satellite.about+'</div>');
@@ -507,9 +524,14 @@ if(typeof $==="undefined") $ = {};
 		// Update the launch vehicle section
 		i = 0;
 		rk = d.designer.rocket;
+		var imgs = "";
+		var n = 0;
+		for(var l in this.data.rocket) n++;
+		var w = 100/n;
 		for(var l in this.data.rocket){
 			li = $('#designer_vehicle .options li').eq(i);
 			r = this.data.rocket[l];
+			imgs += '<div style="display:inline-block;width:'+w+'%;"><img src="'+r.img+'" alt="'+rk.options[l].label+'" title="'+rk.options[l].label+'"  style="width:100%;" /><br /><img src="'+this.data.operator[r.operator].img+'" alt="'+d.operator[r.operator].label+'" title="'+d.operator[r.operator].label+'" style="max-width:100%;" /></div>';
 			li.find('.rocket').html(rk.options[l].label);
 			li.find('.operator img').attr({'src':this.data.operator[r.operator].img,'alt':d.operator[r.operator].label, 'title':d.operator[r.operator].label});
 			if(r.height){
@@ -544,13 +566,13 @@ if(typeof $==="undefined") $ = {};
 			
 			i++;
 		}
+		$('#designer_vehicle .options .images').html('<div class="padded" style="text-align:center;">'+imgs+'</div>');
+		if(d.designer.rocket.about) $('#designer_vehicle .about').html('<div class="padded">'+d.designer.rocket.about+'</div>');
 
 		// Update the instruments section
 		// TODO: update selected
-		html = ''
-		for(var m in this.data.instrument.options) html += '<option>'+d.designer.instrument.options.instrument[m].label+(this.data.instrument.options[m].cost ? ' ('+this.formatValue(this.data.instrument.options[m].cost)+')' : '')+'</option>';
+		this.updateDropdown('instruments');
 		$('#designer_instruments .options label').html(d.designer.instrument.options.label);
-		$('#designer_instruments .options select').html(html);
 		$('#designer_instruments .options input#instrument_name').attr('placeholder',d.designer.instrument.options.name);
 		$('#designer_instruments .options a.add_instrument').attr('title',d.designer.instrument.options.add);
 		if(d.designer.instrument.about) $('#designer_instruments .about').html('<div class="padded">'+d.designer.instrument.about+'</div>');
@@ -653,6 +675,8 @@ if(typeof $==="undefined") $ = {};
 			d = el.attr('data-dimension');
 			if(v && u && d) el.html(this.formatValue({ 'value': v, 'units': u, 'dimension': d }));
 		}
+
+		this.updateDropdown('mirror');
 		return this;
 	}
 

@@ -159,6 +159,7 @@
 		"rocket": {
 			"label": "Launch vehicle",
 			"help": "Choose your rocket",
+			"about": "Choose your rocket",
 			"select": "Select this launch vehicle",
 			"height": "Height",
 			"diameter": "Payload diameter",
