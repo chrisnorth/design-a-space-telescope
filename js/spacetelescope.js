@@ -274,12 +274,27 @@ if(typeof $==="undefined") $ = {};
 			$('#designer_vehicle .info>li.'+$(this).attr('data')).addClass('selected').find('input').trigger('click');
 			console.log($('#designer_vehicle input[name=vehicle_rocket]:checked').val())
 		});
-
 		$(document).on('click','#designer_vehicle .options .info>li',{me:this},function(e){
 			$('.withinfo').removeClass('withinfo');
 			$(this).addClass('withinfo');
 			$('#designer_vehicle .vehicle_details').html($(this).find('.details').html()).addClass('padded')
 		});
+
+
+		// Build site options
+		$('#designer_site .options').html('<div class="worldmap"><img src="images/worldmap.jpg" /></div><form><ul class="padded"><li><label for="site"></label><select id="site" name="site"></select></li></ul></form><div class="site_details padded"></div>');
+		$(document).on('click','#designer_site .launchsite',{me:this},function(e){
+			e.preventDefault();
+			$('#designer_site #site').val($(this).attr('data'));
+			$('#designer_site #site').trigger('change');
+		});
+		$('#designer_site #site').on('change',{me:this},function(e){
+			var site = $(this).find(":selected").attr('value');
+			$('.launchsite').removeClass('selected');
+			$('.launchsite[data='+site+']').addClass('selected');
+			e.data.me.showSiteDetails(site);
+		});
+
 
 		// Build proposal document holder
 		$('#designer_proposal .options').html('<div class="padded"><div class="doc"></div></div>');
@@ -554,6 +569,23 @@ if(typeof $==="undefined") $ = {};
 		$('#designer_satellite .options .mirror_uv label').html(d.designer.satellite.options.uv.label);
 		if(d.designer.satellite.about) $('#designer_satellite .about').html('<div class="padded">'+d.designer.satellite.about+'</div>');
 
+		// Update the instruments section
+		// TODO: update selected
+		this.updateDropdown('instruments');
+		$('#designer_instruments .options label').html(d.designer.instrument.options.label);
+		$('#designer_instruments .options input#instrument_name').attr('placeholder',d.designer.instrument.options.name);
+		$('#designer_instruments .options a.add_instrument').attr('title',d.designer.instrument.options.add);
+		if(d.designer.instrument.about) $('#designer_instruments .about').html('<div class="padded">'+d.designer.instrument.about+'</div>');
+
+		// Update the cooling section
+		// TODO: update selected
+		html = "";
+		for(var m in this.data.cooling) html += '<option value="'+m+'">'+this.formatValue(this.data.cooling[m].temperature)+'</option>';
+		$('#designer_cooling .options select').html(html);
+		$('#designer_cooling .options label').html(d.designer.cooling.options.label);
+		if(d.designer.cooling.about) $('#designer_cooling .about').html('<div class="padded">'+d.designer.cooling.about+'</div>');
+
+
 		// Update the launch vehicle section
 		i = 0;
 		rk = d.designer.rocket;
@@ -603,21 +635,29 @@ if(typeof $==="undefined") $ = {};
 		}
 		if(d.designer.rocket.about) $('#designer_vehicle .about').html('<div class="padded">'+d.designer.rocket.about+'</div>');
 
-		// Update the instruments section
-		// TODO: update selected
-		this.updateDropdown('instruments');
-		$('#designer_instruments .options label').html(d.designer.instrument.options.label);
-		$('#designer_instruments .options input#instrument_name').attr('placeholder',d.designer.instrument.options.name);
-		$('#designer_instruments .options a.add_instrument').attr('title',d.designer.instrument.options.add);
-		if(d.designer.instrument.about) $('#designer_instruments .about').html('<div class="padded">'+d.designer.instrument.about+'</div>');
 
-		// Update the cooling section
-		// TODO: update selected
-		html = "";
-		for(var m in this.data.cooling) html += '<option value="'+m+'">'+this.formatValue(this.data.cooling[m].temperature)+'</option>';
-		$('#designer_cooling .options select').html(html);
-		$('#designer_cooling .options label').html(d.designer.cooling.options.label);
-		if(d.designer.cooling.about) $('#designer_cooling .about').html('<div class="padded">'+d.designer.cooling.about+'</div>');
+		// Update the site section
+		var opts = "";
+		var pins = "";
+		for(var s in this.data.site){
+			var lat = this.data.site[s].latitude;
+			var lon = this.data.site[s].longitude;
+			opts += '<option value="'+s+'">'+d.designer.site.options[s].label+'</option>';
+			if(!lat && !lon){
+				lat = 34;
+				lon = -116;
+			}
+			pins += '<a href="#" class="launchsite '+s+'" data="'+s+'" title="'+d.designer.site.options[s].label+'" style="left:'+Math.round(100*(lon+180)/360)+'%;top:'+Math.round(100*(90-lat)/180)+'%"></a>';
+		}
+		// Remove existing launch site pins
+		$('#designer_site .worldmap .launchsite').remove();
+		$('#designer_site .worldmap').append(pins);
+		
+		$('#designer_site .options label').html(d.designer.site.help);
+		$('#designer_site .options select').html(opts);
+		if(d.designer.site.about) $('#designer_site .about').html('<div class="padded">'+d.designer.site.about+'</div>');
+
+
 
 		// Update the proposal section
 		$('#designer_proposal .options .doc').html(d.designer.proposal.doc.replace(/%FUNDER%/g,'Funder').replace(/%DATE%/,(new Date()).toDateString()).replace(/%TO%/,'<input type="text" name="proposal_to" id="proposal_to" value="" >').replace(/%NAME%/,'<input type="text" name="proposal_name" id="proposal_name" value="" >').replace(/%AIM%/,'<textarea name="proposal_aim" id="proposal_aim"></textarea>').replace(/%PREVIOUS%/,'<input type="text" name="proposal_previous" id="proposal_previous" value="" >').replace(/%ADVANCE%/,'<textarea name="proposal_advance" id="proposal_advance"></textarea>').replace(/%INSTRUMENTS%/,'<textarea name="proposal_instruments" id="proposal_instruments"></textarea>').replace(/%GOALS%/,'<textarea name="proposal_goal" id="proposal_goal"></textarea>').replace(/%RESLOW%/,'<input type="text" name="proposal_reslow" id="proposal_reslow" value="" >').replace(/%RESHIGH%/,'<input type="text" name="proposal_reshigh" id="proposal_reshigh" value="" >').replace(/%MIRROR%/,'<input type="text" name="proposal_mirror" id="proposal_mirror" value="" >').replace(/%REQTEMPERATURE%/,'<input type="text" name="proposal_reqtemp" id="proposal_reqtemp" value="" >').replace(/%TEMPERATURE%/,'<input type="text" name="proposal_temp" id="proposal_temp" value="" >').replace(/%MASS%/,'<input type="text" name="proposal_mass" id="proposal_mass" value="" >').replace(/%MASSSATELLITE%/,'<input type="text" name="proposal_mass_satellite" id="proposal_mass_satellite" value="" >').replace(/%MASSMIRROR%/,'<input type="text" name="proposal_mass_mirror" id="proposal_mass_mirror" value="" >').replace(/%MASSCOOLING%/,'<input type="text" name="proposal_mass_cooling" id="proposal_mass_cooling" value="" >').replace(/%MASSINSTRUMENTS%/,'<input type="text" name="proposal_mass_instruments" id="proposal_mass_instruments" value="" >').replace(/%ORBIT%/,'<input type="text" name="proposal_orbit" id="proposal_orbit" value="" >').replace(/%DISTANCE%/,'<input type="text" name="proposal_distance" id="proposal_distance" value="" >').replace(/%PERIOD%/,'<input type="text" name="proposal_period" id="proposal_period" value="" >').replace(/%FUEL%/,'<input type="text" name="proposal_fuel" id="proposal_fuel" value="" >').replace(/%DURATION%/,'<input type="text" name="proposal_duration" id="proposal_duration" value="" >').replace(/%VEHICLE%/,'<input type="text" name="proposal_vehicle" id="proposal_vehicle" value="" >').replace(/%OPERATOR%/,'<input type="text" name="proposal_operator" id="proposal_operator" value="" >').replace(/%SITE%/,'<input type="text" name="proposal_site" id="proposal_site" value="" >').replace(/%LAUNCHMASS%/,'<input type="text" name="proposal_launchmass" id="proposal_launchmass" value="" >').replace(/%COST%/,'<input type="text" name="proposal_cost" id="proposal_cost" value="" >').replace(/%COSTSATELLITE%/,'<input type="text" name="proposal_cost_satellite" id="proposal_cost_satellite" value="" >').replace(/%COSTMIRROR%/,'<input type="text" name="proposal_cost_mirror" id="proposal_cost_mirror" value="" >').replace(/%COSTCOOLING%/,'<input type="text" name="proposal_cost_cooling" id="proposal_cost_cooling" value="" >').replace(/%COSTINSTRUMENTS%/,'<input type="text" name="proposal_cost_instruments" id="proposal_cost_instruments" value="" >').replace(/%COSTDEV%/,'<input type="text" name="proposal_cost_dev" id="proposal_cost_dev" value="" >').replace(/%COSTLAUNCH%/,'<input type="text" name="proposal_cost_launch" id="proposal_cost_launch" value="" >').replace(/%COSTGROUND%/,'<input type="text" name="proposal_cost_ground" id="proposal_cost_ground" value="" >').replace(/%COSTOPERATIONS%/,'<input type="text" name="proposal_cost_operations" id="proposal_cost_operations" value="" >'));
@@ -662,6 +702,17 @@ if(typeof $==="undefined") $ = {};
 		// Update values to be consistent with current user preferences
 		this.updateUnits();
 
+		return this;
+	}
+
+	SpaceTelescope.prototype.showSiteDetails = function(site){
+		
+		var html = '';
+		if(typeof this.data.site[site].latitude==="number") html += '<div><strong>'+this.phrases.designer.site.location+'</strong> <span class="value">'+this.data.site[site].latitude.toFixed(2)+'&deg;, '+this.data.site[site].longitude.toFixed(2)+'&deg;</span></div>';
+		if(this.data.site[site].operator) html += '<div><strong>'+this.phrases.designer.site.operator+'</strong> <span class="value">'+this.phrases.operator[this.data.site[site].operator].label+'</span></div>';
+		html += '<div><strong>'+this.phrases.designer.site.trajectories+'</strong> <span class="value">'+this.phrases.designer.site.options[site].trajectories+'</span></div>';
+		if(typeof this.data.site[site].risk==="number") html += '<div><strong>'+this.phrases.designer.site.risk+'</strong> <span class="value">'+this.data.site[site].risk+'</span></div>';
+		$('#designer_site .site_details').html(html);
 		return this;
 	}
 
@@ -742,61 +793,48 @@ if(typeof $==="undefined") $ = {};
 		return this;
 	}
 	
-	SpaceTelescope.prototype.updateValue = function(key,value){
-		var el;
-		if(typeof key==="object") el = key;
-		else if(typeof key==="string") el = $('.'+key+'.value');
-
-		if(el.length > 0){
-			if(typeof value==="object") el.attr({'data-value':value.value,'data-units':value.units,'data-dimension':value.dimension}).html(this.formatValue(value)).addClass('convertable');
-			else el.html(value);
-		}
-		return this;
-	}
-
-	// An animated version of updateValue. It will only animate if the original and final values
-	// share the same dimensions. Otherwise it simple changes the value.
+	// Update a value. If a time is provided and the original and final values share dimensions, it will animate the change
 	// Inputs:
 	//   key - the CSS key
 	//   value - an object e.g. {'value': 10, 'units': 'kg', 'dimension': 'mass' }
 	//   ms - the number of milliseconds to animate the number change over
-	SpaceTelescope.prototype.animateValue = function(key,value,ms){
+	SpaceTelescope.prototype.updateValue = function(key,value,ms){
 		var el;
 		if(typeof key==="object") el = key;
 		else if(typeof key==="string") el = $('.'+key+'.value');
 
 		if(el.length > 0){
-
 			if(typeof value==="object"){
-				var _obj = this;
-				var steps = 20;
-				if(!ms) ms = 400;
-				var t = new Date();
-				var i = 0;
+
 				var orig = { 'value': parseFloat(el.attr('data-value'),10), 'units':el.attr('data-units'), 'dimension':el.attr('data-dimension') };
-				// We may need to convert the units
-				if(value.units!=orig.units) value = this.convertValue(value,orig.dimension);
-				// The animation frame
-				function frame(){
-					var diff = (new Date())-t;
-					if(diff > ms){
-						// We've finished so make sure the final values are set correctly
-						el.html(_obj.formatValue(value)).attr({'data-value':value.value,'data-units':value.units,'data-dimension':value.dimension}).addClass('convertable');
-					}else{
-						el.html(_obj.formatValue({ 'value': (orig.value+(value.value-orig.value)*(diff/ms)), 'units':orig.units, 'dimension':orig.dimension }));
-						requestAnimFrame(frame);
-					}	
+
+				if(ms && orig.dimension==value.dimension){
+					var _obj = this;
+					var steps = 20;
+					if(!ms) ms = 400;
+					var t = new Date();
+					var i = 0;
+					// We may need to convert the units
+					if(value.units!=orig.units) value = this.convertValue(value,orig.dimension);
+					// The animation frame
+					function frame(){
+						var diff = (new Date())-t;
+						if(diff > ms){
+							// We've finished so make sure the final values are set correctly
+							el.html(_obj.formatValue(value)).attr({'data-value':value.value,'data-units':value.units,'data-dimension':value.dimension}).addClass('convertable');
+						}else{
+							el.html(_obj.formatValue({ 'value': (orig.value+(value.value-orig.value)*(diff/ms)), 'units':orig.units, 'dimension':orig.dimension }));
+							requestAnimFrame(frame);
+						}	
+					}
+					frame();
+				}else{
+					el.attr({'data-value':value.value,'data-units':value.units,'data-dimension':value.dimension}).html(this.formatValue(value)).addClass('convertable');
 				}
-				if(orig.dimension==value.dimension) frame();
-				else el.html(this.formatValue(value)).attr({'data-value':value.value,'data-units':value.units,'data-dimension':value.dimension}).addClass('convertable');
-			}else{
-				el.html(value);
-			}
+			}else el.html(value);
 		}
 		return this;
-	
 	}
-
 
 	SpaceTelescope.prototype.formatValueSpan = function(value,key){
 		key = (key) ? " "+key : "";
@@ -825,11 +863,13 @@ if(typeof $==="undefined") $ = {};
 		if(key!=table.key) keys += ' '+table.key;
 		var depth = 0;
 		if(typeof key==="string"){
-			html += '<h3><img src="images/cleardot.gif" class="icon '+keys+'" /> <span class="label '+keys+'">'+table.title+'</span> '+this.formatValueSpan(table.value,keys)+'</h3>';
+			html += '<h3><img src="images/cleardot.gif" class="icon '+keys+'" /> <span class="label '+keys+'">'+table.title+'</span> ';
+			if(table.value) html += this.formatValueSpan(table.value,keys);
+			html += '</h3>';
 			html += this.processSummaryList(table.list,key,depth);
 			html = '<div class="padded">'+html+'</div>';
 			// Update summary bar items
-			this.updateValue('baritem .'+table.key,table.value);
+			if(table.value) this.updateValue('baritem .'+table.key,table.value);
 			$('#summaryext_'+key).html(html);
 		}
 		return this;
@@ -841,8 +881,8 @@ console.log('updateSummary')
 		var html = '';
 		var s = this.phrases.ui.summary;
 
-		var devcost = { 'value': -200, 'units': 'GBP', 'dimension': 'currency' };
-		var opcost = { 'value': -60, 'units': 'GBP', 'dimension': 'currency' };
+		var devcost = { 'value': 0, 'units': 'GBP', 'dimension': 'currency' };
+		var opcost = { 'value': 0, 'units': 'GBP', 'dimension': 'currency' };
 		var totalcost = this.sumValues(devcost,opcost);
 
 		var free = this.sumValues(this.scenario.budget,totalcost);
@@ -850,32 +890,32 @@ console.log('updateSummary')
 		// Update success items
 		var table = [{
 			"key": "success",
-			"value": "20%",
+			"value": "0%",
 			"title": s.success.title,
 			"list": [{
 				'key': 'success_site',
 				'label': s.success.site,
-				'value': '98%'
+				'value': '0%'
 			},{ 
 				'key': 'success_vehicle',
 				'label': s.success.vehicle,
-				'value': '98%'
+				'value': '0%'
 			},{ 
 				'key': 'success_deploy',
 				'label': s.success.deploy,
-				'value': '98%'
+				'value': '0%'
 			},{ 
 				'key': 'success_cooling',
 				'label': s.success.cooling,
-				'value': '98%'
+				'value': '0%'
 			},{ 
 				'key': 'success_instruments',
 				'label': s.success.instruments,
-				'value': '98%'
+				'value': '0%'
 			},{ 
 				'key': 'success_mission',
 				'label': s.success.mission,
-				'value': '99%'
+				'value': '0%'
 			}]
 		},{
 			"key": "cost_available",
@@ -913,11 +953,11 @@ console.log('updateSummary')
 				'list': [{
 					'key': 'cost_operations_launch',
 					'label': s.cost.operations.launch,
-					'value': { 'value': -50, 'units': 'GBP', 'dimension': 'currency' }
+					'value': { 'value': 0, 'units': 'GBP', 'dimension': 'currency' }
 				},{
 					'key': 'cost_operations_ground',
 					'label': s.cost.operations.ground,
-					'value': { 'value': -10, 'units': 'GBP', 'dimension': 'currency' }
+					'value': { 'value': 0, 'units': 'GBP', 'dimension': 'currency' }
 				}]
 			},{
 				'key': 'cost_total',
@@ -930,76 +970,104 @@ console.log('updateSummary')
 			}]
 		},{
 			"key": "time_dev_total",
-			"value": { 'value': 19, 'units': 'months', 'dimension': 'time' },
+			"value": { 'value': 0, 'units': 'months', 'dimension': 'time' },
 			"title": s.time.title,
 			"list": [{
 				'key': 'time_dev_total',
 				'label': s.time.dev.title,
-				'value': { 'value': 19, 'units': 'months', 'dimension': 'time' },
+				'value': { 'value': 0, 'units': 'months', 'dimension': 'time' },
 				'list': [{
 					'key': 'time_dev_satellite',
 					'label': s.time.dev.satellite,
-					'value': { 'value': 5, 'units': 'months', 'dimension': 'time' }
+					'value': { 'value': 0, 'units': 'months', 'dimension': 'time' }
 				},{
 					'key': 'time_dev_mirror',
 					'label': s.time.dev.mirror,
-					'value': { 'value': 6, 'units': 'months', 'dimension': 'time' }
+					'value': { 'value': 0, 'units': 'months', 'dimension': 'time' }
 				},{
 					'key': 'time_dev_cooling',
 					'label': s.time.dev.cooling,
-					'value': { 'value': 3, 'units': 'months', 'dimension': 'time' }
+					'value': { 'value': 0, 'units': 'months', 'dimension': 'time' }
 				},{
 					'key': 'time_dev_instruments',
 					'label': s.time.dev.instruments,
-					'value': { 'value': 5, 'units': 'months', 'dimension': 'time' }
+					'value': { 'value': 0, 'units': 'months', 'dimension': 'time' }
 				}]
 			},{
 				'key': 'time_mission',
 				'label': s.time.mission,
-				'value': { 'value': 18, 'units': 'months', 'dimension': 'time' }
+				'value': { 'value': 0, 'units': 'months', 'dimension': 'time' }
 			},{
 				'key': 'time_fuel',
 				'label': s.time.fuel,
-				'value': { 'value': 15, 'units': 'months', 'dimension': 'time' }
+				'value': { 'value': 0, 'units': 'months', 'dimension': 'time' }
 			}]
 		},{
 			'key': 'mass_total',
 			'label': 'mass',
-			"value": { 'value': 1000, 'units': 'kg', 'dimension': 'mass' },
+			"value": { 'value': 0, 'units': 'kg', 'dimension': 'mass' },
 			"title": s.mass.title,
 			"list": [{
 				'key': 'mass_satellite',
 				'label': s.mass.satellite,
-				'value': { 'value': 200, 'units': 'kg', 'dimension': 'mass' }
+				'value': { 'value': 0, 'units': 'kg', 'dimension': 'mass' }
 			},{
 				'key': 'mass_mirror',
 				'label': s.mass.mirror,
-				'value': { 'value': 200, 'units': 'kg', 'dimension': 'mass' }
+				'value': { 'value': 0, 'units': 'kg', 'dimension': 'mass' }
 			},{
 				'key': 'mass_cooling_title',
 				'label': s.mass.cooling.title,
-				'value': { 'value': 250, 'units': 'kg', 'dimension': 'mass' },
+				'value': { 'value': 0, 'units': 'kg', 'dimension': 'mass' },
 				'list': [{
 					'key': 'mass_cooling_passive',
 					'label': s.mass.cooling.passive,
-					'value': { 'value': 50, 'units': 'kg', 'dimension': 'mass' }
+					'value': { 'value': 0, 'units': 'kg', 'dimension': 'mass' }
 				},{
 					'key': 'mass_cooling_cryo',
 					'label': s.mass.cooling.cryo,
-					'value': { 'value': 100, 'units': 'kg', 'dimension': 'mass' }
+					'value': { 'value': 0, 'units': 'kg', 'dimension': 'mass' }
 				},{
 					'key': 'mass_cooling_active',
 					'label': s.mass.cooling.active,
-					'value': { 'value': 100, 'units': 'kg', 'dimension': 'mass' }
+					'value': { 'value': 0, 'units': 'kg', 'dimension': 'mass' }
 				}]
 			},{
 				'key': 'mass_instruments',
 				'label': s.mass.instruments,
-				'value': { 'value': 250, 'units': 'kg', 'dimension': 'mass' }
+				'value': { 'value': 0, 'units': 'kg', 'dimension': 'mass' }
+			}]
+		},{
+			'key': 'profile_total',
+			'label': 'profile',
+			"title": s.profile.title,
+			"list": [{
+				'key': 'profile_site',
+				'label': s.profile.site,
+				'value': 'Kennedy'
+			},{
+				'key': 'profile_vehicle',
+				'label': s.profile.vehicle,
+				'value': 'Ariane 5'
+			},{
+				'key': 'profile_instruments',
+				'label': s.profile.instruments,
+				'value': 2
+			},{
+				'key': 'profile_orbit',
+				'label': s.profile.orbit,
+				'value': 'LEO'
+			},{
+				'key': 'profile_launch',
+				'label': s.profile.launch,
+				'value': 'June 2015'
+			},{
+				'key': 'profile_end',
+				'label': s.profile.end,
+				'value': 'June 2016'
 			}]
 		}]
 		for(var i = 0 ; i < table.length ; i++) this.updateSummaryList(table[i]);
-
 
 /*
 <li id="summaryext_science">
@@ -1010,19 +1078,6 @@ console.log('updateSummary')
 							<li>Mission target 2: <span class="value science">100%</span></li>
 						</ul>
 					</div>
-				</li><li id="summaryext_profile">
-					<div class="padded">
-						<h3 class="profile"><img src="images/cleardot.gif" class="icon profile" /> Mission profile</h3>
-						<ul class="summary">
-							<li>Launch site: <span class="value profile">Kennedy Space Center</span></li>
-							<li>Launch vehicle: <span class="value profile">Delta IV</span></li>
-							<li>Number of instruments: <span class="value profile">2</span></li>
-							<li>Orbit: <span class="value profile">Low Earth Orbit</span></li>
-							<li>Launch date: <span class="value profile">September 2015</span></li>
-							<li>Mission end: <span class="value profile">September 2016</span></li>
-						</ul>
-<!--<p>A private organization has funded your group to research into the birth and evolution of stars in the distant and nearby Universe, with full analysis of the spectra of the event. The budget of your mission is <span class="cost"><span class="convertable" data-value="2000" data-units="GBP" data-dimension="currency">&pound;2Bn</span></span>. You will need the appropriate instruments on board your satellite in order to observe such objects.</p>-->
-					</div>
 				</li>*/
 		return this;
 	}
@@ -1030,8 +1085,10 @@ console.log('updateSummary')
 	
 	// Convert an input value/unit/dimension object into another unit
 	// Inputs:
-	//  v - the { "value": 1, "units": "m", "dimension": "length" } object
-	//  to - the new unit (must be one of the acceptable units for the dimension
+	//   v - the { "value": 1, "units": "m", "dimension": "length" } object
+	//   to - the new unit (must be one of the acceptable units for the dimension
+	// Output:
+	//   An { "value": 1, "units": "m", "dimension": "length" } object
 	SpaceTelescope.prototype.convertValue = function(v,to){
 
 		// If the input isn't the sort of thing we expect we just return it
@@ -1120,7 +1177,7 @@ console.log('updateSummary')
 
 	// Sum an array of input values.
 	// Input:
-	//   An array of the form {'value':100,'units':'GBP','dimension':'currency'}
+	//   An array of the form {'value':100,'units':'GBP','dimension':'currency'},{'value':100,'units':'GBP','dimension':'currency'}
 	// Output:
 	//   A value object with the same dimension and units as the first input value
 	// Notes:

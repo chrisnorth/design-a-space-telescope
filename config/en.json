@@ -117,6 +117,15 @@
 			},
 			"science": {
 				"title": "Mission targets"
+			},
+			"profile": {
+				"title": "Mission profile",
+				"site": "Launch site:",
+				"vehicle": "Launch vehicle:",
+				"instruments": "Number of instruments:",
+				"orbit": "Orbit:",
+				"launch": "Launch date:",
+				"end": "Mission end:"
 			}
 		}
 	},
@@ -194,6 +203,10 @@
 		"site": {
 			"label": "Launch site",
 			"help": "Choose the launch site",
+			"trajectories": "Trajectories:",
+			"location": "Location (latitude, longitude):",
+			"operator": "Operator:",
+			"risk": "Risk:",
 			"options": {
 				"CSG": { "label": "Guiana Space Centre, French Guiana", "trajectories": "North, East" },
 				"BKR": { "label": "Baikonur, Russia", "trajectories": "North, East" },
