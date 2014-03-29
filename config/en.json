@@ -194,7 +194,7 @@
 			"massLEO": "Mass to LEO:",
 			"massGTO": "Mass beyond LEO:",
 			"risk": "Launch probability:",
-			"sites": "Sites:",
+			"sites": "Launch sites:",
 			"options": {
 				"ARI5": { "label": "Ariane 5" },
 				"SOYZ": { "label": "Soyuz" },
