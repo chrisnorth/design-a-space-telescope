@@ -6,7 +6,10 @@
 		"translator": "Chris North"
 	},
 	"title": "Space Telescope Designer!",
-	"intro": "<p>Designing a space telescope is an incredibly complex job, with many requirements that must be met. Some of these are because of the scientific discoveries that astronomers would like to make, while others are due to limits that engineers put on the spacecraft.</p><p>In the early 1990s, astronomers and engineers around the world started designing the <a href=\"#guide_previous_herschel\" class=\"guidelink\">Herschel Space Observatory</a>. After years of building and testing, Herschel launched in 2009. This project will help you explore the kinds of decisions the astronomers and engineers had to make as you design your own space telescope. Can <em>you</em> launch a telescope that will push back the frontiers of knowledge?</p>",
+	"intro": {
+		"about": "<p>Designing a space telescope is an incredibly complex job, with many requirements that must be met. Some of these are because of the scientific discoveries that astronomers would like to make, while others are due to limits that engineers put on the spacecraft.</p><p>In the early 1990s, astronomers and engineers around the world started designing the <a href=\"#guide_previous_herschel\" class=\"guidelink\">Herschel Space Observatory</a>. After years of building and testing, Herschel launched in 2009. This project will help you explore the kinds of decisions the astronomers and engineers had to make as you design your own space telescope. Can <em>you</em> launch a telescope that will push back the frontiers of knowledge?</p>",
+		"button": "Choose a mission"
+	},
 	"ui": {
 		"million": { "full": " million", "compact": " m" },
 		"billion": { "full": " billion", "compact": " Bn" },
@@ -16,11 +19,14 @@
 			"mm": { "unit": " mm", "label": "Millimetres", "dimension": "length" },
 			"ft": { "unit": " ft", "label": "Feet", "dimension": "length", "selectable": 1 },
 			"mile": { "unit": " miles", "label": "Miles", "dimension": "length" },
+			"cubit": { "unit": " cubits", "label": "Cubits", "dimension": "length", "selectable": 1 },
+			"bluewhale": { "unit": " blue whales", "label": "Blue Whales", "dimension": "length", "selectable": 1 },
 			"K": { "unit": " K", "label": "Kelvin", "dimension": "temperature", "selectable": 1 },
 			"C": { "unit": "&deg;C", "label": "Celcius", "dimension": "temperature", "selectable": 1 },
 			"F": { "unit": "&deg;F", "label": "Farenheit", "dimension": "temperature", "selectable": 1 },
 			"kg": { "unit": " kg", "label": "Kilograms", "dimension": "mass", "selectable": 1 },
 			"lb": { "unit": " lb", "label": "Pounds", "dimension": "mass", "selectable": 1 },
+			"elephant": { "unit": " elephants", "label": "Elephants", "dimension": "mass", "selectable": 1 },
 			"years": { "unit": " yrs", "label": "Years", "dimension": "time" },
 			"months": { "unit": " months", "label": "Months", "dimension": "time" },
 			"days": { "unit": " days", "label": "Days", "dimension": "time" },
@@ -129,16 +135,21 @@
 			}
 		}
 	},
+	"scenarios": {
+		"title": "Choose a scenario",
+		"intro": "You can choose a scenario below.",
+		"button": "Choose a mission"
+	},
 	"designer": {
 		"objectives": {
 			"label": "Mission overview",
-			"help": "Review your mission",
-			"about": "You have chosen the <strong>%TITLE%</strong> mission. Use the menu options to design the different parts of your space telescope. You will need to choose a mirror, instruments, a rocket, a launch site and an orbit. Once you are happy with your plans you will need to fill out a proposal letter. If your proposal letter is accepted by <strong>%FUNDER%</strong> you will then be able to launch your mission."
+			"hint": "Review your mission",
+			"intro": "You have chosen the <strong>%TITLE%</strong> mission. Use the menu options to design the different parts of your space telescope. You will need to choose a mirror, instruments, a rocket, a launch site and an orbit. Once you are happy with your plans you will need to fill out a proposal letter. If your proposal letter is accepted by <strong>%FUNDER%</strong> you will then be able to launch your mission."
 		},
 		"satellite": {
 			"label": "Satellite",
-			"help": "Determine the properties of your telescope mirror",
-			"about": "The size and type of <a href=\"#guide_mirror\" class=\"guidelink\">mirror</a> on your satellite will determine the quality of the measurements you can make.",
+			"hint": "Determine the properties of your telescope mirror",
+			"intro": "The size and type of <a href=\"#guide_mirror\" class=\"guidelink\">mirror</a> on your satellite will determine the quality of the measurements you can make.",
 			"options": {
 				"diameter": { "label": "Mirror diameter", "help": "The diameter of the telescope mirror." },
 				"deployable": { "label": "Deployable structure?", "help": "Creates a more compact structure for launch but is more expensive." },
@@ -146,10 +157,10 @@
 			},
 			"questions": []
 		},
-		"instrument": {
+		"instruments": {
 			"label": "Instruments",
-			"help": "Choose your scientific instruments",
-			"about": "To get any results from your mission you will need <a href=\"#guide_instruments\" class=\"guidelink\">scientific instruments</a>. Select a type of instrument and give it a name if you wish. When you are happy with your instrument choice, press the <strong>&plus;</strong> button to add it to your satellite.",
+			"hint": "Choose your scientific instruments",
+			"intro": "To get any results from your mission you will need <a href=\"#guide_instruments\" class=\"guidelink\">scientific instruments</a>. Select a type of instrument and give it a name if you wish. When you are happy with your instrument choice, press the <strong>&plus;</strong> button to add it to your satellite.",
 			"options": {
 				"instrument": {
 					"camera": { "label": "Camera" },
@@ -164,17 +175,17 @@
 		},
 		"cooling": {
 			"label": "Cooling",
-			"help": "Apply cooling to your instruments",
-			"about": "Apply cooling to your instruments.",
+			"hint": "Apply cooling to your instruments",
+			"intro": "Apply cooling to your instruments.",
 			"options": {
 				"label": "Cooling temperature"
 			},
 			"questions": []
 		},
-		"rocket": {
+		"vehicle": {
 			"label": "Launch vehicle",
-			"help": "Choose your rocket",
-			"about": "Choose your <a href=\"#guide_rocket\" class=\"guidelink\">launch vehicle</a>.",
+			"hint": "Choose your rocket",
+			"intro": "Choose your <a href=\"#guide_vehicle\" class=\"guidelink\">launch vehicle</a>.",
 			"select": "Select this launch vehicle",
 			"operator": "Operator:",
 			"height": "Height:",
@@ -202,11 +213,11 @@
 		},
 		"site": {
 			"label": "Launch site",
-			"help": "Choose the launch site",
+			"hint": "Choose the launch site",
 			"trajectories": "Trajectories:",
 			"location": "Location (latitude, longitude):",
 			"operator": "Operator:",
-			"risk": "Risk:",
+			"risk": "Launch success rate:",
 			"options": {
 				"CSG": { "label": "Guiana Space Centre, French Guiana", "trajectories": "North, East" },
 				"BKR": { "label": "Baikonur, Russia", "trajectories": "North, East" },
@@ -222,7 +233,8 @@
 		},
 		"orbit": {
 			"label": "Orbit",
-			"help": "Choose the type of orbit",
+			"hint": "Choose the type of orbit",
+			"intro": "",
 			"options": {
 				"LEO": { "label": "Low Earth Orbit", "altitude": "<", "launchreq": "Requires ability to de-orbit" },
 				"HEO": { "label": "High Earth Orbit", "altitude": ">", "launchreq": "" },
@@ -236,15 +248,12 @@
 		},
 		"proposal": {
 			"label": "Proposal Letter",
-			"help": "Complete your mission proposal document",
+			"hint": "Complete your mission proposal document",
 			"doc": "<h2>%FUNDER% Proposal Form</h2><p class=\"letter_date\">%DATE%<\/p><p>Dear %TO%,<\/p><p>We would like to propose a project to send a telescope into space on board a telescope. The aim of the mission is to %AIM%<\/p><p>Previous similar missions are %PREVIOUS%. This mission will advance on these by %ADVANCE%<\/p><h3>Instruments<\/h3><p>The instruments on board will be %INSTRUMENTS% They will allow the science goals to be met by %GOALS%<\/p><h3>Mirror<\/h3><p>The main mirror of the telescope will be %MIRROR% . This will allow the instruments to achieve resolutions from %RESLOW% to %RESHIGH%.<\/p><h3>Cooling System<\/h3><p>The minimum operating temperature required by the instruments is %REQTEMPERATURE%. The temperature on board the satellite will be %TEMPERATURE%. <\/p><h3>Mass budget<\/h3><p>The total mass of the satellite will be %MASS%. The breakdown from the individual components is given below<\/p><ul><li>Satellite Structure: %MASSSATELLITE%</li><li>Mirror: %MASSMIRROR%</li><li>Cooling System: %MASSCOOLING%</li><li>Instruments: %MASSINSTRUMENTS%</li></ul><h3>Orbit Selection<\/h3><p>The satellite will observe from %ORBIT%, at a distance of %DISTANCE% from Earth. The orbital period will be %PERIOD%, and the maximum fuel lifetime for maintaining such an orbit is %FUEL%. The mission duration will be %DURATION%.<\/p><h3>Launch vehicle and site<\/h3><p>To reach orbit, the satellite will be launched on a %VEHICLE%, operated by %OPERATOR%, from %SITE%.  The maximum capacity of this launch vehicle is %LAUNCHMASS%.<\/p><h3>Budget<\/h3><p>The total cost of the mission will be %COST%.<\/p><ul><li>Satellite Structure: %COSTSATELLITE%</li><li>Mirror: %COSTMIRROR%</li><li>Cooling System: %COSTCOOLING%</li><li>Instruments: %COSTINSTRUMENTS%</li><li>Development cost: %COSTDEV%</li><li>Launch cost: %COSTLAUNCH%</li><li>Ground control cost: %COSTGROUND%</li><li>Operations cost: %COSTOPERATIONS%</li></ul><br /><p>Kind Regards,<\/p><p>%NAME%<\/p>"
 		},
 		"launch": {
 			"label": "Launch",
 			"help": ""
-		},
-		"options": {
-			"label": "Options"
 		}
 	},
 	"operator": {
@@ -339,7 +348,7 @@
 			"summary": "You'll want to observe for as long as you can but running a satellite costs money.",
 			"about": "<p>The operational lifetime of the mission will add to the cost required to run the satellite. It may be limited by the fuel or coolant supply.</p>"
 		},
-		"rocket": {
+		"vehicle": {
 			"title": "Launch Vehicle",
 			"summary": "To lift a bigger satellite to higher orbits requires larger (and usually more expensive) rockets.",
 			"about": "<p>There are numerous launch vehicles and launch sites to use for your satellite from. However, different launch vehicles are launched from different sites, and the two must be compatible.</p><p>Different launchers have different sizes and have different limits in terms of the mass they can carry. The mass carried depends the on the orbit chosen. It is advisable for the satellite mass to below 80% of maximum mass for the chosen launch vehicle. The maximum mass is lower for launches beyond <a href=\"#guide_orbit_LEO\" class=\"guidelink\">low Earth orbit</a>, and some launches are not able to achieve particular orbits. Some operators are a little more efficient than others in terms of cost in order to launch satellites, and other launchers.</p><div class=\"tablewrapper\"><table><tr><th>Launch vehicle</th><th>Diameter</th><th>Maximum mass to <a href=\"#guide_orbit_LEO\" class=\"guidelink\">LEO</a></th><th>Maximum mass beyond <a href=\"#guide_orbit_LEO\" class=\"guidelink\">LEO</a></th><th>Launch cost</th><th>Operator</th></tr>%ROCKETTABLE%</table></div><figure class=\"four\"><figure><img src=\"images/guide/rocket_Ariane5.jpg\" /><figcaption>Ariane 5<br />Image credit: DLR German Aerospace Center</figcaption></figure><figure><img src=\"images/guide/rocket_DeltaIV.jpg\" /><figcaption>Delta IV<br />Image credit: US Air Force</figcaption></figure><figure><img src=\"images/guide/rocket_H-IIB.jpg\" /><figcaption>H-2B<br />Image credit: NARITA Masahiro</figcaption></figure><figure><img src=\"images/guide/rocket_Proton-M.jpg\" /><figcaption>Proton-M<br />Image credit: Flickr user alexpgp</figcaption></figure></figure>"
