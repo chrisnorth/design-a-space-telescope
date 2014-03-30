@@ -21,6 +21,8 @@
 			"mile": { "unit": " miles", "label": "Miles", "dimension": "length" },
 			"cubit": { "unit": " cubits", "label": "Cubits", "dimension": "length", "selectable": 1 },
 			"bluewhale": { "unit": " blue whales", "label": "Blue Whales", "dimension": "length", "selectable": 1 },
+			"yard": { "unit": " yd", "label": "Yards", "dimension": "length", "selectable": 1 },
+			"league": { "unit": " leagues", "label": "Leagues", "dimension": "length" },
 			"K": { "unit": " K", "label": "Kelvin", "dimension": "temperature", "selectable": 1 },
 			"C": { "unit": "&deg;C", "label": "Celcius", "dimension": "temperature", "selectable": 1 },
 			"F": { "unit": "&deg;F", "label": "Farenheit", "dimension": "temperature", "selectable": 1 },
@@ -44,7 +46,8 @@
 			"SEK": { "symbol": "kr", "label": "Swedish Krona" },
 			"CNY": { "symbol": "&yen;", "label": "Chinese Yuan" }, 
 			"INR": { "symbol": "&#8360;", "label": "Indian Rupees" }, 
-			"RUB": { "symbol": "RUB", "label": "Russian Ruble" }
+			"RUB": { "symbol": "RUB", "label": "Russian Ruble" }, 
+			"DBL": { "symbol": "DBL", "label": "Doubloons" }
 		},
 		"warnings": {
 			"title": "Warnings"
@@ -152,8 +155,16 @@
 			"intro": "The size and type of <a href=\"#guide_mirror\" class=\"guidelink\">mirror</a> on your satellite will determine the quality of the measurements you can make.",
 			"options": {
 				"diameter": { "label": "Mirror diameter", "help": "The diameter of the telescope mirror." },
-				"deployable": { "label": "Deployable structure?", "help": "Creates a more compact structure for launch but is more expensive." },
-				"uv": { "label": "UV quality?", "help": "Make the mirror surface of a higher quality. Required if you wish to make observations at UV wavelengths." }
+				"deployable": {
+					"label": "Use a deployable structure?",
+					"no": "No",
+					"yes": "Yes"
+				},
+				"uv": {
+					"label": "UV quality?",
+					"no": "No",
+					"yes": "Yes"
+				}
 			},
 			"questions": []
 		},
@@ -163,6 +174,7 @@
 			"intro": "To get any results from your mission you will need <a href=\"#guide_instruments\" class=\"guidelink\">scientific instruments</a>. Select a type of instrument and give it a name if you wish. When you are happy with your instrument choice, press the <strong>&plus;</strong> button to add it to your satellite.",
 			"options": {
 				"instrument": {
+					"none": { "label": "Select" },
 					"camera": { "label": "Camera" },
 					"spectrometer": { "label": "Spectrometer" },
 					"both": { "label": "Camera and Spectrometer" }
@@ -176,7 +188,12 @@
 		"cooling": {
 			"label": "Cooling",
 			"hint": "Apply cooling to your instruments",
-			"intro": "Apply cooling to your instruments.",
+			"intro": "Apply <a href=\"#guide_cooling\" class=\"guidelink\">cooling</a> to your instruments.",
+			"enable": {
+				"label": "Would you like cooling?",
+				"no": "No",
+				"yes": "Yes"
+			},
 			"options": {
 				"label": "Cooling temperature"
 			},
@@ -267,7 +284,7 @@
 		"spacex": { "label": "SpaceX (Private)" }
 	},
 	"wavelengths": {
-		"none": { "label": "None" },
+		"none": { "label": "Select" },
 		"submm": { "label": "sub-mm" },
 		"farir": { "label": "Far-IR" },
 		"midir": { "label": "Mid-IR" },
@@ -336,7 +353,7 @@
 		"instruments": {
 			"title": "Instrument Selection",
 			"summary": "The instruments you choose dictate the type of science that can be carried out by the telescope.",
-			"about": "<p>The instruments on board the satellite will dictate the type of science that can be carried out by the telescope. Different wavelengths will observe different objects in the universe, as shown in the table below. The light from objects in the distant Universe is stretched by a phenomenon called redshift. This means that a given wavelength is sensitive to different objects in the nearby and distant Universe.</p><div class=\"tablewrapper\"><table><tr><th>Type</th><th>Wavelength</th><th>Our Galaxy and nearby galaxies</th><th>Distant Universe</th></tr><tr><td>Sub-mm</td><td>300–1000 &micro;m</td><td>Birth of stars<br />Very cold dust</td><td>Birth of stars<br />Cool dust</td></tr><tr><td>Far-IR</td><td>30–300 &micro;m</td><td>Cool dust<br />Birth of stars<br />Outermost regions of the solar system (Uranus, Neptune, Kuiper Belt, comets)<br />Birth of stars<br />Warm dust around young stars</td><td></td></tr><tr><td>Mid-IR</td><td>3–30 &micro;m</td><td>Warm dust around young stars<br />Formation of planets<br />Inner Solar System (Mars, Jupiter, Saturn, Asteroids)</td><td>The first stars (100 million years after Big Bang)</td></tr><tr><td>Near-IR</td><td>0.8 – 3 &micro;m</td><td>Cool stars (red dwarfs, red giants)<br />Near-Earth objects</td><td>The first galaxies in the Universe (400 million years after the Big Bang)</td></tr><tr><td>Optical</td><td>0.4–0.8 &micro;m</td><td>Most Stars<br />Nearby galaxies</td><td>Hot, young stars</td></tr><tr><td>UV</td><td>0.1–0.4 &micro;m</td><td>Hot, young stars</td><td>Very hot regions</td></tr></table></div><figure class=\"right\"><img src=\"images/guide/ir_chip.jpg\" /><figcaption>An infrared detector chip</figcaption></figure><p>Some instruments need to operate at low temperatures. In general, the instrument must be cooler than the objects it is looking at. The temperature requirements of the different instruments are given below.</p><div class=\"tablewrapper\"><table><tr><th>Instrument wavelength</th><th>Temperature requirement</th></tr>%WAVELENGTHTABLE%</table></div><figure><img src=\"images/guide/M31_herschel.jpg\" /><figcaption>The Andromeda galaxy, seen by the Herschel Space Observatory in the far-infrared</figcaption></figure>"
+			"about": "<p>The instruments on board the satellite will dictate the type of science that can be carried out by the telescope. Different wavelengths will observe different objects in the universe, as shown in the table below. The light from objects in the distant Universe is stretched by a phenomenon called redshift. This means that a given wavelength is sensitive to different objects in the nearby and distant Universe.</p><div class=\"tablewrapper\"><table><tr><th>Type</th><th>Wavelength</th><th>Our Galaxy and nearby galaxies</th><th>Distant Universe</th></tr><tr><td>Sub-mm</td><td>300–1000 &micro;m</td><td>Birth of stars<br />Very cold dust</td><td>Birth of stars<br />Cool dust</td></tr><tr><td>Far-IR</td><td>30–300 &micro;m</td><td>Cool dust<br />Birth of stars<br />Outermost regions of the solar system (Uranus, Neptune, Kuiper Belt, comets)</td><td>Birth of stars<br />Warm dust around young stars</td></tr><tr><td>Mid-IR</td><td>3–30 &micro;m</td><td>Warm dust around young stars<br />Formation of planets<br />Inner Solar System (Mars, Jupiter, Saturn, Asteroids)</td><td>The first stars (100 million years after Big Bang)</td></tr><tr><td>Near-IR</td><td>0.8 – 3 &micro;m</td><td>Cool stars (red dwarfs, red giants)<br />Near-Earth objects</td><td>The first galaxies in the Universe (400 million years after the Big Bang)</td></tr><tr><td>Optical</td><td>0.4–0.8 &micro;m</td><td>Most Stars<br />Nearby galaxies</td><td>Hot, young stars</td></tr><tr><td>UV</td><td>0.1–0.4 &micro;m</td><td>Hot, young stars</td><td>Very hot regions</td></tr></table></div><figure class=\"right\"><img src=\"images/guide/ir_chip.jpg\" /><figcaption>An infrared detector chip</figcaption></figure><p>Some instruments need to operate at low temperatures. In general, the instrument must be cooler than the objects it is looking at. The temperature requirements of the different instruments are given below.</p><div class=\"tablewrapper\"><table><tr><th>Instrument wavelength</th><th>Temperature requirement</th></tr>%WAVELENGTHTABLE%</table></div><figure><img src=\"images/guide/M31_herschel.jpg\" /><figcaption>The Andromeda galaxy, seen by the Herschel Space Observatory in the far-infrared</figcaption></figure>"
 		},
 		"orbit": {
 			"title": "Satellite Orbit",

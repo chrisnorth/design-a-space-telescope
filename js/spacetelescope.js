@@ -1,6 +1,6 @@
 /*!
 	SpaceTelescope
-	(c) Stuart Lowe, Chris North 2013/2014
+	(c) Stuart Lowe, Chris North 2014
 */
 /*
 	USAGE:
@@ -9,18 +9,15 @@
 		<script type="text/javascript">
 		<!--
 			$(document).ready(function(){
-				audible = $.spacetelescopedesigner({});
+				spacetel = $.spacetelescopedesigner({});
 			});
 		// -->
 		</script>
-		
-	OPTIONS (default values in brackets):
 */
 
 if(typeof $==="undefined") $ = {};
 
 (function($) {
-
 
 	// shim layer with setTimeout fallback
 	window.requestAnimFrame = (function(){
@@ -104,13 +101,13 @@ if(typeof $==="undefined") $ = {};
 	// have Javascript enabled. If we are here they obviously do have Javascript.
 	document.write('<style type="text/css">.noscriptmsg { display: none; }</style>');
 	
-
-	// Control and generate the sound.
+	// Main
 	function SpaceTelescope(inp){
 	
 		// Error checking for jQuery
 		if(typeof $!=="function"){
 			console.log('No jQuery! Abort! Abort!');
+			return this;
 		}
 
 		this.q = $.query();
@@ -199,7 +196,9 @@ if(typeof $==="undefined") $ = {};
 		// Attach specific keypress events
 		this.registerKey(['g','?'],function(e){ this.toggleGuide(e); });
 		this.registerKey(['o'],function(e){ this.showView('options',e); });
+		this.registerKey(['r'],function(e){ this.loadLanguage(this.lang,this.updateLanguage); });
 
+		// Deal with back/forwards navigation
 		if(this.pushstate){
 			var _obj = this;
 			window.onpopstate = function(e){ console.log('onpopstate',e); _obj.navigate(e); };
@@ -208,8 +207,6 @@ if(typeof $==="undefined") $ = {};
 		// Make sure the menu stays attached to the menu bar (unless scrolling down)
 		$(document).on('scroll',{me:this},function(e){ e.data.me.scrollMenus(); });
 
-		//$('.dropdown li:last-child a').on('blur',{me:this},function(e){ console.log('Blur'); e.data.me.toggleMenus(); });
-
 		$('.scriptonly').removeClass('scriptonly');
 		
 		$(window).resize({me:this},function(e){ e.data.me.resize(); });
@@ -217,9 +214,47 @@ if(typeof $==="undefined") $ = {};
 		return this;
 	}
 
+	// Build a toggle button
+	// Inputs
+	//   a = { "value": "a", "id": "uniqueid_a", "checked": true }
+	//   b = { "value": "b", "id": "uniqueid_b", "checked": false }
+	SpaceTelescope.prototype.buildToggle = function(id,a,b){
+
+		if(typeof id!=="string" && typeof a != "object" && typeof b != "object") return "";
+
+		html = '<div class="toggleinput"><label class="toggle-label1" for="'+a.id+'"></label>';
+		html += '<div class="toggle-bg">';
+		html += '	<input id="'+a.id+'" type="radio" '+(a.checked ? 'checked="checked" ' : '')+'name="'+id+'" value="'+a.value+'">';
+		html += '	<input id="'+b.id+'" type="radio" '+(b.checked ? 'checked="checked" ' : '')+'name="'+id+'" value="'+b.value+'">';
+		html += '	<span class="switch"></span>';
+		html += '</div>';
+		html += '<label class="toggle-label2" for="'+b.id+'"></label></div>';
+
+		return html;
+	}
+	
+	// Update the text of a toggle input
+	// Inputs:
+	//   
+	SpaceTelescope.prototype.updateToggle = function(a,b,title){
+		if(typeof a != "object" && typeof b != "object" || $('#'+a.id).length==0 || $('#'+b.id).length==0) return this;
+		if(!title) title = "";
+		if(!a.label) a.label = "";
+		if(!b.label) b.label = "";
+		$('#'+a.id+',#'+b.id).attr('title',title);
+		$('label[for='+a.id+']').html(a.label);
+		$('label[for='+b.id+']').html(b.label);
+		return this;
+	}
+	
 	SpaceTelescope.prototype.buildPage = function(){
 
 		console.log('buildPage')
+
+		// Build scenarios
+		$('#scenarios').html('<h2></h2><p class="about"></p><ul id="scenariolist"></ul>');
+		$(document).on('click','#scenarios .button',{me:this},function(e){ e.data.me.chooseScenario($(this).attr('data')); });
+
 
 		// Add containers for each designer section
 		for(var i = 0; i < this.sections.length; i++){
@@ -230,15 +265,14 @@ if(typeof $==="undefined") $ = {};
 		for(var i = 0; i < this.sections.length; i++) html += '<li><a href="#designer_'+this.sections[i]+'" class="toggle'+this.sections[i]+'"></a></li>';
 		$('#menubar').html('<ul>'+html+'</ul>')
 
-
 		// Build the satellite section
-		$('#designer_satellite .options').html('<form><ul class="padded"><li class="option mirror_diameter"><label for="mirror_diameter"></label><select id="mirror_diameter" name="mirror_diameter"></select></li><li class="option mirror_deployable"><label for="mirror_deployable"></label><input id="mirror_deployable" name="mirror_deployable" type="checkbox" /></li><li class="option mirror_uv"><label for="mirror_uv"></label><input id="mirror_uv" name="mirror_uv" type="checkbox" /></li></ul></form>');
+		$('#designer_satellite .options').html('<form><ul class="padded"><li class="option mirror_diameter"><label for="mirror_diameter"></label><select id="mirror_diameter" name="mirror_diameter"></select></li><li class="option mirror_deployable"><label for="mirror_deployable"></label>'+this.buildToggle("toggledeployable",{ "value": "no", "id": "mirror_deployable_no", "label": "", "checked": true },{ "value": "yes", "id": "mirror_deployable_yes", "label": "" })+'</li><li class="option mirror_uv"><label for="mirror_uv"></label>'+this.buildToggle("toggleuv",{ "value": "no", "id": "mirror_uv_no", "checked": true },{ "value": "yes", "id": "mirror_uv_yes" })+'</li></ul></form>');
 
 		// Build the instruments section
-		$('#designer_instruments .options').html('<form><ul class="padded"><li><label for="instruments"></label><select id="instruments" name="instruments"></select> <input type="text" id="instrument_name" name="instrument_name" /><a href="#" class="add_instrument"><img src="images/cleardot.gif" class="icon add" /></a></li></ul></form>');
+		$('#designer_instruments .options').html('<form><ul class="padded"><li><label for="instruments"></label><select id="wavelengths" name="wavelengths"></select><select id="instruments" name="instruments"></select> <input type="text" id="instrument_name" name="instrument_name" /><a href="#" class="add_instrument"><img src="images/cleardot.gif" class="icon add" /></a></li></ul></form>');
 
 		// Build cooling options
-		$('#designer_cooling .options').html('<form><ul class="padded"><li><label for="cooling"></label><select id="cooling" name="cooling"></select></li></ul></form>');
+		$('#designer_cooling .options').html('<form><ul class="padded"><li><label for="togglecooling"></label>'+this.buildToggle("togglecooling",{ "value": "no", "id": "cooling_no", "checked": true },{ "value": "yes", "id": "cooling_yes" })+'</li><li class="hascooling"><label for="cooling"></label><select id="cooling" name="cooling"></select></li></ul></form>');
 
 		// Update the launch vehicle section
 		html = '<div class="padded">'
@@ -295,8 +329,6 @@ if(typeof $==="undefined") $ = {};
 
 		// Build proposal document holder
 		$('#designer_proposal .options').html('<div class="padded"><div class="doc"></div></div>');
-
-		$(document).on('click','#scenarios .button',{me:this},function(e){ e.data.me.chooseScenario($(this).attr('data')); });
 
 		return this;
 	}
@@ -436,9 +468,11 @@ if(typeof $==="undefined") $ = {};
 		if(!l) l = this.langshort;
 		var m = this.settings.mode;
 		var url = this.langurl.replace('%LANG%',l).replace('%MODE%',this.getMode());
+	console.log('loadLanguage',l,fn,url)
 		$.ajax({
 			url: url,
 			method: 'GET',
+			cache: false,
 			dataType: 'json',
 			context: this,
 			error: function(){
@@ -459,6 +493,7 @@ if(typeof $==="undefined") $ = {};
 				// Store the data
 				this.phrases = data;
 				this.loadScenarios(fn);
+				console.log(data.title)
 			}
 		});
 		return this;
@@ -493,9 +528,8 @@ if(typeof $==="undefined") $ = {};
 		console.log(this.scenario,this.stage);
 		$('#summary').show();
 		$('.baritem.messages').show();
-		$('#designer_objectives .options').html('<div class="padded"><blockquote class="padded">'+this.formatScenario(this.scenario)+'</blockquote></div>');
-		if(this.phrases.designer.objectives.intro) $('#designer_objectives .intro').html('<div class="padded">'+this.phrases.designer.objectives.intro.replace(/%TITLE%/,this.scenario.name).replace(/%FUNDER%/,this.scenario.funder)+'</div>');
 		this.updateSummary();
+		this.updateLanguage();
 		return this;
 	}
 	
@@ -530,11 +564,17 @@ if(typeof $==="undefined") $ = {};
 		var el;
 		if(dropdown=="mirror"){
 			el = $('#mirror_diameter');
-			for(var m in this.data.mirror) options += '<option>'+this.formatValue(this.data.mirror[m].diameter)+' ('+this.formatValue(this.data.mirror[m].cost)+')</option>';
+			for(var m in this.data.mirror) options += '<option value="'+m+'">'+this.formatValue(this.data.mirror[m].diameter)+' ('+this.formatValue(this.data.mirror[m].cost)+')</option>';
 			el.html(options);
 		}else if(dropdown=="instruments"){
 			el = $('#instruments');
-			for(var m in this.data.instrument.options) options += '<option>'+this.phrases.designer.instruments.options.instrument[m].label+(this.data.instrument.options[m].cost ? ' ('+this.formatValue(this.data.instrument.options[m].cost)+')' : '')+'</option>';
+			if(this.phrases.designer.instruments.options.instrument["none"].label) options = '<option value="">'+this.phrases.designer.instruments.options.instrument["none"].label+'</option>';
+			for(var m in this.data.instrument.options) options += '<option value="'+m+'">'+this.phrases.designer.instruments.options.instrument[m].label+(this.data.instrument.options[m].cost ? ' ('+this.formatValue(this.data.instrument.options[m].cost)+')' : '')+'</option>';
+			el.html(options);
+			console.log('here')
+			el = $('#wavelengths');
+			if(this.phrases.wavelengths["none"].label) options = '<option value="">'+this.phrases.wavelengths["none"].label+'</option>';
+			for(var m in this.data.wavelengths) options += '<option value="'+m+'">'+this.phrases.wavelengths[m].label+'</option>';
 			el.html(options);
 		}
 		return this;
@@ -546,7 +586,7 @@ if(typeof $==="undefined") $ = {};
 
 		var d = this.phrases;
 		var html,i,r,li,rk;
-
+		
 		// Update page title (make sure we encode the HTML entities)
 		if(d.title) $('html title').text(htmlDecode(d.title));
 
@@ -556,10 +596,15 @@ if(typeof $==="undefined") $ = {};
 		// Set language direction via attribute and a CSS class
 		$('body').attr('dir',(d.language.alignment=="right" ? 'rtl' : 'ltr')).removeClass('ltr rtl').addClass((d.language.alignment=="right" ? 'rtl' : 'ltr'));
 
+
+
+
 		// Update Designer
 
 		// Update objectives
-		$('#designer_objectives .options').html('')
+		$('#designer_objectives .options').html('<div class="padded"><blockquote class="padded">'+(this.scenario ? this.formatScenario(this.scenario) : '')+'</blockquote></div>');
+		if(this.scenario && d.designer.objectives.intro) $('#designer_objectives .intro').html('<div class="padded">'+d.designer.objectives.intro.replace(/%TITLE%/,this.scenario.name).replace(/%FUNDER%/,this.scenario.funder)+'</div>');
+
 
 		// Update the satellite section
 		$('#designer_satellite .options .mirror_diameter label').html(d.designer.satellite.options.diameter.label)
@@ -567,6 +612,10 @@ if(typeof $==="undefined") $ = {};
 		$('#designer_satellite .options .mirror_deployable label').html(d.designer.satellite.options.deployable.label);
 		$('#designer_satellite .options .mirror_uv label').html(d.designer.satellite.options.uv.label);
 		if(d.designer.satellite.intro) $('#designer_satellite .intro').html('<div class="padded">'+d.designer.satellite.intro+'</div>');
+		this.updateToggle({ "id": "mirror_deployable_no", "label": this.phrases.designer.satellite.options.deployable.no }, { "id": "mirror_deployable_yes", "label": this.phrases.designer.satellite.options.deployable.yes }, this.phrases.designer.satellite.options.deployable.label);
+		this.updateToggle({ "id": "mirror_uv_no", "label": this.phrases.designer.satellite.options.uv.no }, { "id": "mirror_uv_yes", "label": this.phrases.designer.satellite.options.uv.yes }, this.phrases.designer.satellite.options.uv.label);
+
+
 
 		// Update the instruments section
 		// TODO: update selected
@@ -581,8 +630,10 @@ if(typeof $==="undefined") $ = {};
 		html = "";
 		for(var m in this.data.cooling) html += '<option value="'+m+'">'+this.formatValue(this.data.cooling[m].temperature)+'</option>';
 		$('#designer_cooling .options select').html(html);
-		$('#designer_cooling .options label').html(d.designer.cooling.options.label);
+		$('#designer_cooling .options label[for=togglecooling]').html(d.designer.cooling.enable.label);
+		$('#designer_cooling .options label[for=cooling]').html(d.designer.cooling.options.label);
 		if(d.designer.cooling.intro) $('#designer_cooling .intro').html('<div class="padded">'+d.designer.cooling.intro+'</div>');
+		this.updateToggle({ "id": "cooling_no", "label": this.phrases.designer.cooling.enable.no }, { "id": "cooling_yes", "label": this.phrases.designer.cooling.enable.yes }, this.phrases.designer.cooling.enable.label);
 
 
 		// Update the launch vehicle section
@@ -594,7 +645,7 @@ if(typeof $==="undefined") $ = {};
 		var w = 100/n;
 		for(var l in this.data.vehicle){
 			li = $('#designer_vehicle .options li').eq(i);
-			li.attr({'data':l}).css({'width':w+'%','width':'calc(100%/'+n+')'});
+			li.attr({'data':l}).css({'width':w+'%'});
 			r = this.data.vehicle[l];
 			li.find('.image img').attr({'src':r.img,'alt':rk.options[l].label,'title':rk.options[l].label});
 			li.find('.selector label').html(rk.options[l].label);
@@ -686,7 +737,8 @@ if(typeof $==="undefined") $ = {};
 		var li = '';
 		for(var i = 0; i < this.scenarios.length; i++) li += '<li><div class="padded">'+this.formatScenario(this.scenarios[i])+'<a href="#designer_objectives" class="button" title="'+this.scenarios[i].name+'" data="'+i+'">Choose this mission<!--LANGUAGE--></a></div></li>';
 		$('#scenariolist').html(li);
-		if($('#scenariolist h2').length==0) $('#scenariolist').before('<h2>'+d.scenarios.title+'</h2><p>'+d.scenarios.intro+'</p>');
+		$('#scenarios h2').html(d.scenarios.title);
+		$('#scenarios p.about').html(d.scenarios.intro);
 		
 		// Update values to be consistent with current user preferences
 		this.updateUnits();
@@ -1045,7 +1097,7 @@ console.log('updateSummary')
 			},{
 				'key': 'profile_orbit',
 				'label': s.profile.orbit,
-				'value': 'LEO'
+				'value': 'LEO (<span class="convertable" data-value="400000" data-units="m" data-dimension="length">400000m</span>)'
 			},{
 				'key': 'profile_launch',
 				'label': s.profile.launch,
@@ -1094,12 +1146,14 @@ console.log('updateSummary')
 					if(v.units == "mile") v.value *= 1609;
 					if(v.units == "cubit") v.value *= 0.4572;
 					if(v.units == "bluewhale") v.value *= 30;
+					if(v.units == "yard") v.value *= 0.9144;
 					// Step 2: convert to new unit
 					if(to == "ft") v.value *= 3.281;
 					if(to == "km") v.value *= 0.001;
 					if(to == "mile") v.value /= 1609;
 					if(to == "cubit") v.value /= 0.4572;
 					if(to == "bluewhale") v.value /= 30;
+					if(to == "yard") v.value /= 0.9144;
 					v.units = to;
 				}
 				if(v.units=="m" && v.value > 1000){
@@ -1108,7 +1162,11 @@ console.log('updateSummary')
 				}
 				if(v.units=="ft" && v.value > 5280){
 					v.value /= 5280;
-					v.units = "mile";
+					v.units = "mile"
+				}
+				if(v.units=="yard" && v.value > 5280){
+					v.value /= 5280;
+					v.units = "league";
 				}
 			}
 		}else if(v.dimension == "mass"){
@@ -1197,7 +1255,7 @@ console.log('updateSummary')
 	
 	SpaceTelescope.prototype.getPrecision = function(v){
 		if(v == 0) return 1;
-		if(v < 1) return Math.ceil(Math.log10(1/v))+1;
+		if(v==="number" && v < 1) return Math.ceil(Math.log10(1/v))+1;
 		return 1;
 	}
 	

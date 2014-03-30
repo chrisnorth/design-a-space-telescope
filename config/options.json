@@ -11,7 +11,8 @@
 		"SEK": { "conv": 10.7654 },
 		"INR": { "conv": 100.1 },
 		"CNY": { "conv": 10.327 },
-		"RUB": { "conv": 59.136 }
+		"RUB": { "conv": 59.136 },
+		"DBL": { "conv": 0.07485 }
 	},
 	"general": {
 		"deployablemirror": { "risk": 0.9 }
@@ -55,7 +56,6 @@
 		"spacex": { "img": "images/logo_spacex.png" }
 	},
 	"wavelengths": {
-		"none": { "temperature": { "value": 999, "units": "K", "dimension": "temperature" }, "cost": { "value": 0, "units": "GBP", "dimension": "currency" }, "mass": { "value": 0, "units": "kg", "dimension": "mass" } },
 		"submm": { "temperature": { "value": 0.4, "units": "K", "dimension": "temperature" }, "cost": { "value": 50, "units": "GBP", "dimension": "currency" }, "mass": { "value": 100, "units": "kg", "dimension": "mass" } },
 		"farir": { "temperature": { "value": 0.4, "units": "K", "dimension": "temperature" }, "cost": { "value": 50, "units": "GBP", "dimension": "currency" }, "mass": { "value": 100, "units": "kg", "dimension": "mass" } },
 		"midir": { "temperature": { "value": 4, "units": "K", "dimension": "temperature" }, "cost": { "value": 50, "units": "GBP", "dimension": "currency" }, "mass": { "value": 100, "units": "kg", "dimension": "mass" } },
@@ -67,7 +67,12 @@
 		"options": {
 			"camera": { "multiplier": { "cost": 1, "mass": 1 }, "devtime": { "value": 0.5, "units": "years", "dimension": "time" } }
 		},
-		"max": 3
+		"maxsize": [
+			{ "value": 2, "units": "m", "dimension": "length" },
+			{ "value": 2, "units": "m", "dimension": "length" },
+			{ "value": 2, "units": "m", "dimension": "length" }
+		]
+
 	},
 	"cooling": {
 		"400K": { "temperature": { "value": 400, "units": "K", "dimension": "temperature" }, "cost": { "value": 0, "units": "GBP", "dimension": "currency" }, "mass": { "value": 0, "units": "kg", "dimension": "mass" }, "life": { "value": 99, "units": "years", "dimension": "time" } },

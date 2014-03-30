@@ -11,7 +11,8 @@
 		"SEK": { "conv": 10.7654 },
 		"INR": { "conv": 100.1 },
 		"CNY": { "conv": 10.327 },
-		"RUB": { "conv": 59.136 }
+		"RUB": { "conv": 59.136 },
+		"DBL": { "conv": 0.07485 }
 	},
 	"general": {
 		"deployablemirror": { "risk": 0.9 }
@@ -82,7 +83,16 @@
 			"spectrometer": { "multiplier": { "cost": 1, "mass": 1 }, "mass": { "value": 50, "units": "kg", "dimension": "mass" }, "cost": { "value": 50, "units": "GBP", "dimension": "currency" }, "devtime": { "value": 0.5, "units": "years", "dimension": "time" }, "risk": 0.98 },
 			"both": { "multiplier": { "cost": 1.5, "mass": 1.5 }, "mass": { "value": 75, "units": "kg", "dimension": "mass" }, "cost": { "value": 75, "units": "GBP", "dimension": "currency" }, "devtime": { "value": 1, "units": "years", "dimension": "time" }, "risk": 0.98 }
 		},
-		"max": 8
+		"maxsize": [
+			{ "value": 2, "units": "m", "dimension": "length" },
+			{ "value": 2, "units": "m", "dimension": "length" },
+			{ "value": 2, "units": "m", "dimension": "length" },
+			{ "value": 2, "units": "m", "dimension": "length" },
+			{ "value": 3, "units": "m", "dimension": "length" },
+			{ "value": 3, "units": "m", "dimension": "length" },
+			{ "value": 4, "units": "m", "dimension": "length" },
+			{ "value": 4, "units": "m", "dimension": "length" },
+		]
 	},
 	"cooling": {
 		"passive": {

@@ -204,9 +204,9 @@ img.icon {
 
 #options li { margin-top: 1em; }
 .options li { margin-bottom: 1em; }
-li select, li input { float: right; font-size: 1em; font-family: Arial, sans-serif; }
+li select, li input, li .toggleinput { float: right; font-size: 1em; font-family: Arial, sans-serif; }
 textarea { width: 100%; height: 5.5em;}
-.rtl li select, .rtl li input { float: left; }
+.rtl li select, .rtl li input, .rtl li .toggleinput { float: left; }
 
 
 /* Sprites */
@@ -529,9 +529,66 @@ input.button { padding: 6px 8px; /* Bug fix for Firefox over-riding the line-hei
 .button.fancybtn:hover, .button.fancybtn:focus { -o-background-size: 100% 100%;-moz-background-size: 100% 100%;-webkit-background-size: 100% 100%;background-size: 100% 100%;/* Internet Explorer */*background: #263c6f;background: #263c6f;filter: progid:DXImageTransform.Microsoft.gradient(gradientType=0, startColorstr=#FF1b5278, endColorstr=#FF1a294b);/* Recent browsers */background-image: -webkit-gradient(linear,left top, left bottom,from(#1b5278),to(#1a294b));background-image: -webkit-linear-gradient(top,#1b5278,#1a294b);background-image: -moz-linear-gradient(top,#1b5278,#1a294b);background-image: -o-linear-gradient(top,#1b5278,#1a294b);background-image: linear-gradient(top,#1b5278,#1a294b); }
 
 
+/* form toggle */
+.toggleinput { vertical-align: middle; }
+.toggle-label1, .toggle-label2 { display: inline; position: relative; }
+.toggle-bg { display: inline-block; }
+.toggle-label1 { margin-right: 5px; }
+.toggle-label2 { margin-left: 5px; }
+.toggle-bg {
+	background: #cccccc;
+	border-radius: 1em;	
+	box-shadow: inset 0 0 3px rgba(0,0,0,0.4), inset 0 10px 0px rgba(0,0,0,0.05);
+	position: relative;
+	cursor: pointer;
+	white-space: nowrap;
+}
+.toggle-bg input {
+	height: 1.25em;
+	left: 0;
+	margin: 0; /* Reset the margins and padding */
+	opacity: 0.0; /* Invisible! */
+	padding: 0;
+	position: absolute;
+	top: 0;
+	z-index: 2;
+		/*IE*/
+		zoom: 1;
+		filter: alpha(opacity=0);
+	cursor: pointer;
+}
+/* As we are hiding the radio buttons we will make the switch glow when the radio button receives focus. We need to use some sibling selectors. */
+.toggle-bg input:focus + .switch, .toggle-bg input:focus + input + .switch, .toggle-bg input:hover + .switch, .toggle-bg input:hover + input + .switch {
+	box-shadow: 0 1px 1px #65727b, 0 0 1px #b6bdc2, 0 0 4px 2px #3366dd;
+}
+.switch{
+	cursor: pointer;
+	background: #ffffff;
+	border-radius: 1em;
+	box-shadow: 0 1px 1px #65727b, 0 0 1px #b6bdc2;
+	display: inline-block;
+	left: -1px; /* This is the starting point. When adding a border radius, a small bit of the background is shown if we use left: 0;, so -1px is best.*/
+	position: absolute;
+	top: 0; /* ...To keep it centered vertically */
+	transition: left .25s ease;
+	z-index: 1; /* Remember, it must be below the invisible inputs */
+}
+.toggle-bg input:checked~.switch{ left: -1px; } /* initial toggle position */
+.toggle-bg input~:checked~.switch{ left: 1.25em; } /* final relative toggle position */
+.toggle-bg input:checked{ z-index: 0; }
+.toggle-bg, .toggle-bg input, .switch, .toggleinput label { height: 1.25em; }
+.toggle-bg, .toggle-bg input { width: 2.5em; }
+.toggle-label1, .toggle-label2 { top: -0.25em; }
+.switch { width: 1.25em; }
+
+
 /* Define border colours */
 #bar, .dropdown, .dropdown.fullwidth h3 { border-color: #404040; }
 #scenariolist li { border-color: #d6d6d6; }
+
+
+
+
 
 
 
@@ -589,6 +646,8 @@ input.button { padding: 6px 8px; /* Bug fix for Firefox over-riding the line-hei
 	#designer_site li select { float: none; }
 	#designer_instruments li input { width: 7em; }
 	.questions { clear: both; }
+
+	#designer .designer_title a { height: auto; }
 
 	#main .doc { padding: 2em 0.5em 0.5em 0.5em; }
 
