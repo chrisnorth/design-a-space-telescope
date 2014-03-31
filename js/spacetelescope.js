@@ -577,7 +577,7 @@ if(typeof $==="undefined") $ = {};
 		if(dropdown=="mirror"){
 			el = $('#mirror_diameter');
 			if(this.phrases.designer.satellite.options.placeholder) options = '<option value="">'+this.phrases.designer.satellite.options.placeholder+'</option>';
-			for(var m in this.data.mirror) options += '<option value="'+m+'">'+this.formatValue(this.data.mirror[m].diameter)+' ('+this.formatValue(this.data.mirror[m].cost)+')</option>';
+			for(var m in this.data.mirror) options += '<option value="'+m+'">'+this.formatValue(this.data.mirror[m].diameter)+'</option>';
 			el.html(options);
 		}else if(dropdown=="instruments"){
 			el = $('#instruments');
@@ -959,15 +959,34 @@ if(typeof $==="undefined") $ = {};
 	SpaceTelescope.prototype.copyValue = function(v){
 		return JSON.parse(JSON.stringify(v));
 	}
+	
+	SpaceTelescope.prototype.multiplyValue = function(v,b){
+		var a = JSON.parse(JSON.stringify(v));
+		a.value *= b;
+		return a;
+	}
 
 	SpaceTelescope.prototype.getChoice = function(choice){
 		if(choice=="mirror.cost"){
 			v = (this.choices.mirror ? this.copyValue(this.data.mirror[this.choices.mirror].cost) : { 'value': 0, 'units': 'GBP', 'dimension': 'currency' });
 			v.value = -v.value;
+			if(this.choices.deployablemirror && this.data.deployablemirror.multiplier.cost) v = this.multiplyValue(v,this.data.deployablemirror.multiplier.cost);
 		}else if(choice=="mirror.mass"){
 			v = (this.choices.mirror ? this.copyValue(this.data.mirror[this.choices.mirror].mass) : { 'value': 0, 'units': 'kg', 'dimension': 'mass' });
+			if(this.choices.deployablemirror && this.data.deployablemirror.multiplier.mass) v = this.multiplyValue(v,this.data.deployablemirror.multiplier.mass);
 		}else if(choice=="mirror.time"){
 			v = (this.choices.mirror ? this.copyValue(this.data.mirror[this.choices.mirror].devtime) : { 'value': 0, 'units': 'months', 'dimension': 'time' });
+			if(this.choices.deployablemirror && this.data.deployablemirror.multiplier.time) v = this.multiplyValue(v,this.data.deployablemirror.multiplier.time);
+		}else if(choice=="mirror.prob"){
+			v = (this.choices.mirror ? this.copyValue(this.data.mirror[this.choices.mirror].risk) : 1);
+			if(this.choices.deployablemirror && this.data.deployablemirror.risk) v = v*this.data.deployablemirror.risk;
+		}else if(choice=="satellite.cost"){
+			v = (this.choices.mirror ? this.copyValue(this.data.mirror[this.choices.mirror].bus.cost) : { 'value': 0, 'units': 'GBP', 'dimension': 'currency' });
+			v.value = -v.value;
+		}else if(choice=="satellite.mass"){
+			v = (this.choices.mirror ? this.copyValue(this.data.mirror[this.choices.mirror].bus.mass) : { 'value': 0, 'units': 'kg', 'dimension': 'mass' });
+		}else if(choice=="satellite.time"){
+			v = (this.choices.mirror ? this.copyValue(this.data.mirror[this.choices.mirror].bus.devtime) : { 'value': 0, 'units': 'months', 'dimension': 'time' });
 		}else if(choice=="vehicle.cost"){
 			v = (this.choices.vehicle ? this.copyValue(this.data.vehicle[this.choices.vehicle].cost) : { 'value': 0, 'units': 'GBP', 'dimension': 'currency' });
 			v.value = -v.value;		
@@ -996,9 +1015,12 @@ console.log('updateSummary')
 		var scie = {};
 		var prof = {};
 
+		prob.mirror = this.getChoice('mirror.prob');
+
 		// Format costs
 		cost.mirror = this.getChoice('mirror.cost');
-		cost.dev = this.sumValues(cost.mirror);
+		cost.satellite = this.getChoice('satellite.cost');
+		cost.dev = this.sumValues(cost.mirror,cost.satellite);
 		cost.vehicle = this.getChoice('vehicle.cost');
 		cost.ground = { 'value': 0, 'units': 'GBP', 'dimension': 'currency' };
 		cost.operations = this.sumValues(cost.vehicle,cost.ground);
@@ -1007,16 +1029,22 @@ console.log('updateSummary')
 
 		// Format times
 		time.mirror = this.getChoice('mirror.time');
-		time.total = this.sumValues(time.mirror);
+		time.satellite = this.getChoice('satellite.time');
+		time.total = this.sumValues(time.mirror,time.satellite);
 
 		// Format masses
 		mass.mirror = this.getChoice('mirror.mass');
-		mass.total = this.sumValues(mass.mirror);
+		mass.satellite = this.getChoice('satellite.mass');
+		mass.total = this.sumValues(mass.mirror,mass.satellite);
 		
 		prof.site = this.getChoice('site');
 		prof.vehicle = this.getChoice('vehicle');
 		prof.instruments = '0';
 		prof.orbit = this.getChoice('orbit');
+		var d = new Date();
+		var t = this.convertValue(time.total,'months');
+		d.setUTCMonth(d.getUTCMonth()+t.value);
+		prof.launch = d.toDateString()
 
 		
 		// Update success items
@@ -1035,7 +1063,7 @@ console.log('updateSummary')
 			},{ 
 				'key': 'success_deploy',
 				'label': s.success.deploy,
-				'value': '0%'
+				'value': (prob.mirror*100)+'%'
 			},{ 
 				'key': 'success_cooling',
 				'label': s.success.cooling,
@@ -1064,7 +1092,7 @@ console.log('updateSummary')
 				'list': [{
 					'key': 'cost_dev_satellite',
 					'label': s.cost.dev.satellite,
-					'value': { 'value': 0, 'units': 'GBP', 'dimension': 'currency' }
+					'value': cost.satellite
 				},{
 					'key': 'cost_dev_mirror',
 					'label': s.cost.dev.mirror,
@@ -1111,7 +1139,7 @@ console.log('updateSummary')
 				'list': [{
 					'key': 'time_dev_satellite',
 					'label': s.time.dev.satellite,
-					'value': { 'value': 0, 'units': 'months', 'dimension': 'time' }
+					'value': time.satellite
 				},{
 					'key': 'time_dev_mirror',
 					'label': s.time.dev.mirror,
@@ -1142,7 +1170,7 @@ console.log('updateSummary')
 			"list": [{
 				'key': 'mass_satellite',
 				'label': s.mass.satellite,
-				'value': { 'value': 0, 'units': 'kg', 'dimension': 'mass' }
+				'value': mass.satellite
 			},{
 				'key': 'mass_mirror',
 				'label': s.mass.mirror,
@@ -1192,7 +1220,11 @@ console.log('updateSummary')
 			},{
 				'key': 'profile_launch',
 				'label': s.profile.launch,
-				'value': 'June 2015'
+				'value': prof.launch
+			},{
+				'key': 'profile_temperature',
+				'label': s.profile.temperature,
+				'value': 'temp'
 			},{
 				'key': 'profile_end',
 				'label': s.profile.end,
@@ -1227,6 +1259,9 @@ console.log('updateSummary')
 		if(typeof v != "object") return v;
 
 		if(typeof v.value==="string" && v.value != "inf") v.value = parseFloat(v.value,10);
+
+		v = this.copyValue(v);
+		
 
 		if(v.dimension == "length"){
 			if(v.dimension == this.phrases.ui.units[to].dimension){
@@ -1476,13 +1511,15 @@ console.log('updateSummary')
 	SpaceTelescope.prototype.processChoices = function(view,e){
 
 		this.choices = {};
-		var m,v,s;
+		var m,d,v,s;
 		var errors = [];
 		var warnings = [];
 		
 		// Process satellite
 		m = $('#mirror_diameter').val();
 		if(m && this.data.mirror[m]) this.choices.mirror = m; 
+		d = $('input[name=toggledeployable]:checked').val();
+		if(d) this.choices.deployablemirror = (d=="yes" ? true : false);
 		
 		// Process vehicle
 		v = $('#designer_vehicle input[name=vehicle_rocket]:checked').val();

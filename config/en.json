@@ -134,7 +134,8 @@
 				"instruments": "Number of instruments:",
 				"orbit": "Orbit:",
 				"launch": "Launch date:",
-				"end": "Mission end:"
+				"end": "Mission end:",
+				"temperature": "Temperature:"
 			}
 		}
 	},
