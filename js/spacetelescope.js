@@ -713,8 +713,8 @@ if(typeof $==="undefined") $ = {};
 
 
 		// Update the site section
-		var opts = "";
 		var pins = "";
+		var opts = '<option value="">'+d.designer.site.hint+'</option>';
 		for(var s in this.data.site){
 			var lat = this.data.site[s].latitude;
 			var lon = this.data.site[s].longitude;
@@ -775,10 +775,12 @@ if(typeof $==="undefined") $ = {};
 	SpaceTelescope.prototype.showSiteDetails = function(site){
 		
 		var html = '';
-		if(typeof this.data.site[site].latitude==="number") html += '<div><strong>'+this.phrases.designer.site.location+'</strong> <span class="value">'+this.data.site[site].latitude.toFixed(2)+'&deg;, '+this.data.site[site].longitude.toFixed(2)+'&deg;</span></div>';
-		if(this.data.site[site].operator) html += '<div><strong>'+this.phrases.designer.site.operator+'</strong> <span class="value">'+this.phrases.operator[this.data.site[site].operator].label+'</span></div>';
-		html += '<div><strong>'+this.phrases.designer.site.trajectories+'</strong> <span class="value">'+this.phrases.designer.site.options[site].trajectories+'</span></div>';
-		if(typeof this.data.site[site].risk==="number") html += '<div><strong>'+this.phrases.designer.site.risk+'</strong> <span class="value">'+(this.data.site[site].risk*100).toFixed(0)+'%</span></div>';
+		if(site && site != ""){
+			if(typeof this.data.site[site].latitude==="number") html += '<div><strong>'+this.phrases.designer.site.location+'</strong> <span class="value">'+this.data.site[site].latitude.toFixed(2)+'&deg;, '+this.data.site[site].longitude.toFixed(2)+'&deg;</span></div>';
+			if(this.data.site[site].operator) html += '<div><strong>'+this.phrases.designer.site.operator+'</strong> <span class="value">'+this.phrases.operator[this.data.site[site].operator].label+'</span></div>';
+			html += '<div><strong>'+this.phrases.designer.site.trajectories+'</strong> <span class="value">'+this.phrases.designer.site.options[site].trajectories+'</span></div>';
+			if(typeof this.data.site[site].risk==="number") html += '<div><strong>'+this.phrases.designer.site.risk+'</strong> <span class="value">'+(this.data.site[site].risk*100).toFixed(0)+'%</span></div>';
+		}
 		$('#designer_site .site_details').html(html);
 		return this;
 	}

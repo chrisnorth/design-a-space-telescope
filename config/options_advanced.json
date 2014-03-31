@@ -48,8 +48,8 @@
 		"PEGA": { "mass": { "LEO": { "value": 400, "units": "kg", "dimension": "mass" }, "GTO": { "value": 0, "units": "kg", "dimension": "mass" } }, "diameter": { "value": 1.2, "units": "m", "dimension": "length" }, "operator": "orbital", "cost": { "value": 15, "units": "GBP", "dimension": "currency" }, "risk": 0.92, "sites": ["AIR"], "video": { "url": "https://www.youtube.com/watch?v=m7_yyvGxwrE", "start": 20 }, "height": { "value": 16.9, "units": "m", "dimension": "length" }, "img": "images/rocket_pegasus.png" }
 	},
 	"site": {
-		"AIR": { "LEO": 0, "operator": "orbital", "risk": 0.98 },
 		"VDB": { "LEO": 0, "operator": "nasa", "risk": 0.98, "latitude": 34.73278, "longitude": -120.56806 },
+		"AIR": { "LEO": 0, "operator": "orbital", "risk": 0.98 },
 		"KSC": { "LEO": 1, "operator": "nasa", "risk": 0.98, "latitude": 28.524058, "longitude": -80.65085 },
 		"CSG": { "LEO": 1, "operator": "esa", "risk": 0.98, "latitude": 5.23722, "longitude": -52.76056 },
 		"PTK": { "LEO": 0, "operator": "roscosmos", "risk": 0.95, "latitude": 62.70889, "longitude": 40.29389 },
