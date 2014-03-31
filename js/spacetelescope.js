@@ -971,15 +971,19 @@ if(typeof $==="undefined") $ = {};
 			v = (this.choices.mirror ? this.copyValue(this.data.mirror[this.choices.mirror].cost) : { 'value': 0, 'units': 'GBP', 'dimension': 'currency' });
 			v.value = -v.value;
 			if(this.choices.deployablemirror && this.data.deployablemirror.multiplier.cost) v = this.multiplyValue(v,this.data.deployablemirror.multiplier.cost);
+			if(this.choices.uvmirror && this.data.uvmirror.multiplier.cost) v = this.multiplyValue(v,this.data.uvmirror.multiplier.cost);
 		}else if(choice=="mirror.mass"){
 			v = (this.choices.mirror ? this.copyValue(this.data.mirror[this.choices.mirror].mass) : { 'value': 0, 'units': 'kg', 'dimension': 'mass' });
 			if(this.choices.deployablemirror && this.data.deployablemirror.multiplier.mass) v = this.multiplyValue(v,this.data.deployablemirror.multiplier.mass);
+			if(this.choices.uvmirror && this.data.uvmirror.multiplier.mass) v = this.multiplyValue(v,this.data.uvmirror.multiplier.mass);
 		}else if(choice=="mirror.time"){
 			v = (this.choices.mirror ? this.copyValue(this.data.mirror[this.choices.mirror].devtime) : { 'value': 0, 'units': 'months', 'dimension': 'time' });
 			if(this.choices.deployablemirror && this.data.deployablemirror.multiplier.time) v = this.multiplyValue(v,this.data.deployablemirror.multiplier.time);
+			if(this.choices.uvmirror && this.data.uvmirror.multiplier.time) v = this.multiplyValue(v,this.data.uvmirror.multiplier.time);
 		}else if(choice=="mirror.prob"){
 			v = (this.choices.mirror ? this.copyValue(this.data.mirror[this.choices.mirror].risk) : 1);
 			if(this.choices.deployablemirror && this.data.deployablemirror.risk) v = v*this.data.deployablemirror.risk;
+			if(this.choices.uvmirror && this.data.uvmirror.risk) v = v*this.data.uvmirror.risk;
 		}else if(choice=="satellite.cost"){
 			v = (this.choices.mirror ? this.copyValue(this.data.mirror[this.choices.mirror].bus.cost) : { 'value': 0, 'units': 'GBP', 'dimension': 'currency' });
 			v.value = -v.value;
@@ -1531,7 +1535,7 @@ console.log('updateSummary')
 	SpaceTelescope.prototype.processChoices = function(view,e){
 
 		this.choices = {};
-		var m,d,v,s;
+		var m,d,u,v,s;
 		var errors = [];
 		var warnings = [];
 		
@@ -1540,6 +1544,8 @@ console.log('updateSummary')
 		if(m && this.data.mirror[m]) this.choices.mirror = m; 
 		d = $('input[name=toggledeployable]:checked').val();
 		if(d) this.choices.deployablemirror = (d=="yes" ? true : false);
+		u = $('input[name=toggleuv]:checked').val();
+		if(u) this.choices.uvmirror = (u=="yes" ? true : false);
 		
 		// Process vehicle
 		v = $('#designer_vehicle input[name=vehicle_rocket]:checked').val();
