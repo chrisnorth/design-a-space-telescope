@@ -1282,8 +1282,8 @@ console.log('updateSummary')
 	}
 	
 	SpaceTelescope.prototype.getPrecision = function(v){
-		if(v == 0) return 1;
-		if(v==="number" && v < 1) return Math.ceil(Math.log10(1/v))+1;
+		if(v < 1e-9) return 1;
+		if(typeof v==="number" && v < 1) return Math.ceil(Math.log10(1/v))+1;
 		return 1;
 	}
 	
