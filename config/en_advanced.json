@@ -147,7 +147,8 @@
 		"objectives": {
 			"label": "Mission overview",
 			"hint": "Review your mission",
-			"intro": "You have chosen the <strong>%TITLE%</strong> mission. Use the menu options to design the different parts of your space telescope. You will need to choose a mirror, instruments, a rocket, a launch site and an orbit. Once you are happy with your plans you will need to fill out a proposal letter. If your proposal letter is accepted by <strong>%FUNDER%</strong> you will then be able to launch your mission."
+			"intro": "You have chosen the <strong>%TITLE%</strong> mission. Use the menu options to design the different parts of your space telescope. You will need to choose a mirror, instruments, a rocket, a launch site and an orbit. Once you are happy with your plans you will need to fill out a proposal letter. If your proposal letter is accepted by <strong>%FUNDER%</strong> you will then be able to launch your mission.",
+			"intronofunder": "You have chosen the <strong>%TITLE%</strong> mission. Use the menu options to design the different parts of your space telescope. You will need to choose a mirror, instruments, a rocket, a launch site and an orbit. Once you are happy with your plans you will need to fill out a proposal letter. You will then be able to launch your mission."
 		},
 		"satellite": {
 			"label": "Satellite",
@@ -155,7 +156,8 @@
 			"options": {
 				"diameter": {
 					"label": "Mirror diameter",
-					"help": "The diameter of the telescope mirror."
+					"help": "The diameter of the telescope mirror.",
+					"placeholder": "Diameter"
 				},
 				"deployable": {
 					"label": "Use a deployable structure?",
@@ -258,6 +260,7 @@
 			"trajectories": "Trajectories:",
 			"location": "Location (latitude, longitude):",
 			"operator": "Operator:",
+			"orbits": "Orbits:",
 			"risk": "Launch success rate:",
 			"options": {
 				"CSG": { "label": "Guiana Space Centre, French Guiana", "trajectories": "North, East" },
@@ -416,7 +419,7 @@
 			"summary": "You'll want to observe for as long as you can but running a satellite costs money.",
 			"about": "<p>The operational lifetime of the mission will add to the cost required to run the satellite. It may be limited by the fuel or coolant supply. A longer mission will also mean a higher risk of failure of delay.</p>"
 		},
-		"rocket": {
+		"vehicle": {
 			"title": "Launch Vehicle",
 			"summary": "To lift a bigger satellite to higher orbits requires larger (and usually more expensive) rockets.",
 			"about": "<p>There are numerous launch vehicles and launch sites to use for your satellite from. However, different launch vehicles are launched from different sites, and the two must be compatible.</p><p>Different launchers have different sizes and have different limits in terms of the mass they can carry. The mass carried depends the on the orbit chosen. It is advisable for the satellite mass to below 80% of maximum mass for the chosen launch vehicle. The maximum mass is lower for launches beyond low or high Earth orbit, and some launches are not able to achieve higher orbits. Some operators are a little more efficient than others in terms of cost in order to launch satellites, and other launchers also have varied Success Probabilities, which in turn affects the risk.</p><div class=\"tablewrapper\"><table><tr><th>Launch vehicle</th><th>Diameter</th><th>Maximum mass to <a href=\"#guide_orbit_LEO\" class=\"guidelink\">LEO</a></th><th>Maximum mass beyond <a href=\"#guide_orbit_LEO\" class=\"guidelink\">LEO</a></th><th>Launch cost</th><th>Operator</th><th>Success Rate</th></tr>%ROCKETTABLE%</table></div><figure class=\"four\"><figure><img src=\"images/guide/rocket_Ariane5.jpg\" /><figcaption>Ariane 5<br />Image credit: DLR German Aerospace Center</figcaption></figure><figure><img src=\"images/guide/rocket_DeltaIV.jpg\" /><figcaption>Delta IV<br />Image credit: US Air Force</figcaption></figure><figure><img src=\"images/guide/rocket_H-IIB.jpg\" /><figcaption>H-2B<br />Image credit: NARITA Masahiro</figcaption></figure><figure><img src=\"images/guide/rocket_Proton-M.jpg\" /><figcaption>Proton-M<br />Image credit: Flickr user alexpgp</figcaption></figure></figure>"

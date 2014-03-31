@@ -39,11 +39,11 @@
 		"PEGA": { "mass": { "LEO": { "value": 400, "units": "kg", "dimension": "mass" }, "GTO": { "value": 0, "units": "kg", "dimension": "mass" } }, "diameter": { "value": 1.2, "units": "m", "dimension": "length" }, "operator": "orbital", "cost": { "value": 15, "units": "GBP", "dimension": "currency" }, "sites": ["AIR"], "video": { "url": "https://www.youtube.com/watch?v=m7_yyvGxwrE", "start": 2, "end": 48 }, "height": { "value": 16.9, "units": "m", "dimension": "length" }, "img": "images/rocket_pegasus.png" }
 	},
 	"site": {
-		"AIR": { "LEO": 0, "operator": "orbital" },
-		"KSC": { "LEO": 1, "operator": "nasa", "latitude": 28.524058, "longitude": -80.65085 },
-		"CSG": { "LEO": 1, "operator": "esa", "latitude": 5.23722, "longitude": -52.76056 },
-		"BKR": { "LEO": 1, "operator": "roscosmos", "latitude": 45.965, "longitude": 63.305 },
-		"TNG": { "LEO": 1, "operator": "jaxa", "latitude": 30.40000, "longitude": 130.97000 }
+		"AIR": { "orbits": { "LEO" : true, "GEO": false, "ES2": false }, "operator": "orbital" },
+		"KSC": { "orbits": { "LEO" : true, "GEO": true, "ES2": true }, "operator": "nasa", "latitude": 28.524058, "longitude": -80.65085 },
+		"CSG": { "orbits": { "LEO" : true, "GEO": true, "ES2": true }, "operator": "esa", "latitude": 5.23722, "longitude": -52.76056 },
+		"BKR": { "orbits": { "LEO" : true, "GEO": true, "ES2": true }, "operator": "roscosmos", "latitude": 45.965, "longitude": 63.305 },
+		"TNG": { "orbits": { "LEO" : true, "GEO": true, "ES2": true }, "operator": "jaxa", "latitude": 30.40000, "longitude": 130.97000 }
 	},
 	"operator": {
 		"nasa": { "img": "images/logo_nasa.png" },
@@ -56,7 +56,6 @@
 		"spacex": { "img": "images/logo_spacex.png" }
 	},
 	"wavelengths": {
-		"none": { "temperature": { "value": 999, "units": "K", "dimension": "temperature" }, "cost": { "value": 0, "units": "GBP", "dimension": "currency" }, "mass": { "value": 0, "units": "kg", "dimension": "mass" } },
 		"submm": { "temperature": { "value": 0.4, "units": "K", "dimension": "temperature" }, "cost": { "value": 50, "units": "GBP", "dimension": "currency" }, "mass": { "value": 100, "units": "kg", "dimension": "mass" } },
 		"farir": { "temperature": { "value": 0.4, "units": "K", "dimension": "temperature" }, "cost": { "value": 50, "units": "GBP", "dimension": "currency" }, "mass": { "value": 100, "units": "kg", "dimension": "mass" } },
 		"midir": { "temperature": { "value": 4, "units": "K", "dimension": "temperature" }, "cost": { "value": 50, "units": "GBP", "dimension": "currency" }, "mass": { "value": 100, "units": "kg", "dimension": "mass" } },

@@ -61,7 +61,7 @@
 			}]
 		},{
 			"name": "Interstellar Dust",
-			"description": "A university has approached your group to design a mission for satellite telescope in order to analyse the spectra of interstellar dust in nearby galaxies. The budget of your mission is <span class=\"cost\">%COST%</span>. You will need the appropriate instruments on board the telescope in order to carry out the mission.",
+			"description": "A university has approached your group to design a mission for a satellite telescope in order to analyse the spectra of interstellar dust in nearby galaxies. The budget of your mission is <span class=\"cost\">%COST%</span>. You will need the appropriate instruments on board the telescope in order to carry out the mission.",
 			"funder": "University",
 			"budget": { "value": 9000, "units": "GBP", "dimension": "currency" },
 			"requires": [{

@@ -147,7 +147,8 @@
 		"objectives": {
 			"label": "Mission overview",
 			"hint": "Review your mission",
-			"intro": "You have chosen the <strong>%TITLE%</strong> mission. Use the menu options to design the different parts of your space telescope. You will need to choose a mirror, instruments, a rocket, a launch site and an orbit. Once you are happy with your plans you will need to fill out a proposal letter. If your proposal letter is accepted by <strong>%FUNDER%</strong> you will then be able to launch your mission."
+			"intro": "You have chosen the <strong>%TITLE%</strong> mission. Use the menu options to design the different parts of your space telescope. You will need to choose a mirror, instruments, a rocket, a launch site and an orbit. Once you are happy with your plans you will need to fill out a proposal letter. If your proposal letter is accepted by <strong>%FUNDER%</strong> you will then be able to launch your mission.",
+			"intronofunder": "You have chosen the <strong>%TITLE%</strong> mission. Use the menu options to design the different parts of your space telescope. You will need to choose a mirror, instruments, a rocket, a launch site and an orbit. Once you are happy with your plans you will need to fill out a proposal letter. You will then be able to launch your mission."
 		},
 		"satellite": {
 			"label": "Satellite",
@@ -156,7 +157,8 @@
 			"options": {
 				"diameter": {
 					"label": "Mirror diameter",
-					"help": "The diameter of the telescope mirror."
+					"help": "The diameter of the telescope mirror.",
+					"placeholder": "Diameter"
 				},
 				"deployable": {
 					"label": "Use a deployable structure?",
@@ -239,6 +241,7 @@
 			"trajectories": "Trajectories:",
 			"location": "Location (latitude, longitude):",
 			"operator": "Operator:",
+			"orbits": "Orbits:",
 			"risk": "Launch success rate:",
 			"options": {
 				"CSG": { "label": "Guiana Space Centre, French Guiana", "trajectories": "North, East" },
@@ -304,6 +307,12 @@
 		"years_10": { "label": "10 yrs" },
 		"years_15": { "label": "15 yrs" },
 		"years_20": { "label": "20 yrs" }
+	},
+	"errors": {
+		"site": "<strong>%SITE%</strong> is unsuitable for the <strong>%VEHICLE%</strong>."
+	},
+	"warnings": {
+	
 	},
 	"guide": {
 		"title": "Guide",

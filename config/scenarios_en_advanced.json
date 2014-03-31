@@ -3,6 +3,7 @@
 		{
 			"name": "Star Birth and Evolution",
 			"description": "A private organization has funded your group to research into the birth and evolution of stars the distant and nearby Universe, with full analysis of the spectra of the event. The budget of your mission is <span class=\"cost\">%COST%</span>. You will need the appropriate instruments on board your satellite in order to observe such objects.",
+			"funder": "Private Organization",
 			"budget": { "value": 2000, "units": "GBP", "dimension": "currency" },
 			"requires": [
 				{ "instrument": "camera", "wavelength": "farir" },
@@ -15,6 +16,7 @@
 		},{
 			"name": "Multi-wavelength Sky Mapper",
 			"description": "A government research grant has come through to take images of the sky in ultraviolet, visible and nearby wavelengths from a satellite in space, in order to map stars, galaxies and other yet to be discovered phenomena. The budget of your mission is <span class=\"cost\">%COST%</span>.",
+			"funder": "Government",
 			"budget": { "value": 400, "units": "GBP", "dimension": "currency" },
 			"requires": [
 				{ "instrument": "camera", "wavelength": "uv" },
@@ -24,7 +26,8 @@
 			]
 		},{
 			"name": "Interstellar Dust",
-			"description": "A university has approached your group to design a mission for satellite telescope in order to analyse the spectra of interstellar dust in nearby galaxies. The budget of your mission is <span class=\"cost\">%COST%</span>. You will need the appropriate instruments on board the telescope in order to carry out the mission.",
+			"description": "A university has approached your group to design a mission for a satellite telescope in order to analyse the spectra of interstellar dust in nearby galaxies. The budget of your mission is <span class=\"cost\">%COST%</span>. You will need the appropriate instruments on board the telescope in order to carry out the mission.",
+			"funder": "University",
 			"budget": { "value": 9000, "units": "GBP", "dimension": "currency" },
 			"requires": [
 				{ "mirror": 0.5 }
@@ -32,6 +35,7 @@
 		},{
 			"name": "Planet Formation",
 			"description": "A private rocket company, SpaceX, has approached your group to launch a telescope into space in order to study the formation of planets and their chemical composition. The resolution must be at least four times better than previous equivalent missions, and you must use their rocket. The budget for your mission is <span class=\"cost\">%COST%</span>.",
+			"funder": "SpaceX",
 			"budget": { "value": 4000, "units": "GBP", "dimension": "currency" },
 			"requires": [
 				{ "rocket": "FLC9" },
@@ -40,6 +44,7 @@
 		},{
 			"name": "Infrared All-sky",
 			"description": "A funding agency is providing funding to perform an all-sky survey from near infrared to far infrared. The budget of your mission is <span class=\"cost\">%COST%</span>. The satellite should launch within 10 years.",
+			"funder": "Funding Agency",
 			"budget": { "value": 1000, "units": "GBP", "dimension": "currency" },
 			"requires": [
 				{ "instrument": "camera", "wavelength": "nearir" },
@@ -50,6 +55,7 @@
 		},{
 			"name": "Nearby Galaxy Explorer",
 			"description": "Your group has received funding to send a telescope on board a satellite into space with the main objective of analysing stars in a nearby galaxy at very high resolution. You should aim to capture both the spectra and image data. The budget of your mission is <span class=\"cost\">%COST%</span>. Your group will need to use the appropriate instruments in order to collect data if it is to be analysed.",
+			"funder": "",
 			"budget": { "value": 15000, "units": "GBP", "dimension": "currency" },
 			"requires": [
 				{ "instrument": "camera", "wavelength": "nearir" },
@@ -60,6 +66,7 @@
 		},{
 			"name": "Near-Earth Asteroid Study",
 			"description": "The government has asked you to design a satellite to take images of near-Earth asteroids. The mission should last for as long as possible, but the development funding of the satellite will expire in eight years. The European Space Agency are providing funding towards the launch and operations so you have to use their launch site. Your total budget is <span class=\"cost\">%COST%</span>.",
+			"funder": "Government",
 			"budget": { "value": 1400, "units": "GBP", "dimension": "currency" },
 			"requires": [
 				{ "mirror": 0.5 },
@@ -68,6 +75,7 @@
 		},{
 			"name": "Freedom",
 			"description": "There is no need to worry about money. Spend as much as you like.",
+			"funder": "",
 			"budget": { "value": 1e20, "units": "GBP", "dimension": "currency" },
 			"requires": []
 		}

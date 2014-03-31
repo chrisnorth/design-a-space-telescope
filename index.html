@@ -33,27 +33,23 @@
 					<a href="#language" class="togglebtn togglelang" title="Change Language"><!--LANGUAGE--><img src="images/cleardot.gif" class="icon globe" alt="Language" /></a>
 					<div id="language" class="dropdown"><ul></ul></div>
 				</div>
-				<div class="baritem messages"><a href="#messages" class="toggleerrors" title="View errors"><!--LANGUAGE--><img src="images/cleardot.gif" class="icon error" title="Errors" /><span class="error">2</span></a></div>
-				<div class="baritem messages"><a href="#messages" class="togglewarnings" title="View warnings"><img src="images/cleardot.gif" class="icon warning" alt="Warnings" /><!--LANGUAGE--><span class="warning">3</span></a></div>
+				<div class="baritem errors"><a href="#messages" class="toggleerror" title="View errors"><!--LANGUAGE--><img src="images/cleardot.gif" class="icon error" title="Errors" /><span class="error value">0</span></a></div>
+				<div class="baritem warnings"><a href="#messages" class="togglewarning" title="View warnings"><img src="images/cleardot.gif" class="icon warning" alt="Warnings" /><!--LANGUAGE--><span class="warning value">0</span></a></div>
 			</div>
 			<ul id="summary"><li class="baritem"><a href="#summaryext_success" class="togglesuccess"><img src="images/cleardot.gif" class="icon success" /><span class="success success_total value">0%</span></a></li><li class="baritem"><a href="#summaryext_cost" class="togglecost"><img src="images/cleardot.gif" class="icon cost" /><span class="cost cost_available value convertable" data-value="0" data-units="GBP" data-dimension="currency">&pound;0 m</span></a></li><li class="baritem"><a href="#summaryext_mass" class="togglemass"><img src="images/cleardot.gif" class="icon mass" /><span class="mass mass_total value convertable" data-value="0" data-units="kg" data-dimension="mass">0 kg</span></a></li><li class="baritem"><a href="#summaryext_science" class="togglescience"><img src="images/cleardot.gif" class="icon science" /><span class="science science_total value">0%</span></a></li><li class="baritem"><a href="#summaryext_time" class="toggletime"><img src="images/cleardot.gif" class="icon time" /><span class="time time_dev_total value">0 months</span></a></li></ul>
 		</div>
 		<div id="messages" class="dropdown fullwidth">
 			<ul>
-				<li>
+				<li class="errors">
 					<div class="padded">
-						<h3 class="error"><img src="images/cleardot.gif" class="icon error" /> Errors <span class="value">2</span></h3>
-						<ul class="summary">
-							<li>Blah</li>
-						</ul>
+						<h3 class="error"><img src="images/cleardot.gif" class="icon error" /> Errors <span class="error value">0</span></h3>
+						<ul class="summary"></ul>
 					</div>
 				</li>
-				<li>
+				<li class="warnings">
 					<div class="padded">
-						<h3 class="warning"><img src="images/cleardot.gif" class="icon warning" /> Warnings <span class="value">3</span></h3>
-						<ul class="summary">
-							<li>Blah</li>
-						</ul>
+						<h3 class="warning"><img src="images/cleardot.gif" class="icon warning" /> Warnings <span class="warning value">0</span></h3>
+						<ul class="summary"></ul>
 					</div>
 				</li>
 			</ul>
