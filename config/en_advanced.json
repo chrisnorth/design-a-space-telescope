@@ -334,6 +334,12 @@
 		"years_15": { "label": "15 yrs" },
 		"years_20": { "label": "20 yrs" }
 	},
+	"errors": {
+		"site": "<strong>%SITE%</strong> is unsuitable for the <strong>%VEHICLE%</strong>."
+	},
+	"warnings": {
+	
+	},
 	"guide": {
 		"title": "Guide",
 		"about": "Use the guide to find out more about specific topics.",

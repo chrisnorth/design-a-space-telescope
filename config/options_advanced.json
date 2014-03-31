@@ -14,8 +14,9 @@
 		"RUB": { "conv": 59.136 },
 		"DBL": { "conv": 0.07485 }
 	},
-	"general": {
-		"deployablemirror": { "risk": 0.9, "multiplier": { "mass": 2, "cost": 4 } }
+	"deployablemirror": {
+		"risk": 0.9,
+		"multiplier": { "mass": 2, "cost": 4 }
 	},
 	"mirror": {
 		"0.5m": { "diameter": { "value": 0.5, "units": "m", "dimension": "length" }, "cost": { "value": 12, "units": "GBP", "dimension": "currency" }, "mass": { "value": 3, "units": "kg", "dimension": "mass" }, "devtime": { "value": 0.5, "units": "years", "dimension": "time" }, "bus": { "diameter": { "value": 0.8, "units": "m", "dimension": "length" }, "cost": { "value": 100, "units": "GBP", "dimension": "currency" }, "mass": { "value": 50, "units": "kg", "dimension": "mass" }, "devtime": { "value": 5, "units": "years", "dimension": "time" }, "instrumentslots": 2 }, "passive": { "cost": { "value": 5, "units": "GBP", "dimension": "currency" }, "mass": { "value": 20, "units": "kg", "dimension": "mass" }, "devtime": { "value": 0.5, "units": "years", "dimension": "time" } }, "risk" : 0.99 },

@@ -992,8 +992,12 @@ if(typeof $==="undefined") $ = {};
 			v.value = -v.value;		
 		}else if(choice=="site"){
 			v = (this.choices.site ? this.phrases.designer.site.options[this.choices.site].label : '');
+		}else if(choice=="site.prob"){
+			v = (this.choices.site && this.data.site[this.choices.site].risk ? this.data.site[this.choices.site].risk : 1);
 		}else if(choice=="vehicle"){
 			v = (this.choices.vehicle ? this.phrases.designer.vehicle.options[this.choices.vehicle].label : '');
+		}else if(choice=="vehicle.prob"){
+			v = (this.choices.vehicle && this.data.vehicle[this.choices.vehicle].risk ? this.data.vehicle[this.choices.vehicle].risk : 1);
 		}else if(choice=="orbit"){
 			//'LEO (<span class="convertable" data-value="400000" data-units="m" data-dimension="length">400000m</span>)'
 			v = ' ';
@@ -1016,6 +1020,12 @@ console.log('updateSummary')
 		var prof = {};
 
 		prob.mirror = this.getChoice('mirror.prob');
+		prob.site = this.getChoice('site.prob');
+		prob.vehicle = this.getChoice('vehicle.prob');
+		prob.cooling = 1;
+		prob.instruments = 1;
+		prob.mission = 1;
+		prob.total = prob.site*prob.vehicle*prob.mirror*prob.cooling*prob.instruments*prob.mission;
 
 		// Format costs
 		cost.mirror = this.getChoice('mirror.cost');
@@ -1050,32 +1060,32 @@ console.log('updateSummary')
 		// Update success items
 		var table = [{
 			"key": "success",
-			"value": "0%",
+			"value": this.formatPercent(prob.total),
 			"title": s.success.title,
 			"list": [{
 				'key': 'success_site',
 				'label': s.success.site,
-				'value': '0%'
+				'value': this.formatPercent(prob.site)
 			},{ 
 				'key': 'success_vehicle',
 				'label': s.success.vehicle,
-				'value': '0%'
+				'value': this.formatPercent(prob.vehicle)
 			},{ 
 				'key': 'success_deploy',
 				'label': s.success.deploy,
-				'value': (prob.mirror*100)+'%'
+				'value': this.formatPercent(prob.mirror)
 			},{ 
 				'key': 'success_cooling',
 				'label': s.success.cooling,
-				'value': '0%'
+				'value': this.formatPercent(prob.cooling)
 			},{ 
 				'key': 'success_instruments',
 				'label': s.success.instruments,
-				'value': '0%'
+				'value': this.formatPercent(prob.instruments)
 			},{ 
 				'key': 'success_mission',
 				'label': s.success.mission,
-				'value': '0%'
+				'value': this.formatPercent(prob.mission)
 			}]
 		},{
 			"key": "cost_available",
@@ -1481,6 +1491,16 @@ console.log('updateSummary')
 		var unit = (this.phrases.ui.units[v.units]) ? this.phrases.ui.units[v.units].unit : "";
 		if(typeof v.value==="string") v.value = parseInt(v.value,10)
 		return ''+addCommas((v.value).toFixed(p).replace(/\.0+$/,'').replace(/(\.[1-9])0+$/,"$1"))+''+unit;
+	}
+
+	// Inputs:
+	//  v - e.g. 0.99 (99%)
+	//  p - the number of decimal places to show in the output
+	SpaceTelescope.prototype.formatPercent = function(v,p){
+		if(v > 1) v = 1;
+		if(v < 0) v = 0;
+		if(typeof p!=="number") p = 1;
+		return ''+addCommas((v*100).toFixed(p)).replace(/\.0+$/,'').replace(/(\.[1-9]+)0+$/,"$1")+'%';
 	}
 
 	// Display really large numbers as powers of ten
