@@ -154,7 +154,10 @@
 			"hint": "Determine the properties of your telescope mirror",
 			"intro": "The size and type of <a href=\"#guide_mirror\" class=\"guidelink\">mirror</a> on your satellite will determine the quality of the measurements you can make.",
 			"options": {
-				"diameter": { "label": "Mirror diameter", "help": "The diameter of the telescope mirror." },
+				"diameter": {
+					"label": "Mirror diameter",
+					"help": "The diameter of the telescope mirror."
+				},
 				"deployable": {
 					"label": "Use a deployable structure?",
 					"no": "No",
@@ -197,29 +200,6 @@
 			"options": {
 				"temperature": {
 					"label": "Cooling temperature"
-				},
-				"passive": {
-					"label": "Passive cooling?",
-					"options": {
-						"yes": "Yes",
-						"no": "No"
-					}
-				},
-				"cryogenic": {
-					"label": "Cyrogenic cooling?",
-					"options": {
-						"none": "None",
-						"2yr": "",
-						"4yr": "",
-						"8yr": ""
-					}
-				},
-				"active": {
-					"label": "Active cooling?",
-					"options": {
-						"yes": "Yes",
-						"no": "No"
-					}
 				}
 			},
 			"questions": []
@@ -263,12 +243,8 @@
 			"options": {
 				"CSG": { "label": "Guiana Space Centre, French Guiana", "trajectories": "North, East" },
 				"BKR": { "label": "Baikonur, Russia", "trajectories": "North, East" },
-				"PTK": { "label": "Plesetsk Cosmodrome, Russia", "trajectories": "North" },
 				"KSC": { "label": "Kennedy Space Centre, Florida", "trajectories": "East" },
-				"VDB": { "label": "Vandenberg Air Force Base, California", "trajectories": "North" },
-				"XCH": { "label": "Xichang Satellite Launch Center, China", "trajectories": "North, East" },
 				"TNG": { "label": "Tanegashima Space Center, Japan", "trajectories": "South, East" },
-				"SDH": { "label": "Satish Dhawan Space Centre, India", "trajectories": "South, East" },
 				"AIR": { "label": "Carrier Aircraft", "trajectories": "Any" }
 			},
 			"questions": []
@@ -304,8 +280,6 @@
 		"esa": { "label": "ESA (Europe)" },
 		"jaxa": { "label": "JAXA (Japan)" },
 		"orbital": { "label": "Orbital (Private)" },
-		"cnsa": { "label": "CNSA (China)" },
-		"isro": { "label": "ISRO (India)" },
 		"spacex": { "label": "SpaceX (Private)" }
 	},
 	"wavelengths": {

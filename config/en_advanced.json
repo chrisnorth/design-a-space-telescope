@@ -6,7 +6,10 @@
 		"translator": "Chris North"
 	},
 	"title": "Space Telescope Designer!",
-	"intro": "<p>Designing a space telescope is an incredibly complex job, with many requirements that must be met. Some of these are because of the scientific discoveries that astronomers would like to make, while others are due to limits that engineers put on the spacecraft.</p><p>In the early 1990s, astronomers and engineers around the world started designing the <a href=\"#guide_previous_herschel\" class=\"guidelink\">Herschel Space Observatory</a>. After years of building and testing, Herschel launched in 2009. This project will help you explore the kinds of decisions the astronomers and engineers had to make as you design your own space telescope. Can <em>you</em> launch a telescope that will push back the frontiers of knowledge?</p>",
+	"intro": {
+		"about": "<p>Designing a space telescope is an incredibly complex job, with many requirements that must be met. Some of these are because of the scientific discoveries that astronomers would like to make, while others are due to limits that engineers put on the spacecraft.</p><p>In the early 1990s, astronomers and engineers around the world started designing the <a href=\"#guide_previous_herschel\" class=\"guidelink\">Herschel Space Observatory</a>. After years of building and testing, Herschel launched in 2009. This project will help you explore the kinds of decisions the astronomers and engineers had to make as you design your own space telescope. Can <em>you</em> launch a telescope that will push back the frontiers of knowledge?</p>",
+		"button": "Choose a mission"
+	},
 	"ui": {
 		"million": { "full": " million", "compact": " m" },
 		"billion": { "full": " billion", "compact": " Bn" },
@@ -16,12 +19,17 @@
 			"mm": { "unit": " mm", "label": "Millimetres", "dimension": "length" },
 			"ft": { "unit": " ft", "label": "Feet", "dimension": "length", "selectable": 1 },
 			"mile": { "unit": " miles", "label": "Miles", "dimension": "length" },
+			"cubit": { "unit": " cubits", "label": "Cubits", "dimension": "length", "selectable": 1 },
+			"bluewhale": { "unit": " blue whales", "label": "Blue Whales", "dimension": "length", "selectable": 1 },
+			"yard": { "unit": " yd", "label": "Yards", "dimension": "length", "selectable": 1 },
+			"league": { "unit": " leagues", "label": "Leagues", "dimension": "length" },
 			"K": { "unit": " K", "label": "Kelvin", "dimension": "temperature", "selectable": 1 },
 			"C": { "unit": "&deg;C", "label": "Celcius", "dimension": "temperature", "selectable": 1 },
 			"F": { "unit": "&deg;F", "label": "Farenheit", "dimension": "temperature", "selectable": 1 },
 			"kg": { "unit": " kg", "label": "Kilograms", "dimension": "mass", "selectable": 1 },
 			"lb": { "unit": " lb", "label": "Pounds", "dimension": "mass", "selectable": 1 },
 			"years": { "unit": " yrs", "label": "Years", "dimension": "time" },
+			"elephant": { "unit": " elephants", "label": "Elephants", "dimension": "mass", "selectable": 1 },
 			"months": { "unit": " months", "label": "Months", "dimension": "time" },
 			"days": { "unit": " days", "label": "Days", "dimension": "time" },
 			"hours": { "unit": " hours", "label": "Hours", "dimension": "time" },
@@ -38,7 +46,8 @@
 			"SEK": { "symbol": "kr", "label": "Swedish Krona" },
 			"CNY": { "symbol": "&yen;", "label": "Chinese Yuan" }, 
 			"INR": { "symbol": "&#8377;", "label": "Indian Rupees" }, 
-			"RUB": { "symbol": "RUB", "label": "Russian Ruble" }
+			"RUB": { "symbol": "RUB", "label": "Russian Ruble" }, 
+			"DBL": { "symbol": "DBL", "label": "Doubloons" }
 		},
 		"warnings": {
 			"title": "Warnings"
@@ -86,7 +95,8 @@
 				"end": "Mission end:"
 			},
 			"cost": {
-				"title": "Funds available",
+				"title": "Budget",
+				"initial": "Initial funding",
 				"dev": {
 					"title": "Development (total):",
 					"satellite": "Satellite structure:",
@@ -99,7 +109,8 @@
 					"launch": "Launch:",
 					"ground": "Ground control (per year):"
 				},
-				"total": "Total:"
+				"total": "Total costs:",
+				"available": "Funds available:"
 			},
 			"mass": {
 				"title": "Mass budget",
@@ -115,80 +126,73 @@
 			},
 			"science": {
 				"title": "Mission targets"
+			},
+			"profile": {
+				"title": "Mission profile",
+				"site": "Launch site:",
+				"vehicle": "Launch vehicle:",
+				"instruments": "Number of instruments:",
+				"orbit": "Orbit:",
+				"launch": "Launch date:",
+				"end": "Mission end:"
 			}
 		}
 	},
-	"options": {
+	"scenarios": {
+		"title": "Choose a scenario",
+		"intro": "You can choose a scenario below.",
+		"button": "Choose a mission"
+	},
+	"designer": {
+		"objectives": {
+			"label": "Mission overview",
+			"hint": "Review your mission",
+			"intro": "You have chosen the <strong>%TITLE%</strong> mission. Use the menu options to design the different parts of your space telescope. You will need to choose a mirror, instruments, a rocket, a launch site and an orbit. Once you are happy with your plans you will need to fill out a proposal letter. If your proposal letter is accepted by <strong>%FUNDER%</strong> you will then be able to launch your mission."
+		},
 		"satellite": {
-			"title": "Satellite",
-			"diameter": { "label": "Mirror diameter", "help": "The diameter of the telescope mirror." },
-			"deployable": { "label": "Deployable structure?", "help": "Creates a more compact structure for launch but is more expensive." },
-			"uv": { "label": "UV quality?", "help": "Make the mirror surface of a higher quality. Required if you wish to make observations at UV wavelengths." }
+			"label": "Satellite",
+			
+			"options": {
+				"diameter": {
+					"label": "Mirror diameter",
+					"help": "The diameter of the telescope mirror."
+				},
+				"deployable": {
+					"label": "Use a deployable structure?",
+					"no": "No",
+					"yes": "Yes"
+				},
+				"uv": {
+					"label": "UV quality?",
+					"no": "No",
+					"yes": "Yes"
+				}
+			},
+			"questions": []
 		},
-		"orbit": {
-			"LEO": { "label": "Low Earth Orbit", "altitude": "<", "launchreq": "Requires ability to de-orbit" },
-			"HEO": { "label": "High Earth Orbit", "altitude": ">", "launchreq": "" },
-			"SNS": { "label": "Sun Synchronous Orbit", "altitude": "<", "launchreq": "Requires ability to de-orbit" },
-			"GEO": { "label": "Geostationary Orbit", "launchreq": "" },
-			"ETR": { "label": "Earth-Trailing", "launchreq": "" },
-			"EM2": { "label": "Earth-Moon L2", "launchreq": "Requires relay satellite" },
-			"ES2": { "label": "Earth-Sun L2", "launchreq": "" }
-		},
-		"rocket": {
-			"ARI5": { "label": "Ariane 5" },
-			"SOYZ": { "label": "Soyuz" },
-			"DLT2": { "label": "Delta II" },
-			"DLT4": { "label": "Delta IV" },
-			"PRTM": { "label": "Proton-M" },
-			"H2B4": { "label": "H-2B" },
-			"VEGA": { "label": "Vega" },
-			"PEGA": { "label": "Pegasus" },
-			"LM3B": { "label": "Long March 3B" },
-			"ATLV": { "label": "Atlas V" },
-			"FLC9": { "label": "Falcon 9" },
-			"PSLV": { "label": "PSLV" }
-		},
-		"operator": {
-			"nasa": { "label": "NASA (USA)" },
-			"roscosmos": { "label": "Roscosmos (Russia)" },
-			"esa": { "label": "ESA (Europe)" },
-			"jaxa": { "label": "JAXA (Japan)" },
-			"orbital": { "label": "Orbital (Private)" },
-			"cnsa": { "label": "CNSA (China)" },
-			"isro": { "label": "ISRO (India)" },
-			"spacex": { "label": "SpaceX (Private)" }
-		},
-		"site": {
-			"CSG": { "label": "Guiana Space Centre, French Guiana", "trajectories": "North, East" },
-			"BKR": { "label": "Baikonur, Russia", "trajectories": "North, East" },
-			"PTK": { "label": "Plesetsk Cosmodrome, Russia", "trajectories": "North" },
-			"KSC": { "label": "Kennedy Space Centre, Florida", "trajectories": "East" },
-			"VDB": { "label": "Vandenberg Air Force Base, California", "trajectories": "North" },
-			"XCH": { "label": "Xichang Satellite Launch Center, China", "trajectories": "North, East" },
-			"TNG": { "label": "Tanegashima Space Center, Japan", "trajectories": "South, East" },
-			"SDH": { "label": "Satish Dhawan Space Centre, India", "trajectories": "South, East" },
-			"AIR": { "label": "Carrier Aircraft", "trajectories": "Any" }
-		},
-		"wavelengths": {
-			"none": { "label": "None" },
-			"submm": { "label": "sub-mm" },
-			"farir": { "label": "Far-IR" },
-			"midir": { "label": "Mid-IR" },
-			"nearir": { "label": "Near-IR" },
-			"optical": { "label": "Optical" },
-			"uv": { "label": "UV" }
-		},
-		"instrument": {
-			"camera": { "label": "Camera" },
-			"spectrometer": { "label": "Spectrometer" },
-			"both": { "label": "Both" }
+		"instruments": {
+			"label": "Instruments",
+			"hint": "Choose your scientific instruments",
+			"intro": "To get any results from your mission you will need <a href=\"#guide_instruments\" class=\"guidelink\">scientific instruments</a>. Select a type of instrument and give it a name if you wish. When you are happy with your instrument choice, press the <strong>&plus;</strong> button to add it to your satellite.",
+			"options": {
+				"instrument": {
+					"none": { "label": "Type" },
+					"camera": { "label": "Camera" },
+					"spectrometer": { "label": "Spectrometer" },
+					"both": { "label": "Camera and Spectrometer" }
+				},
+				"label": "Add",
+				"add": "Add this instrument",
+				"name": "Instrument name"
+			},
+			"questions": []
 		},
 		"cooling": {
 			"label": "Cooling",
 			"hint": "Apply cooling to your instruments",
-			"intro": "Apply <a href=\"#guide_cooling\" class=\"guidelink\">cooling</a> to your instruments.",
+			"intro": "A <a href=\"#guide_cooling\" class=\"guidelink\">cooling system</a> may be required for your satellite, particularly for instruments observing longer wavelengths.",
 			"enable": {
-				"label": "Would you like cooling?",
+				"label": "Do you need cooling?",
 				"no": "No",
 				"yes": "Yes"
 			},
@@ -204,9 +208,9 @@
 					"label": "Cyrogenic cooling?",
 					"options": {
 						"none": "None",
-						"years_2": "2yr",
-						"years_4": "4yr",
-						"years_8": "8yr"
+						"2yr": "",
+						"4yr": "",
+						"8yr": ""
 					}
 				},
 				"active": {
@@ -219,20 +223,112 @@
 			},
 			"questions": []
 		},
-		"mission": {
-			"years_1": { "label": "1 yr" },
-			"years_2": { "label": "2 yrs" },
-			"years_3": { "label": "3 yrs" },
-			"years_4": { "label": "4 yrs" },
-			"years_5": { "label": "5 yrs" },
-			"years_6": { "label": "6 yrs" },
-			"years_7": { "label": "7 yrs" },
-			"years_8": { "label": "8 yrs" },
-			"years_9": { "label": "9 yrs" },
-			"years_10": { "label": "10 yrs" },
-			"years_15": { "label": "15 yrs" },
-			"years_20": { "label": "20 yrs" }
+		"vehicle": {
+			"label": "Launch vehicle",
+			"hint": "Choose your rocket",
+			"intro": "Choose your <a href=\"#guide_vehicle\" class=\"guidelink\">launch vehicle</a>.",
+			"select": "Select this launch vehicle",
+			"operator": "Operator:",
+			"height": "Height:",
+			"diameter": "Payload diameter:",
+			"cost": "Launch cost:",
+			"massLEO": "Mass to LEO:",
+			"massGTO": "Mass beyond LEO:",
+			"risk": "Launch probability:",
+			"sites": "Launch sites:",
+			"options": {
+				"ARI5": { "label": "Ariane 5" },
+				"SOYZ": { "label": "Soyuz" },
+				"DLT2": { "label": "Delta II" },
+				"DLT4": { "label": "Delta IV" },
+				"PRTM": { "label": "Proton-M" },
+				"H2B4": { "label": "H-2B" },
+				"VEGA": { "label": "Vega" },
+				"PEGA": { "label": "Pegasus" },
+				"LM3B": { "label": "Long March 3B" },
+				"ATLV": { "label": "Atlas V" },
+				"FLC9": { "label": "Falcon 9" },
+				"PSLV": { "label": "PSLV" }
+			},
+			"questions": []
+		},
+		"site": {
+			"label": "Launch site",
+			"hint": "Choose the launch site",
+			"trajectories": "Trajectories:",
+			"location": "Location (latitude, longitude):",
+			"operator": "Operator:",
+			"risk": "Launch success rate:",
+			"options": {
+				"CSG": { "label": "Guiana Space Centre, French Guiana", "trajectories": "North, East" },
+				"BKR": { "label": "Baikonur, Russia", "trajectories": "North, East" },
+				"PTK": { "label": "Plesetsk Cosmodrome, Russia", "trajectories": "North" },
+				"KSC": { "label": "Kennedy Space Centre, Florida", "trajectories": "East" },
+				"VDB": { "label": "Vandenberg Air Force Base, California", "trajectories": "North" },
+				"XCH": { "label": "Xichang Satellite Launch Center, China", "trajectories": "North, East" },
+				"TNG": { "label": "Tanegashima Space Center, Japan", "trajectories": "South, East" },
+				"SDH": { "label": "Satish Dhawan Space Centre, India", "trajectories": "South, East" },
+				"AIR": { "label": "Carrier Aircraft", "trajectories": "Any" }
+			},
+			"questions": []
+		},
+		"orbit": {
+			"label": "Orbit",
+			"hint": "Choose the type of orbit",
+			"intro": "",
+			"options": {
+				"LEO": { "label": "Low Earth Orbit", "altitude": "<", "launchreq": "Requires ability to de-orbit" },
+				"HEO": { "label": "High Earth Orbit", "altitude": ">", "launchreq": "" },
+				"SNS": { "label": "Sun Synchronous Orbit", "altitude": "<", "launchreq": "Requires ability to de-orbit" },
+				"GEO": { "label": "Geostationary Orbit", "launchreq": "" },
+				"ETR": { "label": "Earth-Trailing", "launchreq": "" },
+				"EM2": { "label": "Earth-Moon L2", "launchreq": "Requires relay satellite" },
+				"ES2": { "label": "Earth-Sun L2", "launchreq": "" }
+			},
+			"questions": []
+		},
+		"proposal": {
+			"label": "Proposal Letter",
+			"hint": "Complete your mission proposal document",
+			"doc": "<h2>%FUNDER% Proposal Form</h2><p class=\"letter_date\">%DATE%<\/p><p>Dear %TO%,<\/p><p>We would like to propose a project to send a telescope into space on board a telescope. The aim of the mission is to %AIM%<\/p><p>Previous similar missions are %PREVIOUS%. This mission will advance on these by %ADVANCE%<\/p><h3>Instruments<\/h3><p>The instruments on board will be %INSTRUMENTS% They will allow the science goals to be met by %GOALS%<\/p><h3>Mirror<\/h3><p>The main mirror of the telescope will be %MIRROR% . This will allow the instruments to achieve resolutions from %RESLOW% to %RESHIGH%.<\/p><h3>Cooling System<\/h3><p>The minimum operating temperature required by the instruments is %REQTEMPERATURE%. The temperature on board the satellite will be %TEMPERATURE%. <\/p><h3>Mass budget<\/h3><p>The total mass of the satellite will be %MASS%. The breakdown from the individual components is given below<\/p><ul><li>Satellite Structure: %MASSSATELLITE%</li><li>Mirror: %MASSMIRROR%</li><li>Cooling System: %MASSCOOLING%</li><li>Instruments: %MASSINSTRUMENTS%</li></ul><h3>Orbit Selection<\/h3><p>The satellite will observe from %ORBIT%, at a distance of %DISTANCE% from Earth. The orbital period will be %PERIOD%, and the maximum fuel lifetime for maintaining such an orbit is %FUEL%. The mission duration will be %DURATION%.<\/p><h3>Launch vehicle and site<\/h3><p>To reach orbit, the satellite will be launched on a %VEHICLE%, operated by %OPERATOR%, from %SITE%.  The maximum capacity of this launch vehicle is %LAUNCHMASS%.<\/p><h3>Budget<\/h3><p>The total cost of the mission will be %COST%.<\/p><ul><li>Satellite Structure: %COSTSATELLITE%</li><li>Mirror: %COSTMIRROR%</li><li>Cooling System: %COSTCOOLING%</li><li>Instruments: %COSTINSTRUMENTS%</li><li>Development cost: %COSTDEV%</li><li>Launch cost: %COSTLAUNCH%</li><li>Ground control cost: %COSTGROUND%</li><li>Operations cost: %COSTOPERATIONS%</li></ul><br /><p>Kind Regards,<\/p><p>%NAME%<\/p>"
+		},
+		"launch": {
+			"label": "Launch",
+			"help": ""
 		}
+	},
+	"operator": {
+		"nasa": { "label": "NASA (USA)" },
+		"roscosmos": { "label": "Roscosmos (Russia)" },
+		"esa": { "label": "ESA (Europe)" },
+		"jaxa": { "label": "JAXA (Japan)" },
+		"orbital": { "label": "Orbital (Private)" },
+		"cnsa": { "label": "CNSA (China)" },
+		"isro": { "label": "ISRO (India)" },
+		"spacex": { "label": "SpaceX (Private)" }
+	},
+	"wavelengths": {
+		"none": { "label": "Wavelength" },
+		"submm": { "label": "sub-mm" },
+		"farir": { "label": "Far-IR" },
+		"midir": { "label": "Mid-IR" },
+		"nearir": { "label": "Near-IR" },
+		"optical": { "label": "Optical" },
+		"uv": { "label": "UV" }
+	},
+	"mission": {
+		"years_1": { "label": "1 yr" },
+		"years_2": { "label": "2 yrs" },
+		"years_3": { "label": "3 yrs" },
+		"years_4": { "label": "4 yrs" },
+		"years_5": { "label": "5 yrs" },
+		"years_6": { "label": "6 yrs" },
+		"years_7": { "label": "7 yrs" },
+		"years_8": { "label": "8 yrs" },
+		"years_9": { "label": "9 yrs" },
+		"years_10": { "label": "10 yrs" },
+		"years_15": { "label": "15 yrs" },
+		"years_20": { "label": "20 yrs" }
 	},
 	"guide": {
 		"title": "Guide",

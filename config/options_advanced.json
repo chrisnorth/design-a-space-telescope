@@ -33,7 +33,7 @@
 		"EM2": { "altitude": { "value": 400000, "units": "km", "dimension": "length" }, "obsfrac": 0.5, "period": { "value": 27, "units": "days", "dimension": "time" }, "multiplier": { "passive": 0, "cryo": 0, "launchcost": 1.5 }, "fuellife": { "value": 10, "units": "years", "dimension": "time" }, "temperature": { "value": 300, "units": "K", "dimension": "temperature" }, "LEO": 0, "groundcost": { "value": 80, "units": "GBP", "dimension": "currency" }, "risk": 0.95 },
 		"ES2": { "altitude": { "value": 1500000, "units": "km", "dimension": "length" }, "obsfrac": 1, "period": { "value": 365, "units": "days", "dimension": "time" }, "multiplier": { "passive": 1, "cryo": 1, "launchcost": 1 }, "fuellife": { "value": 10, "units": "years", "dimension": "time" }, "temperature": { "value": 300, "units": "K", "dimension": "temperature" }, "LEO": 0, "groundcost": { "value": 50, "units": "GBP", "dimension": "currency" }, "risk": 0.95 }
 	},
-	"rocket": {
+	"vehicle": {
 		"DLT4": { "mass": { "LEO": { "value": 23000, "units": "kg", "dimension": "mass" }, "GTO": { "value": 13000, "units": "kg", "dimension": "mass" } }, "diameter": { "value": 5, "units": "m", "dimension": "length" }, "cost": { "value": 200, "units": "GBP", "dimension": "currency" }, "operator": "nasa", "risk": 0.95, "sites": ["KSC","VDB"], "video": { "url": "https://www.youtube.com/watch?v=oxMuxZWtiOU", "start": 150 }, "height": { "value": 72, "units": "m", "dimension": "length" }, "img": "images/rocket_deltaiv.png" }, 
 		"ARI5": { "mass": { "LEO": { "value": 20000, "units": "kg", "dimension": "mass" }, "GTO": { "value": 9000, "units": "kg", "dimension": "mass" } }, "diameter": { "value": 5.5, "units": "m", "dimension": "length" }, "cost": { "value": 100, "units": "GBP", "dimension": "currency" }, "operator": "esa", "risk": 0.96, "sites": ["CSG"], "video": { "url": "https://www.youtube.com/watch?v=59599vSL7tM", "start": 45 }, "height": { "value": 53, "units": "m", "dimension": "length" }, "img": "images/rocket_ariane5.png" },
 		"PRTM": { "mass": { "LEO": { "value": 20000, "units": "kg", "dimension": "mass" }, "GTO": { "value": 5000, "units": "kg", "dimension": "mass" } }, "diameter": { "value": 4, "units": "m", "dimension": "length" }, "cost": { "value": 60, "units": "GBP", "dimension": "currency" }, "operator": "roscosmos", "risk": 0.88, "sites": ["BKR", "PTK"], "img": "images/rocket_proton.png" },
@@ -48,15 +48,15 @@
 		"PEGA": { "mass": { "LEO": { "value": 400, "units": "kg", "dimension": "mass" }, "GTO": { "value": 0, "units": "kg", "dimension": "mass" } }, "diameter": { "value": 1.2, "units": "m", "dimension": "length" }, "operator": "orbital", "cost": { "value": 15, "units": "GBP", "dimension": "currency" }, "risk": 0.92, "sites": ["AIR"], "video": { "url": "https://www.youtube.com/watch?v=m7_yyvGxwrE", "start": 20 }, "height": { "value": 16.9, "units": "m", "dimension": "length" }, "img": "images/rocket_pegasus.png" }
 	},
 	"site": {
-		"CSG": { "LEO": 1, "operator": "esa", "risk": 0.98, "latitude": 5.23722, "longitude": -52.76056 },
-		"BKR": { "LEO": 1, "operator": "roscosmos", "risk": 0.95, "latitude": 45.965, "longitude": 63.305 },
-		"PTK": { "LEO": 0, "operator": "roscosmos", "risk": 0.95, "latitude": 62.70889, "longitude": 40.29389 },
-		"KSC": { "LEO": 1, "operator": "nasa", "risk": 0.98, "latitude": 28.524058, "longitude": -80.65085 },
+		"AIR": { "LEO": 0, "operator": "orbital", "risk": 0.98 },
 		"VDB": { "LEO": 0, "operator": "nasa", "risk": 0.98, "latitude": 34.73278, "longitude": -120.56806 },
-		"XCH": { "LEO": 1, "operator": "cnsa", "risk": 0.90, "latitude": 28.2460167, "longitude": 102.0265556 },
-		"TNG": { "LEO": 1, "operator": "jaxa", "risk": 0.98, "latitude": 30.40000, "longitude": 130.97000 },
+		"KSC": { "LEO": 1, "operator": "nasa", "risk": 0.98, "latitude": 28.524058, "longitude": -80.65085 },
+		"CSG": { "LEO": 1, "operator": "esa", "risk": 0.98, "latitude": 5.23722, "longitude": -52.76056 },
+		"PTK": { "LEO": 0, "operator": "roscosmos", "risk": 0.95, "latitude": 62.70889, "longitude": 40.29389 },
+		"BKR": { "LEO": 1, "operator": "roscosmos", "risk": 0.95, "latitude": 45.965, "longitude": 63.305 },
 		"SDH": { "LEO": 1, "operator": "isro", "risk": 0.90, "latitude": 13.7199389, "longitude": 80.2304250 },
-		"AIR": { "LEO": 0, "operator": "orbital", "risk": 0.98 }
+		"XCH": { "LEO": 1, "operator": "cnsa", "risk": 0.90, "latitude": 28.2460167, "longitude": 102.0265556 },
+		"TNG": { "LEO": 1, "operator": "jaxa", "risk": 0.98, "latitude": 30.40000, "longitude": 130.97000 }
 	},
 	"operator": {
 		"nasa": { "img": "images/logo_nasa.png" },
@@ -91,7 +91,7 @@
 			{ "value": 3, "units": "m", "dimension": "length" },
 			{ "value": 3, "units": "m", "dimension": "length" },
 			{ "value": 4, "units": "m", "dimension": "length" },
-			{ "value": 4, "units": "m", "dimension": "length" },
+			{ "value": 4, "units": "m", "dimension": "length" }
 		]
 	},
 	"cooling": {
