@@ -174,12 +174,12 @@
 			"intro": "To get any results from your mission you will need <a href=\"#guide_instruments\" class=\"guidelink\">scientific instruments</a>. Select a type of instrument and give it a name if you wish. When you are happy with your instrument choice, press the <strong>&plus;</strong> button to add it to your satellite.",
 			"options": {
 				"instrument": {
-					"none": { "label": "Select" },
+					"none": { "label": "Type" },
 					"camera": { "label": "Camera" },
 					"spectrometer": { "label": "Spectrometer" },
 					"both": { "label": "Camera and Spectrometer" }
 				},
-				"label": "New instrument",
+				"label": "Add",
 				"add": "Add this instrument",
 				"name": "Instrument name"
 			},
@@ -188,14 +188,39 @@
 		"cooling": {
 			"label": "Cooling",
 			"hint": "Apply cooling to your instruments",
-			"intro": "Apply <a href=\"#guide_cooling\" class=\"guidelink\">cooling</a> to your instruments.",
+			"intro": "A <a href=\"#guide_cooling\" class=\"guidelink\">cooling system</a> may be required for your satellite, particularly for instruments observing longer wavelengths.",
 			"enable": {
-				"label": "Would you like cooling?",
+				"label": "Do you need cooling?",
 				"no": "No",
 				"yes": "Yes"
 			},
 			"options": {
-				"label": "Cooling temperature"
+				"temperature": {
+					"label": "Cooling temperature"
+				},
+				"passive": {
+					"label": "Passive cooling?",
+					"options": {
+						"yes": "Yes",
+						"no": "No"
+					}
+				},
+				"cryogenic": {
+					"label": "Cyrogenic cooling?",
+					"options": {
+						"none": "None",
+						"2yr": "",
+						"4yr": "",
+						"8yr": ""
+					}
+				},
+				"active": {
+					"label": "Active cooling?",
+					"options": {
+						"yes": "Yes",
+						"no": "No"
+					}
+				}
 			},
 			"questions": []
 		},
@@ -284,7 +309,7 @@
 		"spacex": { "label": "SpaceX (Private)" }
 	},
 	"wavelengths": {
-		"none": { "label": "Select" },
+		"none": { "label": "Wavelength" },
 		"submm": { "label": "sub-mm" },
 		"farir": { "label": "Far-IR" },
 		"midir": { "label": "Mid-IR" },

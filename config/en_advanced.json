@@ -184,20 +184,40 @@
 			"both": { "label": "Both" }
 		},
 		"cooling": {
-			"passive": {
-				"yes": { "label": "Yes" },
-				"no": { "label": "No" }
+			"label": "Cooling",
+			"hint": "Apply cooling to your instruments",
+			"intro": "Apply <a href=\"#guide_cooling\" class=\"guidelink\">cooling</a> to your instruments.",
+			"enable": {
+				"label": "Would you like cooling?",
+				"no": "No",
+				"yes": "Yes"
 			},
-			"cryogenic": {
-				"none": { "label": "None" },
-				"years_2": { "label": "2yr" },
-				"years_4": { "label": "4yr" },
-				"years_8": { "label": "8yr" }
+			"options": {
+				"passive": {
+					"label": "Passive cooling?",
+					"options": {
+						"yes": "Yes",
+						"no": "No"
+					}
+				},
+				"cryogenic": {
+					"label": "Cyrogenic cooling?",
+					"options": {
+						"none": "None",
+						"years_2": "2yr",
+						"years_4": "4yr",
+						"years_8": "8yr"
+					}
+				},
+				"active": {
+					"label": "Active cooling?",
+					"options": {
+						"yes": "Yes",
+						"no": "No"
+					}
+				}
 			},
-			"active": {
-				"yes": { "label": "Yes" },
-				"no": { "label": "No" }
-			}
+			"questions": []
 		},
 		"mission": {
 			"years_1": { "label": "1 yr" },

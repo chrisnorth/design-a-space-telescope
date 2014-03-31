@@ -272,7 +272,12 @@ if(typeof $==="undefined") $ = {};
 		$('#designer_instruments .options').html('<form><ul class="padded"><li><label for="instruments"></label><select id="wavelengths" name="wavelengths"></select><select id="instruments" name="instruments"></select> <input type="text" id="instrument_name" name="instrument_name" /><a href="#" class="add_instrument"><img src="images/cleardot.gif" class="icon add" /></a></li></ul></form>');
 
 		// Build cooling options
-		$('#designer_cooling .options').html('<form><ul class="padded"><li><label for="togglecooling"></label>'+this.buildToggle("togglecooling",{ "value": "no", "id": "cooling_no", "checked": true },{ "value": "yes", "id": "cooling_yes" })+'</li><li class="hascooling"><label for="cooling"></label><select id="cooling" name="cooling"></select></li></ul></form>');
+		$('#designer_cooling .options').html('<form><ul class="padded"><li><label for="togglecooling"></label>'+this.buildToggle("togglecooling",{ "value": "no", "id": "cooling_no", "checked": true },{ "value": "yes", "id": "cooling_yes" })+'</li></ul></form>');
+		if(this.data.cooling.temperature) $('#designer_cooling .options form ul').append('<li class="hascooling"><label for="cooling_temperature"></label><select id="cooling_temperature" name="cooling_temperature"></select></li>');
+		if(this.data.cooling.passive) $('#designer_cooling .options form ul').append('<li class="hascooling"><label for="cooling_passive"></label>'+this.buildToggle("cooling_passive",{ "value": "no", "id": "cooling_passive_no", "checked": true },{ "value": "yes", "id": "cooling_passive_yes" })+'</li>');
+		if(this.data.cooling.active) $('#designer_cooling .options form ul').append('<li class="hascooling"><label for="cooling_active"></label>'+this.buildToggle("cooling_active",{ "value": "no", "id": "cooling_active_no", "checked": true },{ "value": "yes", "id": "cooling_active_yes" })+'</li>');
+		if(this.data.cooling.cryogenic) $('#designer_cooling .options form ul').append('<li class="hascooling"><label for="cooling_cryogenic"></label><select id="cooling_cryogenic" name="cooling_cryogenic"></select></li>');
+
 
 		// Update the launch vehicle section
 		html = '<div class="padded">'
@@ -571,7 +576,6 @@ if(typeof $==="undefined") $ = {};
 			if(this.phrases.designer.instruments.options.instrument["none"].label) options = '<option value="">'+this.phrases.designer.instruments.options.instrument["none"].label+'</option>';
 			for(var m in this.data.instrument.options) options += '<option value="'+m+'">'+this.phrases.designer.instruments.options.instrument[m].label+(this.data.instrument.options[m].cost ? ' ('+this.formatValue(this.data.instrument.options[m].cost)+')' : '')+'</option>';
 			el.html(options);
-			console.log('here')
 			el = $('#wavelengths');
 			if(this.phrases.wavelengths["none"].label) options = '<option value="">'+this.phrases.wavelengths["none"].label+'</option>';
 			for(var m in this.data.wavelengths) options += '<option value="'+m+'">'+this.phrases.wavelengths[m].label+'</option>';
@@ -627,13 +631,35 @@ if(typeof $==="undefined") $ = {};
 
 		// Update the cooling section
 		// TODO: update selected
-		html = "";
-		for(var m in this.data.cooling) html += '<option value="'+m+'">'+this.formatValue(this.data.cooling[m].temperature)+'</option>';
-		$('#designer_cooling .options select').html(html);
-		$('#designer_cooling .options label[for=togglecooling]').html(d.designer.cooling.enable.label);
-		$('#designer_cooling .options label[for=cooling]').html(d.designer.cooling.options.label);
 		if(d.designer.cooling.intro) $('#designer_cooling .intro').html('<div class="padded">'+d.designer.cooling.intro+'</div>');
+		$('#designer_cooling .options label[for=togglecooling]').html(d.designer.cooling.enable.label);
 		this.updateToggle({ "id": "cooling_no", "label": this.phrases.designer.cooling.enable.no }, { "id": "cooling_yes", "label": this.phrases.designer.cooling.enable.yes }, this.phrases.designer.cooling.enable.label);
+		if(this.data.cooling.temperature){
+			html = "";
+// updateDropDown()
+			for(var m in this.data.cooling.temperature) html += '<option value="'+m+'">'+this.formatValue(this.data.cooling.temperature[m].temperature)+'</option>';
+			$('#designer_cooling .options select[id=cooling_temperature]').html(html);
+			$('#designer_cooling .options label[for=cooling_temperature]').html(d.designer.cooling.options.temperature.label);
+		}
+		if(this.data.cooling.passive){
+			html = "";
+			this.updateToggle({ "id": "cooling_passive_no", "label": this.phrases.designer.cooling.options.passive.options.no },{ "id": "cooling_passive_yes", "label": this.phrases.designer.cooling.options.passive.options.yes }, this.phrases.designer.cooling.options.passive.label)
+			$('#designer_cooling .options label[for=cooling_passive]').html(d.designer.cooling.options.passive.label);
+		}
+		if(this.data.cooling.active){
+			html = "";
+			this.updateToggle({ "id": "cooling_active_no", "label": this.phrases.designer.cooling.options.active.options.no },{ "id": "cooling_active_yes", "label": this.phrases.designer.cooling.options.active.options.yes }, this.phrases.designer.cooling.options.active.label)
+			$('#designer_cooling .options label[for=cooling_active]').html(d.designer.cooling.options.active.label);
+		}
+
+		if(this.data.cooling.cryogenic){
+			html = "";
+// updateDropdown()
+			for(var m in this.data.cooling.cryogenic) html += '<option value="'+m+'">'+(d.designer.cooling.options.cryogenic.options[m] ? d.designer.cooling.options.cryogenic.options[m] : this.formatValue(this.data.cooling.cryogenic[m].life))+'</option>';
+			$('#designer_cooling .options select[id=cooling_cryogenic]').html(html);
+			$('#designer_cooling .options label[for=cooling_cryogenic]').html(d.designer.cooling.options.cryogenic.label);
+		}
+
 
 
 		// Update the launch vehicle section

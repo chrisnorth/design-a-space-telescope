@@ -75,14 +75,30 @@
 
 	},
 	"cooling": {
-		"400K": { "temperature": { "value": 400, "units": "K", "dimension": "temperature" }, "cost": { "value": 0, "units": "GBP", "dimension": "currency" }, "mass": { "value": 0, "units": "kg", "dimension": "mass" }, "life": { "value": 99, "units": "years", "dimension": "time" } },
-		"300K": { "temperature": { "value": 300, "units": "K", "dimension": "temperature" }, "cost": { "value": 0.5, "units": "GBP", "dimension": "currency" }, "mass": { "value": 20, "units": "kg", "dimension": "mass" }, "life": { "value": 20, "units": "years", "dimension": "time" } },
-		"200K": { "temperature": { "value": 200, "units": "K", "dimension": "temperature" }, "cost": { "value": 1, "units": "GBP", "dimension": "currency" }, "mass": { "value": 40, "units": "kg", "dimension": "mass" }, "life": { "value": 19, "units": "years", "dimension": "time" } },
-		"100K": { "temperature": { "value": 100, "units": "K", "dimension": "temperature" }, "cost": { "value": 2.5, "units": "GBP", "dimension": "currency" }, "mass": { "value": 70, "units": "kg", "dimension": "mass" }, "life": { "value": 17, "units": "years", "dimension": "time" } },
-		"50K": { "temperature": { "value": 50, "units": "K", "dimension": "temperature" }, "cost": { "value": 12, "units": "GBP", "dimension": "currency" }, "mass": { "value": 150, "units": "kg", "dimension": "mass" }, "life": { "value": 14, "units": "years", "dimension": "time" } },
-		"18K": { "temperature": { "value": 18, "units": "K", "dimension": "temperature" }, "cost": { "value": 40, "units": "GBP", "dimension": "currency" }, "mass": { "value": 500, "units": "kg", "dimension": "mass" }, "life": { "value": 10, "units": "years", "dimension": "time" } },
-		"3K": { "temperature": { "value": 3, "units": "K", "dimension": "temperature" }, "cost": { "value": 70, "units": "GBP", "dimension": "currency" }, "mass": { "value": 800, "units": "kg", "dimension": "mass" }, "life": { "value": 5, "units": "years", "dimension": "time" } },
-		"0.3K": { "temperature": { "value": 0.3, "units": "K", "dimension": "temperature" }, "cost": { "value": 200, "units": "GBP", "dimension": "currency" }, "mass": { "value": 1200, "units": "kg", "dimension": "mass" }, "life": { "value": 3, "units": "years", "dimension": "time" } }
+		"temperature": {
+			"400K": { "temperature": { "value": 400, "units": "K", "dimension": "temperature" }, "cost": { "value": 0, "units": "GBP", "dimension": "currency" }, "mass": { "value": 0, "units": "kg", "dimension": "mass" }, "life": { "value": 99, "units": "years", "dimension": "time" } },
+			"300K": { "temperature": { "value": 300, "units": "K", "dimension": "temperature" }, "cost": { "value": 0.5, "units": "GBP", "dimension": "currency" }, "mass": { "value": 20, "units": "kg", "dimension": "mass" }, "life": { "value": 20, "units": "years", "dimension": "time" } },
+			"200K": { "temperature": { "value": 200, "units": "K", "dimension": "temperature" }, "cost": { "value": 1, "units": "GBP", "dimension": "currency" }, "mass": { "value": 40, "units": "kg", "dimension": "mass" }, "life": { "value": 19, "units": "years", "dimension": "time" } },
+			"100K": { "temperature": { "value": 100, "units": "K", "dimension": "temperature" }, "cost": { "value": 2.5, "units": "GBP", "dimension": "currency" }, "mass": { "value": 70, "units": "kg", "dimension": "mass" }, "life": { "value": 17, "units": "years", "dimension": "time" } },
+			"50K": { "temperature": { "value": 50, "units": "K", "dimension": "temperature" }, "cost": { "value": 12, "units": "GBP", "dimension": "currency" }, "mass": { "value": 150, "units": "kg", "dimension": "mass" }, "life": { "value": 14, "units": "years", "dimension": "time" } },
+			"18K": { "temperature": { "value": 18, "units": "K", "dimension": "temperature" }, "cost": { "value": 40, "units": "GBP", "dimension": "currency" }, "mass": { "value": 500, "units": "kg", "dimension": "mass" }, "life": { "value": 10, "units": "years", "dimension": "time" } },
+			"3K": { "temperature": { "value": 3, "units": "K", "dimension": "temperature" }, "cost": { "value": 70, "units": "GBP", "dimension": "currency" }, "mass": { "value": 800, "units": "kg", "dimension": "mass" }, "life": { "value": 5, "units": "years", "dimension": "time" } },
+			"0.3K": { "temperature": { "value": 0.3, "units": "K", "dimension": "temperature" }, "cost": { "value": 200, "units": "GBP", "dimension": "currency" }, "mass": { "value": 1200, "units": "kg", "dimension": "mass" }, "life": { "value": 3, "units": "years", "dimension": "time" } }
+		},
+		"passive": {
+			"yes": { "temperature": { "value": 0.1, "units": "K", "dimension": "temperature" }, "multiplier": { "cost": 1, "mass": 1 }, "life": { "value": 20, "units": "years", "dimension": "time" }, "devtime": { "value": 1, "units": "years", "dimension": "time" }, "risk": 0.99 },
+			"no": { "temperature": { "value": 1, "units": "K", "dimension": "temperature" }, "multiplier": { "cost": 0, "mass": 0 }, "life": { "value": 99, "units": "years", "dimension": "time" }, "devtime": { "value": 0, "units": "years", "dimension": "time" }, "risk": 1 }
+		},
+		"cryogenic": {
+			"none": { "multiplier": { "temperature": 1 }, "cost": { "value": 0, "units": "GBP", "dimension": "currency" }, "mass": { "value": 0, "units": "kg", "dimension": "mass" }, "life": { "value": 99, "units": "years", "dimension": "time" }, "devtime": { "value": 0, "units": "years", "dimension": "time" }, "risk": 1 },
+			"2yr": { "multiplier": { "temperature": 0.1 }, "cost": { "value": 20, "units": "GBP", "dimension": "currency" }, "mass": { "value": 500, "units": "kg", "dimension": "mass" }, "life": { "value": 2, "units": "years", "dimension": "time" }, "devtime": { "value": 1, "units": "years", "dimension": "time" }, "risk": 0.95 },
+			"4yr": { "multiplier": { "temperature": 0.1 }, "cost": { "value": 50, "units": "GBP", "dimension": "currency" }, "mass": { "value": 1000, "units": "kg", "dimension": "mass" }, "life": { "value": 4, "units": "years", "dimension": "time" }, "devtime": { "value": 1, "units": "years", "dimension": "time" }, "risk": 0.9 },
+			"8yr": { "multiplier": { "temperature": 0.1 }, "cost": { "value": 250, "units": "GBP", "dimension": "currency" }, "mass": { "value": 2000, "units": "kg", "dimension": "mass" }, "life": { "value": 8, "units": "years", "dimension": "time" }, "devtime": { "value": 1, "units": "years", "dimension": "time" }, "risk": 0.8 }
+		},
+		"active": {
+			"yes": { "multiplier": { "temperature": 0.1 }, "cost": { "value": 200, "units": "GBP", "dimension": "currency" }, "mass": { "value": 100, "units": "kg", "dimension": "mass" }, "life": { "value": 10, "units": "years", "dimension": "time" }, "devtime": { "value": 1, "units": "years", "dimension": "time" }, "risk": 0.9 },
+			"no": { "multiplier": { "temperature": 1 }, "cost": { "value": 0, "units": "GBP", "dimension": "currency" }, "mass": { "value": 0, "units": "kg", "dimension": "mass" }, "life": { "value": 99, "units": "years", "dimension": "time" }, "devtime": { "value": 0, "units": "years", "dimension": "time" }, "risk": 1 }
+		}
 	},
 	"mission": {
 		"1": { "life": { "value": 1, "units": "years", "dimension": "time" }, "risk": 0.99 },
