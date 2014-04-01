@@ -624,9 +624,13 @@ if(typeof $==="undefined") $ = {};
 		// Update Designer
 
 		// Update objectives
-		$('#designer_objectives .summary').html('<blockquote class="padded">'+(this.scenario ? this.formatScenario(this.scenario) : '')+'</blockquote>').addClass('bigpadded');
-		if(this.scenario && d.designer.objectives.intro) $('#designer_objectives .intro').html((this.scenario.funder ? d.designer.objectives.intro : d.designer.objectives.intronofunder).replace(/%TITLE%/,this.scenario.name).replace(/%FUNDER%/,this.scenario.funder)).addClass('bigpadded');
-		$('#designer_objectives .options label').html(d.designer.objectives.options.duration.label)
+		if(this.scenario){
+			if($('#designer_objectives .banner').length==0) $('#designer_objectives .intro').before('<div class="banner"></div>');
+			$('#designer_objectives .banner').html('<div class="title">'+this.scenario.name+'</div>');
+			if(this.scenario.image && this.scenario.image.banner) $('#designer_objectives .banner').css('background-image','url('+this.scenario.image.banner+')');
+			if(d.designer.objectives.intro) $('#designer_objectives .intro').html(this.formatScenario(this.scenario)+(this.scenario.funder ? d.designer.objectives.intro : d.designer.objectives.intronofunder).replace(/%TITLE%/,this.scenario.name).replace(/%FUNDER%/,this.scenario.funder)).addClass('bigpadded');
+		}
+		$('#designer_objectives .options label').html(d.designer.objectives.options.duration.label);
 		this.updateDropdown('mission_duration');
 
 		// Update the satellite section
@@ -780,7 +784,7 @@ if(typeof $==="undefined") $ = {};
 		$('#introduction').append('<div class="centre"><a href="#scenarios" class="button fancybtn">'+d.intro.button+'</a></div>');
 
 		var li = '';
-		for(var i = 0; i < this.scenarios.length; i++) li += '<li><div class="padded">'+this.formatScenario(this.scenarios[i])+'<a href="#designer_objectives" class="button" title="'+this.scenarios[i].name+'" data="'+i+'">Choose this mission<!--LANGUAGE--></a></div></li>';
+		for(var i = 0; i < this.scenarios.length; i++) li += '<li><div class="padded"><h3>'+this.scenarios[i].name+'</h3>'+this.formatScenario(this.scenarios[i])+'<a href="#designer_objectives" class="button" title="'+this.scenarios[i].name+'" data="'+i+'">Choose this mission<!--LANGUAGE--></a></div></li>';
 		$('#scenariolist').html(li);
 		$('#scenarios h2').html(d.scenarios.title);
 		$('#scenarios p.about').html(d.scenarios.intro);
@@ -814,7 +818,7 @@ if(typeof $==="undefined") $ = {};
 	}
 
 	SpaceTelescope.prototype.formatScenario = function(s){
-		return '<h3>'+s.name+'</h3><p>'+((typeof s.description==="string") ? s.description : "").replace(/%COST%/,this.formatValueSpan(s.budget))+'</p>';
+		return '<p>'+((typeof s.description==="string") ? s.description : "").replace(/%COST%/,this.formatValueSpan(s.budget))+'</p>';
 	}
 
 	SpaceTelescope.prototype.updateOptions = function(){
