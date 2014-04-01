@@ -1012,6 +1012,8 @@ if(typeof $==="undefined") $ = {};
 			v = (this.choices.vehicle ? this.phrases.designer.vehicle.options[this.choices.vehicle].label : '');
 		}else if(choice=="vehicle.prob"){
 			v = (this.choices.vehicle && this.data.vehicle[this.choices.vehicle].risk ? this.data.vehicle[this.choices.vehicle].risk : 1);
+		}else if(choice=="temperature"){
+			v = (this.choices.temperature ? this.choices.temperature : { 'value': 400, 'units': 'K', 'dimension': 'temperature' });
 		}else if(choice=="orbit"){
 			//'LEO (<span class="convertable" data-value="400000" data-units="m" data-dimension="length">400000m</span>)'
 			v = ' ';
@@ -1070,6 +1072,7 @@ console.log('updateSummary')
 		prof.vehicle = this.getChoice('vehicle');
 		prof.instruments = '0';
 		prof.orbit = this.getChoice('orbit');
+		prof.temperature = this.getChoice('temperature');
 		var d = new Date();
 		var t = this.convertValue(time.total,'months');
 		d.setUTCMonth(d.getUTCMonth()+t.value);
@@ -1077,7 +1080,7 @@ console.log('updateSummary')
 		
 		t = this.convertValue(time.mission,'months');
 		d.setUTCMonth(d.getUTCMonth()+t.value);
-		prof.end = d.toDateString()
+		prof.end = d.toDateString();
 
 		
 		// Update success items
@@ -1253,6 +1256,10 @@ console.log('updateSummary')
 				'label': s.profile.instruments,
 				'value': prof.instruments
 			},{
+				'key': 'profile_temperature',
+				'label': s.profile.temperature,
+				'value': prof.temperature
+			},{
 				'key': 'profile_orbit',
 				'label': s.profile.orbit,
 				'value': prof.orbit
@@ -1260,10 +1267,6 @@ console.log('updateSummary')
 				'key': 'profile_launch',
 				'label': s.profile.launch,
 				'value': prof.launch
-			},{
-				'key': 'profile_temperature',
-				'label': s.profile.temperature,
-				'value': 'temp'
 			},{
 				'key': 'profile_end',
 				'label': s.profile.end,
@@ -1575,22 +1578,33 @@ console.log('updateSummary')
 		
 		// Process cooling
 		c = $('input[name=hascooling]:checked').val();
+		this.choices.temperature = {'value': 400, 'units': 'K', 'dimension': 'temperature' }; // get from orbit
 		this.choices.cooling = {
-			"temperature": { 'value': 400, 'units': 'K', 'dimension': 'temperature' },
 			"cost": { 'value': 0, 'units': 'GBP', 'dimension': 'currency' },
 			"mass": { 'value': 0, 'units': 'kg', 'dimension': 'mass' },
 			"life": { 'value': 0, 'units': 'months', 'dimension': 'time' },
-			"time": { 'value': 0, 'units': 'months', 'dimension': 'time' }
+			"time": { 'value': 0, 'units': 'months', 'dimension': 'time' },
+			"risk": 1
 		}
 		if(c){
 			if(c=="yes"){
 				if($('#cooling_temperature').length > 0){
 					t = this.data.cooling.temperature[$('#cooling_temperature').val()];
-					if(t.temperature) this.choices.cooling.temperature = t.temperature;
+					if(t.temperature) this.choices.temperature = t.temperature;
+					
 					if(t.mass) this.choices.cooling.mass = t.mass;
 					if(t.cost) this.choices.cooling.cost = t.cost;
 					if(t.devtime) this.choices.cooling.time = t.devtime;
 					if(t.life) this.choices.cooling.life = t.life;
+					if(t.risk) this.choices.cooling.risk = t.risk;
+
+console.log('test',this.choices.cooling.time)
+					if(this.choices.mirror && this.data.mirror[m]['passive']){
+						this.choices.cooling.mass = this.sumValues(this.choices.cooling.mass,this.data.mirror[m]['passive'].mass);
+						this.choices.cooling.cost = this.sumValues(this.choices.cooling.cost,this.data.mirror[m]['passive'].cost);
+						this.choices.cooling.time = this.sumValues(this.choices.cooling.time,this.data.mirror[m]['passive'].devtime);
+					}
+console.log('test2',this.choices.cooling.time)
 				}
 			}
 		}
@@ -1655,6 +1669,7 @@ console.log('updateSummary')
 
 		$('#mirror_diameter').val('1.0m');
 		$('#cooling_yes').attr('checked',true);
+		$('#cooling_temperature').val('100K');
 		$('#vehicle_rocket_SOYZ').trigger('click');
 		$('.launchsite.KSC').trigger('click');
 		this.processChoices();
