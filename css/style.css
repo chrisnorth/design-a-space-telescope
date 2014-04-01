@@ -336,7 +336,7 @@ a.togglescience:hover { padding-bottom: 0.3em; border-bottom: 0.2em solid #69dff
 .designer_inner { background-color: rgba(0,0,0,0.4); }
 #designer .designer_title { display:none; }
 #designer form li:last-child { margin-bottom: 0px; }
-#designer .intro.bigpadded { padding-bottom: 0px; }
+#designer .intro.bigpadded, #designer .summary.bigpadded { padding-bottom: 0px; }
 #designer .site_details { margin-top: 1em; }
 
 #designer_objectives blockquote { background-color: #f6f6f6; border: 1px solid #d6d6d6; }
