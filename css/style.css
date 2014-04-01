@@ -593,7 +593,7 @@ input.button { padding: 6px 8px; /* Bug fix for Firefox over-riding the line-hei
 
 
 /* Define border colours */
-#bar, .dropdown, .dropdown.fullwidth h3 { border-color: #404040; }
+#bar, .dropdown, .dropdown.fullwidth h3 { border-color: #606060; }
 #scenariolist li { border-color: #d6d6d6; }
 
 
