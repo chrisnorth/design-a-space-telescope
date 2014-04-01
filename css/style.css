@@ -338,7 +338,7 @@ a.togglescience:hover { padding-bottom: 0.3em; border-bottom: 0.2em solid #69dff
 #designer form li:last-child { margin-bottom: 0px; }
 #designer .intro.bigpadded, #designer .summary.bigpadded { padding-bottom: 0px; }
 #designer .site_details { margin-top: 1em; }
-#designer .banner { position: relative; height: 8em; line-height: 8em; text-align: center; vertical-align: bottom; margin: 2px; background-color: #202020; background-position: center center; background-size: cover; }
+#designer .banner { position: relative; height: 8em; line-height: 8em; overflow: hidden; text-align: center; vertical-align: bottom; margin: 2px; background-color: #202020; background-position: center center; background-size: cover; }
 #designer .banner .title {
 	color: #ffffff;
 	font-size: 2em;

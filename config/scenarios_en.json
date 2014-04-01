@@ -6,7 +6,8 @@
 			"funder": "Private Organization",
 			"image": {
 				"banner": "images/mission_stellar.jpg",
-				"alt": "The Orion Nebula"
+				"alt": "The Orion Nebula",
+				"credit": "HST/NASA/ESA"
 			},
 			"budget": { "value": 2000, "units": "GBP", "dimension": "currency" },
 			"requires": [{
@@ -40,7 +41,8 @@
 			"funder": "Government",
 			"image": {
 				"banner": "images/mission_multiwavelength.jpg",
-				"alt": "Chromoscope"
+				"alt": "Chromoscope",
+				"credit": "Chris North"
 			},
 			"budget": { "value": 800, "units": "GBP", "dimension": "currency" },
 			"requires": [{
@@ -81,6 +83,11 @@
 			"name": "Planet Formation",
 			"description": "A private rocket company, <em>SpaceX</em>, has approached your group to launch a telescope into space in order to study the formation of planets. The resolution must be at least four times better than previous equivalent missions, and you must use their rocket. The budget for your mission is <span class=\"cost\">%COST%</span>.",
 			"funder": "SpaceX",
+			"image": {
+				"banner": "images/mission_planet.jpg",
+				"alt": "Artist's impression of brown dwarf 2M1207",
+				"credit": "ESA"
+			},
 			"budget": { "value": 4000, "units": "GBP", "dimension": "currency" },
 			"requires": [{
 				"rocket": "FLC9",
