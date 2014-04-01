@@ -924,17 +924,19 @@ if(typeof $==="undefined") $ = {};
 
 	SpaceTelescope.prototype.formatValueSpan = function(value,key){
 		key = (key) ? " "+key : "";
-		return (typeof value==="object" ? '<span class="value'+key+' convertable" data-value="'+value.value+'" data-units="'+value.units+'" data-dimension="'+value.dimension+'">'+this.formatValue(value)+'</span>' : '<span class="value">'+value+'</span>');
+		return (typeof value==="object" ? '<span class="value'+key+' convertable" data-value="'+value.value+'" data-units="'+value.units+'" data-dimension="'+value.dimension+'">'+this.formatValue(value)+'</span>' : '<span class="value'+key+'">'+value+'</span>');
 	}
 	
 	SpaceTelescope.prototype.processSummaryList = function(list,key,depth){
 		depth++;
 		var html = '<ul class="summary">';
 		for(var i = 0; i < list.length; i++){
-			html += '<li>';
-			if(list[i].key && list[i].value) html += '<span class="label '+list[i].key+'">'+list[i].label+'</span>'+this.formatValueSpan(list[i].value,key+' '+list[i].key);
-			if(list[i].list) html += this.processSummaryList(list[i].list,(depth==1 ? key : ''));
-			html += '</li>';
+			if((list[i].key && list[i].value) || list[i].list){
+				html += '<li>';
+				if(list[i].key && list[i].value) html += '<span class="label '+list[i].key+'">'+list[i].label+'</span>'+this.formatValueSpan(list[i].value,key+' '+list[i].key);
+				if(list[i].list) html += this.processSummaryList(list[i].list,(depth==1 ? key : ''));
+				html += '</li>';
+			}
 		}
 		html += '</ul>';
 		return html;
@@ -984,6 +986,14 @@ if(typeof $==="undefined") $ = {};
 			v = (this.choices.mirror ? this.copyValue(this.data.mirror[this.choices.mirror].risk) : 1);
 			if(this.choices.deployablemirror && this.data.deployablemirror.risk) v = v*this.data.deployablemirror.risk;
 			if(this.choices.uvmirror && this.data.uvmirror.risk) v = v*this.data.uvmirror.risk;
+		}else if(choice=="cooling.cost"){
+		console.log(this.choices.cooling)
+			v = (this.choices.cooling ? this.copyValue(this.choices.cooling.cost) : { 'value': 0, 'units': 'GBP', 'dimension': 'currency' });
+			v.value = -v.value;
+		}else if(choice=="cooling.mass"){
+			v = (this.choices.cooling ? this.copyValue(this.choices.cooling.mass) : { 'value': 0, 'units': 'kg', 'dimension': 'mass' });
+		}else if(choice=="cooling.time"){
+			v = (this.choices.cooling ? this.copyValue(this.choices.cooling.time) : { 'value': 0, 'units': 'months', 'dimension': 'time' });
 		}else if(choice=="satellite.cost"){
 			v = (this.choices.mirror ? this.copyValue(this.data.mirror[this.choices.mirror].bus.cost) : { 'value': 0, 'units': 'GBP', 'dimension': 'currency' });
 			v.value = -v.value;
@@ -1034,7 +1044,9 @@ console.log('updateSummary')
 		// Format costs
 		cost.mirror = this.getChoice('mirror.cost');
 		cost.satellite = this.getChoice('satellite.cost');
-		cost.dev = this.sumValues(cost.mirror,cost.satellite);
+		cost.cooling = this.getChoice('cooling.cost');
+		cost.dev = this.sumValues(cost.mirror,cost.satellite,cost.cooling);
+
 		cost.vehicle = this.getChoice('vehicle.cost');
 		cost.ground = { 'value': 0, 'units': 'GBP', 'dimension': 'currency' };
 		cost.operations = this.sumValues(cost.vehicle,cost.ground);
@@ -1044,12 +1056,15 @@ console.log('updateSummary')
 		// Format times
 		time.mirror = this.getChoice('mirror.time');
 		time.satellite = this.getChoice('satellite.time');
-		time.total = this.sumValues(time.mirror,time.satellite);
+		time.cooling = this.getChoice('cooling.time');
+		time.total = this.sumValues(time.mirror,time.satellite,time.cooling);
+		time.mission = { 'value': 0, 'units': 'months', 'dimension': 'time' };
 
 		// Format masses
 		mass.mirror = this.getChoice('mirror.mass');
 		mass.satellite = this.getChoice('satellite.mass');
-		mass.total = this.sumValues(mass.mirror,mass.satellite);
+		mass.cooling = this.getChoice('cooling.mass');
+		mass.total = this.sumValues(mass.mirror,mass.satellite,mass.cooling);
 		
 		prof.site = this.getChoice('site');
 		prof.vehicle = this.getChoice('vehicle');
@@ -1059,6 +1074,10 @@ console.log('updateSummary')
 		var t = this.convertValue(time.total,'months');
 		d.setUTCMonth(d.getUTCMonth()+t.value);
 		prof.launch = d.toDateString()
+		
+		t = this.convertValue(time.mission,'months');
+		d.setUTCMonth(d.getUTCMonth()+t.value);
+		prof.end = d.toDateString()
 
 		
 		// Update success items
@@ -1066,15 +1085,15 @@ console.log('updateSummary')
 			"key": "success",
 			"value": this.formatPercent(prob.total),
 			"title": s.success.title,
-			"list": [{
+			"list": [(this.data.site[this.choices.site] && this.data.site[this.choices.site].risk ? {
 				'key': 'success_site',
 				'label': s.success.site,
 				'value': this.formatPercent(prob.site)
-			},{ 
+			}:{}),(this.data.vehicle[this.choices.vehicle] && this.data.vehicle[this.choices.vehicle].risk ? { 
 				'key': 'success_vehicle',
 				'label': s.success.vehicle,
 				'value': this.formatPercent(prob.vehicle)
-			},{ 
+			}:{}),{ 
 				'key': 'success_deploy',
 				'label': s.success.deploy,
 				'value': this.formatPercent(prob.mirror)
@@ -1114,7 +1133,7 @@ console.log('updateSummary')
 				},{
 					'key': 'cost_dev_cooling',
 					'label': s.cost.dev.cooling,
-					'value': { 'value': 0, 'units': 'GBP', 'dimension': 'currency' }
+					'value': cost.cooling
 				},{
 					'key': 'cost_dev_instruments',
 					'label': s.cost.dev.instruments,
@@ -1161,7 +1180,7 @@ console.log('updateSummary')
 				},{
 					'key': 'time_dev_cooling',
 					'label': s.time.dev.cooling,
-					'value': { 'value': 0, 'units': 'months', 'dimension': 'time' }
+					'value': time.cooling
 				},{
 					'key': 'time_dev_instruments',
 					'label': s.time.dev.instruments,
@@ -1192,7 +1211,7 @@ console.log('updateSummary')
 			},{
 				'key': 'mass_cooling_title',
 				'label': s.mass.cooling.title,
-				'value': { 'value': 0, 'units': 'kg', 'dimension': 'mass' },
+				'value': mass.cooling,
 				'list': [{
 					'key': 'mass_cooling_passive',
 					'label': s.mass.cooling.passive,
@@ -1211,6 +1230,12 @@ console.log('updateSummary')
 				'label': s.mass.instruments,
 				'value': { 'value': 0, 'units': 'kg', 'dimension': 'mass' }
 			}]
+		},{
+			'key': 'science_total',
+			'label': 'science',
+			"value": this.formatPercent(scie.total),
+			"title": s.science.title,
+			"list": []
 		},{
 			'key': 'profile_total',
 			'label': 'profile',
@@ -1242,7 +1267,7 @@ console.log('updateSummary')
 			},{
 				'key': 'profile_end',
 				'label': s.profile.end,
-				'value': 'June 2016'
+				'value': prof.end
 			}]
 		}]
 		for(var i = 0 ; i < table.length ; i++) this.updateSummaryList(table[i]);
@@ -1501,6 +1526,7 @@ console.log('updateSummary')
 	//  v - e.g. 0.99 (99%)
 	//  p - the number of decimal places to show in the output
 	SpaceTelescope.prototype.formatPercent = function(v,p){
+		if(typeof v!=="number") v = 0;
 		if(v > 1) v = 1;
 		if(v < 0) v = 0;
 		if(typeof p!=="number") p = 1;
@@ -1535,7 +1561,7 @@ console.log('updateSummary')
 	SpaceTelescope.prototype.processChoices = function(view,e){
 
 		this.choices = {};
-		var m,d,u,v,s;
+		var m,d,u,c,t,v,s;
 		var errors = [];
 		var warnings = [];
 		
@@ -1546,6 +1572,29 @@ console.log('updateSummary')
 		if(d) this.choices.deployablemirror = (d=="yes" ? true : false);
 		u = $('input[name=toggleuv]:checked').val();
 		if(u) this.choices.uvmirror = (u=="yes" ? true : false);
+		
+		// Process cooling
+		c = $('input[name=hascooling]:checked').val();
+		this.choices.cooling = {
+			"temperature": { 'value': 400, 'units': 'K', 'dimension': 'temperature' },
+			"cost": { 'value': 0, 'units': 'GBP', 'dimension': 'currency' },
+			"mass": { 'value': 0, 'units': 'kg', 'dimension': 'mass' },
+			"life": { 'value': 0, 'units': 'months', 'dimension': 'time' },
+			"time": { 'value': 0, 'units': 'months', 'dimension': 'time' }
+		}
+		if(c){
+			if(c=="yes"){
+				if($('#cooling_temperature').length > 0){
+					t = this.data.cooling.temperature[$('#cooling_temperature').val()];
+					if(t.temperature) this.choices.cooling.temperature = t.temperature;
+					if(t.mass) this.choices.cooling.mass = t.mass;
+					if(t.cost) this.choices.cooling.cost = t.cost;
+					if(t.devtime) this.choices.cooling.time = t.devtime;
+					if(t.life) this.choices.cooling.life = t.life;
+				}
+			}
+		}
+
 		
 		// Process vehicle
 		v = $('#designer_vehicle input[name=vehicle_rocket]:checked').val();
