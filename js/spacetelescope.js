@@ -655,27 +655,69 @@ if(typeof $==="undefined") $ = {};
 	SpaceTelescope.prototype.updateDropdown = function(dropdown){
 
 		var options = "";
-		var el;
-		if(dropdown=="mirror"){
-			el = $('#mirror_diameter');
+		var el,o,v;
+		el = $('#'+dropdown);
+		if(el.length == 0) return this;
+		o = el.find('option');
+
+		if(dropdown=="mirror_diameter"){
 			if(this.phrases.designer.satellite.options.diameter.placeholder) options = '<option value="">'+this.phrases.designer.satellite.options.diameter.placeholder+'</option>';
-			for(var m in this.data.mirror) options += '<option value="'+m+'">'+this.formatValue(this.data.mirror[m].diameter)+'</option>';
-			el.html(options);
+			if(o.length == 0){
+				for(var m in this.data.mirror) options += '<option value="'+m+'">'+this.formatValue(this.data.mirror[m].diameter)+'</option>';
+				el.html(options);
+			}else{
+				for(var m in this.data.mirror) el.find('option[value="'+m+'"]').text(this.formatValue(this.data.mirror[m].diameter));
+			}
 		}else if(dropdown=="instruments"){
-			el = $('#instruments');
 			if(this.phrases.designer.instruments.options.instrument["none"]) options = '<option value="">'+this.phrases.designer.instruments.options.instrument["none"].label+'</option>';
-			for(var m in this.data.instrument.options) options += '<option value="'+m+'">'+this.phrases.designer.instruments.options.instrument[m].label+(this.data.instrument.options[m].cost ? ' ('+this.formatValue(this.data.instrument.options[m].cost)+')' : '')+'</option>';
-			el.html(options);
-			el = $('#wavelengths');
-			options = "";
+			for(var m in this.data.instrument.options){
+				v = this.phrases.designer.instruments.options.instrument[m].label+(this.data.instrument.options[m].cost ? ' ('+this.formatValue(this.data.instrument.options[m].cost)+')' : '');
+				if(o.length == 0) options += '<option value="'+m+'">'+v+'</option>';
+				else el.find('option[value="'+m+'"]').text(v);
+			}
+			if(o.length == 0) el.html(options);
+		}else if(dropdown=="wavelengths"){
 			if(this.phrases.wavelengths["none"].label) options = '<option value="">'+this.phrases.wavelengths["none"].label+'</option>';
-			for(var m in this.data.wavelengths) options += '<option value="'+m+'">'+this.phrases.wavelengths[m].label+'</option>';
-			el.html(options);
+			for(var m in this.data.wavelengths){
+				v = this.phrases.wavelengths[m].label;
+				if(o.length == 0) options += '<option value="'+m+'">'+v+'</option>';
+				else el.find('option[value="'+m+'"]').text(v);
+			}
+			if(o.length == 0) el.html(options);
 		}else if(dropdown=="mission_duration"){
-			el = $('#mission_duration');
 			if(this.phrases.designer.objectives.options.duration["none"]) options = '<option value="">'+this.phrases.designer.objectives.options.duration["none"]+'</option>';
-			for(var m in this.data.mission) options += '<option value="'+m+'">'+this.formatValue(this.data.mission[m].life)+'</option>';
-			el.html(options);
+			for(var m in this.data.mission){
+				v = this.formatValue(this.data.mission[m].life);
+				if(o.length == 0) options += '<option value="'+m+'">'+v+'</option>';
+				else el.find('option[value="'+m+'"]').text(v);
+			}
+			if(o.length == 0) el.html(options);
+		}else if(dropdown=="cooling_temperature"){
+			if(this.data.cooling.temperature){
+				for(var m in this.data.cooling.temperature){
+					v = this.formatValue(this.data.cooling.temperature[m].temperature);
+					if(o.length == 0) options += '<option value="'+m+'">'+v+'</option>';
+					else el.find('option[value="'+m+'"]').text(v);
+				}
+				if(o.length == 0) el.html(options);
+			}
+		}else if(dropdown=="site"){
+			if(this.phrases.designer.site.hint) options = '<option value="">'+this.phrases.designer.site.hint+'</option>';
+			for(var m in this.data.site){
+				if(this.phrases.designer.site.options[m]){
+					v = this.phrases.designer.site.options[m].label
+					if(o.length == 0) options += '<option value="'+m+'">'+v+'</option>';
+					else el.find('option[value="'+m+'"]').text(v);
+				}
+			}
+			if(o.length == 0) el.html(options);
+		}else if(dropdown=="cooling_cryogenic"){
+			for(var m in this.data.cooling.cryogenic){
+				v = (d.designer.cooling.options.cryogenic.options[m] ? d.designer.cooling.options.cryogenic.options[m] : this.formatValue(this.data.cooling.cryogenic[m].life));
+				if(o.length == 0) options += '<option value="'+m+'">'+v+'</option>';
+				else el.find('option[value="'+m+'"]').text(v);
+			}
+			if(o.length == 0) el.html(options);
 		}
 		return this;
 	}
@@ -713,7 +755,7 @@ if(typeof $==="undefined") $ = {};
 
 		// Update the satellite section
 		$('#designer_satellite .options .mirror_diameter label').html(d.designer.satellite.options.diameter.label)
-		this.updateDropdown('mirror');
+		this.updateDropdown('mirror_diameter');
 		$('#designer_satellite .options .mirror_deployable label').html(d.designer.satellite.options.deployable.label);
 		$('#designer_satellite .options .mirror_uv label').html(d.designer.satellite.options.uv.label);
 		if(d.designer.satellite.intro) $('#designer_satellite .intro').html(d.designer.satellite.intro).addClass('bigpadded');
@@ -725,6 +767,7 @@ if(typeof $==="undefined") $ = {};
 		// Update the instruments section
 		// TODO: update selected
 		this.updateDropdown('instruments');
+		this.updateDropdown('wavelengths');
 		$('#designer_instruments .options label').html(d.designer.instruments.options.label);
 		$('#designer_instruments .options input#instrument_name').attr('placeholder',d.designer.instruments.options.name);
 		$('#designer_instruments .options a.add_instrument').attr('title',d.designer.instruments.options.add);
@@ -735,13 +778,9 @@ if(typeof $==="undefined") $ = {};
 		if(d.designer.cooling.intro) $('#designer_cooling .intro').html(d.designer.cooling.intro).addClass('bigpadded');
 		$('#designer_cooling .options label[for=hascooling]').html(d.designer.cooling.enable.label);
 		this.updateToggle({ "id": "cooling_no", "label": this.phrases.designer.cooling.enable.no }, { "id": "cooling_yes", "label": this.phrases.designer.cooling.enable.yes }, this.phrases.designer.cooling.enable.label);
-		if(this.data.cooling.temperature){
-			html = "";
-// updateDropDown()
-			for(var m in this.data.cooling.temperature) html += '<option value="'+m+'">'+this.formatValue(this.data.cooling.temperature[m].temperature)+'</option>';
-			$('#designer_cooling .options select[id=cooling_temperature]').html(html);
-			$('#designer_cooling .options label[for=cooling_temperature]').html(d.designer.cooling.options.temperature.label);
-		}
+		this.updateDropdown('cooling_temperature');
+		$('#designer_cooling .options label[for=cooling_temperature]').html(d.designer.cooling.options.temperature.label);
+
 		if(this.data.cooling.passive){
 			html = "";
 			this.updateToggle({ "id": "cooling_passive_no", "label": this.phrases.designer.cooling.options.passive.options.no },{ "id": "cooling_passive_yes", "label": this.phrases.designer.cooling.options.passive.options.yes }, this.phrases.designer.cooling.options.passive.label);
@@ -754,10 +793,7 @@ if(typeof $==="undefined") $ = {};
 		}
 
 		if(this.data.cooling.cryogenic){
-			html = "";
-// updateDropdown()
-			for(var m in this.data.cooling.cryogenic) html += '<option value="'+m+'">'+(d.designer.cooling.options.cryogenic.options[m] ? d.designer.cooling.options.cryogenic.options[m] : this.formatValue(this.data.cooling.cryogenic[m].life))+'</option>';
-			$('#designer_cooling .options select[id=cooling_cryogenic]').html(html);
+			this.updateDropdown('cooling_cryogenic');
 			$('#designer_cooling .options label[for=cooling_cryogenic]').html(d.designer.cooling.options.cryogenic.label);
 		}
 
@@ -815,6 +851,7 @@ if(typeof $==="undefined") $ = {};
 
 		// Update the site section
 		var pins = "";
+		this.updateDropdown('site');
 		var opts = '<option value="">'+d.designer.site.hint+'</option>';
 		for(var s in this.data.site){
 			var lat = this.data.site[s].latitude;
@@ -831,7 +868,7 @@ if(typeof $==="undefined") $ = {};
 		$('#designer_site .worldmap').append(pins);
 		
 		$('#designer_site .options label').html(d.designer.site.hint);
-		$('#designer_site .options select').html(opts);
+//		$('#designer_site .options select').html(opts);
 		if(d.designer.site.intro) $('#designer_site .intro').html(d.designer.site.intro).addClass('bigpadded');
 
 
@@ -874,6 +911,7 @@ if(typeof $==="undefined") $ = {};
 
 		// Update summary table labels
 		var s = d.ui.summary;
+
 		this.table.success.label = s.success.title;
 		if(this.data.site[this.choices.site] && this.data.site[this.choices.site].risk) this.table.success.list.success_site.label = s.success.site;
 		if(this.data.vehicle[this.choices.vehicle] && this.data.vehicle[this.choices.vehicle].risk) this.table.success.list.success_vehicle.label = s.success.vehicle;
@@ -1083,6 +1121,8 @@ if(typeof $==="undefined") $ = {};
 			v = (this.choices.mirror ? this.copyValue(this.data.mirror[this.choices.mirror].bus.mass) : this.makeValue(0,'kg'));
 		}else if(choice=="satellite.time"){
 			v = (this.choices.mirror ? this.copyValue(this.data.mirror[this.choices.mirror].bus.devtime) : this.makeValue(0,'months'));
+		}else if(choice=="instruments.time"){
+			v = (this.choices.instrument ? this.copyValue(this.data.instrument[this.choices.instrument].devtime) : this.makeValue(0,'months'));
 		}else if(choice=="site"){
 			v = (this.choices.site ? this.phrases.designer.site.options[this.choices.site].label : '');
 		}else if(choice=="site.prob"){
@@ -1128,10 +1168,10 @@ if(typeof $==="undefined") $ = {};
 		return html;
 	}
 	
+
 	SpaceTelescope.prototype.updateSummaryList = function(){
 
 		for(var key in this.table){
-		
 			var html = '';
 			var base = key;
 			if(base.indexOf('_') > 0) base = base.substr(0,base.indexOf('_'));
@@ -1184,8 +1224,9 @@ if(typeof $==="undefined") $ = {};
 		// Format times
 		time.mirror = this.getChoice('mirror.time');
 		time.satellite = this.getChoice('satellite.time');
+		time.instruments = this.getChoice('instruments.time');
 		time.cooling = this.getChoice('cooling.time');
-		time.total = this.sumValues(time.mirror,time.satellite,time.cooling);
+		time.total = this.sumValues(time.mirror,time.satellite,time.cooling,time.instruments);
 		time.mission = this.getChoice('mission.time');
 
 		// Format masses
@@ -1217,14 +1258,14 @@ if(typeof $==="undefined") $ = {};
 		this.updateTable('cost_total','value',cost.total);
 		this.table.cost_available.list.cost_available.value = cost.free;
 
-		this.table.time_dev_total.value = time.total;
-		this.table.time_dev_total.list.time_dev_total.value = this.makeValue(0,'months');
-		this.table.time_dev_total.list.time_dev_total.list.time_dev_satellite.value = time.satellite;
-		this.table.time_dev_total.list.time_dev_total.list.time_dev_mirror.value = time.mirror;
-		this.table.time_dev_total.list.time_dev_total.list.time_dev_cooling.value = time.cooling;
-		this.table.time_dev_total.list.time_dev_total.list.time_dev_instruments.value = time.instruments;
-		this.table.time_dev_total.list.time_mission.value = time.mission;
-		this.table.time_dev_total.list.time_fuel.value = this.makeValue(0,'months');
+		this.updateTable('time_dev_total','value',time.total);
+		this.table.time_dev_total.list.time_dev_total.value = time.total;
+		this.updateTable('time_dev_satellite','value',time.satellite);
+		this.updateTable('time_dev_mirror','value',time.mirror);
+		this.updateTable('time_dev_cooling','value',time.cooling);
+		this.updateTable('time_dev_instruments','value',time.instruments);
+		this.updateTable('time_mission','value',time.mission);
+		this.updateTable('time_fuel','value',this.makeValue(0,'months'));
 		this.table.mass_total.value = mass.total;
 		this.table.mass_total.list.mass_satellite.value = mass.satellite;
 		this.table.mass_total.list.mass_mirror.value = mass.mirror;
