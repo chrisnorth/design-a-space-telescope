@@ -141,15 +141,16 @@
 		}
 	},
 	"scenarios": {
-		"title": "Choose a scenario",
-		"intro": "You can choose a scenario below.",
-		"button": "Choose a mission"
+		"title": "Choose a mission",
+		"intro": "Select a mission from the list below.",
+		"button": "Choose a mission",
+		"mission": "Mission:"
 	},
 	"designer": {
 		"objectives": {
 			"label": "Mission overview",
 			"hint": "Review your mission",
-			"intro": "Use the menu options to choose a mirror, instruments, a rocket, a launch site and an orbit for your space telescope. Once you are happy with your plans you will need to fill out a proposal letter. If you are given the go-ahead you will then be able to launch your mission.",
+			"intro": "Use the menu options to choose a mirror, instruments, a rocket, a launch site and an orbit for your space telescope. Once you are happy with your plans you will need to fill out a proposal letter. After that you'll be go for launch.",
 			"intronofunder": "You have chosen the <strong>%TITLE%</strong> mission. Use the menu options to design the different parts of your space telescope. You will need to choose a mirror, instruments, a rocket, a launch site and an orbit. Once you are happy with your plans you will need to fill out a proposal letter. You will then be able to launch your mission.",
 			"options": {
 			}

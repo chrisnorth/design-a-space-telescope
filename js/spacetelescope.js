@@ -384,20 +384,6 @@ if(typeof $==="undefined") $ = {};
 					'cost_available': {}
 				}
 			},
-			'time_dev_total': {
-				'list': {
-					'time_dev_total': {
-						'list': {
-							'time_dev_satellite': {},
-							'time_dev_mirror': {},
-							'time_dev_cooling': {},
-							'time_dev_instruments': {}
-						}
-					},
-					'time_mission': {},
-					'time_fuel': {}
-				}
-			},
 			'mass_total': {
 				'list': {
 					'mass_satellite': {},
@@ -410,6 +396,20 @@ if(typeof $==="undefined") $ = {};
 						}
 					},
 					'mass_instruments': {}
+				}
+			},
+			'time_dev_total': {
+				'list': {
+					'time_dev_total': {
+						'list': {
+							'time_dev_satellite': {},
+							'time_dev_mirror': {},
+							'time_dev_cooling': {},
+							'time_dev_instruments': {}
+						}
+					},
+					'time_mission': {},
+					'time_fuel': {}
 				}
 			},
 			'science_total': {},
@@ -700,7 +700,7 @@ if(typeof $==="undefined") $ = {};
 		}else if(dropdown=="cooling_temperature"){
 			if(this.data.cooling.temperature){
 				for(var m in this.data.cooling.temperature){
-					v = this.formatValue(this.data.cooling.temperature[m].temperature);
+					v = htmlDecode(this.formatValue(this.data.cooling.temperature[m].temperature));
 					if(o.length == 0) options += '<option value="'+m+'">'+v+'</option>';
 					else el.find('option[value="'+m+'"]').text(v);
 				}
@@ -753,7 +753,7 @@ if(typeof $==="undefined") $ = {};
 			if($('#designer_objectives .banner').length==0) $('#designer_objectives .intro').before('<div class="banner"></div>');
 			$('#designer_objectives .banner').html('<div class="title">'+this.scenario.name+'</div>');
 			if(this.scenario.image && this.scenario.image.banner) $('#designer_objectives .banner').css('background-image','url('+this.scenario.image.banner+')');
-			if(d.designer.objectives.intro) $('#designer_objectives .intro').html(this.formatScenario(this.scenario)+(this.scenario.funder ? d.designer.objectives.intro : d.designer.objectives.intronofunder).replace(/%TITLE%/,this.scenario.name).replace(/%FUNDER%/,this.scenario.funder)).addClass('bigpadded');
+			if(d.designer.objectives.intro) $('#designer_objectives .intro').html('<p><strong>'+d.scenarios.mission+'</strong> &quot;'+this.formatScenario(this.scenario)+'&quot;</p>'+(this.scenario.funder ? d.designer.objectives.intro : d.designer.objectives.intronofunder).replace(/%TITLE%/,this.scenario.name).replace(/%FUNDER%/,this.scenario.funder)).addClass('bigpadded');
 		}
 
 		// Update the satellite section
@@ -905,7 +905,7 @@ if(typeof $==="undefined") $ = {};
 		$('#introduction').append('<div class="centre"><a href="#scenarios" class="button fancybtn">'+d.intro.button+'</a></div>');
 
 		var li = '';
-		for(var i = 0; i < this.scenarios.length; i++) li += '<li><div class="padded"><h3>'+this.scenarios[i].name+'</h3>'+this.formatScenario(this.scenarios[i])+'<a href="#designer_objectives" class="button" title="'+this.scenarios[i].name+'" data="'+i+'">Choose this mission<!--LANGUAGE--></a></div></li>';
+		for(var i = 0; i < this.scenarios.length; i++) li += '<li><div class="padded"><h3>'+this.scenarios[i].name+'</h3><p>'+this.formatScenario(this.scenarios[i])+'</p><a href="#designer_objectives" class="button" title="'+this.scenarios[i].name+'" data="'+i+'">Choose this mission<!--LANGUAGE--></a></div></li>';
 		$('#scenariolist').html(li);
 		$('#scenarios h2').html(d.scenarios.title);
 		$('#scenarios p.about').html(d.scenarios.intro);
@@ -935,7 +935,7 @@ if(typeof $==="undefined") $ = {};
 		this.table.cost_available.list.cost_operations_total.label = s.cost.operations.title;
 		this.table.cost_available.list.cost_operations_total.list.cost_operations_launch.label = s.cost.operations.launch;
 		this.table.cost_available.list.cost_operations_total.list.cost_operations_ground.label = s.cost.operations.ground;
-		this.table.cost_available.list.cost_total.label = s.cost.title;
+		this.table.cost_available.list.cost_total.label = s.cost.total;
 		this.table.cost_available.list.cost_available.label = s.cost.available;
 		this.table.time_dev_total.label = s.time.title;
 		this.table.time_dev_total.list.time_dev_total.label = s.time.dev.title;
@@ -992,7 +992,7 @@ if(typeof $==="undefined") $ = {};
 	}
 
 	SpaceTelescope.prototype.formatScenario = function(s){
-		return '<p>'+((typeof s.description==="string") ? s.description : "").replace(/%COST%/,this.formatValueSpan(s.budget))+'</p>';
+		return ''+((typeof s.description==="string") ? s.description : "").replace(/%COST%/,this.formatValueSpan(s.budget))+'';
 	}
 
 	SpaceTelescope.prototype.updateOptions = function(){
@@ -1039,6 +1039,7 @@ if(typeof $==="undefined") $ = {};
 		}
 
 		this.updateDropdown('mirror');
+		this.updateDropdown('cooling_temperature');
 		return this;
 	}
 	
@@ -1930,11 +1931,11 @@ console.log('setScroll',el)
 						txt = txt.replace(/\%ACTIVECOST\%/,this.formatValue(this.data.cooling.active.yes.cost));
 	
 					}else{
-						for(i in this.data.cooling){
+						for(i in this.data.cooling.temperature){
 							table += '<tr>';
-							table += '<td>'+this.formatValue(this.data.cooling[i].temperature)+'</td>';
-							table += '<td>'+this.formatValue(this.data.cooling[i].cost)+'</td>';
-							table += '<td>'+this.formatValue(this.data.cooling[i].mass)+'</td>';
+							table += '<td>'+this.formatValue(this.data.cooling.temperature[i].temperature)+'</td>';
+							table += '<td>'+this.formatValue(this.data.cooling.temperature[i].cost)+'</td>';
+							table += '<td>'+this.formatValue(this.data.cooling.temperature[i].mass)+'</td>';
 							table += '</tr>';
 						}
 					}
@@ -2145,7 +2146,6 @@ console.log('setScroll',el)
 
 		return this;
 	}
-
 
 	// Add commas every 10^3
 	function addCommas(nStr) {
