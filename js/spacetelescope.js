@@ -341,7 +341,85 @@ if(typeof $==="undefined") $ = {};
 		$('#designer_proposal .options').html('<div class="padded"><div class="doc"></div></div>');
 
 		// Bind function to process any form changes
-		$(document).on('change','#designer input, #designer select',{me:this},function(e){ e.data.me.processChoices(); });
+		$(document).on('change','#designer input, #designer select',{me:this},function(e){ e.data.me.parseChoices().updateChoices(); });
+
+
+
+
+		// Barebones summary table
+		this.table = {
+			'success': {
+				'list': {
+					'success_site': {},
+					'success_vehicle': {},
+					'success_deploy': {},
+					'success_cooling': {},
+					'success_instruments': {},
+					'success_mission': {}
+				}
+			},
+			'cost_available': {
+				'list': {
+					'cost_initial': {},
+					'cost_dev_total': {
+						'list': {
+							'cost_dev_satellite': {},
+							'cost_dev_mirror': {},
+							'cost_dev_cooling': {},
+							'cost_dev_instruments': {}
+						}
+					},
+					'cost_operations_total': {
+						'list': {
+							'cost_operations_launch': {},
+							'cost_operations_ground': {}
+						}
+					},
+					'cost_total': {},
+					'cost_available': {}
+				}
+			},
+			'time_dev_total': {
+				'list': {
+					'time_dev_total': {
+						'list': {
+							'time_dev_satellite': {},
+							'time_dev_mirror': {},
+							'time_dev_cooling': {},
+							'time_dev_instruments': {}
+						}
+					},
+					'time_mission': {},
+					'time_fuel': {}
+				}
+			},
+			'mass_total': {
+				'list': {
+					'mass_satellite': {},
+					'mass_mirror': {},
+					'mass_cooling_total': {
+						'list': {
+							'mass_cooling_passive': {},
+							'mass_cooling_cryo': {},
+							'mass_cooling_active': {}
+						}
+					},
+					'mass_instruments': {}
+				}
+			},
+			'science_total': {},
+			'profile_total': {
+				'list': {
+					'profile_site': {},
+					'profile_vehicle': {},
+					'profile_instruments': {},
+					'profile_temperature': {},
+					'profile_orbit': {},
+					'profile_launch': {},
+					'profile_end': {}
+				}
+			}
+		}
 
 		return this;
 	}
@@ -788,9 +866,61 @@ if(typeof $==="undefined") $ = {};
 		$('#scenariolist').html(li);
 		$('#scenarios h2').html(d.scenarios.title);
 		$('#scenarios p.about').html(d.scenarios.intro);
+
 		
 		// Update values to be consistent with current user preferences
 		this.updateUnits();
+
+
+		// Update summary table labels
+		var s = d.ui.summary;
+		this.table.success.label = s.success.title;
+		if(this.data.site[this.choices.site] && this.data.site[this.choices.site].risk) this.table.success.list.success_site.label = s.success.site;
+		if(this.data.vehicle[this.choices.vehicle] && this.data.vehicle[this.choices.vehicle].risk) this.table.success.list.success_vehicle.label = s.success.vehicle;
+		this.table.success.list.success_deploy.label = s.success.deploy;
+		this.table.success.list.success_cooling.label = s.success.cooling;
+		this.table.success.list.success_instruments.label = s.success.instruments;
+		this.table.success.list.success_mission.label = s.success.mission;
+		this.table.cost_available.label = s.cost.title;
+		this.table.cost_available.list.cost_initial.label = s.cost.initial;
+		this.table.cost_available.list.cost_dev_total.label = s.cost.dev.title;
+		this.table.cost_available.list.cost_dev_total.list.cost_dev_satellite.label = s.cost.dev.satellite;
+		this.table.cost_available.list.cost_dev_total.list.cost_dev_mirror.label = s.cost.dev.mirror;
+		this.table.cost_available.list.cost_dev_total.list.cost_dev_cooling.label = s.cost.dev.cooling;
+		this.table.cost_available.list.cost_dev_total.list.cost_dev_instruments.label = s.cost.dev.instruments;
+		this.table.cost_available.list.cost_operations_total.label = s.cost.operations.title;
+		this.table.cost_available.list.cost_operations_total.list.cost_operations_launch.label = s.cost.operations.launch;
+		this.table.cost_available.list.cost_operations_total.list.cost_operations_ground.label = s.cost.operations.ground;
+		this.table.cost_available.list.cost_total.label = s.cost.title;
+		this.table.cost_available.list.cost_available.label = s.cost.available;
+		this.table.time_dev_total.label = s.time.title;
+		this.table.time_dev_total.list.time_dev_total.label = s.time.dev.title;
+		this.table.time_dev_total.list.time_dev_total.list.time_dev_satellite.label = s.time.dev.satellite;
+		this.table.time_dev_total.list.time_dev_total.list.time_dev_mirror.label = s.time.dev.mirror;
+		this.table.time_dev_total.list.time_dev_total.list.time_dev_cooling.label = s.time.dev.cooling;
+		this.table.time_dev_total.list.time_dev_total.list.time_dev_instruments.label = s.time.dev.instruments;
+		this.table.time_dev_total.list.time_mission.label = s.time.mission;
+		this.table.time_dev_total.list.time_fuel.label = s.time.fuel;
+		this.table.mass_total.label = s.mass.title;
+		this.table.mass_total.list.mass_satellite.label = s.mass.satellite;
+		this.table.mass_total.list.mass_mirror.label = s.mass.mirror;
+		this.table.mass_total.list.mass_cooling_total.label = s.mass.cooling.title;
+		this.table.mass_total.list.mass_cooling_total.list.mass_cooling_passive.label = s.mass.cooling.passive;
+		this.table.mass_total.list.mass_cooling_total.list.mass_cooling_cryo.label = s.mass.cooling.cryo;
+		this.table.mass_total.list.mass_cooling_total.list.mass_cooling_active.label = s.mass.cooling.active;
+		this.table.mass_total.list.mass_instruments.label = s.mass.instruments;
+		this.table.science_total.label = s.science.title;
+		this.table.profile_total.label = s.profile.title;
+		this.table.profile_total.list.profile_site.label = s.profile.site;
+		this.table.profile_total.list.profile_vehicle.label = s.profile.vehicle;
+		this.table.profile_total.list.profile_instruments.label = s.profile.instruments;
+		this.table.profile_total.list.profile_temperature.label = s.profile.temperature;
+		this.table.profile_total.list.profile_orbit.label = s.profile.orbit;
+		this.table.profile_total.list.profile_launch.label = s.profile.launch;
+		this.table.profile_total.list.profile_end.label = s.profile.end;
+
+		this.updateSummaryList();
+
 
 		return this;
 	}
@@ -867,32 +997,6 @@ if(typeof $==="undefined") $ = {};
 		this.updateDropdown('mirror');
 		return this;
 	}
-
-	// Update all values shown in the DOM
-	SpaceTelescope.prototype.updateValues = function(){
-
-		this.updateValue('cost_available',{value:2000-320,units:'GBP',dimension:'currency'});
-		this.updateValue('cost_initial',{value:2000,units:'GBP',dimension:'currency'});
-		this.updateValue('cost_dev_total',{value:-250,units:'GBP',dimension:'currency'});
-		this.updateValue('cost_dev_satellite',{value:80,units:'GBP',dimension:'currency'});
-		this.updateValue('cost_dev_mirror',{value:100,units:'GBP',dimension:'currency'});
-		this.updateValue('cost_dev_cooling',{value:20,units:'GBP',dimension:'currency'});
-		this.updateValue('cost_dev_instruments',{value:50,units:'GBP',dimension:'currency'});
-		this.updateValue('cost_operations_total',{value:-70,units:'GBP',dimension:'currency'});
-		this.updateValue('cost_operations_launch',{value:50,units:'GBP',dimension:'currency'});
-		this.updateValue('cost_operations_ground',{value:10,units:'GBP',dimension:'currency'});
-		this.updateValue('cost_total',{value:-320,units:'GBP',dimension:'currency'});
-		this.updateValue('mass_total',{value:1050,units:'kg',dimension:'mass'});
-		this.updateValue('success_total','89%');
-		this.updateValue('time_dev_total',{value:38,units:'months',dimension:'time'});
-		this.updateValue('time_dev_satellite',{value:6,units:'months',dimension:'time'});
-		this.updateValue('time_dev_mirror',{value:8,units:'months',dimension:'time'});
-		this.updateValue('time_dev_cooling',{value:12,units:'months',dimension:'time'});
-		this.updateValue('time_dev_instruments',{value:12,units:'months',dimension:'time'});
-		this.updateValue('science_total','78%');
-
-		return this;
-	}
 	
 	// Update a value. If a time is provided and the original and final values share dimensions, it will animate the change
 	// Inputs:
@@ -942,13 +1046,80 @@ if(typeof $==="undefined") $ = {};
 		return (typeof value==="object" ? '<span class="value'+key+' convertable" data-value="'+value.value+'" data-units="'+value.units+'" data-dimension="'+value.dimension+'">'+this.formatValue(value)+'</span>' : '<span class="value'+key+'">'+value+'</span>');
 	}
 	
+	SpaceTelescope.prototype.copyValue = function(v){
+		return JSON.parse(JSON.stringify(v));
+	}
+	
+	SpaceTelescope.prototype.getChoice = function(choice){
+		if(choice=="mirror.cost"){
+			v = (this.choices.mirror ? this.copyValue(this.data.mirror[this.choices.mirror].cost) : this.makeValue(0,'GBP'));
+			v.value = -v.value;
+			if(this.choices.deployablemirror && this.data.deployablemirror.multiplier.cost) v.value *= this.data.deployablemirror.multiplier.cost;
+			if(this.choices.uvmirror && this.data.uvmirror.multiplier.cost) v.value *= this.data.uvmirror.multiplier.cost;
+		}else if(choice=="mirror.mass"){
+			v = (this.choices.mirror ? this.copyValue(this.data.mirror[this.choices.mirror].mass) : this.makeValue(0,'kg'));
+			if(this.choices.deployablemirror && this.data.deployablemirror.multiplier.mass) v.value *= this.data.deployablemirror.multiplier.mass;
+			if(this.choices.uvmirror && this.data.uvmirror.multiplier.mass) v.value *= this.data.uvmirror.multiplier.mass;
+		}else if(choice=="mirror.time"){
+			v = (this.choices.mirror ? this.copyValue(this.data.mirror[this.choices.mirror].devtime) : this.makeValue(0,'months'));
+			if(this.choices.deployablemirror && this.data.deployablemirror.multiplier.time) v.value *= this.data.deployablemirror.multiplier.time;
+			if(this.choices.uvmirror && this.data.uvmirror.multiplier.time) v.value *= this.data.uvmirror.multiplier.time;
+		}else if(choice=="mirror.prob"){
+			v = (this.choices.mirror ? this.copyValue(this.data.mirror[this.choices.mirror].risk) : 1);
+			if(this.choices.deployablemirror && this.data.deployablemirror.risk) v = v*this.data.deployablemirror.risk;
+			if(this.choices.uvmirror && this.data.uvmirror.risk) v = v*this.data.uvmirror.risk;
+		}else if(choice=="cooling.cost"){
+		console.log(this.choices.cooling)
+			v = (this.choices.cooling ? this.copyValue(this.choices.cooling.cost) : this.makeValue(0,'GBP'));
+			v.value = -v.value;
+		}else if(choice=="cooling.mass"){
+			v = (this.choices.cooling ? this.copyValue(this.choices.cooling.mass) : this.makeValue(0,'kg'));
+		}else if(choice=="cooling.time"){
+			v = (this.choices.cooling ? this.copyValue(this.choices.cooling.time) : this.makeValue(0,'months'));
+		}else if(choice=="satellite.cost"){
+			v = (this.choices.mirror ? this.copyValue(this.data.mirror[this.choices.mirror].bus.cost) : this.makeValue(0,'GBP'));
+			v.value = -v.value;
+		}else if(choice=="satellite.mass"){
+			v = (this.choices.mirror ? this.copyValue(this.data.mirror[this.choices.mirror].bus.mass) : this.makeValue(0,'kg'));
+		}else if(choice=="satellite.time"){
+			v = (this.choices.mirror ? this.copyValue(this.data.mirror[this.choices.mirror].bus.devtime) : this.makeValue(0,'months'));
+		}else if(choice=="site"){
+			v = (this.choices.site ? this.phrases.designer.site.options[this.choices.site].label : '');
+		}else if(choice=="site.prob"){
+			v = (this.choices.site && this.data.site[this.choices.site].risk ? this.data.site[this.choices.site].risk : 1);
+		}else if(choice=="vehicle"){
+			v = (this.choices.vehicle ? this.phrases.designer.vehicle.options[this.choices.vehicle].label : '');
+		}else if(choice=="vehicle.cost"){
+			v = (this.choices.vehicle ? this.copyValue(this.data.vehicle[this.choices.vehicle].cost) : this.makeValue(0,'GBP'));
+			v.value = -v.value;		
+		}else if(choice=="vehicle.prob"){
+			v = (this.choices.vehicle && this.data.vehicle[this.choices.vehicle].risk ? this.data.vehicle[this.choices.vehicle].risk : 1);
+		}else if(choice=="ground.cost"){
+			var m = this.choices.mission ? this.copyValue(this.data.mission[this.choices.mission].life) : this.makeValue(0,'months');
+			v = this.copyValue(this.data.orbit.LEO.groundcost);
+			v.value *= -this.convertValue(m,'years').value;	
+		}else if(choice=="temperature"){
+			v = (this.choices.temperature ? this.choices.temperature : this.makeValue(400,'K'));
+		}else if(choice=="orbit"){
+			//'LEO (<span class="convertable" data-value="400000" data-units="m" data-dimension="length">400000m</span>)'
+			v = ' ';
+		}else if(choice=="mission.time"){
+			v = (this.choices.mission ? this.copyValue(this.data.mission[this.choices.mission].life) : this.makeValue(0,'months'));
+		}
+		return v;
+	}
+
+
+
+
 	SpaceTelescope.prototype.processSummaryList = function(list,key,depth){
 		depth++;
 		var html = '<ul class="summary">';
-		for(var i = 0; i < list.length; i++){
-			if((list[i].key && list[i].value) || list[i].list){
+		for(var i in list){
+
+			if(list[i].value || list[i].list){
 				html += '<li>';
-				if(list[i].key && list[i].value) html += '<span class="label '+list[i].key+'">'+list[i].label+'</span>'+this.formatValueSpan(list[i].value,key+' '+list[i].key);
+				if(i && list[i].value) html += '<span class="label '+i+'">'+list[i].label+'</span>'+this.formatValueSpan(list[i].value,key+' '+i);
 				if(list[i].list) html += this.processSummaryList(list[i].list,(depth==1 ? key : ''));
 				html += '</li>';
 			}
@@ -957,90 +1128,28 @@ if(typeof $==="undefined") $ = {};
 		return html;
 	}
 	
-	SpaceTelescope.prototype.updateSummaryList = function(table){
+	SpaceTelescope.prototype.updateSummaryList = function(){
 
-		var html = '';
-		var key = table.key;
-		if(key.indexOf('_') > 0) key = key.substr(0,key.indexOf('_'));
-		var keys = key;
-		if(key!=table.key) keys += ' '+table.key;
-		var depth = 0;
-		if(typeof key==="string"){
+		for(var key in this.table){
+		
+			var html = '';
+			var base = key;
+			if(base.indexOf('_') > 0) base = base.substr(0,base.indexOf('_'));
+			var keys = base;
+			if(base!=key) keys += ' '+key;
+			var depth = 0;
 			// Update summary bar items
-			if(table.value) this.updateValue('baritem .'+table.key,table.value);
-			$('#summaryext_'+key).addClass('padded').html('<h3><img src="images/cleardot.gif" class="icon '+keys+'" /> <span class="label '+keys+'">'+table.title+'</span> '+(table.value ? this.formatValueSpan(table.value,keys) : '')+'</h3>'+this.processSummaryList(table.list,key,depth));
+			if(this.table[key].value) this.updateValue('baritem .'+key,this.table[key].value);
+			var output = '<h3><img src="images/cleardot.gif" class="icon '+keys+'" /> <span class="label '+keys+'">'+this.table[key].label+'</span> '+(this.table[key].value ? this.formatValueSpan(this.table[key].value,keys) : '')+'</h3>';
+			if(this.table[key].list) output += this.processSummaryList(this.table[key].list,base,depth);
+			$('#summaryext_'+base).addClass('padded').html(output);
 		}
 		return this;
 	}
 
-	SpaceTelescope.prototype.copyValue = function(v){
-		return JSON.parse(JSON.stringify(v));
-	}
-	
-	SpaceTelescope.prototype.multiplyValue = function(v,b){
-		var a = JSON.parse(JSON.stringify(v));
-		a.value *= b;
-		return a;
-	}
-
-	SpaceTelescope.prototype.getChoice = function(choice){
-		if(choice=="mirror.cost"){
-			v = (this.choices.mirror ? this.copyValue(this.data.mirror[this.choices.mirror].cost) : { 'value': 0, 'units': 'GBP', 'dimension': 'currency' });
-			v.value = -v.value;
-			if(this.choices.deployablemirror && this.data.deployablemirror.multiplier.cost) v = this.multiplyValue(v,this.data.deployablemirror.multiplier.cost);
-			if(this.choices.uvmirror && this.data.uvmirror.multiplier.cost) v = this.multiplyValue(v,this.data.uvmirror.multiplier.cost);
-		}else if(choice=="mirror.mass"){
-			v = (this.choices.mirror ? this.copyValue(this.data.mirror[this.choices.mirror].mass) : { 'value': 0, 'units': 'kg', 'dimension': 'mass' });
-			if(this.choices.deployablemirror && this.data.deployablemirror.multiplier.mass) v = this.multiplyValue(v,this.data.deployablemirror.multiplier.mass);
-			if(this.choices.uvmirror && this.data.uvmirror.multiplier.mass) v = this.multiplyValue(v,this.data.uvmirror.multiplier.mass);
-		}else if(choice=="mirror.time"){
-			v = (this.choices.mirror ? this.copyValue(this.data.mirror[this.choices.mirror].devtime) : { 'value': 0, 'units': 'months', 'dimension': 'time' });
-			if(this.choices.deployablemirror && this.data.deployablemirror.multiplier.time) v = this.multiplyValue(v,this.data.deployablemirror.multiplier.time);
-			if(this.choices.uvmirror && this.data.uvmirror.multiplier.time) v = this.multiplyValue(v,this.data.uvmirror.multiplier.time);
-		}else if(choice=="mirror.prob"){
-			v = (this.choices.mirror ? this.copyValue(this.data.mirror[this.choices.mirror].risk) : 1);
-			if(this.choices.deployablemirror && this.data.deployablemirror.risk) v = v*this.data.deployablemirror.risk;
-			if(this.choices.uvmirror && this.data.uvmirror.risk) v = v*this.data.uvmirror.risk;
-		}else if(choice=="cooling.cost"){
-		console.log(this.choices.cooling)
-			v = (this.choices.cooling ? this.copyValue(this.choices.cooling.cost) : { 'value': 0, 'units': 'GBP', 'dimension': 'currency' });
-			v.value = -v.value;
-		}else if(choice=="cooling.mass"){
-			v = (this.choices.cooling ? this.copyValue(this.choices.cooling.mass) : { 'value': 0, 'units': 'kg', 'dimension': 'mass' });
-		}else if(choice=="cooling.time"){
-			v = (this.choices.cooling ? this.copyValue(this.choices.cooling.time) : { 'value': 0, 'units': 'months', 'dimension': 'time' });
-		}else if(choice=="satellite.cost"){
-			v = (this.choices.mirror ? this.copyValue(this.data.mirror[this.choices.mirror].bus.cost) : { 'value': 0, 'units': 'GBP', 'dimension': 'currency' });
-			v.value = -v.value;
-		}else if(choice=="satellite.mass"){
-			v = (this.choices.mirror ? this.copyValue(this.data.mirror[this.choices.mirror].bus.mass) : { 'value': 0, 'units': 'kg', 'dimension': 'mass' });
-		}else if(choice=="satellite.time"){
-			v = (this.choices.mirror ? this.copyValue(this.data.mirror[this.choices.mirror].bus.devtime) : { 'value': 0, 'units': 'months', 'dimension': 'time' });
-		}else if(choice=="vehicle.cost"){
-			v = (this.choices.vehicle ? this.copyValue(this.data.vehicle[this.choices.vehicle].cost) : { 'value': 0, 'units': 'GBP', 'dimension': 'currency' });
-			v.value = -v.value;		
-		}else if(choice=="site"){
-			v = (this.choices.site ? this.phrases.designer.site.options[this.choices.site].label : '');
-		}else if(choice=="site.prob"){
-			v = (this.choices.site && this.data.site[this.choices.site].risk ? this.data.site[this.choices.site].risk : 1);
-		}else if(choice=="vehicle"){
-			v = (this.choices.vehicle ? this.phrases.designer.vehicle.options[this.choices.vehicle].label : '');
-		}else if(choice=="vehicle.prob"){
-			v = (this.choices.vehicle && this.data.vehicle[this.choices.vehicle].risk ? this.data.vehicle[this.choices.vehicle].risk : 1);
-		}else if(choice=="temperature"){
-			v = (this.choices.temperature ? this.choices.temperature : { 'value': 400, 'units': 'K', 'dimension': 'temperature' });
-		}else if(choice=="orbit"){
-			//'LEO (<span class="convertable" data-value="400000" data-units="m" data-dimension="length">400000m</span>)'
-			v = ' ';
-		}else if(choice=="mission.time"){
-			v = (this.choices.mission ? this.copyValue(this.data.mission[this.choices.mission].life) : { 'value': 0, 'units': 'months', 'dimension': 'time' });
-		}
-		return v;
-	}
-
 	SpaceTelescope.prototype.updateSummary = function(){
 
-console.log('updateSummary')
+		console.log('updateSummary')
 
 		var html = '';
 		var s = this.phrases.ui.summary;
@@ -1067,7 +1176,7 @@ console.log('updateSummary')
 		cost.dev = this.sumValues(cost.mirror,cost.satellite,cost.cooling);
 
 		cost.vehicle = this.getChoice('vehicle.cost');
-		cost.ground = { 'value': 0, 'units': 'GBP', 'dimension': 'currency' };
+		cost.ground = this.getChoice('ground.cost');
 		cost.operations = this.sumValues(cost.vehicle,cost.ground);
 		cost.total = this.sumValues(cost.dev,cost.operations);
 		cost.free = this.sumValues(this.scenario.budget,cost.total);
@@ -1085,226 +1194,82 @@ console.log('updateSummary')
 		mass.cooling = this.getChoice('cooling.mass');
 		mass.total = this.sumValues(mass.mirror,mass.satellite,mass.cooling);
 		
-		prof.site = this.getChoice('site');
-		prof.vehicle = this.getChoice('vehicle');
-		prof.instruments = '0';
-		prof.orbit = this.getChoice('orbit');
-		prof.temperature = this.getChoice('temperature');
+		
+
+		this.table.success.value = this.formatPercent(prob.total);
+		if(this.data.site[this.choices.site] && this.data.site[this.choices.site].risk) this.table.success.list.success_site.value = this.formatPercent(prob.site);
+		if(this.data.vehicle[this.choices.vehicle] && this.data.vehicle[this.choices.vehicle].risk) this.table.success.list.success_vehicle.value = this.formatPercent(prob.vehicle);
+		this.table.success.list.success_deploy.value = this.formatPercent(prob.mirror);
+		this.table.success.list.success_cooling.value = this.formatPercent(prob.cooling);
+		this.table.success.list.success_instruments.value = this.formatPercent(prob.instruments);
+		this.table.success.list.success_mission.value = this.formatPercent(prob.mission);
+
+		this.updateTable('cost_available','value',cost.free);
+		this.updateTable('cost_initial','value',this.scenario.budget);
+		this.updateTable('cost_dev_total','value',cost.dev);
+		this.updateTable('cost_dev_satellite','value',cost.satellite);
+		this.updateTable('cost_dev_mirror','value',cost.mirror);
+		this.updateTable('cost_dev_cooling','value',cost.cooling);
+		this.updateTable('cost_dev_instruments','value',this.makeValue(0,'GBP'));
+		this.updateTable('cost_operations_total','value',cost.operations);
+		this.updateTable('cost_operations_launch','value',cost.vehicle);
+		this.updateTable('cost_operations_ground','value',cost.ground);
+		this.updateTable('cost_total','value',cost.total);
+		this.table.cost_available.list.cost_available.value = cost.free;
+
+		this.table.time_dev_total.value = time.total;
+		this.table.time_dev_total.list.time_dev_total.value = this.makeValue(0,'months');
+		this.table.time_dev_total.list.time_dev_total.list.time_dev_satellite.value = time.satellite;
+		this.table.time_dev_total.list.time_dev_total.list.time_dev_mirror.value = time.mirror;
+		this.table.time_dev_total.list.time_dev_total.list.time_dev_cooling.value = time.cooling;
+		this.table.time_dev_total.list.time_dev_total.list.time_dev_instruments.value = time.instruments;
+		this.table.time_dev_total.list.time_mission.value = time.mission;
+		this.table.time_dev_total.list.time_fuel.value = this.makeValue(0,'months');
+		this.table.mass_total.value = mass.total;
+		this.table.mass_total.list.mass_satellite.value = mass.satellite;
+		this.table.mass_total.list.mass_mirror.value = mass.mirror;
+		this.table.mass_total.list.mass_cooling_total.value = mass.cooling;
+		this.table.mass_total.list.mass_cooling_total.list.mass_cooling_passive.value = this.makeValue(0,'kg');
+		this.table.mass_total.list.mass_cooling_total.list.mass_cooling_cryo.value = this.makeValue(0,'kg');
+		this.table.mass_total.list.mass_cooling_total.list.mass_cooling_active.value = this.makeValue(0,'kg');
+		this.table.mass_total.list.mass_instruments.value = this.makeValue(0,'kg');
+		this.table.science_total.value = this.makeValue(0,'%');
+		this.table.profile_total.list.profile_site.value = this.getChoice('site');
+		this.table.profile_total.list.profile_vehicle.value = this.getChoice('vehicle');
+		this.table.profile_total.list.profile_instruments.value = '0';
+		this.table.profile_total.list.profile_temperature.value = this.getChoice('temperature');
+		this.table.profile_total.list.profile_orbit.value = this.getChoice('orbit');
 		var d = new Date();
 		var t = this.convertValue(time.total,'months');
 		d.setUTCMonth(d.getUTCMonth()+t.value);
-		prof.launch = d.toDateString()
-		
+		this.table.profile_total.list.profile_launch.value = d.toDateString();
 		t = this.convertValue(time.mission,'months');
 		d.setUTCMonth(d.getUTCMonth()+t.value);
-		prof.end = d.toDateString();
+		this.table.profile_total.list.profile_end.value = d.toDateString();
 
-		
-		// Update success items
-		var table = [{
-			"key": "success",
-			"value": this.formatPercent(prob.total),
-			"title": s.success.title,
-			"list": [(this.data.site[this.choices.site] && this.data.site[this.choices.site].risk ? {
-				'key': 'success_site',
-				'label': s.success.site,
-				'value': this.formatPercent(prob.site)
-			}:{}),(this.data.vehicle[this.choices.vehicle] && this.data.vehicle[this.choices.vehicle].risk ? { 
-				'key': 'success_vehicle',
-				'label': s.success.vehicle,
-				'value': this.formatPercent(prob.vehicle)
-			}:{}),{ 
-				'key': 'success_deploy',
-				'label': s.success.deploy,
-				'value': this.formatPercent(prob.mirror)
-			},{ 
-				'key': 'success_cooling',
-				'label': s.success.cooling,
-				'value': this.formatPercent(prob.cooling)
-			},{ 
-				'key': 'success_instruments',
-				'label': s.success.instruments,
-				'value': this.formatPercent(prob.instruments)
-			},{ 
-				'key': 'success_mission',
-				'label': s.success.mission,
-				'value': this.formatPercent(prob.mission)
-			}]
-		},{
-			"key": "cost_available",
-			"value": cost.free,
-			"title": s.cost.title,
-			"list": [{
-				'key': 'cost_initial',
-				'label': s.cost.initial,
-				'value': this.scenario.budget
-			},{
-				'key': 'cost_dev_total',
-				'label': s.cost.dev.title,
-				'value': cost.dev,
-				'list': [{
-					'key': 'cost_dev_satellite',
-					'label': s.cost.dev.satellite,
-					'value': cost.satellite
-				},{
-					'key': 'cost_dev_mirror',
-					'label': s.cost.dev.mirror,
-					'value': cost.mirror
-				},{
-					'key': 'cost_dev_cooling',
-					'label': s.cost.dev.cooling,
-					'value': cost.cooling
-				},{
-					'key': 'cost_dev_instruments',
-					'label': s.cost.dev.instruments,
-					'value': { 'value': 0, 'units': 'GBP', 'dimension': 'currency' }
-				}]
-			},{
-				'key': 'cost_operations_total',
-				'label': s.cost.operations.title,
-				'value': cost.operations,
-				'list': [{
-					'key': 'cost_operations_launch',
-					'label': s.cost.operations.launch,
-					'value': cost.vehicle
-				},{
-					'key': 'cost_operations_ground',
-					'label': s.cost.operations.ground,
-					'value': cost.ground
-				}]
-			},{
-				'key': 'cost_total',
-				'label': s.cost.total,
-				'value': cost.total
-			},{
-				'key': 'cost_available',
-				'label': s.cost.available,
-				'value': cost.free
-			}]
-		},{
-			"key": "time_dev_total",
-			"value": time.total,
-			"title": s.time.title,
-			"list": [{
-				'key': 'time_dev_total',
-				'label': s.time.dev.title,
-				'value': { 'value': 0, 'units': 'months', 'dimension': 'time' },
-				'list': [{
-					'key': 'time_dev_satellite',
-					'label': s.time.dev.satellite,
-					'value': time.satellite
-				},{
-					'key': 'time_dev_mirror',
-					'label': s.time.dev.mirror,
-					'value': time.mirror
-				},{
-					'key': 'time_dev_cooling',
-					'label': s.time.dev.cooling,
-					'value': time.cooling
-				},{
-					'key': 'time_dev_instruments',
-					'label': s.time.dev.instruments,
-					'value': { 'value': 0, 'units': 'months', 'dimension': 'time' }
-				}]
-			},{
-				'key': 'time_mission',
-				'label': s.time.mission,
-				'value': time.mission
-			},{
-				'key': 'time_fuel',
-				'label': s.time.fuel,
-				'value': { 'value': 0, 'units': 'months', 'dimension': 'time' }
-			}]
-		},{
-			'key': 'mass_total',
-			'label': 'mass',
-			"value": mass.total,
-			"title": s.mass.title,
-			"list": [{
-				'key': 'mass_satellite',
-				'label': s.mass.satellite,
-				'value': mass.satellite
-			},{
-				'key': 'mass_mirror',
-				'label': s.mass.mirror,
-				'value': mass.mirror
-			},{
-				'key': 'mass_cooling_title',
-				'label': s.mass.cooling.title,
-				'value': mass.cooling,
-				'list': [{
-					'key': 'mass_cooling_passive',
-					'label': s.mass.cooling.passive,
-					'value': { 'value': 0, 'units': 'kg', 'dimension': 'mass' }
-				},{
-					'key': 'mass_cooling_cryo',
-					'label': s.mass.cooling.cryo,
-					'value': { 'value': 0, 'units': 'kg', 'dimension': 'mass' }
-				},{
-					'key': 'mass_cooling_active',
-					'label': s.mass.cooling.active,
-					'value': { 'value': 0, 'units': 'kg', 'dimension': 'mass' }
-				}]
-			},{
-				'key': 'mass_instruments',
-				'label': s.mass.instruments,
-				'value': { 'value': 0, 'units': 'kg', 'dimension': 'mass' }
-			}]
-		},{
-			'key': 'science_total',
-			'label': 'science',
-			"value": this.formatPercent(scie.total),
-			"title": s.science.title,
-			"list": []
-		},{
-			'key': 'profile_total',
-			'label': 'profile',
-			"title": s.profile.title,
-			"list": [{
-				'key': 'profile_site',
-				'label': s.profile.site,
-				'value': prof.site
-			},{
-				'key': 'profile_vehicle',
-				'label': s.profile.vehicle,
-				'value': prof.vehicle
-			},{
-				'key': 'profile_instruments',
-				'label': s.profile.instruments,
-				'value': prof.instruments
-			},{
-				'key': 'profile_temperature',
-				'label': s.profile.temperature,
-				'value': prof.temperature
-			},{
-				'key': 'profile_orbit',
-				'label': s.profile.orbit,
-				'value': prof.orbit
-			},{
-				'key': 'profile_launch',
-				'label': s.profile.launch,
-				'value': prof.launch
-			},{
-				'key': 'profile_end',
-				'label': s.profile.end,
-				'value': prof.end
-			}]
-		}]
-		for(var i = 0 ; i < table.length ; i++) this.updateSummaryList(table[i]);
+		this.updateSummaryList();
 
-/*
-<li id="summaryext_science">
-					<div class="padded">
-						<h3 class="science"><img src="images/cleardot.gif" class="icon science" /> Mission targets <span class="value">75%</span></h3>
-						<ul class="summary">
-							<li>Mission target 1: <span class="value science">50%<!--&#x2714; &#x2718--></span></li>
-							<li>Mission target 2: <span class="value science">100%</span></li>
-						</ul>
-					</div>
-				</li>*/
 		return this;
 	}
 	
+	SpaceTelescope.prototype.setKey = function(t,key,typ,value){
+		for(i in t){
+			if(i==key){
+				t[i][typ] = value;
+				return t;
+			}else{
+				if(t[i].list){
+					t[i].list = this.setKey(t[i].list,key,typ,value);
+				}
+			}
+		}
+		return t;
+	}
+
+	SpaceTelescope.prototype.updateTable = function(key,typ,value){
+		this.table = this.setKey(this.table,key,typ,value);
+		return this;
+	}
 	
 	// Convert an input value/unit/dimension object into another unit
 	// Inputs:
@@ -1409,9 +1374,10 @@ console.log('updateSummary')
 				}
 			}
 		}
-		
+
 		return v;
 	}
+
 
 	// Sum an array of input values.
 	// Input:
@@ -1423,11 +1389,10 @@ console.log('updateSummary')
 	//   Input units can differ - this will take care of unit conversions
 	SpaceTelescope.prototype.sumValues = function(){
 		var args = Array.prototype.slice.call(arguments, 0);
-		var a;
+		var a,output,i;
 		if(args.length > 0){
-			var output = this.copyValue(args[0]);
-			output = this.convertValue(output,args[0].units);
-			for(var i = 1 ; i < args.length ; i++){
+			output = this.convertValue(args[0],args[0].units);
+			for(i = 1 ; i < args.length ; i++){
 				if(typeof args[i]==="object" && args[i].dimension && args[i].dimension===output.dimension){
 					a = this.convertValue(args[i],args[0].units);
 					output.value += a.value;
@@ -1438,108 +1403,106 @@ console.log('updateSummary')
 		return args[0];
 	}
 	
-	SpaceTelescope.prototype.getPrecision = function(v){
+
+	function getPrecision(v){
 		if(v < 1e-9) return 1;
 		if(typeof v==="number" && v < 1) return Math.ceil(Math.log10(1/v))+1;
+		else return 1;
 		return 1;
-	}
 	
-	// Format a value. This calls the appropriate format function for the dimension
+	}
+		
+	// Format a value differently depending on the dimension
 	// Inputs:
 	//  v - the value as an object e.g. { "value": 1, "units": "m", "dimension": "length" }
-	//  p - the number of decimal places to show in the output
+	//  p - the number of decimal places to show in the output (if not provided the function
+	//      makes an intelligent guess).
 	SpaceTelescope.prototype.formatValue = function(v,p){
+
 		if(typeof v==="string" || typeof v==="number") return v;
-		if(typeof v==="object" && v.dimension){
-			if(v.dimension=="length") return this.formatLength(v,p);
-			else if(v.dimension=="mass") return this.formatMass(v,p)
-			else if(v.dimension=="currency") return this.formatCurrency(v,p)
-			else if(v.dimension=="temperature") return this.formatTemperature(v,p)
-			else if(v.dimension=="time") return this.formatTime(v,p)
-			else return v.value;
-		}
-		return "";
-	}
+		if(!(typeof v==="object" && v.dimension)) return "";
 
-	// Inputs:
-	//  v - the { "value": 1, "units": "m", "dimension": "length" } object
-	//  p - the number of decimal places to show in the output
-	SpaceTelescope.prototype.formatLength = function(v,p){
-		v = this.convertValue(v,(this.settings.length) ? this.settings.length : "m")
-		if(typeof p==="string") p = parseInt(p,10);
-		if(typeof p!=="number") p = (v.units=="km" ? 0 : this.getPrecision(v.value));
-		var unit = (this.phrases.ui.units[v.units]) ? this.phrases.ui.units[v.units].unit : "";
-		if(v.value > 1e15) return powerOfTen(v.value,unit);
-		return ''+addCommas((v.value).toFixed(p)).replace(/\.0+$/,'').replace(/(\.0?[1-9]+)0+$/,"$1")+''+unit;
-	}
-
-	// Inputs:
-	//  v - the { "value": 1, "units": "m", "dimension": "length" } object
-	//  p - the number of decimal places to show in the output
-	SpaceTelescope.prototype.formatMass = function(v,p){
-		v = this.convertValue(v,(this.settings.mass) ? this.settings.mass : "kg")
-		if(typeof p==="string") p = parseInt(p,10);
-		var unit = (this.phrases.ui.units[v.units]) ? this.phrases.ui.units[v.units].unit : "";
-		if(typeof p!=="number") p = (v.value >= 1000) ? 0 : this.getPrecision(v.value);
-		if(v.value > 1e15) return powerOfTen(v.value,unit);
-		else return ''+addCommas((v.value).toFixed(p)).replace(/\.0+$/,'').replace(/(\.[1-9]+)0+$/,"$1")+''+unit;
-	}
-
-	// Inputs:
-	//  v - the { "value": 1, "units": "m", "dimension": "length" } object
-	//  p - the number of decimal places to show in the output
-	SpaceTelescope.prototype.formatCurrency = function(v,p){
 		// Make a copy of the original so that we don't overwrite it
-		v=this.copyValue(v);
-		v = this.convertValue(v,(this.settings.currency) ? this.settings.currency : "GBP")
+		v = this.copyValue(v);
+
+		// Convert precision to a number if it is a string
 		if(typeof p==="string") p = parseInt(p,10);
-		if(typeof p!=="number") p = 0;
 
-		var append = (this.phrases.ui.million.compact) ? this.phrases.ui.million.compact : "";
-		var s = (this.phrases.ui.currency[v.units] && this.phrases.ui.currency[v.units].symbol) ? this.phrases.ui.currency[v.units].symbol : (this.phrases.ui.currency["GBP"].symbol ? this.phrases.ui.currency["GBP"].symbol : "");
+		if(v.dimension=="length"){
+			
+			v = this.convertValue(v,(this.settings.length) ? this.settings.length : "m")
+			if(typeof p!=="number") p = (v.units=="km" ? 0 : getPrecision(v.value));
+			var unit = (this.phrases.ui.units[v.units]) ? this.phrases.ui.units[v.units].unit : "";
+			if(v.value > 1e15) return powerOfTen(v.value,unit);
+			return ''+addCommas((v.value).toFixed(p)).replace(/\.0+$/,'').replace(/(\.0?[1-9]+)0+$/,"$1")+''+unit;	
+			
+		}else if(v.dimension=="mass"){
 
-		if(v.value == "inf" || v.value >= 1e15) return '&infin;';
+			v = this.convertValue(v,(this.settings.mass) ? this.settings.mass : "kg")
+			var unit = (this.phrases.ui.units[v.units]) ? this.phrases.ui.units[v.units].unit : "";
+			if(typeof p!=="number") p = (v.value >= 1000) ? 0 : getPrecision(v.value);
+			if(v.value > 1e15) return powerOfTen(v.value,unit);
+			else return ''+addCommas((v.value).toFixed(p)).replace(/\.0+$/,'').replace(/(\.[1-9]+)0+$/,"$1")+''+unit;
+		
+		}else if(v.dimension=="currency"){
 
-		// Correct for sign of currency (we can have negative values)
-		var d = (v.value < 0) ? '-' : '';
-		v.value = Math.abs(v.value);
+			v = this.convertValue(v,(this.settings.currency) ? this.settings.currency : "GBP")
+			if(typeof p!=="number") p = 0;
+	
+			var append = (this.phrases.ui.million.compact) ? this.phrases.ui.million.compact : "";
+			var s = (this.phrases.ui.currency[v.units] && this.phrases.ui.currency[v.units].symbol) ? this.phrases.ui.currency[v.units].symbol : (this.phrases.ui.currency["GBP"].symbol ? this.phrases.ui.currency["GBP"].symbol : "");
+	
+			if(v.value == "inf" || v.value >= 1e15) return '&infin;';
+	
+			// Correct for sign of currency (we can have negative values)
+			var sign = (v.value < 0) ? '-' : '';
+			v.value = Math.abs(v.value);
+	
+			// Change the "million" to "billion" if the number if too big
+			if(v.value >= 1000){
+				v.value /= 1000;
+				append = (this.phrases.ui.billion.compact) ? this.phrases.ui.billion.compact : "";
+			}
+			if(p == 0){
+				if(v.value < 100) p = 1;
+				if(v.value < 10) p = 2;
+			}
+			var val = (v.value).toFixed(p).replace(/\.0+$/,'').replace(/(\.[1-9]+)0+$/,"$1");
+			return sign+s+val+append;
 
-		// Change the "million" to "billion" if the number if too big
-		if(v.value >= 1000){
-			v.value /= 1000;
-			append = (this.phrases.ui.billion.compact) ? this.phrases.ui.billion.compact : "";
-		}
-		if(p == 0){
-			if(v.value < 100) p = 1;
-			if(v.value < 10) p = 2;
-		}
-		var val = (v.value).toFixed(p).replace(/\.0+$/,'').replace(/(\.[1-9]+)0+$/,"$1");
-		return d+s+val+append;
+		}else if(v.dimension=="temperature"){
+
+			v = this.convertValue(v,(this.settings.temperature) ? this.settings.temperature : "K")
+			if(typeof p==="string") p = parseInt(p,10);
+			if(typeof p!=="number") p = (v.value > 1000) ? 0 : getPrecision(v.value);
+			var unit = (this.phrases.ui.units[v.units]) ? this.phrases.ui.units[v.units].unit : "";
+			if(typeof v.value==="string") v.value = parseInt(v.value,10)
+			return ''+addCommas((v.value).toFixed(p).replace(/\.0+$/,'').replace(/(\.[1-9])0+$/,"$1"))+''+unit;
+
+		}else if(v.dimension=="time"){
+
+			if(v.units=="years" && v.value < 5) v = this.convertValue(v,"months");
+			if(typeof p!=="number") p = (v.value >= 6) ? 0 : getPrecision(v.value);
+			var unit = (this.phrases.ui.units[v.units]) ? this.phrases.ui.units[v.units].unit : "";
+			if(typeof v.value==="string") v.value = parseInt(v.value,10)
+			return ''+addCommas((v.value).toFixed(p).replace(/\.0+$/,'').replace(/(\.[1-9])0+$/,"$1"))+''+unit;
+
+		}else if(v.dimension=="percent"){
+
+			v = v.value;
+			if(typeof p!=="number") p = 1;
+			var unit = (this.phrases.ui.units[v.units]) ? this.phrases.ui.units[v.units].unit : "%";
+			return ''+addCommas((v*100).toFixed(p)).replace(/\.0+$/,'').replace(/(\.[1-9]+)0+$/,"$1")+unit;
+
+		}else return v.value;
 	}
 
-
-	// Inputs:
-	//  v - the { "value": 1, "units": "m", "dimension": "length" } object
-	//  p - the number of decimal places to show in the output
-	SpaceTelescope.prototype.formatTemperature = function(v,p){
-		v = this.convertValue(v,(this.settings.temperature) ? this.settings.temperature : "K")
-		if(typeof p==="string") p = parseInt(p,10);
-		if(typeof p!=="number") p = (v.value > 1000) ? 0 : this.getPrecision(v.value);
-		var unit = (this.phrases.ui.units[v.units]) ? this.phrases.ui.units[v.units].unit : "";
-		if(typeof v.value==="string") v.value = parseInt(v.value,10)
-		return ''+addCommas((v.value).toFixed(p).replace(/\.0+$/,'').replace(/(\.[1-9])0+$/,"$1"))+''+unit;
-	}
-
-	// Inputs:
-	//  v - the { "value": 1, "units": "m", "dimension": "length" } object
-	//  p - the number of decimal places to show in the output
-	SpaceTelescope.prototype.formatTime = function(v,p){
-		if(v.units=="years" && v.value < 5) v = this.convertValue(v,"months");
-		if(typeof p==="string") p = parseInt(p,10);
-		if(typeof p!=="number") p = (v.value >= 6) ? 0 : this.getPrecision(v.value);
-		var unit = (this.phrases.ui.units[v.units]) ? this.phrases.ui.units[v.units].unit : "";
-		if(typeof v.value==="string") v.value = parseInt(v.value,10)
-		return ''+addCommas((v.value).toFixed(p).replace(/\.0+$/,'').replace(/(\.[1-9])0+$/,"$1"))+''+unit;
+	SpaceTelescope.prototype.makeValue = function(v,u,d){
+		if(!d){
+			if(this.phrases.ui.units[u]) d = this.phrases.ui.units[u].dimension;
+			else d = "unknown";
+		}
+		return { 'value': v, 'units': u, 'dimension': d };
 	}
 
 	// Inputs:
@@ -1547,8 +1510,6 @@ console.log('updateSummary')
 	//  p - the number of decimal places to show in the output
 	SpaceTelescope.prototype.formatPercent = function(v,p){
 		if(typeof v!=="number") v = 0;
-		if(v > 1) v = 1;
-		if(v < 0) v = 0;
 		if(typeof p!=="number") p = 1;
 		return ''+addCommas((v*100).toFixed(p)).replace(/\.0+$/,'').replace(/(\.[1-9]+)0+$/,"$1")+'%';
 	}
@@ -1577,13 +1538,12 @@ console.log('updateSummary')
 		return this;
 	}
 
-
-	SpaceTelescope.prototype.processChoices = function(view,e){
+	SpaceTelescope.prototype.parseChoices = function(view,e){
 
 		this.choices = {};
 		var l,m,d,u,c,t,v,s;
-		var errors = [];
-		var warnings = [];
+		this.errors = [];
+		this.warnings = [];
 		
 		// Process mission
 		l = $('#mission_duration').val();
@@ -1599,12 +1559,12 @@ console.log('updateSummary')
 		
 		// Process cooling
 		c = $('input[name=hascooling]:checked').val();
-		this.choices.temperature = {'value': 400, 'units': 'K', 'dimension': 'temperature' }; // get from orbit
+		this.choices.temperature = this.makeValue(400,'K'); // get from orbit
 		this.choices.cooling = {
-			"cost": { 'value': 0, 'units': 'GBP', 'dimension': 'currency' },
-			"mass": { 'value': 0, 'units': 'kg', 'dimension': 'mass' },
-			"life": { 'value': 0, 'units': 'months', 'dimension': 'time' },
-			"time": { 'value': 0, 'units': 'months', 'dimension': 'time' },
+			"cost": this.makeValue(0,'GBP'),
+			"mass": this.makeValue(0,'kg'),
+			"life": this.makeValue(0,'months'),
+			"time": this.makeValue(0,'months'),
 			"risk": 1
 		}
 		if(c){
@@ -1647,15 +1607,20 @@ console.log('updateSummary')
 				// No vehicle chosen so the site is actually OK
 				ok = true;
 			}
-			if(!ok) errors.push({ 'text': this.phrases.errors.site.replace(/%SITE%/g,this.phrases.designer.site.options[s].label).replace(/%VEHICLE%/,this.phrases.designer.vehicle.options[v].label), 'link': '#designer_site' });
+			if(!ok) this.errors.push({ 'text': this.phrases.errors.site.replace(/%SITE%/g,this.phrases.designer.site.options[s].label).replace(/%VEHICLE%/,this.phrases.designer.vehicle.options[v].label), 'link': '#designer_site' });
 		}
 
-		this.updateMessages("error",errors);
-		this.updateMessages("warning",warnings);
-
-		this.updateSummary();
 
 		console.log(this.choices)
+
+		return this;
+	}
+
+	SpaceTelescope.prototype.updateChoices = function(){
+
+		this.updateMessages("error",this.errors);
+		this.updateMessages("warning",this.warnings);
+		this.updateSummary();
 
 		return this;
 	}
@@ -1691,7 +1656,7 @@ console.log('updateSummary')
 		$('#cooling_temperature').val('100K');
 		$('#vehicle_rocket_SOYZ').trigger('click');
 		$('.launchsite.KSC').trigger('click');
-		this.processChoices();
+		this.parseChoices().updateChoices();
 		return this;
 	}
 	

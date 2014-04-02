@@ -33,7 +33,8 @@
 			"months": { "unit": " months", "label": "Months", "dimension": "time" },
 			"days": { "unit": " days", "label": "Days", "dimension": "time" },
 			"hours": { "unit": " hours", "label": "Hours", "dimension": "time" },
-			"minutes": { "unit": " minutes", "label": "Minutes", "dimension": "time" }
+			"minutes": { "unit": " minutes", "label": "Minutes", "dimension": "time" },
+			"%": { "unit": "%", "label": "Percent", "dimension": "percent" }
 		},
 		"currency": {
 			"GBP": { "symbol": "&pound;", "label": "British Pounds" },
