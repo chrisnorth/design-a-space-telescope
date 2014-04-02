@@ -268,7 +268,7 @@ if(typeof $==="undefined") $ = {};
 
 		// Build the objectives section
 		$('#designer_objectives .intro').after('<div class="summary"></div>');
-		$('#designer_objectives .options').html('<form><ul class="bigpadded"><li><label for="mission_duration"></label><select id="mission_duration" name="mission_duration"></select></li></ul></form>');
+		//$('#designer_objectives .options').html('<form><ul class="bigpadded"><li><label for="mission_duration"></label><select id="mission_duration" name="mission_duration"></select></li></ul></form>');
 
 		// Build the satellite section
 		$('#designer_satellite .options').html('<form><ul class="bigpadded"><li class="option mirror_diameter"><label for="mirror_diameter"></label><select id="mirror_diameter" name="mirror_diameter"></select></li><li class="option mirror_deployable"><label for="mirror_deployable"></label>'+this.buildToggle("toggledeployable",{ "value": "no", "id": "mirror_deployable_no", "label": "", "checked": true },{ "value": "yes", "id": "mirror_deployable_yes", "label": "" })+'</li><li class="option mirror_uv"><label for="mirror_uv"></label>'+this.buildToggle("toggleuv",{ "value": "no", "id": "mirror_uv_no", "checked": true },{ "value": "yes", "id": "mirror_uv_yes" })+'</li></ul></form>');
@@ -336,6 +336,11 @@ if(typeof $==="undefined") $ = {};
 			$('.launchsite[data='+site+']').addClass('selected');
 			e.data.me.showSiteDetails(site);
 		});
+
+		// Build orbit options
+		$('#designer_orbit .options').html('<form><ul class="bigpadded"><li><label for="mission_duration"></label><select id="mission_duration" name="mission_duration"></select></li></ul></form>');
+
+
 
 		// Build proposal document holder
 		$('#designer_proposal .options').html('<div class="padded"><div class="doc"></div></div>');
@@ -685,7 +690,7 @@ if(typeof $==="undefined") $ = {};
 			}
 			if(o.length == 0) el.html(options);
 		}else if(dropdown=="mission_duration"){
-			if(this.phrases.designer.objectives.options.duration["none"]) options = '<option value="">'+this.phrases.designer.objectives.options.duration["none"]+'</option>';
+			if(this.phrases.designer.orbit.duration["none"]) options = '<option value="">'+this.phrases.designer.orbit.duration["none"]+'</option>';
 			for(var m in this.data.mission){
 				v = this.formatValue(this.data.mission[m].life);
 				if(o.length == 0) options += '<option value="'+m+'">'+v+'</option>';
@@ -750,8 +755,6 @@ if(typeof $==="undefined") $ = {};
 			if(this.scenario.image && this.scenario.image.banner) $('#designer_objectives .banner').css('background-image','url('+this.scenario.image.banner+')');
 			if(d.designer.objectives.intro) $('#designer_objectives .intro').html(this.formatScenario(this.scenario)+(this.scenario.funder ? d.designer.objectives.intro : d.designer.objectives.intronofunder).replace(/%TITLE%/,this.scenario.name).replace(/%FUNDER%/,this.scenario.funder)).addClass('bigpadded');
 		}
-		$('#designer_objectives .options label').html(d.designer.objectives.options.duration.label);
-		this.updateDropdown('mission_duration');
 
 		// Update the satellite section
 		$('#designer_satellite .options .mirror_diameter label').html(d.designer.satellite.options.diameter.label)
@@ -871,6 +874,9 @@ if(typeof $==="undefined") $ = {};
 //		$('#designer_site .options select').html(opts);
 		if(d.designer.site.intro) $('#designer_site .intro').html(d.designer.site.intro).addClass('bigpadded');
 
+		// Update the orbit section
+		$('#designer_orbit .options label[for=mission_duration]').html(d.designer.orbit.duration.label);
+		this.updateDropdown('mission_duration');
 
 
 		// Update the proposal section

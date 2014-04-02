@@ -152,10 +152,6 @@
 			"intro": "Use the menu options to choose a mirror, instruments, a rocket, a launch site and an orbit for your space telescope. Once you are happy with your plans you will need to fill out a proposal letter. If you are given the go-ahead you will then be able to launch your mission.",
 			"intronofunder": "You have chosen the <strong>%TITLE%</strong> mission. Use the menu options to design the different parts of your space telescope. You will need to choose a mirror, instruments, a rocket, a launch site and an orbit. Once you are happy with your plans you will need to fill out a proposal letter. You will then be able to launch your mission.",
 			"options": {
-				"duration": {
-					"label": "Mission duration:",
-					"none": "Select duration"
-				}
 			}
 		},
 		"satellite": {
@@ -295,6 +291,10 @@
 				"ETR": { "label": "Earth-Trailing", "launchreq": "" },
 				"EM2": { "label": "Earth-Moon L2", "launchreq": "Requires relay satellite" },
 				"ES2": { "label": "Earth-Sun L2", "launchreq": "" }
+			},
+			"duration": {
+				"label": "Mission duration:",
+				"none": "Select duration"
 			},
 			"questions": []
 		},
