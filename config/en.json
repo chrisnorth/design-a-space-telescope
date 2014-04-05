@@ -108,7 +108,7 @@
 				"operations": {
 					"title": "Operations (total):",
 					"launch": "Launch:",
-					"ground": "Ground control (per year):"
+					"ground": "Ground control (total):"
 				},
 				"total": "Total costs:",
 				"available": "Funds available:"

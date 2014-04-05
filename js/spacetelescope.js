@@ -337,9 +337,11 @@ if(typeof $==="undefined") $ = {};
 			e.data.me.showSiteDetails(site);
 		});
 
-		// Build orbit options
-		$('#designer_orbit .options').html('<form><ul class="bigpadded"><li><label for="mission_duration"></label><select id="mission_duration" name="mission_duration"></select></li></ul></form>');
 
+		// Build orbit options
+		$('#designer_orbit .options').html('<div id="orbits"></div><form><ul class="bigpadded"><li><label for="mission_duration"></label><select id="mission_duration" name="mission_duration"></select></li></ul></form>');
+
+//		this.space = Raphael('orbits', $('#orbits').width(), $('#orbits').height());
 
 
 		// Build proposal document holder
@@ -347,7 +349,6 @@ if(typeof $==="undefined") $ = {};
 
 		// Bind function to process any form changes
 		$(document).on('change','#designer input, #designer select',{me:this},function(e){ e.data.me.parseChoices().updateChoices(); });
-
 
 
 
@@ -434,6 +435,10 @@ if(typeof $==="undefined") $ = {};
 		if(this.modal){
 			this.positionModal(this.modal);
 		}
+		
+		// Update the orbit diagram
+		this.updateOrbits();
+		
 		return this;
 	}
 	
@@ -643,6 +648,8 @@ if(typeof $==="undefined") $ = {};
 
 		this.updateLanguage();
 
+		this.updateOrbits();
+
 		$('#language.dropdown').hide()
 		
 		// Is this the first time we've called this function since page load?
@@ -652,6 +659,152 @@ if(typeof $==="undefined") $ = {};
 			this.loaded = true;
 		}
 		
+		return this;
+	}
+	
+	SpaceTelescope.prototype.updateOrbits = function(){
+
+console.log('updateOrbits')
+
+		if(!this.orbit) this.orbit = { width: 0, height: 300, zoom: 1, scale: [1,0.025], anim: {}, orbits:{} };
+		if(!this.orbit.el) this.orbit.el = $('#orbits');
+
+		// Remove the Raphael object if it already exists
+		if(this.orbit.paper){
+			for(var i in this.orbit.anim) this.orbit.anim[i].stop();
+			this.orbit.paper.remove();
+		}
+
+		if(!this.orbit.el.is(':visible')) return this;
+
+
+		// Hide the contents so we can calculate the size of the container
+		this.orbit.el.children().hide();
+
+		// Check if the HTML element has changed size due to responsive CSS
+		if(this.orbit.el.innerWidth() != this.orbit.width || this.orbit.el.innerHeight() != this.orbit.height){
+
+			this.orbit.width = this.orbit.el.width();
+			this.orbit.height = this.orbit.el.width()/2;
+
+			// Create the Raphael object to hold the vector graphics
+			this.orbit.paper = Raphael('orbits', this.orbit.width, this.orbit.height);
+
+		}
+
+		// r - radius
+		// e - ellipticity
+		function makeOrbit(r,e,a){
+			if(!a || typeof a !== "number") a = 0;
+			var dy = r*Math.sin(a*Math.PI/180);
+			var dx = r*Math.cos(a*Math.PI/180);
+			// Big cludge as I can't work out how the ellipses are positioned when rotation is applied
+			if(Math.abs(a) > 80){
+				dy += r;
+				dx += r*e;
+			}
+			return " m "+(0-dx)+" "+(0-dy)+" a " + (r) + "," + (e*r) + " "+a+" 1,1 0,0.01";
+		}
+
+
+		// Update the transforms on a Raphael element
+		function transformer(el,trans){
+			t = el.data('transform');
+			if(typeof t==="undefined") t = el.attr('transform');
+			if(typeof t!=="object") t = [];
+			m = false;
+			for(i = 0; i < t.length ; i++){
+				for(j = 0; j < trans.length ; j++){
+					if(t[i][0] == trans[j][0]){
+						t[i] = trans[j][0];
+						m = true;
+					}
+				}
+			}
+			if(!m) t.push(trans);
+			// Re-apply the transform
+			// For some reason IE 8 has a bug in using .attr('transform') to get the transform.
+			// As a work-around we make a function that stores the transform in .data('transform')
+			el.transform(t).data('transform',t);
+		}
+		
+		//Adapted from https://github.com/brianblakely/raphael-animate-along/blob/master/raphael-animate-along.js
+		Raphael.el.animateAlong = function(path, duration, repetitions, direction) {
+			var element = this;
+			element.path = path;
+			element.direction = direction;
+			element.pathLen = element.path.getTotalLength();    
+			duration = (typeof duration === "undefined") ? 5000 : duration;
+			repetitions = (typeof repetitions === "undefined") ? 1 : repetitions;
+			element.paper.customAttributes.along = function(v) {
+				var a = (this.direction && this.direction < 0) ? (1-v)*this.pathLen : (v * this.pathLen);
+				var point = this.path.getPointAtLength(a),
+					attrs = { cx: point.x, cy: point.y };
+				this.rotateWith && (attrs.transform = 'r'+point.alpha);
+				return attrs;
+			};    
+			element.attr({along:0});
+			var anim = Raphael.animation({along: 1}, duration);
+			element.animate(anim.repeat(repetitions)); 
+		};
+
+
+		var E = { x: this.orbit.width/2, y: this.orbit.height/2, r: 43, radius: 6378 };
+		var M = { r: 5, o: E.r*58 };
+		
+		this.orbit.Earth = this.orbit.paper.path('M '+(E.x)+' '+(E.y)+' m -6.927379,42.861897 c -10.79338,-1.89118 -21.17473,-8.25868 -27.52258,-16.87977 -15.02038,-20.3975403 -9.63593,-48.89125 11.79388,-62.41291 16.94554,-10.68989 39.20392,-8.16663 53.44137,6.06404 5.87268,5.86844 9.54913,12.35889 11.55616,20.4047297 1.16835,4.68267 1.47335,12.35457 0.67442,16.96248 -3.048,17.5816003 -15.4426,30.9321203 -32.72769,35.2509203 -4.33566,1.08222 -12.80575,1.3828 -17.21554,0.61124 z m 11.33951,-4.82289 c 6.979,-0.79891 13.53188,-3.42643 19.13933,-7.67694 1.15933,-0.87801 1.54372,-1.39287 1.55148,-2.07816 0.0111,-1.02039 1.44195,-5.01704 2.21985,-6.20209 0.27849,-0.42427 1.14761,-1.04771 1.93147,-1.3828 1.16726,-0.50337 1.55149,-0.90389 2.12308,-2.23204 0.96595,-2.24427 1.24242,-3.45664 0.78812,-3.45664 -0.20378,0 -0.37027,-0.35953 -0.37027,-0.78883 0,-0.79173 1.79473,-2.69441 4.39774,-4.66182 0.67305,-0.50337 1.30726,-1.14263 1.40925,-1.40725 0.839,-2.1845903 0.99945,-12.8320603 0.19322,-12.8320603 -0.51768,0 -0.70521,2.11843004 -0.37077,4.19083 0.41376,2.56281 0.0979,4.2843 -0.80975,4.4166 -1.268,0.18698 -2.13725,-1.28571 -2.84295,-4.81066 -1.04641,-5.22558 -1.1243,-5.32626 -4.56601,-5.9267 -1.02684,-0.17978 -1.08581,-0.13664 -1.08581,0.81689 0,2.22772 -2.80355,5.66709 -5.01389,6.15248 -1.66562,0.36674 -2.62557,-0.58246 -4.17367,-4.1182 -0.735,-1.67907 -1.59947,-3.31138 -1.92103,-3.62778 -0.55377,-0.5465 -0.58461,-0.53932 -0.58461,0.12942 0,1.72221 2.25458,7.61438 3.13524,8.1954 0.20501,0.13663 1.09432,0.2445 1.97628,0.25168 2.19326,0.006 3.57706,0.7572 3.56758,1.9329 -0.013,1.61147 -1.23802,3.68026 -3.44872,5.8238503 -2.98531,2.89432 -3.55713,3.9449 -3.55867,6.5372 -0.001,2.03428 0.0252,2.10116 0.75047,1.87393 0.41348,-0.12941 1.04826,-0.43864 1.4107,-0.68312 0.98159,-0.67594 2.09973,-0.56808 2.35382,0.2373 0.2447,0.77084 -1.60253,3.96287 -3.39818,5.87203 -0.87967,0.93553 -1.18294,1.07144 -1.83751,0.82552 -0.6725,-0.25169 -0.7809,-0.51776 -0.76252,-1.84374 0.013,-0.95351 -0.11516,-1.50505 -0.33409,-1.43314 -0.34616,0.10794 -0.65537,0.55369 -2.65289,3.74859 -1.17673,1.884 -3.79425,3.67597 -6.07803,4.16206 -1.86971,0.3955 -3.48492,0 -3.48492,-0.7953 0,-0.26607 -0.43326,-1.29723 -0.96281,-2.30323 -1.69574,-3.22007 -1.84288,-3.99595 -1.37585,-7.24909 0.47848,-3.33582 0.19975,-4.72582 -1.21076997,-6.04247 -1.23809,-1.15484 -1.87063003,-2.53763 -1.64033003,-3.58606 0.18366003,-0.8355803 0.0857,-0.9340903 -1.34377,-1.3540303 -1.63056,-0.4818 -5.15549,-0.33078 -7.61198,0.33796 -1.09992,0.30202 -1.50461,0.23729 -2.83756,-0.42426 -2.86801,-1.42451 -4.32003,-4.81858 -3.89918,-9.11581996 0.39299,-4.01250004 0.54491,-4.51441004 1.80953,-5.97273004 0.68343,-0.78955 1.4365,-1.90268 1.67352,-2.47365 0.39117,-0.94344 1.89274,-1.9479897 3.70135,-2.4779597 0.29382,-0.0863 0.93542,-0.95925 0.19912,-1.19654 -2.63115,0.61121 -3.4916,-1.84374 -1.69974,-3.63426 0.98587,-0.98515 1.35751,-1.14982 2.33866,-1.03549 1.08194,0.12941 1.16649,0.0791 1.16649,-0.77733 0,-0.49616 0.15034,-1.00814 0.33409,-1.12032 0.18367,-0.11497 1.44636,-0.95208 1.44636,-1.06713 0,-0.36673 -4.64238,1.86027 -2.8525,-0.67594 -0.26146,0.41707 -0.65956,0.19416 -1.1224,-0.26605 -0.87213,-0.87083 0.29445,-1.80204 1.00761,-1.97534 0.45202,-0.006 0.96756,1.28718 1.31068,0.58247 -0.82013,-1.1455 -0.62158,-2.63904 -0.28282,-2.70519 1.2859,-0.53932 1.49537,0.78523 1.49537,1.81137 0,0.39548 0.2255,0.91683 0.50112,1.14478 0.27563,0.2373 0.50113,0.79099 0.50113,1.25048 0,0.76151 0.0941,0.81689 1.06974,0.62562 1.49278,-0.30203 2.53575,-1.36699 2.47682,-2.53838 2.67534003,-1.78908 -0.15886,-1.06713 -0.29398,-1.20302 -0.63709,-0.63281 -0.13885,-1.83798 1.40482003,-3.38761 2.14169997,-2.15005 3.38975997,-2.7095 6.99786997,-3.13593 2.72694,-0.32359 3.09543,-0.29482 4.55125,0.35235 1.4815,0.64719 1.57109,0.76511 1.3838,1.70136 l -0.20026,0.99953 1.80809,-0.9643 c 0.99444,-0.53212 2.56916,-1.15844 3.49938,-1.39646 0.93019,-0.2373 1.69128,-0.56808 1.69128,-0.72556 0,-0.3811 -4.20122,-2.31041 -6.97024,-3.21358 -5.23627,-1.70998 -13.51182,-2.25217 -18.83832,-1.23323 -4.60384,0.87944 -12.69228,4.14912 -13.13855,5.31187 -0.0896,0.2373 0.0676,0.97293 0.34883,1.64671 0.63899,1.52734 0.65767,3.66589 0.0424,4.84878 -0.61531,1.18145 -5.09802,5.49956 -6.37985,6.14601 -0.55124,0.27325 -2.28017,0.92043 -3.84205,1.42882 -4.30776,1.40509 -4.48483,1.5338 -5.46145,3.96935 -1.64357,4.1023697 -2.26852,7.1311597 -2.45187,11.88357974 l -0.17385,4.50720996 2.56104,2.13282 c 1.40855,1.17211 3.47725,3.15461 4.59709,4.4043803 1.51998,1.6956 2.48972,2.45639 3.82568,2.99714 1.96471,0.79675 3.45111,2.28165 3.45111,3.4473 0,0.40987 -0.24263,1.46045 -0.53917,2.3291 -0.49906,1.46407 -0.49746,1.69129 0.0209,3.04604 0.6264,1.6388 0.35646,2.62899 -0.81789,3.00146 -0.81891,0.26607 -0.85988,1.23396 -0.10053,2.39168 0.31237,0.4746 0.65063,1.48204 0.7517,2.23635 0.17385,1.29723 0.34977,1.48131 3.26152,3.42284 7.40928,4.93795 16.4231,7.13547 25.16577,6.13379 z m 8.48287,-49.9181103 c 0.68449,-0.6759197 0.66479,-1.1239097 -0.0596,-1.3360497 -0.3215,-0.10072 -2.2514,-1.55826 -2.92906,-1.89694 -1.01081,-0.49617 6.7196,-1.01966 1.45075,-3.16972 -5.26885,-2.15079 -2.56176,4.83655 -3.32655,3.88017 -0.65552,-0.8327 -2.0022,-1.01104 -2.5835,-0.48178 -1.15634,-1.28069 -2.98745,-3.84351 -3.70189,-3.89241 -1.03907997,-0.0718 1.16978,2.32983 -0.27577,2.81665 -1.44553997,0.48898 -2.20706997,-2.826 -4.09265,-2.61817 -2.10817,0.2373 -4.38327,-0.72484 -5.18683,3.39191 -0.004,0.52493 3.06135,0.16533 4.50771,0 2.32603003,-0.3092 3.10989003,0 5.24841,1.91132 l 1.88004,1.7013597 3.25884,-0.2373 c 2.19723,-0.1583 3.33099,-0.11497 3.48033,0.1222 0.3297,0.53212 1.72994,0.42425 2.32983,-0.16534 z M 4.909541,-24.277303 c 0.94202,-0.43865 1.16153,-0.7191 1.01819,-1.2505 -0.10053,-0.38112 -0.18477,-0.86794 -0.18732,-1.09733 0.15107,-1.64957 -0.72375,-1.29793 -1.57539,-0.0718 -0.77094,1.13326 -4.82187997,5.26872 -0.61209,2.96477 0.0752,-0.0718 0.69614,-0.25886 1.35664,-0.56807 z m 20.69451,-1.74667 c 0.2363,-0.38111 -1.04497,-1.12824 -1.47795,-0.86075 -0.16792,0.10072 -0.95404,-0.15107 -1.74709,-0.56808 -1.95859,-1.02828 -6.42112,-0.95134 -5.77085,0.10072 0.10572,0.17256 1.42366,0.3164 2.92877,0.3164 2.03716,8.3e-4 3.03539,0.16533 3.90586,0.6328 1.36846,0.73274 1.8913,0.82694 2.16126,0.3883 z').attr({ stroke: 0, fill: '#69DFFF' });
+		var orbits = {
+			"GEO": { "inclination": 0, "color": "#048b9f", "ellipticity": 0.3, "zoom": 0 },
+			"SNS": { "inclination": -90, "color": "#7ac36a", "ellipticity": 0.4, "zoom": 0 },
+			"HEO": { "inclination": 30, "color": "#de1f2a", "ellipticity": 0.4, "r": E.r*3.3, "zoom": 0 },
+			"LEO": { "inclination": -30, "color": "#cccccc", "ellipticity": 0.4, "zoom": 0 },
+			"EM2": { "inclination": 0, "color": "#fac900", "ellipticity": 0, "zoom": 1 }		
+		}
+		var dx,dy,r,e,i;
+
+		if(this.orbit.zoom == 0){
+			var period;
+			for(var o in this.data.orbit){
+				if(orbits[o] && orbits[o].zoom == this.orbit.zoom){
+					if(o=="HEO"){
+						dx = -E.r*1.2;
+						dy = -E.r*0.35;
+					}else{
+						dx = 0;
+						dy = 0;
+					}
+					if(!orbits[o].r) orbits[o].r = E.r*(1+this.data.orbit[o].altitude.value/E.radius);
+					i = (orbits[o].inclination) ? orbits[o].inclination : 0;
+					e = (orbits[o].ellipticity) ? orbits[o].ellipticity : 1;
+					this.orbit.orbits[o] = this.orbit.paper.path("M "+(E.x+dx)+","+(E.y+dy)+" "+makeOrbit(orbits[o].r,e,orbits[o].inclination)).attr({ stroke: orbits[o].color,'stroke-dasharray': '-','stroke-width':1.5 });
+					this.orbit.anim[o] = this.orbit.paper.circle(E.x - orbits[o].r,E.y,3).attr({ 'fill': orbits[o].color, 'stroke': 0 });
+					period = this.convertValue(this.data.orbit[o].period,'hours')
+					this.orbit.anim[o].animateAlong(this.orbit.orbits[o], period.value*3*1000, Infinity);
+				}
+			}
+		}
+
+		if(this.orbit.zoom == 1){
+			this.orbit.Moonorbit = this.orbit.paper.path("M "+E.x+","+E.y+" "+makeOrbit(M.o*this.orbit.scale[1],1)).attr({ stroke:'#606060','stroke-dasharray': '-','stroke-width':1.5 });
+			this.orbit.Moonlagrangian = this.orbit.paper.path("M "+E.x+","+E.y+" "+makeOrbit(M.o*this.orbit.scale[1]*440000/380000,1)).attr({ stroke:'#000000','stroke-dasharray': '-','stroke-width':0.5 });
+			this.orbit.anim["Moon"] = this.orbit.paper.circle(E.x - M.o*this.orbit.scale[1]*Math.cos(Math.PI/6),E.y - M.o*this.orbit.scale[1]*Math.sin(Math.PI/6),M.r).attr({ 'fill': '#606060' });
+			this.orbit.anim["EM2"] = this.orbit.paper.circle(E.x - M.o*this.orbit.scale[1]*Math.cos(Math.PI/6),E.y - M.o*this.orbit.scale[1]*Math.sin(Math.PI/6),M.o*((440000/380000)-1)*this.orbit.scale[1]).attr({ 'stroke': orbits["EM2"].color,'stroke-dasharray': '-','stroke-width':1.5 });
+			this.orbit.anim["MoonL2"] = this.orbit.paper.circle(E.x - M.o*this.orbit.scale[1]*(440000/380000)*Math.cos(Math.PI/6),E.y - M.o*this.orbit.scale[1]*(440000/380000)*Math.sin(Math.PI/6),2.5).attr({ 'fill': orbits["EM2"].color, 'stroke': 0 });
+			this.orbit.anim["Moon"].animateAlong(this.orbit.Moonorbit, 28000, Infinity,-1);
+			this.orbit.anim["EM2"].animateAlong(this.orbit.Moonorbit, 28000, Infinity,-1);
+			this.orbit.anim["MoonL2"].animateAlong(this.orbit.Moonlagrangian, 28000, Infinity,-1);
+		}else{
+		}
+
+		if(this.orbit.scale[this.orbit.zoom] < 1){
+			var scale = this.orbit.scale[this.orbit.zoom];
+			transformer(this.orbit.Earth,['S',scale*10,scale*10,E.x,E.y]);
+			for(var o in this.orbit.orbits) transformer(this.orbit.orbits[o],['S',scale,scale,E.x,E.y]);
+		}
+
+		// Show the contents again
+		this.orbit.el.children().show();
+
 		return this;
 	}
 
@@ -718,7 +871,7 @@ if(typeof $==="undefined") $ = {};
 			if(o.length == 0) el.html(options);
 		}else if(dropdown=="cooling_cryogenic"){
 			for(var m in this.data.cooling.cryogenic){
-				v = (d.designer.cooling.options.cryogenic.options[m] ? d.designer.cooling.options.cryogenic.options[m] : this.formatValue(this.data.cooling.cryogenic[m].life));
+				v = (this.phrases.designer.cooling.options.cryogenic.options[m] ? this.phrases.designer.cooling.options.cryogenic.options[m] : this.formatValue(this.data.cooling.cryogenic[m].life));
 				if(o.length == 0) options += '<option value="'+m+'">'+v+'</option>';
 				else el.find('option[value="'+m+'"]').text(v);
 			}
@@ -780,9 +933,11 @@ if(typeof $==="undefined") $ = {};
 		// TODO: update selected
 		if(d.designer.cooling.intro) $('#designer_cooling .intro').html(d.designer.cooling.intro).addClass('bigpadded');
 		$('#designer_cooling .options label[for=hascooling]').html(d.designer.cooling.enable.label);
-		this.updateToggle({ "id": "cooling_no", "label": this.phrases.designer.cooling.enable.no }, { "id": "cooling_yes", "label": this.phrases.designer.cooling.enable.yes }, this.phrases.designer.cooling.enable.label);
-		this.updateDropdown('cooling_temperature');
-		$('#designer_cooling .options label[for=cooling_temperature]').html(d.designer.cooling.options.temperature.label);
+		this.updateToggle({ "id": "cooling_no", "label": d.designer.cooling.enable.no }, { "id": "cooling_yes", "label": d.designer.cooling.enable.yes }, this.phrases.designer.cooling.enable.label);
+		if(d.designer.cooling.options.temperature){
+			this.updateDropdown('cooling_temperature');
+			$('#designer_cooling .options label[for=cooling_temperature]').html(d.designer.cooling.options.temperature.label);
+		}
 
 		if(this.data.cooling.passive){
 			html = "";
@@ -1394,7 +1549,7 @@ if(typeof $==="undefined") $ = {};
 				}
 			}
 		}else if(v.dimension == "time"){
-			if(to == "years" || to == "months" || to == "days"){
+			if(to == "years" || to == "months" || to == "days" || to == "hours"){
 				if(v.units != to){
 					// Step 1: convert to SI
 					if(v.units == "months") v.value /= 12;
@@ -1787,6 +1942,8 @@ if(typeof $==="undefined") $ = {};
 					if($('#'+view).find('input')) $('#'+view).find('input').eq(0).focus(); 
 					else $('#menubar a.toggle'+section).focus();
 				}
+				this.updateOrbits();
+
 			}else{
 				$('#designer').show().find('a').eq(0).focus();
 			}

@@ -390,6 +390,19 @@ a.togglescience:hover { padding-bottom: 0.3em; border-bottom: 0.2em solid #69dff
 #designer_site .site_details div { clear: both; }
 #designer_site .site_details .value { float: right; text-align: right; }
 
+#designer_orbit #orbits {
+	width: 99%;
+	width: calc(100% - 4px);
+	margin: 2px;
+	background-color: #101010;
+	background-image:-moz-linear-gradient(top,#101010,#000000);
+	background-image:-webkit-gradient(linear,0 0,0 100%,from(#101010),to(#000000));
+	background-image:-webkit-linear-gradient(top,#101010,#000000);
+	background-image:-o-linear-gradient(top,#101010,#000000);
+	background-image:linear-gradient(to bottom,#101010,#000000);
+	background-repeat:repeat-x;
+}
+
 #main {
 	display: table;
 	width: 100%;
