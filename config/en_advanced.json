@@ -284,6 +284,18 @@
 			"label": "Orbit",
 			"hint": "Choose the type of orbit",
 			"intro": "",
+			"altitude": "Altitude:",
+			"obsfrac": "Observing fraction:",
+			"period": "Orbital period:",
+			"fuellife": "Fuel lifetime",
+			"temperature": "Ambient temperature:",
+			"groundcost": "Ground cost (per year):",
+			"risk": "Risk:",
+			"multiplier": {
+				"passive": "Passive cooling multiplier",
+				"cryo": "Cyrogenic cooling multiplier",
+				"launchcost": "Launch cost multiplier"
+			},
 			"options": {
 				"LEO": { "label": "Low Earth Orbit", "altitude": "<", "launchreq": "Requires ability to de-orbit" },
 				"HEO": { "label": "High Earth Orbit", "altitude": ">", "launchreq": "" },
@@ -300,6 +312,11 @@
 			"duration": {
 				"label": "Mission duration:",
 				"none": "Select mission duration"
+			},
+			"diagram": {
+				"sun": "The Sun",
+				"earthorbit": "Earth's orbit",
+				"moonorbit": "Moon's orbit"
 			},
 			"questions": []
 		},
@@ -347,7 +364,8 @@
 		"years_20": { "label": "20 yrs" }
 	},
 	"errors": {
-		"site": "<strong>%SITE%</strong> is unsuitable for the <strong>%VEHICLE%</strong>."
+		"site": "<strong>%SITE%</strong> is unsuitable for the <strong>%VEHICLE%</strong>.",
+		"orbit": "<strong>%ORBIT%</strong> cannot be reached from <strong>%SITE%</strong>."
 	},
 	"warnings": {
 	

@@ -337,7 +337,7 @@ a.togglescience:hover { padding-bottom: 0.3em; border-bottom: 0.2em solid #69dff
 #designer .designer_title { display:none; }
 #designer form li:last-child { margin-bottom: 0px; }
 #designer .intro.bigpadded, #designer .summary.bigpadded { padding-bottom: 0px; }
-#designer .site_details { margin-top: 1em; }
+#designer .site_details, #designer .orbit_details { margin-top: 1em; }
 #designer .banner { position: relative; height: 8em; line-height: 8em; overflow: hidden; text-align: center; vertical-align: bottom; margin: 2px; background-color: #202020; background-position: center center; background-size: cover; }
 #designer .banner .title {
 	color: #ffffff;
@@ -353,7 +353,7 @@ a.togglescience:hover { padding-bottom: 0.3em; border-bottom: 0.2em solid #69dff
 #designer_vehicle input { margin: auto; float: none; }
 #designer_vehicle li .details { display: none; }
 #designer_vehicle li:hover, #designer_vehicle li:focus { background-color: #f6f6f6; }
-#designer_vehicle li.withinfo, #designer_vehicle .vehicle_details, #designer_site .site_details { background-color: #e6e6e6; }
+#designer_vehicle li.withinfo, #designer .vehicle_details, #designer .site_details, #designer .orbit_details { background-color: #e6e6e6; }
 #designer_vehicle li.selected {
 	background-color: #cccccc;
 	background-image:-moz-linear-gradient(top,#202020,#cccccc);
@@ -388,12 +388,13 @@ a.togglescience:hover { padding-bottom: 0.3em; border-bottom: 0.2em solid #69dff
 #designer_site .worldmap .launchsite:hover,#designer_site .worldmap .launchsite:focus { border: 8px solid white; margin-left: -8px; margin-top: -8px; border-radius: 8px; box-shadow: 0px 0px 8px white; }
 #designer_site .worldmap .launchsite.selected { border-color: #fac900; }
 #designer_site .site_details div { clear: both; }
-#designer_site .site_details .value { float: right; text-align: right; }
+#designer .site_details .value,#designer .orbit_details .value { float: right; text-align: right; }
 
 #designer_orbit #orbits {
 	width: 99%;
 	width: calc(100% - 4px);
 	margin: 2px;
+
 	background-color: #101010;
 	background-image:-moz-linear-gradient(top,#101010,#000000);
 	background-image:-webkit-gradient(linear,0 0,0 100%,from(#101010),to(#000000));
@@ -401,6 +402,13 @@ a.togglescience:hover { padding-bottom: 0.3em; border-bottom: 0.2em solid #69dff
 	background-image:-o-linear-gradient(top,#101010,#000000);
 	background-image:linear-gradient(to bottom,#101010,#000000);
 	background-repeat:repeat-x;
+/*
+	background-color: transparent;
+	background-color: rgba(34,101,153,0.7);
+	background-image: linear-gradient(rgba(255,255,255,.5) 1px, transparent 2px), linear-gradient(90deg, rgba(255,255,255,.5) 1px, transparent 2px), linear-gradient(rgba(255,255,255,.15) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.15) 1px, transparent 1px);
+	background-size: 5em 5em, 5em 5em, 1em 1em, 1em 1em;
+	background-position:-2px -2px, -2px -2px, -1px -1px, -1px -1px;
+*/
 }
 
 #main {
