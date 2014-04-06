@@ -270,9 +270,13 @@
 				"EM2": { "label": "Earth-Moon L2", "launchreq": "Requires relay satellite" },
 				"ES2": { "label": "Earth-Sun L2", "launchreq": "" }
 			},
+			"orbit": {
+				"label": "Orbit",
+				"none": "Select orbit"
+			},
 			"duration": {
 				"label": "Mission duration:",
-				"none": "Select duration"
+				"none": "Select mission duration"
 			},
 			"questions": []
 		},

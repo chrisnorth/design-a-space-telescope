@@ -79,6 +79,26 @@ if(typeof $==="undefined") $ = {};
 	window.fullScreenApi = fullScreenApi;
 	// End of Full Screen API
 
+	// Animate Raphael object along a path
+	// Adapted from https://github.com/brianblakely/raphael-animate-along/blob/master/raphael-animate-along.js
+	Raphael.el.animateAlong = function(path, duration, repetitions, direction) {
+		var element = this;
+		element.path = path;
+		element.direction = direction;
+		element.pathLen = element.path.getTotalLength();    
+		duration = (typeof duration === "undefined") ? 5000 : duration;
+		repetitions = (typeof repetitions === "undefined") ? 1 : repetitions;
+		element.paper.customAttributes.along = function(v) {
+			var a = (this.direction && this.direction < 0) ? (1-v)*this.pathLen : (v * this.pathLen);
+			var point = this.path.getPointAtLength(a),
+				attrs = { cx: point.x, cy: point.y };
+			this.rotateWith && (attrs.transform = 'r'+point.alpha);
+			return attrs;
+		};    
+		element.attr({along:0});
+		var anim = Raphael.animation({along: 1}, duration);
+		element.animate(anim.repeat(repetitions)); 
+	};
 
 	// Get the URL query string and parse it
 	$.query = function() {
@@ -339,9 +359,8 @@ if(typeof $==="undefined") $ = {};
 
 
 		// Build orbit options
-		$('#designer_orbit .options').html('<div id="orbits"></div><form><ul class="bigpadded"><li><label for="mission_duration"></label><select id="mission_duration" name="mission_duration"></select></li></ul></form>');
-
-//		this.space = Raphael('orbits', $('#orbits').width(), $('#orbits').height());
+		$('#designer_orbit .options').html('<div id="orbits"></div><form><ul class="bigpadded"><li><label for="mission_orbit"></label><select id="mission_orbit" name="mission_orbit"></select></li><li><label for="mission_duration"></label><select id="mission_duration" name="mission_duration"></select></li></ul></form>');
+		$('#designer_orbit #mission_orbit').on('change',{me:this},function(e){ e.data.me.highlightOrbit(); });
 
 
 		// Build proposal document holder
@@ -437,7 +456,7 @@ if(typeof $==="undefined") $ = {};
 		}
 		
 		// Update the orbit diagram
-		this.updateOrbits();
+		this.resizeSpace();
 		
 		return this;
 	}
@@ -648,7 +667,7 @@ if(typeof $==="undefined") $ = {};
 
 		this.updateLanguage();
 
-		this.updateOrbits();
+		this.makeSpace();
 
 		$('#language.dropdown').hide()
 		
@@ -661,40 +680,97 @@ if(typeof $==="undefined") $ = {};
 		
 		return this;
 	}
-	
-	SpaceTelescope.prototype.updateOrbits = function(){
 
-console.log('updateOrbits')
+	SpaceTelescope.prototype.selectOrbit = function(key){
 
-		if(!this.orbit) this.orbit = { width: 0, height: 300, zoom: 1, scale: [1,0.025], anim: {}, orbits:{} };
-		if(!this.orbit.el) this.orbit.el = $('#orbits');
-
-		// Remove the Raphael object if it already exists
-		if(this.orbit.paper){
-			for(var i in this.orbit.anim) this.orbit.anim[i].stop();
-			this.orbit.paper.remove();
+		if(key){
+			$('#designer_orbit #mission_orbit').val(key);
+			$('#designer_orbit #mission_orbit').trigger('change');
 		}
 
-		if(!this.orbit.el.is(':visible')) return this;
+		return this;
+	}
 
+	// Highlight the selected orbit (uses the value from the select dropdown)
+	// If necessary (i.e. if the zoom level has changed) redisplay the orbits first.
+	SpaceTelescope.prototype.highlightOrbit = function(){
+
+		var key = $('#mission_orbit').find(":selected").attr('value');
+
+		if(!this.space.orbits[key] || this.space.zoom!=this.space.orbits[key].zoom){
+			// We've changed the zoom level so remove existing orbits
+			this.space.zoom = (this.space.zoom==1) ? 0 : 1;
+			// Re-draw the orbits
+			this.displayOrbits();
+		}
+		
+		// Update SVG elements
+		for(var o in this.space.orbits){
+			if(o==key) this.space.orbits[o].selected = true;
+			else this.space.orbits[o].selected = false;
+			this.space.orbits[o].dotted.attr({'stroke-width':(this.space.orbits[o].selected ? this.space.orbits[o].inp.stroke.selected : this.space.orbits[o].inp.stroke.off)});
+		}
+
+		return this;
+	}
+
+	SpaceTelescope.prototype.resizeSpace = function(){
 
 		// Hide the contents so we can calculate the size of the container
-		this.orbit.el.children().hide();
+		this.space.el.children().hide();
 
 		// Check if the HTML element has changed size due to responsive CSS
-		if(this.orbit.el.innerWidth() != this.orbit.width || this.orbit.el.innerHeight() != this.orbit.height){
-
-			this.orbit.width = this.orbit.el.width();
-			this.orbit.height = this.orbit.el.width()/2;
-
+		if(this.space.el.innerWidth() != this.space.width || this.space.el.innerHeight() != this.space.height){
+			this.space.width = this.space.el.width();
+			this.space.height = this.space.el.width()/2;
 			// Create the Raphael object to hold the vector graphics
-			this.orbit.paper = Raphael('orbits', this.orbit.width, this.orbit.height);
-
+			if(!this.space.paper){
+				this.space.paper = Raphael('orbits', this.space.width, this.space.height);
+			}else{
+				this.space.paper.setSize(this.space.width,this.space.height);
+				this.space.rebuild = true;
+			}
+			// Define Earth and Moon
+			this.space.E = { x: this.space.width/2, y: this.space.height/2, r: this.space.height/6, radius: 6378 };
+			this.space.M = { r: 5, o: this.space.E.r*58 };
 		}
+
+		// Calculate the orbits to show
+		this.displayOrbits();
+
+		// Show the contents again
+		this.space.el.children().show();
+
+		return this;	
+	}
+	
+	SpaceTelescope.prototype.makeSpace = function(zoom){
+
+console.log('makeSpace')
+
+		if(!this.space) this.space = { width: 0, height: 300, zoom: 0, scale: [1,0.025], anim: {}, orbits:{} };
+	
+		if(zoom) this.space.zoom = zoom;
+		//this.space.orbits = {};
+		if(!this.space.el) this.space.el = $('#orbits');
+
+		if(!this.space.el.is(':visible')) return this;
+
+		if(!this.space.paper) this.resizeSpace();
+
+		this.displayOrbits();
+
+		return this;
+	}
+
+	SpaceTelescope.prototype.displayOrbits = function(){
+
+console.log('displayOrbits',this.space.zoom)
 
 		// r - radius
 		// e - ellipticity
-		function makeOrbit(r,e,a){
+		// a - inclination angle
+		function makeOrbitPath(r,e,a){
 			if(!a || typeof a !== "number") a = 0;
 			var dy = r*Math.sin(a*Math.PI/180);
 			var dx = r*Math.cos(a*Math.PI/180);
@@ -728,82 +804,142 @@ console.log('updateOrbits')
 			el.transform(t).data('transform',t);
 		}
 		
-		//Adapted from https://github.com/brianblakely/raphael-animate-along/blob/master/raphael-animate-along.js
-		Raphael.el.animateAlong = function(path, duration, repetitions, direction) {
-			var element = this;
-			element.path = path;
-			element.direction = direction;
-			element.pathLen = element.path.getTotalLength();    
-			duration = (typeof duration === "undefined") ? 5000 : duration;
-			repetitions = (typeof repetitions === "undefined") ? 1 : repetitions;
-			element.paper.customAttributes.along = function(v) {
-				var a = (this.direction && this.direction < 0) ? (1-v)*this.pathLen : (v * this.pathLen);
-				var point = this.path.getPointAtLength(a),
-					attrs = { cx: point.x, cy: point.y };
-				this.rotateWith && (attrs.transform = 'r'+point.alpha);
-				return attrs;
-			};    
-			element.attr({along:0});
-			var anim = Raphael.animation({along: 1}, duration);
-			element.animate(anim.repeat(repetitions)); 
-		};
-
-
-		var E = { x: this.orbit.width/2, y: this.orbit.height/2, r: 43, radius: 6378 };
-		var M = { r: 5, o: E.r*58 };
+		if(this.space.rebuild){
+			for(var o in this.space.orbits){
+				if(this.space.orbits[o].dotted) this.space.orbits[o].dotted.stop().remove();
+				if(this.space.orbits[o].solid) this.space.orbits[o].solid.stop().remove();
+				if(this.space.orbits[o].satellite) this.space.orbits[o].satellite.stop().remove();
+				delete this.space.orbits[o];
+			}
+			if(this.space.Moon) this.space.Moon.remove();
+			if(this.space.Moonorbit) this.space.Moonorbit.remove();
+			if(this.space.Moonlagrangian) this.space.Moonlagrangian.remove();
+			
+			this.space.rebuild = false;
+		}
 		
-		this.orbit.Earth = this.orbit.paper.path('M '+(E.x)+' '+(E.y)+' m -6.927379,42.861897 c -10.79338,-1.89118 -21.17473,-8.25868 -27.52258,-16.87977 -15.02038,-20.3975403 -9.63593,-48.89125 11.79388,-62.41291 16.94554,-10.68989 39.20392,-8.16663 53.44137,6.06404 5.87268,5.86844 9.54913,12.35889 11.55616,20.4047297 1.16835,4.68267 1.47335,12.35457 0.67442,16.96248 -3.048,17.5816003 -15.4426,30.9321203 -32.72769,35.2509203 -4.33566,1.08222 -12.80575,1.3828 -17.21554,0.61124 z m 11.33951,-4.82289 c 6.979,-0.79891 13.53188,-3.42643 19.13933,-7.67694 1.15933,-0.87801 1.54372,-1.39287 1.55148,-2.07816 0.0111,-1.02039 1.44195,-5.01704 2.21985,-6.20209 0.27849,-0.42427 1.14761,-1.04771 1.93147,-1.3828 1.16726,-0.50337 1.55149,-0.90389 2.12308,-2.23204 0.96595,-2.24427 1.24242,-3.45664 0.78812,-3.45664 -0.20378,0 -0.37027,-0.35953 -0.37027,-0.78883 0,-0.79173 1.79473,-2.69441 4.39774,-4.66182 0.67305,-0.50337 1.30726,-1.14263 1.40925,-1.40725 0.839,-2.1845903 0.99945,-12.8320603 0.19322,-12.8320603 -0.51768,0 -0.70521,2.11843004 -0.37077,4.19083 0.41376,2.56281 0.0979,4.2843 -0.80975,4.4166 -1.268,0.18698 -2.13725,-1.28571 -2.84295,-4.81066 -1.04641,-5.22558 -1.1243,-5.32626 -4.56601,-5.9267 -1.02684,-0.17978 -1.08581,-0.13664 -1.08581,0.81689 0,2.22772 -2.80355,5.66709 -5.01389,6.15248 -1.66562,0.36674 -2.62557,-0.58246 -4.17367,-4.1182 -0.735,-1.67907 -1.59947,-3.31138 -1.92103,-3.62778 -0.55377,-0.5465 -0.58461,-0.53932 -0.58461,0.12942 0,1.72221 2.25458,7.61438 3.13524,8.1954 0.20501,0.13663 1.09432,0.2445 1.97628,0.25168 2.19326,0.006 3.57706,0.7572 3.56758,1.9329 -0.013,1.61147 -1.23802,3.68026 -3.44872,5.8238503 -2.98531,2.89432 -3.55713,3.9449 -3.55867,6.5372 -0.001,2.03428 0.0252,2.10116 0.75047,1.87393 0.41348,-0.12941 1.04826,-0.43864 1.4107,-0.68312 0.98159,-0.67594 2.09973,-0.56808 2.35382,0.2373 0.2447,0.77084 -1.60253,3.96287 -3.39818,5.87203 -0.87967,0.93553 -1.18294,1.07144 -1.83751,0.82552 -0.6725,-0.25169 -0.7809,-0.51776 -0.76252,-1.84374 0.013,-0.95351 -0.11516,-1.50505 -0.33409,-1.43314 -0.34616,0.10794 -0.65537,0.55369 -2.65289,3.74859 -1.17673,1.884 -3.79425,3.67597 -6.07803,4.16206 -1.86971,0.3955 -3.48492,0 -3.48492,-0.7953 0,-0.26607 -0.43326,-1.29723 -0.96281,-2.30323 -1.69574,-3.22007 -1.84288,-3.99595 -1.37585,-7.24909 0.47848,-3.33582 0.19975,-4.72582 -1.21076997,-6.04247 -1.23809,-1.15484 -1.87063003,-2.53763 -1.64033003,-3.58606 0.18366003,-0.8355803 0.0857,-0.9340903 -1.34377,-1.3540303 -1.63056,-0.4818 -5.15549,-0.33078 -7.61198,0.33796 -1.09992,0.30202 -1.50461,0.23729 -2.83756,-0.42426 -2.86801,-1.42451 -4.32003,-4.81858 -3.89918,-9.11581996 0.39299,-4.01250004 0.54491,-4.51441004 1.80953,-5.97273004 0.68343,-0.78955 1.4365,-1.90268 1.67352,-2.47365 0.39117,-0.94344 1.89274,-1.9479897 3.70135,-2.4779597 0.29382,-0.0863 0.93542,-0.95925 0.19912,-1.19654 -2.63115,0.61121 -3.4916,-1.84374 -1.69974,-3.63426 0.98587,-0.98515 1.35751,-1.14982 2.33866,-1.03549 1.08194,0.12941 1.16649,0.0791 1.16649,-0.77733 0,-0.49616 0.15034,-1.00814 0.33409,-1.12032 0.18367,-0.11497 1.44636,-0.95208 1.44636,-1.06713 0,-0.36673 -4.64238,1.86027 -2.8525,-0.67594 -0.26146,0.41707 -0.65956,0.19416 -1.1224,-0.26605 -0.87213,-0.87083 0.29445,-1.80204 1.00761,-1.97534 0.45202,-0.006 0.96756,1.28718 1.31068,0.58247 -0.82013,-1.1455 -0.62158,-2.63904 -0.28282,-2.70519 1.2859,-0.53932 1.49537,0.78523 1.49537,1.81137 0,0.39548 0.2255,0.91683 0.50112,1.14478 0.27563,0.2373 0.50113,0.79099 0.50113,1.25048 0,0.76151 0.0941,0.81689 1.06974,0.62562 1.49278,-0.30203 2.53575,-1.36699 2.47682,-2.53838 2.67534003,-1.78908 -0.15886,-1.06713 -0.29398,-1.20302 -0.63709,-0.63281 -0.13885,-1.83798 1.40482003,-3.38761 2.14169997,-2.15005 3.38975997,-2.7095 6.99786997,-3.13593 2.72694,-0.32359 3.09543,-0.29482 4.55125,0.35235 1.4815,0.64719 1.57109,0.76511 1.3838,1.70136 l -0.20026,0.99953 1.80809,-0.9643 c 0.99444,-0.53212 2.56916,-1.15844 3.49938,-1.39646 0.93019,-0.2373 1.69128,-0.56808 1.69128,-0.72556 0,-0.3811 -4.20122,-2.31041 -6.97024,-3.21358 -5.23627,-1.70998 -13.51182,-2.25217 -18.83832,-1.23323 -4.60384,0.87944 -12.69228,4.14912 -13.13855,5.31187 -0.0896,0.2373 0.0676,0.97293 0.34883,1.64671 0.63899,1.52734 0.65767,3.66589 0.0424,4.84878 -0.61531,1.18145 -5.09802,5.49956 -6.37985,6.14601 -0.55124,0.27325 -2.28017,0.92043 -3.84205,1.42882 -4.30776,1.40509 -4.48483,1.5338 -5.46145,3.96935 -1.64357,4.1023697 -2.26852,7.1311597 -2.45187,11.88357974 l -0.17385,4.50720996 2.56104,2.13282 c 1.40855,1.17211 3.47725,3.15461 4.59709,4.4043803 1.51998,1.6956 2.48972,2.45639 3.82568,2.99714 1.96471,0.79675 3.45111,2.28165 3.45111,3.4473 0,0.40987 -0.24263,1.46045 -0.53917,2.3291 -0.49906,1.46407 -0.49746,1.69129 0.0209,3.04604 0.6264,1.6388 0.35646,2.62899 -0.81789,3.00146 -0.81891,0.26607 -0.85988,1.23396 -0.10053,2.39168 0.31237,0.4746 0.65063,1.48204 0.7517,2.23635 0.17385,1.29723 0.34977,1.48131 3.26152,3.42284 7.40928,4.93795 16.4231,7.13547 25.16577,6.13379 z m 8.48287,-49.9181103 c 0.68449,-0.6759197 0.66479,-1.1239097 -0.0596,-1.3360497 -0.3215,-0.10072 -2.2514,-1.55826 -2.92906,-1.89694 -1.01081,-0.49617 6.7196,-1.01966 1.45075,-3.16972 -5.26885,-2.15079 -2.56176,4.83655 -3.32655,3.88017 -0.65552,-0.8327 -2.0022,-1.01104 -2.5835,-0.48178 -1.15634,-1.28069 -2.98745,-3.84351 -3.70189,-3.89241 -1.03907997,-0.0718 1.16978,2.32983 -0.27577,2.81665 -1.44553997,0.48898 -2.20706997,-2.826 -4.09265,-2.61817 -2.10817,0.2373 -4.38327,-0.72484 -5.18683,3.39191 -0.004,0.52493 3.06135,0.16533 4.50771,0 2.32603003,-0.3092 3.10989003,0 5.24841,1.91132 l 1.88004,1.7013597 3.25884,-0.2373 c 2.19723,-0.1583 3.33099,-0.11497 3.48033,0.1222 0.3297,0.53212 1.72994,0.42425 2.32983,-0.16534 z M 4.909541,-24.277303 c 0.94202,-0.43865 1.16153,-0.7191 1.01819,-1.2505 -0.10053,-0.38112 -0.18477,-0.86794 -0.18732,-1.09733 0.15107,-1.64957 -0.72375,-1.29793 -1.57539,-0.0718 -0.77094,1.13326 -4.82187997,5.26872 -0.61209,2.96477 0.0752,-0.0718 0.69614,-0.25886 1.35664,-0.56807 z m 20.69451,-1.74667 c 0.2363,-0.38111 -1.04497,-1.12824 -1.47795,-0.86075 -0.16792,0.10072 -0.95404,-0.15107 -1.74709,-0.56808 -1.95859,-1.02828 -6.42112,-0.95134 -5.77085,0.10072 0.10572,0.17256 1.42366,0.3164 2.92877,0.3164 2.03716,8.3e-4 3.03539,0.16533 3.90586,0.6328 1.36846,0.73274 1.8913,0.82694 2.16126,0.3883 z').attr({ stroke: 0, fill: '#69DFFF' });
+		if(this.space.Earth) this.space.Earth.remove();
+		if(this.space.zoom == 0) this.space.Earth = this.space.paper.path('M '+(this.space.E.x)+' '+(this.space.E.y)+' m -6.927379,42.861897 c -10.79338,-1.89118 -21.17473,-8.25868 -27.52258,-16.87977 -15.02038,-20.3975403 -9.63593,-48.89125 11.79388,-62.41291 16.94554,-10.68989 39.20392,-8.16663 53.44137,6.06404 5.87268,5.86844 9.54913,12.35889 11.55616,20.4047297 1.16835,4.68267 1.47335,12.35457 0.67442,16.96248 -3.048,17.5816003 -15.4426,30.9321203 -32.72769,35.2509203 -4.33566,1.08222 -12.80575,1.3828 -17.21554,0.61124 z m 11.33951,-4.82289 c 6.979,-0.79891 13.53188,-3.42643 19.13933,-7.67694 1.15933,-0.87801 1.54372,-1.39287 1.55148,-2.07816 0.0111,-1.02039 1.44195,-5.01704 2.21985,-6.20209 0.27849,-0.42427 1.14761,-1.04771 1.93147,-1.3828 1.16726,-0.50337 1.55149,-0.90389 2.12308,-2.23204 0.96595,-2.24427 1.24242,-3.45664 0.78812,-3.45664 -0.20378,0 -0.37027,-0.35953 -0.37027,-0.78883 0,-0.79173 1.79473,-2.69441 4.39774,-4.66182 0.67305,-0.50337 1.30726,-1.14263 1.40925,-1.40725 0.839,-2.1845903 0.99945,-12.8320603 0.19322,-12.8320603 -0.51768,0 -0.70521,2.11843004 -0.37077,4.19083 0.41376,2.56281 0.0979,4.2843 -0.80975,4.4166 -1.268,0.18698 -2.13725,-1.28571 -2.84295,-4.81066 -1.04641,-5.22558 -1.1243,-5.32626 -4.56601,-5.9267 -1.02684,-0.17978 -1.08581,-0.13664 -1.08581,0.81689 0,2.22772 -2.80355,5.66709 -5.01389,6.15248 -1.66562,0.36674 -2.62557,-0.58246 -4.17367,-4.1182 -0.735,-1.67907 -1.59947,-3.31138 -1.92103,-3.62778 -0.55377,-0.5465 -0.58461,-0.53932 -0.58461,0.12942 0,1.72221 2.25458,7.61438 3.13524,8.1954 0.20501,0.13663 1.09432,0.2445 1.97628,0.25168 2.19326,0.006 3.57706,0.7572 3.56758,1.9329 -0.013,1.61147 -1.23802,3.68026 -3.44872,5.8238503 -2.98531,2.89432 -3.55713,3.9449 -3.55867,6.5372 -0.001,2.03428 0.0252,2.10116 0.75047,1.87393 0.41348,-0.12941 1.04826,-0.43864 1.4107,-0.68312 0.98159,-0.67594 2.09973,-0.56808 2.35382,0.2373 0.2447,0.77084 -1.60253,3.96287 -3.39818,5.87203 -0.87967,0.93553 -1.18294,1.07144 -1.83751,0.82552 -0.6725,-0.25169 -0.7809,-0.51776 -0.76252,-1.84374 0.013,-0.95351 -0.11516,-1.50505 -0.33409,-1.43314 -0.34616,0.10794 -0.65537,0.55369 -2.65289,3.74859 -1.17673,1.884 -3.79425,3.67597 -6.07803,4.16206 -1.86971,0.3955 -3.48492,0 -3.48492,-0.7953 0,-0.26607 -0.43326,-1.29723 -0.96281,-2.30323 -1.69574,-3.22007 -1.84288,-3.99595 -1.37585,-7.24909 0.47848,-3.33582 0.19975,-4.72582 -1.21076997,-6.04247 -1.23809,-1.15484 -1.87063003,-2.53763 -1.64033003,-3.58606 0.18366003,-0.8355803 0.0857,-0.9340903 -1.34377,-1.3540303 -1.63056,-0.4818 -5.15549,-0.33078 -7.61198,0.33796 -1.09992,0.30202 -1.50461,0.23729 -2.83756,-0.42426 -2.86801,-1.42451 -4.32003,-4.81858 -3.89918,-9.11581996 0.39299,-4.01250004 0.54491,-4.51441004 1.80953,-5.97273004 0.68343,-0.78955 1.4365,-1.90268 1.67352,-2.47365 0.39117,-0.94344 1.89274,-1.9479897 3.70135,-2.4779597 0.29382,-0.0863 0.93542,-0.95925 0.19912,-1.19654 -2.63115,0.61121 -3.4916,-1.84374 -1.69974,-3.63426 0.98587,-0.98515 1.35751,-1.14982 2.33866,-1.03549 1.08194,0.12941 1.16649,0.0791 1.16649,-0.77733 0,-0.49616 0.15034,-1.00814 0.33409,-1.12032 0.18367,-0.11497 1.44636,-0.95208 1.44636,-1.06713 0,-0.36673 -4.64238,1.86027 -2.8525,-0.67594 -0.26146,0.41707 -0.65956,0.19416 -1.1224,-0.26605 -0.87213,-0.87083 0.29445,-1.80204 1.00761,-1.97534 0.45202,-0.006 0.96756,1.28718 1.31068,0.58247 -0.82013,-1.1455 -0.62158,-2.63904 -0.28282,-2.70519 1.2859,-0.53932 1.49537,0.78523 1.49537,1.81137 0,0.39548 0.2255,0.91683 0.50112,1.14478 0.27563,0.2373 0.50113,0.79099 0.50113,1.25048 0,0.76151 0.0941,0.81689 1.06974,0.62562 1.49278,-0.30203 2.53575,-1.36699 2.47682,-2.53838 2.67534003,-1.78908 -0.15886,-1.06713 -0.29398,-1.20302 -0.63709,-0.63281 -0.13885,-1.83798 1.40482003,-3.38761 2.14169997,-2.15005 3.38975997,-2.7095 6.99786997,-3.13593 2.72694,-0.32359 3.09543,-0.29482 4.55125,0.35235 1.4815,0.64719 1.57109,0.76511 1.3838,1.70136 l -0.20026,0.99953 1.80809,-0.9643 c 0.99444,-0.53212 2.56916,-1.15844 3.49938,-1.39646 0.93019,-0.2373 1.69128,-0.56808 1.69128,-0.72556 0,-0.3811 -4.20122,-2.31041 -6.97024,-3.21358 -5.23627,-1.70998 -13.51182,-2.25217 -18.83832,-1.23323 -4.60384,0.87944 -12.69228,4.14912 -13.13855,5.31187 -0.0896,0.2373 0.0676,0.97293 0.34883,1.64671 0.63899,1.52734 0.65767,3.66589 0.0424,4.84878 -0.61531,1.18145 -5.09802,5.49956 -6.37985,6.14601 -0.55124,0.27325 -2.28017,0.92043 -3.84205,1.42882 -4.30776,1.40509 -4.48483,1.5338 -5.46145,3.96935 -1.64357,4.1023697 -2.26852,7.1311597 -2.45187,11.88357974 l -0.17385,4.50720996 2.56104,2.13282 c 1.40855,1.17211 3.47725,3.15461 4.59709,4.4043803 1.51998,1.6956 2.48972,2.45639 3.82568,2.99714 1.96471,0.79675 3.45111,2.28165 3.45111,3.4473 0,0.40987 -0.24263,1.46045 -0.53917,2.3291 -0.49906,1.46407 -0.49746,1.69129 0.0209,3.04604 0.6264,1.6388 0.35646,2.62899 -0.81789,3.00146 -0.81891,0.26607 -0.85988,1.23396 -0.10053,2.39168 0.31237,0.4746 0.65063,1.48204 0.7517,2.23635 0.17385,1.29723 0.34977,1.48131 3.26152,3.42284 7.40928,4.93795 16.4231,7.13547 25.16577,6.13379 z m 8.48287,-49.9181103 c 0.68449,-0.6759197 0.66479,-1.1239097 -0.0596,-1.3360497 -0.3215,-0.10072 -2.2514,-1.55826 -2.92906,-1.89694 -1.01081,-0.49617 6.7196,-1.01966 1.45075,-3.16972 -5.26885,-2.15079 -2.56176,4.83655 -3.32655,3.88017 -0.65552,-0.8327 -2.0022,-1.01104 -2.5835,-0.48178 -1.15634,-1.28069 -2.98745,-3.84351 -3.70189,-3.89241 -1.03907997,-0.0718 1.16978,2.32983 -0.27577,2.81665 -1.44553997,0.48898 -2.20706997,-2.826 -4.09265,-2.61817 -2.10817,0.2373 -4.38327,-0.72484 -5.18683,3.39191 -0.004,0.52493 3.06135,0.16533 4.50771,0 2.32603003,-0.3092 3.10989003,0 5.24841,1.91132 l 1.88004,1.7013597 3.25884,-0.2373 c 2.19723,-0.1583 3.33099,-0.11497 3.48033,0.1222 0.3297,0.53212 1.72994,0.42425 2.32983,-0.16534 z M 4.909541,-24.277303 c 0.94202,-0.43865 1.16153,-0.7191 1.01819,-1.2505 -0.10053,-0.38112 -0.18477,-0.86794 -0.18732,-1.09733 0.15107,-1.64957 -0.72375,-1.29793 -1.57539,-0.0718 -0.77094,1.13326 -4.82187997,5.26872 -0.61209,2.96477 0.0752,-0.0718 0.69614,-0.25886 1.35664,-0.56807 z m 20.69451,-1.74667 c 0.2363,-0.38111 -1.04497,-1.12824 -1.47795,-0.86075 -0.16792,0.10072 -0.95404,-0.15107 -1.74709,-0.56808 -1.95859,-1.02828 -6.42112,-0.95134 -5.77085,0.10072 0.10572,0.17256 1.42366,0.3164 2.92877,0.3164 2.03716,8.3e-4 3.03539,0.16533 3.90586,0.6328 1.36846,0.73274 1.8913,0.82694 2.16126,0.3883 z');
+		else this.space.Earth = this.space.paper.path('M '+(this.space.E.x)+' '+(this.space.E.y)+' m 0 -43.6 c,-19.195,-0.359,-37.44,13.34,-41.865,32.015 c,-4.561096,17.1667748,2.72917,37.246587,17.656538,46.977656 c,13.373687,9.285707,32.0526208,9.996435,45.992018,1.508414 c,5.957424,-3.319826,11.075156,-8.039317,14.543607,-13.935126 c,10.546018,-15.6499112,8.720274,-38.18332,-4.018314,-52.068038 c,-8.07768,-9.096389,-20.115729,-14.609639,-32.30837958,-14.498209 z m,0.09375,5.375 c,12.57022058,-0.128555,24.94591858,6.5994,31.74999958,17.15625 c,-0.94917,5.002919,-6.086293,1.530374,-3.041063,-1.619594 c,-1.457671,-0.526126,-4.932858,2.878261,-6.847657,-0.603915 c,-3.184453,-1.308637,-6.3599,1.691261,-5.15979,4.188482 c,-3.782846,2.664376,-6.163477,-4.184848,-10.1526402,-1.250482 c,0.930713,-0.712397,6.3522672,-6.132291,1.9485113,-5.743768 c,-2.1471153,3.268504,-5.9001547,5.6116,-9.7549386,6.742359 c,-3.0333281,1.666497,3.4871809,3.919715,5.0848899,3.874212 c,4.4525294,2.286084,8.5800896,7.1007845,6.1927696,12.1877615 c,1.90772,3.21337796,3.996962,6.758283,2.957496,10.7455353 c,-1.088944,1.5975017,-1.993627,6.6457482,-3.8098779,5.9629142 c,0.09411,-5.5523502,-5.8551147,1.424572,-5.9032977,3.921686 c,-0.233555,1.607328,-2.089538,4.666463,0.316221,3.452139 c,1.5791784,3.031545,4.0433554,1.23024,2.5706854,-1.432668 c,-0.755832,-2.214988,1.071785,-4.450478,1.431817,-0.910521 c,3.4227102,1.986574,-2.079278,8.026424,-3.441317,4.221977 c,-0.05038,3.190668,-5.9116094,4.835384,-6.2547064,5.746188 c,2.90918203,2.904457,-1.551746,2.079951,-3.228894,2.254064 c,-1.300676,5.220523,5.49423002,3.315504,6.569102,-0.06951 c,2.572843,-3.120142,7.9417807,2.476723,8.2176023,0.158591 c,-5.1570029,-2.906592,4.3679773,1.498193,3.7328613,-0.172704 c,0.355589,-3.393695,5.711734,0.663429,6.832822,-2.635732 c,2.782198,1.056601,-3.254675,4.26505,-4.941003,4.473991 c,-2.714088,0.573027,-2.35272,4.236763,-5.7564619,2.583428 c,-3.9108453,-2.119881,-7.9960437,-0.807618,-12.0653907,-0.15703 c,-4.931145,2.236895,-10.2173174,1.74978,-14.8366384,-1.385684 c,-10.813803,-5.566552,-18.524599,-16.654538,-20.004852,-28.7192222 c,2.732778,2.989211,6.598056,4.7293091,8.998081,8.3559682 c,1.599527,0.730324,3.945675,3.523961,4.82994,3.171984 c,1.833841,-2.480098,4.151057,-5.772095,2.790203,-8.5464922 c,3.363681,-2.474446,-0.289772,-5.5676083,-3.153322,-3.525176 c,-4.391341,0.818177,-0.191169,-4.9463963,1.391046,-6.2324653 c,2.857681,-0.460706,3.513174,2.41500097,3.980956,3.732494 c,3.316523,-0.0353,0.834669,-3.882306,4.374542,-4.092336 c,0.130908,-1.411563,-3.481833,-2.709873,-0.211945,-1.771103 c,4.26026,-1.249006,1.634257,-4.365219,-0.493731,-3.1780419 c,2.763194,-2.1547021,4.181646,-7.6700956,8.5041634,-6.4331296 c,2.24906,-0.416067,2.612667,-2.860803,1.014942,-3.538046 c,2.719085,-1.835258,-1.409228,-1.787455,-0.10076,-4.29649 c,-1.830306,-0.309672,-4.304873,-0.973664,-2.132519,-3.101562 c,-3.3845944,2.57314,-3.5487544,7.860395,-8.9615664,7.398945 c,-4.539774,1.777416,-8.333796,-1.761858,-12.015717,-2.70409 c,-1.477835,0.696073,-6.487149,4.76626,-4.024621,0.665479 c,6.584664,-11.488859,19.533888,-19.038283,32.80405842,-18.874686 z m,-33.65625042,21.59375 c,-0.631472,0.607654,-1.285523,0.774007,0,0 z m,25.0312504,13.8749985 c,-1.378264,1.634778,-4.7210584,3.734578,-0.438841,3.849626 c,2.052676,0.491366,5.022044,2.343429,3.253406,-0.95631404 c,-0.419504,-1.86979296,-2.20923,-1.09186896,-2.814565,-2.89331196 z m,-4.0625014,1.78125 c,-4.153103,-0.46570203,-2.208863,6.0465023,-6.129842,6.4757613 c,-0.605185,2.103009,2.300217,1.325155,3.030352,1.204245 c,1.416321,-2.463228,3.738442,-4.4874303,3.09949,-7.6800063 z m,3.5312514,3.03125 c,0.05302,4.2453083,-2.3776964,7.126859,-5.9261904,8.5371375 c,-2.819523,3.208873,0.326358,5.688926,2.91859,2.404436 c,3.6624634,0.820099,7.4597394,0.468648,8.5987314,-3.8347225 c,3.98761402,-4.1394317,-1.837631,-7.108603,-5.591131,-7.106851 z m,2.65625,13.8750015 c,-4.0821284,2.583778,5.79884807,0.948002,0,0 z m,29.9999996,1 c,-0.310613,2.698258,7.000211,1.533177,2.616976,4.524626 c,-1.843124,0.0678,-6.305665,-2.59259,-2.616976,-4.524626 z m,-25.0937496,4.625 c,-2.608331,0.710104,1.04075402,4.160157,-0.444775,4.552104 c,-1.433649,1.942609,4.729631,-0.163724,1.34758302,-1.892931 c,-0.672,-1.046,-1.062,-1.697,-0.903,-2.659 z m,32.4999996,0.34375 c,-0.01479,2.705677,-5.791353,2.714607,-1.548038,0.956689 l,0.803335,-0.425532 z m,-12.78125,0.375 c,0.523617,1.617196,4.358842,0.626771,1.387,2.500788 c,-1.249506,2.929193,-6.666484,3.760447,-3.932662,-0.407517 c,1.533416,0.532153,2.258563,-0.753125,2.545662,-2.093271 z m,-21.9374996,1.15625 c,-3.15159,1.823608,0.365256,3.975785,0.815462,0.936364 c,-0.0466,-0.434703,-0.359015,-0.867276,-0.815462,-0.936364 z m,26.4374996,6.90625 c,-1.920358,1.510414,-1.942756,0.166742,0,0 z');
+		this.space.Earth.attr({ stroke: 0, fill: '#69DFFF', opacity:0.6 });
+
 		var orbits = {
 			"GEO": { "inclination": 0, "color": "#048b9f", "ellipticity": 0.3, "zoom": 0 },
 			"SNS": { "inclination": -90, "color": "#7ac36a", "ellipticity": 0.4, "zoom": 0 },
-			"HEO": { "inclination": 30, "color": "#de1f2a", "ellipticity": 0.4, "r": E.r*3.3, "zoom": 0 },
+			"HEO": { "inclination": 30, "color": "#de1f2a", "ellipticity": 0.4, "r": this.space.E.r*3.3, "zoom": 0 },
 			"LEO": { "inclination": -30, "color": "#cccccc", "ellipticity": 0.4, "zoom": 0 },
-			"EM2": { "inclination": 0, "color": "#fac900", "ellipticity": 0, "zoom": 1 }		
+			"EM2": { "inclination": 0, "color": "#fac900", "ellipticity": 1, "zoom": 1 },
+			"ES2": { "inclination": 0, "color": "#fa0000", "ellipticity": 1, "zoom": 1 }
 		}
-		var dx,dy,r,e,i;
+		var dx,dy,r,e,i,period;
 
-		if(this.orbit.zoom == 0){
-			var period;
+		var _obj = this;
+
+		function makeOrbit(inp){
+			if(!inp) return null;
+			if(!inp.cx) inp.cx = 0;
+			if(!inp.cy) inp.cy = 0;
+			if(!inp.e) inp.e = 1;
+			if(!inp.i) inp.i = 0;
+			if(!inp.r) inp.r = 0;
+			if(!inp.color) inp.color = '#999999';
+			if(!inp.stroke) inp.stroke = {};
+			if(!inp.stroke.on) inp.stroke.on = 2.5;
+			if(!inp.stroke.off) inp.stroke.off = 1.5;
+			if(!inp.stroke.selected) inp.stroke.selected = 3.5;
+			var p = { inp: inp };
+			if(inp.e==1){
+				p.dotted = _obj.space.paper.circle(inp.cx,inp.cy,inp.r);
+				p.solid = _obj.space.paper.circle(inp.cx,inp.cy,inp.r);
+			}else{
+				var path = "m "+inp.cx+","+inp.cy+" "+makeOrbitPath(inp.r,inp.e,inp.i);
+				p.dotted = _obj.space.paper.path(path);
+				p.solid = _obj.space.paper.path(path);
+			}
+
+			// Make the satellie
+			if(inp.period){
+				p.satellite = _obj.space.paper.circle(inp.cx,inp.cy,4).attr({ 'fill': inp.color, 'stroke': 0 });
+				p.satellite.animateAlong((inp.orbit ? inp.orbit : p.dotted), inp.period, Infinity, inp.orbitdir);
+			}
+
+			p.dotted.attr({ stroke: inp.color,'stroke-dasharray': '-','stroke-width':inp.stroke.off });
+			p.solid.attr({ stroke: inp.color,'opacity':0.1,'stroke-width': 8 });
+
+			// Add mouseover events
+			p.solid.hover(function(){ $('#orbits').css('cursor','pointer'); this.dotted.attr({"stroke-width": inp.stroke.on}); }, function(){ $('#orbits').css('cursor','default');this.dotted.attr({"stroke-width": (this.selected ? inp.stroke.selected : inp.stroke.off)}); }, p, p);
+			p.solid.click(function(){ _obj.selectOrbit(inp.key); },p,p);
+
+			// Store zoom level this applies to
+			p.zoom = _obj.space.zoom+0;
+			p.hide = function(){
+				p.dotted.hide();
+				p.solid.hide();
+				p.satellite.hide();
+			}
+			p.show = function(){
+				p.dotted.show();
+				p.solid.show();
+				p.satellite.show();
+			}
+
+			return p;
+		}
+
+		if(this.space.zoom == 0){
 			for(var o in this.data.orbit){
-				if(orbits[o] && orbits[o].zoom == this.orbit.zoom){
+				if(orbits[o] && orbits[o].zoom == this.space.zoom && !this.space.orbits[o]){
 					if(o=="HEO"){
-						dx = -E.r*1.2;
-						dy = -E.r*0.35;
+						dx = -this.space.E.r*1.2;
+						dy = -this.space.E.r*0.35;
 					}else{
 						dx = 0;
 						dy = 0;
 					}
-					if(!orbits[o].r) orbits[o].r = E.r*(1+this.data.orbit[o].altitude.value/E.radius);
-					i = (orbits[o].inclination) ? orbits[o].inclination : 0;
-					e = (orbits[o].ellipticity) ? orbits[o].ellipticity : 1;
-					this.orbit.orbits[o] = this.orbit.paper.path("M "+(E.x+dx)+","+(E.y+dy)+" "+makeOrbit(orbits[o].r,e,orbits[o].inclination)).attr({ stroke: orbits[o].color,'stroke-dasharray': '-','stroke-width':1.5 });
-					this.orbit.anim[o] = this.orbit.paper.circle(E.x - orbits[o].r,E.y,3).attr({ 'fill': orbits[o].color, 'stroke': 0 });
+					if(!orbits[o].r) orbits[o].r = this.space.E.r*(1+this.data.orbit[o].altitude.value/this.space.E.radius);
 					period = this.convertValue(this.data.orbit[o].period,'hours')
-					this.orbit.anim[o].animateAlong(this.orbit.orbits[o], period.value*3*1000, Infinity);
+					this.space.orbits[o] = makeOrbit({key:o,period:period.value*3*1000,r:orbits[o].r,cx:(this.space.E.x+dx),cy:(this.space.E.y+dy),color:orbits[o].color,e:orbits[o].ellipticity,i:orbits[o].inclination});
+				}
+			}
+		}else if(this.space.zoom == 1){
+			if(!this.space.orbits["EM2"] && this.data.orbit["EM2"]){
+				this.space.Moonorbit = this.space.paper.path("M "+this.space.E.x+","+this.space.E.y+" "+makeOrbitPath(this.space.M.o*this.space.scale[1],1)).attr({ stroke:'#606060','stroke-dasharray': '-','stroke-width':1.5 });
+				this.space.Moonlagrangian = this.space.paper.path("M "+this.space.E.x+","+this.space.E.y+" "+makeOrbitPath(this.space.M.o*this.space.scale[1]*440000/380000,1)).attr({ stroke:'#000000','stroke-dasharray': '-','stroke-width':0.5 });
+				this.space.Moon = this.space.paper.circle(this.space.E.x - this.space.M.o*this.space.scale[1]*Math.cos(Math.PI/6),this.space.E.y - this.space.M.o*this.space.scale[1]*Math.sin(Math.PI/6),this.space.M.r).attr({ 'fill': '#606060' });
+				period = this.convertValue(this.data.orbit["EM2"].period,'days');
+				this.space.Moon.animateAlong(this.space.Moonorbit, period.value*1000, Infinity,-1);
+				this.space.orbits["EM2"] = makeOrbit({key:"EM2",period:period.value*1000,orbit:this.space.Moonlagrangian,orbitdir:-1,r:this.space.M.o*((440000/380000)-1)*this.space.scale[1],cx:(this.space.E.x - this.space.M.o*this.space.scale[1]*Math.cos(Math.PI/6)),cy:(this.space.M.o*this.space.scale[1]*Math.sin(Math.PI/6)),color:orbits["EM2"].color,e:1,i:0});
+				this.space.orbits["EM2"].dotted.animateAlong(this.space.Moonorbit, period.value*1000, Infinity,-1);
+				this.space.orbits["EM2"].solid.animateAlong(this.space.Moonorbit, period.value*1000, Infinity,-1);
+			}
+			if(!this.space.orbits["ES2"] && this.data.orbit["ES2"]){
+				period = this.convertValue(this.data.orbit["ES2"].period,'days');
+				this.space.orbits["ES2"] = makeOrbit({key:"ES2",period:period.value*1000,r:1,cx:(this.space.E.x + 4*this.space.M.o*this.space.scale[1]),cy:this.space.E.y,color:orbits["ES2"].color});
+			}
+		}
+
+		for(var o in this.space.orbits){
+			if(this.space.orbits[o].zoom!=this.space.zoom) this.space.orbits[o].hide();
+			else this.space.orbits[o].show();
+			if(this.space.orbits["EM2"]){
+				if(this.space.zoom == 0){
+					this.space.Moonorbit.hide();
+					this.space.Moonlagrangian.hide();
+					this.space.Moon.hide();
+				}else{
+					this.space.Moonorbit.show();			
+					this.space.Moonlagrangian.show();
+					this.space.Moon.show();
 				}
 			}
 		}
 
-		if(this.orbit.zoom == 1){
-			this.orbit.Moonorbit = this.orbit.paper.path("M "+E.x+","+E.y+" "+makeOrbit(M.o*this.orbit.scale[1],1)).attr({ stroke:'#606060','stroke-dasharray': '-','stroke-width':1.5 });
-			this.orbit.Moonlagrangian = this.orbit.paper.path("M "+E.x+","+E.y+" "+makeOrbit(M.o*this.orbit.scale[1]*440000/380000,1)).attr({ stroke:'#000000','stroke-dasharray': '-','stroke-width':0.5 });
-			this.orbit.anim["Moon"] = this.orbit.paper.circle(E.x - M.o*this.orbit.scale[1]*Math.cos(Math.PI/6),E.y - M.o*this.orbit.scale[1]*Math.sin(Math.PI/6),M.r).attr({ 'fill': '#606060' });
-			this.orbit.anim["EM2"] = this.orbit.paper.circle(E.x - M.o*this.orbit.scale[1]*Math.cos(Math.PI/6),E.y - M.o*this.orbit.scale[1]*Math.sin(Math.PI/6),M.o*((440000/380000)-1)*this.orbit.scale[1]).attr({ 'stroke': orbits["EM2"].color,'stroke-dasharray': '-','stroke-width':1.5 });
-			this.orbit.anim["MoonL2"] = this.orbit.paper.circle(E.x - M.o*this.orbit.scale[1]*(440000/380000)*Math.cos(Math.PI/6),E.y - M.o*this.orbit.scale[1]*(440000/380000)*Math.sin(Math.PI/6),2.5).attr({ 'fill': orbits["EM2"].color, 'stroke': 0 });
-			this.orbit.anim["Moon"].animateAlong(this.orbit.Moonorbit, 28000, Infinity,-1);
-			this.orbit.anim["EM2"].animateAlong(this.orbit.Moonorbit, 28000, Infinity,-1);
-			this.orbit.anim["MoonL2"].animateAlong(this.orbit.Moonlagrangian, 28000, Infinity,-1);
-		}else{
-		}
-
-		if(this.orbit.scale[this.orbit.zoom] < 1){
-			var scale = this.orbit.scale[this.orbit.zoom];
-			transformer(this.orbit.Earth,['S',scale*10,scale*10,E.x,E.y]);
-			for(var o in this.orbit.orbits) transformer(this.orbit.orbits[o],['S',scale,scale,E.x,E.y]);
-		}
-
-		// Show the contents again
-		this.orbit.el.children().show();
+		// Scale the Earth. SVG size is 48px so we scale that first;
+		var scale = this.space.E.r/48;
+		// If we are in Earth-Moon view we scale the Earth so that it is visible
+		if(this.space.scale[this.space.zoom] < 1) scale *= this.space.scale[this.space.zoom]*10;
+		// Now scale the path
+		if(this.space.Earth) transformer(this.space.Earth,['S',scale,scale,this.space.E.x,this.space.E.y]);
 
 		return this;
 	}
@@ -848,6 +984,13 @@ console.log('updateOrbits')
 				v = this.formatValue(this.data.mission[m].life);
 				if(o.length == 0) options += '<option value="'+m+'">'+v+'</option>';
 				else el.find('option[value="'+m+'"]').text(v);
+			}
+			if(o.length == 0) el.html(options);
+		}else if(dropdown=="mission_orbit"){
+			if(this.phrases.designer.orbit.orbit["none"]) options = '<option value="">'+this.phrases.designer.orbit.orbit["none"]+'</option>';
+			for(var m in this.data.orbit){
+				if(o.length == 0) options += '<option value="'+m+'">'+this.phrases.designer.orbit.options[m].label+'</option>';
+				else el.find('option[value="'+m+'"]').text(this.phrases.designer.orbit.options[m].label);
 			}
 			if(o.length == 0) el.html(options);
 		}else if(dropdown=="cooling_temperature"){
@@ -1032,6 +1175,8 @@ console.log('updateOrbits')
 		// Update the orbit section
 		$('#designer_orbit .options label[for=mission_duration]').html(d.designer.orbit.duration.label);
 		this.updateDropdown('mission_duration');
+		$('#designer_orbit .options label[for=mission_orbit]').html(d.designer.orbit.orbit.label);
+		this.updateDropdown('mission_orbit');
 
 
 		// Update the proposal section
@@ -1302,6 +1447,9 @@ console.log('updateOrbits')
 			v.value *= -this.convertValue(m,'years').value;	
 		}else if(choice=="temperature"){
 			v = (this.choices.temperature ? this.choices.temperature : this.makeValue(400,'K'));
+		}else if(choice=="orbit.cost"){
+			v = (this.choices.orbit && this.choices.vehicle ? this.copyValue(this.data.vehicle[this.choices.vehicle].cost) : this.makeValue(0,'GBP'));;
+			v.value *= -this.data.orbit[this.choices.orbit].multiplier.launchcost;
 		}else if(choice=="orbit"){
 			//'LEO (<span class="convertable" data-value="400000" data-units="m" data-dimension="length">400000m</span>)'
 			v = ' ';
@@ -1379,9 +1527,11 @@ console.log('updateOrbits')
 
 		cost.vehicle = this.getChoice('vehicle.cost');
 		cost.ground = this.getChoice('ground.cost');
-		cost.operations = this.sumValues(cost.vehicle,cost.ground);
+		cost.launch = this.getChoice('launch.cost');
+		cost.operations = this.sumValues(cost.launch,cost.ground);
 		cost.total = this.sumValues(cost.dev,cost.operations);
 		cost.free = this.sumValues(this.scenario.budget,cost.total);
+
 
 		// Format times
 		time.mirror = this.getChoice('mirror.time');
@@ -1415,7 +1565,7 @@ console.log('updateOrbits')
 		this.updateTable('cost_dev_cooling','value',cost.cooling);
 		this.updateTable('cost_dev_instruments','value',this.makeValue(0,'GBP'));
 		this.updateTable('cost_operations_total','value',cost.operations);
-		this.updateTable('cost_operations_launch','value',cost.vehicle);
+		this.updateTable('cost_operations_launch','value',cost.launch);
 		this.updateTable('cost_operations_ground','value',cost.ground);
 		this.updateTable('cost_total','value',cost.total);
 		this.table.cost_available.list.cost_available.value = cost.free;
@@ -1596,6 +1746,7 @@ console.log('updateOrbits')
 		if(args.length > 0){
 			output = this.convertValue(args[0],args[0].units);
 			for(i = 1 ; i < args.length ; i++){
+console.log(args[i])
 				if(typeof args[i]==="object" && args[i].dimension && args[i].dimension===output.dimension){
 					a = this.convertValue(args[i],args[0].units);
 					output.value += a.value;
@@ -1603,7 +1754,7 @@ console.log('updateOrbits')
 			}
 			return output;
 		}
-		return args[0];
+		return {};
 	}
 	
 
@@ -1703,7 +1854,10 @@ console.log('updateOrbits')
 	SpaceTelescope.prototype.makeValue = function(v,u,d){
 		if(!d){
 			if(this.phrases.ui.units[u]) d = this.phrases.ui.units[u].dimension;
-			else d = "unknown";
+			else{
+				if(this.phrases.ui.currency[u]) d = "currency";
+				else d = "unknown";
+			}
 		}
 		return { 'value': v, 'units': u, 'dimension': d };
 	}
@@ -1942,7 +2096,7 @@ console.log('updateOrbits')
 					if($('#'+view).find('input')) $('#'+view).find('input').eq(0).focus(); 
 					else $('#menubar a.toggle'+section).focus();
 				}
-				this.updateOrbits();
+				this.makeSpace();
 
 			}else{
 				$('#designer').show().find('a').eq(0).focus();
