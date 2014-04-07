@@ -362,7 +362,7 @@ a.togglescience:hover { padding-bottom: 0.3em; border-bottom: 0.2em solid #69dff
 #designer_vehicle .selector { text-align: center; margin-bottom: 1em; }
 #designer_vehicle .selector label { display: none; }
 #designer_vehicle input { margin: auto; float: none; }
-#designer_vehicle li .details { display: none; margin-top: 0px; }
+#designer_vehicle li .vehicle_details { display: none; }
 #designer_vehicle .details { margin-top: 0px; }
 #designer_vehicle li:hover, #designer_vehicle li:focus { background-color: #f6f6f6; }
 #designer_vehicle li.selected {
