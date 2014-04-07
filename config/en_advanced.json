@@ -211,6 +211,11 @@
 			"label": "Cooling",
 			"hint": "Apply cooling to your instruments",
 			"intro": "A <a href=\"#guide_cooling\" class=\"guidelink\">cooling system</a> may be required for your satellite, particularly for instruments observing longer wavelengths.",
+			"cost": "Cost:",
+			"mass": "Mass:",
+			"temperature": "Temperature:",
+			"devtime": "Development time:",
+			"life": "Life:",
 			"enable": {
 				"label": "Do you need cooling?",
 				"no": "No",

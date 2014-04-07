@@ -159,6 +159,16 @@
 			"label": "Satellite",
 			"hint": "Determine the properties of your telescope mirror",
 			"intro": "The size and type of <a href=\"#guide_mirror\" class=\"guidelink\">mirror</a> on your satellite will determine the quality of the measurements you can make.",
+			"cost": "Cost:",
+			"mass": "Mass:",
+			"devtime": "Development time:",
+			"bus": {
+				"cost": "Bus cost:",
+				"mass": "Bus mass:",
+				"devtime": "Bus development time:",
+				"slots": "Instrument slots",
+				"diameter": "Bus diameter"
+			},
 			"options": {
 				"diameter": {
 					"label": "Mirror diameter",
@@ -213,6 +223,12 @@
 			"label": "Cooling",
 			"hint": "Apply cooling to your instruments",
 			"intro": "A <a href=\"#guide_cooling\" class=\"guidelink\">cooling system</a> may be required for your satellite, particularly for instruments observing longer wavelengths.",
+			"cost": "Cost:",
+			"mass": "Mass:",
+			"temperature": "Temperature:",
+			"devtime": "Development time:",
+			"life": "Life:",
+			"risk": "Success probability:",
 			"enable": {
 				"label": "Do you need cooling?",
 				"no": "No",

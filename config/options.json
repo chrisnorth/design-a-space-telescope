@@ -74,7 +74,12 @@
 		"maxsize": [
 			{ "value": 2, "units": "m", "dimension": "length" },
 			{ "value": 2, "units": "m", "dimension": "length" },
-			{ "value": 2, "units": "m", "dimension": "length" }
+			{ "value": 2, "units": "m", "dimension": "length" },
+			{ "value": 2, "units": "m", "dimension": "length" },
+			{ "value": 3, "units": "m", "dimension": "length" },
+			{ "value": 3, "units": "m", "dimension": "length" },
+			{ "value": 4, "units": "m", "dimension": "length" },
+			{ "value": 4, "units": "m", "dimension": "length" }
 		]
 
 	},
