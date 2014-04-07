@@ -795,12 +795,13 @@ console.log('chooseScenario')
 		if(this.space.el.length > 0) this.space.el.children().hide();
 
 		// Make the element fill the container's width
-		this.space.el.css({'width':'auto','display':'block'})
+		this.space.el.css({'width':'auto','display':'block'});
 		
 		// Get the inner width of the space container (i.e. without margins)
 		var w = this.space.el.innerWidth();
 		var h = w/2;
 
+//console.log(w,$('#designer_orbit').width())
 		// Check if the HTML element has changed size due to responsive CSS
 		if(w != this.space.width || h != this.space.height){
 			this.space.width = w;
@@ -888,7 +889,7 @@ console.log('chooseScenario')
 
 	SpaceTelescope.prototype.displayOrbits = function(key){
 
-//console.log('displayOrbits',key,this.space.paper,this.space.el)
+console.log('displayOrbits',key)
 
 		if(!this.space.paper) return this;
 
@@ -1031,6 +1032,7 @@ console.log('chooseScenario')
 				}
 			}
 		}else if(this.space.zoom == 1){
+
 			if(!this.space.Moonorbit){
 				this.space.Moonorbit = this.space.paper.path("M "+this.space.E.x+","+this.space.E.y+" "+makeOrbitPath(this.space.M.o*this.space.scale[1],1)).attr({ stroke:'#606060','stroke-dasharray': '-','stroke-width':1.5 });
 				this.space.Moon = this.space.paper.circle(this.space.E.x - this.space.M.o*this.space.scale[1]*Math.cos(Math.PI/6),this.space.E.y - this.space.M.o*this.space.scale[1]*Math.sin(Math.PI/6),this.space.M.r).attr({ 'fill': '#606060', 'stroke': 0 });
@@ -2639,7 +2641,7 @@ console.log('view',view,this.stage,this.scenario)
 					if($('#'+view).find('input')) $('#'+view).find('input').eq(0).focus(); 
 					else $('#menubar a.toggle'+section).focus();
 				}
-				if(section=="orbit") this.makeSpace();
+				if(section=="orbit") this.makeSpace().displayOrbits();
 				else this.removeOrbits();
 				
 				if(section=="proposal") this.updateProposal();
