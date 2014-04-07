@@ -789,7 +789,8 @@ if(typeof $==="undefined") $ = {};
 		// Check if the HTML element has changed size due to responsive CSS
 		if(this.space.el.innerWidth() != this.space.width || this.space.el.innerHeight() != this.space.height){
 			this.space.width = this.space.el.width();
-			this.space.height = this.space.el.width()/2;
+			if(this.space.width == 0) this.space.width = 10;
+			this.space.height = this.space.width/2;
 			// Create the Raphael object to hold the vector graphics
 			if(!this.space.paper){
 				this.space.paper = Raphael('orbits', this.space.width, this.space.height);
@@ -801,6 +802,7 @@ if(typeof $==="undefined") $ = {};
 			this.space.E = { x: this.space.width/2, y: this.space.height/2, r: this.space.height/6, radius: 6378 };
 			this.space.M = { r: 5, o: this.space.E.r*58 };
 		}
+console.log(this.space.width,this.space.el.width())
 
 		// Calculate the orbits to show
 		this.displayOrbits();
@@ -1080,6 +1082,25 @@ if(typeof $==="undefined") $ = {};
 		// Now scale the path
 		if(this.space.Earth) transformer(this.space.Earth,['S',scale,scale,this.space.E.x,this.space.E.y]);
 		
+		return this;
+	}
+	
+	SpaceTelescope.prototype.updateSidePanels = function(){
+		var html = "";
+		if(this.choices.vehicle) html += '<div class="vehicle padded"><div class="image"><img src="'+this.data.vehicle[this.choices.vehicle].img+'" /></div><div class="info"><div>'+this.phrases.designer.vehicle.options[this.choices.vehicle].label+'</div><div>'+this.phrases.designer.vehicle.height+' '+this.formatValueSpan(this.data.vehicle[this.choices.vehicle].height)+'</div><div>'+this.phrases.designer.vehicle.diameter+' '+this.formatValueSpan(this.data.vehicle[this.choices.vehicle].diameter)+'</div><div>'+this.phrases.designer.vehicle.operator+' '+this.phrases.operator[this.data.vehicle[this.choices.vehicle].operator].label+'</div></div></div>';
+		if(this.choices.site){
+			html += '<div class="worldmap"><img src="images/worldmap.jpg" />';
+			var lat = this.data.site[this.choices.site].latitude;
+			var lon = this.data.site[this.choices.site].longitude;
+			if(!lat && !lon){
+				lat = 34;
+				lon = -116;
+			}
+			html += '<a href="#" class="launchsite '+this.choices.site+'" title="'+this.phrases.designer.site.options[this.choices.site].label+'" style="left:'+Math.round(100*(lon+180)/360)+'%;top:'+Math.round(100*(90-lat)/180)+'%"></a>';
+			html += '</div>';
+		}
+		$('#sidebar').html(html);
+
 		return this;
 	}
 
@@ -1733,7 +1754,7 @@ if(typeof $==="undefined") $ = {};
 		}else if(choice=="orbit"){
 			v = (this.choices.orbit) ? this.phrases.designer.orbit.options[this.choices.orbit].label : '';
 		}else if(choice=="orbit.prob"){
-			v = (this.choices.orbit) ? this.data.orbit[this.choices.orbit].risk : 1;
+			v = (this.choices.orbit && this.data.orbit[this.choices.orbit].risk) ? this.data.orbit[this.choices.orbit].risk : 1;
 		}else if(choice=="mission.time"){
 			v = (this.choices.mission ? this.copyValue(this.data.mission[this.choices.mission].life) : this.makeValue(0,'months'));
 		}else if(choice=="mission.prob"){
@@ -1805,6 +1826,7 @@ if(typeof $==="undefined") $ = {};
 		prob.mission = this.getChoice('mission.prob');
 		prob.total = prob.orbit*prob.site*prob.vehicle*prob.mirror*prob.cooling*prob.instruments*prob.mission;
 
+console.log(prob.orbit,prob.site,prob.vehicle,prob.mirror,prob.cooling,prob.instruments,prob.mission)
 		// Format costs
 		cost.mirror = this.getChoice('mirror.cost');
 		cost.satellite = this.getChoice('satellite.cost');
@@ -2408,7 +2430,7 @@ if(typeof $==="undefined") $ = {};
 //console.log('updateChoices')
 		this.updateMessages("error",this.errors);
 		this.updateMessages("warning",this.warnings);
-		this.updateSummary();
+		this.updateSummary().updateSidePanels();
 
 		return this;
 	}
