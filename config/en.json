@@ -50,11 +50,13 @@
 			"RUB": { "symbol": "RUB", "label": "Russian Ruble" }, 
 			"DBL": { "symbol": "DBL", "label": "Doubloons" }
 		},
-		"warnings": {
-			"title": "Warnings"
+		"warning": {
+			"title": "Warnings",
+			"link": "Fix"
 		},
-		"errors": {
-			"title": "Errors"
+		"error": {
+			"title": "Errors",
+			"link": "Fix"
 		},
 		"menu": {
 			"title": "Toggle menu",
@@ -369,7 +371,8 @@
 	},
 	"errors": {
 		"site": "<strong>%SITE%</strong> is unsuitable for the <strong>%VEHICLE%</strong>.",
-		"orbit": "<strong>%ORBIT%</strong> cannot be reached from <strong>%SITE%</strong>."
+		"orbit": "<strong>%ORBIT%</strong> cannot be reached from <strong>%SITE%</strong>.",
+		"slots": "You have more instruments than slots available on the satellite bus. Either reduce the number of instruments or choose a larger satellite structure."
 	},
 	"warnings": {
 	

@@ -50,11 +50,13 @@
 			"RUB": { "symbol": "RUB", "label": "Russian Ruble" }, 
 			"DBL": { "symbol": "DBL", "label": "Doubloons" }
 		},
-		"warnings": {
-			"title": "Warnings"
+		"warning": {
+			"title": "Warnings",
+			"link": "Fix"
 		},
-		"errors": {
-			"title": "Errors"
+		"error": {
+			"title": "Errors",
+			"link": "Fix"
 		},
 		"menu": {
 			"title": "Toggle menu",
@@ -157,7 +159,18 @@
 		},
 		"satellite": {
 			"label": "Satellite",
-			
+			"hint": "Determine the properties of your telescope mirror",
+			"intro": "The size and type of <a href=\"#guide_mirror\" class=\"guidelink\">mirror</a> on your satellite will determine the quality of the measurements you can make.",
+			"cost": "Cost:",
+			"mass": "Mass:",
+			"devtime": "Development time:",
+			"bus": {
+				"cost": "Bus cost:",
+				"mass": "Bus mass:",
+				"devtime": "Bus development time:",
+				"slots": "Instrument slots",
+				"diameter": "Bus diameter"
+			},			
 			"options": {
 				"diameter": {
 					"label": "Mirror diameter",
@@ -383,7 +396,8 @@
 	},
 	"errors": {
 		"site": "<strong>%SITE%</strong> is unsuitable for the <strong>%VEHICLE%</strong>.",
-		"orbit": "<strong>%ORBIT%</strong> cannot be reached from <strong>%SITE%</strong>."
+		"orbit": "<strong>%ORBIT%</strong> cannot be reached from <strong>%SITE%</strong>.",
+		"slots": "You have more instruments than slots available on the satellite bus. Either reduce the number of instruments or choose a larger satellite structure."
 	},
 	"warnings": {
 	

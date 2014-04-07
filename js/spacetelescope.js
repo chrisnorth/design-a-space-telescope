@@ -294,7 +294,12 @@ if(typeof $==="undefined") $ = {};
 		for(var i = 0; i < this.sections.length; i++) html += '<li><a href="#designer_'+this.sections[i]+'" class="toggle'+this.sections[i]+'"></a></li>';
 		$('#menubar').html('<ul>'+html+'</ul>')
 
+		// Close messages when clicking on a link in the message list
+		$(document).on('click','#messages a',{me:this},function(e){
+			$('#messages').hide();
+		});
 
+		
 		// Build the objectives section
 		$('#designer_objectives .intro').after('<div class="summary"></div>');
 
@@ -721,8 +726,7 @@ if(typeof $==="undefined") $ = {};
 		var w = this.getValue('#wavelengths');
 		var n = this.getValue('#instrument_name');
 
-		var slots = (this.choices.mirror) ? this.data.mirror[this.choices.mirror].bus.instrumentslots : 0;
-		if(i && w && this.choices.instruments.length < slots){
+		if(i && w){
 			if(!n) n = this.phrases.designer.instruments.defaultname.replace(/%d%/,(this.choices.instruments.length+1));
 			this.choices.instruments.push({'name':n,'type':i,'wavelength':w});
 			this.updateInstruments();
@@ -731,7 +735,6 @@ if(typeof $==="undefined") $ = {};
 	}
 
 	SpaceTelescope.prototype.removeInstrument = function(i){
-
 		i = parseInt(i,10);
 		if(i < this.choices.instruments.length) this.choices.instruments.splice(i,1)
 		this.updateInstruments();
@@ -750,7 +753,7 @@ if(typeof $==="undefined") $ = {};
 			html += '</table></div>';
 		}
 		$('#designer_instruments .instrument_list').html(html);
-		this.parseChoices().updateSummary();
+		this.parseChoices().updateChoices();
 		return this;
 	}
 	
@@ -866,6 +869,8 @@ console.log('displayOrbits',key)
 			return " m "+(0-dx)+" "+(0-dy)+" a " + (r) + "," + (e*r) + " "+a+" 1,1 0,0.01";
 		}
 
+		function hide(el){ if(el) el.hide(); }
+		function show(el){ if(el) el.show(); }
 
 		// Update the transforms on a Raphael element
 		function transformer(el,trans){
@@ -915,7 +920,7 @@ console.log('displayOrbits',key)
 		var dx,dy,r,e,i,period;
 
 		var _obj = this;
-
+		
 		function makeOrbit(inp){
 			if(!inp) return null;
 			if(!inp.cx) inp.cx = 0;
@@ -958,14 +963,14 @@ console.log('displayOrbits',key)
 			// Store zoom level this applies to
 			p.zoom = _obj.space.zoom+0;
 			p.hide = function(){
-				p.dotted.hide();
-				p.solid.hide();
-				p.satellite.hide();
+				hide(p.dotted);
+				hide(p.solid);
+				hide(p.satellite);
 			}
 			p.show = function(){
-				p.dotted.show();
-				p.solid.show();
-				p.satellite.show();
+				show(p.dotted);
+				show(p.solid);
+				show(p.satellite);
 			}
 
 			return p;
@@ -1032,32 +1037,32 @@ console.log('displayOrbits',key)
 		}
 
 		for(var o in this.space.orbits){
-			if(this.space.orbits[o].zoom!=this.space.zoom) this.space.orbits[o].hide();
-			else this.space.orbits[o].show();
+			if(this.space.orbits[o].zoom!=this.space.zoom) hide(this.space.orbits[o]);
+			else show(this.space.orbits[o]);
 			if(this.space.zoom == 0){
-				if(this.space.Moonorbit) this.space.Moonorbit.hide();
-				if(this.space.Moon) this.space.Moon.hide();
+				hide(this.space.Moonorbit);
+				hide(this.space.Moon);
 			}else{
-				if(this.space.Moonorbit) this.space.Moonorbit.show();			
-				if(this.space.Moon) this.space.Moon.show();
+				show(this.space.Moonorbit);			
+				show(this.space.Moon);
 			}
 			if(this.space.orbits["EM2"]){
 				if(this.space.zoom == 0){
-					this.space.Moonlagrangian.hide();
-					this.space.Earthorbit.hide();
+					hide(this.space.Moonlagrangian);
+					hide(this.space.Earthorbit);
 				}else{
-					this.space.Moonlagrangian.show();
-					this.space.Earthorbit.show();
+					show(this.space.Moonlagrangian);
+					show(this.space.Earthorbit);
 				}
 			}
 		}
 		for(var l in this.space.labels){
 			if(this.space.labels[l].zoom!=this.space.zoom){
-				if(this.space.labels[l].arrow) this.space.labels[l].arrow.hide();
-				if(this.space.labels[l].label) this.space.labels[l].label.hide();
+				hide(this.space.labels[l].arrow);
+				hide(this.space.labels[l].label);
 			}else{
-				if(this.space.labels[l].arrow) this.space.labels[l].arrow.show();
-				if(this.space.labels[l].label) this.space.labels[l].label.show();
+				show(this.space.labels[l].arrow);
+				show(this.space.labels[l].label);
 			}
 		}
 
@@ -1294,7 +1299,6 @@ console.log('displayOrbits',key)
 		$('#designer_site .worldmap').append(pins);
 		
 		$('#designer_site .options label').html(d.designer.site.hint);
-//		$('#designer_site .options select').html(opts);
 		if(d.designer.site.intro) $('#designer_site .intro').html(d.designer.site.intro).addClass('bigpadded');
 
 		// Update the orbit section
@@ -1338,6 +1342,11 @@ console.log('displayOrbits',key)
 		
 		// Update values to be consistent with current user preferences
 		this.updateUnits();
+
+
+		$('#messages h3.warning .title').text(this.phrases.ui.warning.title);
+		$('#messages h3.error .title').text(this.phrases.ui.error.title);
+
 
 
 		// Update summary table labels
@@ -1434,15 +1443,30 @@ console.log('displayOrbits',key)
 		
 		var d = this.phrases.designer;
 
-		this.parseChoices();
+		this.parseChoices().updateChoices();
 
 		if(area=="satellite"){
 
-			if(this.choices.mirror){
+			if(this.choices.mirror && this.data.mirror[this.choices.mirror]){
 				var m = this.data.mirror[this.choices.mirror];
-				html += '<div><strong>'+d.satellite.cost+'</strong> '+this.formatValueSpan(m.cost)+'</div>';
-				html += '<div><strong>'+d.satellite.mass+'</strong> '+this.formatValueSpan(m.mass)+'</div>';
-				html += '<div><strong>'+d.satellite.devtime+'</strong> '+this.formatValueSpan(m.devtime)+'</div>';
+				var cost = this.copyValue(m.cost);
+				var mass = this.copyValue(m.mass);
+				var time = this.copyValue(m.devtime);
+				
+				if(this.choices.deployablemirror){
+					if(this.data.deployablemirror.multiplier.cost) cost.value *= this.data.deployablemirror.multiplier.cost;
+					if(this.data.deployablemirror.multiplier.mass) mass.value *= this.data.deployablemirror.multiplier.mass;
+					if(this.data.deployablemirror.multiplier.time) time.value *= this.data.deployablemirror.multiplier.time;
+				}
+				if(this.choices.uvmirror){
+					if(this.data.uvmirror.multiplier.cost) cost.value *= this.data.uvmirror.multiplier.cost;
+					if(this.data.uvmirror.multiplier.mass) mass.value *= this.data.uvmirror.multiplier.mass;
+					if(this.data.uvmirror.multiplier.time) time.value *= this.data.uvmirror.multiplier.time;
+				}
+
+				html += '<div><strong>'+d.satellite.cost+'</strong> '+this.formatValueSpan(cost)+'</div>';
+				html += '<div><strong>'+d.satellite.mass+'</strong> '+this.formatValueSpan(mass)+'</div>';
+				html += '<div><strong>'+d.satellite.devtime+'</strong> '+this.formatValueSpan(time)+'</div>';
 				html += '<div><strong>'+d.satellite.bus.cost+'</strong> '+this.formatValueSpan(m.bus.cost)+'</div>';
 				html += '<div><strong>'+d.satellite.bus.mass+'</strong> '+this.formatValueSpan(m.bus.mass)+'</div>';
 				html += '<div><strong>'+d.satellite.bus.devtime+'</strong> '+this.formatValueSpan(m.bus.devtime)+'</div>';
@@ -2195,6 +2219,9 @@ console.log('parseChoices')
 				if(t.devtime) time = this.sumValues(time,t.devtime);
 
 			}
+			var slots = (this.choices.mirror) ? this.data.mirror[this.choices.mirror].bus.instrumentslots : 0;
+			if(this.choices.instruments.length > slots) this.errors.push({ 'text': this.phrases.errors.slots, 'link': '#designer_instruments' });
+console.log(slots,this.choices.instruments.length,this.errors)
 		}
 		this.choices.instrument.cost = cost;
 		this.choices.instrument.mass = mass;
@@ -2270,13 +2297,11 @@ console.log('parseChoices')
 			if(!ok) this.errors.push({ 'text': this.phrases.errors.orbit.replace(/%SITE%/g,this.phrases.designer.site.options[s].label).replace(/%ORBIT%/,this.phrases.designer.orbit.options[o].label), 'link': '#designer_orbit' });
 		}else this.choices.orbit = "";
 
-		console.log(this.choices)
-
 		return this;
 	}
 
 	SpaceTelescope.prototype.updateChoices = function(){
-
+console.log('updateChoices')
 		this.updateMessages("error",this.errors);
 		this.updateMessages("warning",this.warnings);
 		this.updateSummary();
@@ -2286,13 +2311,14 @@ console.log('parseChoices')
 
 	SpaceTelescope.prototype.updateMessages = function(category,e){
 
+console.log('updateMessages',e)
 		if(category != "error" && category != "warning") return this;
 
 		var li = '';
 		var v = 0;
 		if(e && typeof e=="object" && e.length > 0){
 			v = e.length;
-			for(var i = 0 ; i < e.length; i++) li += '<li>'+e[i].text+'</li>';
+			for(var i = 0 ; i < e.length; i++) li += '<li>'+e[i].text+' <a href="'+e[i].link+'">'+this.phrases.ui[category].link+'</a></li>';
 		}
 		
 		// Update the values

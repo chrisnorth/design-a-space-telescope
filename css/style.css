@@ -241,7 +241,6 @@ img.close { background-position: -4.5em -10.5em; }
 .profile { color: #f6dc8c; }
 .error { color: #ff4a4a; }
 .warning { color: #ffee00; }
-a:focus>img.add,a:hover>img.add { background-color: #e6e6e6; }
 
 .view .cost { font-weight: bold; color: #009d00; }
 
@@ -348,13 +347,16 @@ a.togglescience:hover { padding-bottom: 0.3em; border-bottom: 0.2em solid #69dff
 #designer .details, #designer_vehicle li.withinfo { background-color: #e6e6e6; }
 
 #designer_objectives blockquote { background-color: #f6f6f6; border: 1px solid #d6d6d6; }
-#designer_instruments li input { width: 9em; }
-#designer_instruments li input, #designer_instruments li select { float: left; margin-right: 0.5em; }
+#designer_instruments li input { width: 8em; }
+#designer_instruments li input, #designer_instruments li select { float: left; margin-right: 0.25em; }
 #designer_instruments label { display: none; }
 #designer_instruments .details { clear: both; }
 #designer_instruments .instrument_list { padding-top: 0em; }
 #designer_instruments table { width: 100%; }
 #designer_instruments table td img.icon { width: 1.5em; height: 1.2em; }
+#designer_instruments a.add_instrument { display: inline-block; padding: 0.2em; float: right; }
+#designer_instruments a.add_instrument img { display: block; }
+#designer_instruments a.add_instrument { background-color: #e6e6e6; }
 #designer_cooling li.hascooling { display: none; }
 #designer_vehicle li { cursor: pointer; margin: 0; display: inline-block; }
 #designer_vehicle .selector { text-align: center; margin-bottom: 1em; }
