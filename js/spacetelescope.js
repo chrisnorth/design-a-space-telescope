@@ -2451,12 +2451,15 @@ console.log(sylda,fairing)
 							this.choices.cooling.passive = this.data.mirror[this.choices.mirror].passive.mass;
 							cost = this.sumValues(cost,this.data.mirror[this.choices.mirror].passive.cost);
 						}
-						console.log('passive',cost)
 						mass.value *= this.data.cooling.passive[p].multiplier.mass;
 						cost.value *= this.data.cooling.passive[p].multiplier.cost;
 						risk *= this.data.cooling.passive[p].risk;
 						temp.value *= this.data.cooling.passive[p].multiplier.temperature;
 						if(this.data.cooling.passive[p].life) life = this.minValue(life,this.data.cooling.passive[p].life);
+						if(this.choices.orbit){
+							life.value *= this.data.orbit[this.choices.orbit].multiplier.passive.time;
+							if(this.data.orbit[this.choices.orbit].multiplier.cryo.time==0) this.errors.push({ 'text': this.phrases.errors.hotorbitpassive, 'link': '#designer_orbit' });
+						}
 					}
 				}
 				if(this.data.cooling.active){
@@ -2473,14 +2476,19 @@ console.log(sylda,fairing)
 				}
 				if(this.data.cooling.cryogenic){
 					p = this.getValue('#cooling_cryogenic');
-					if(p){
+					if(p && p!="none"){
 						time = this.sumValues(time,this.data.cooling.cryogenic[p].devtime);
 						cost = this.sumValues(cost,this.data.cooling.cryogenic[p].cost);
 						mass = this.sumValues(mass,this.data.cooling.cryogenic[p].mass);
+
 						this.choices.cooling.cryogenic = this.data.cooling.cryogenic[p].mass;
 						risk *= this.data.cooling.cryogenic[p].risk;
 						temp.value *= this.data.cooling.cryogenic[p].multiplier.temperature;
 						if(this.data.cooling.cryogenic[p].life) life = this.minValue(life,this.data.cooling.cryogenic[p].life);
+						if(this.choices.orbit){
+							life.value *= this.data.orbit[this.choices.orbit].multiplier.cryo.time;
+							if(this.data.orbit[this.choices.orbit].multiplier.cryo.time==0) this.errors.push({ 'text': this.phrases.errors.hotorbitcryo, 'link': '#designer_orbit' });
+						}
 					}
 				}
 				
