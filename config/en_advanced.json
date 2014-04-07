@@ -333,7 +333,7 @@
 			},
 			"options": {
 				"LEO": { "label": "Low Earth Orbit", "altitude": "<", "launchreq": "Requires ability to de-orbit" },
-				"HEO": { "label": "High Earth Orbit", "altitude": ">", "launchreq": "" },
+				"HEO": { "label": "Highly Elliptical Orbit", "altitude": ">", "launchreq": "" },
 				"SNS": { "label": "Sun Synchronous Orbit", "altitude": "<", "launchreq": "Requires ability to de-orbit" },
 				"GEO": { "label": "Geostationary Orbit", "launchreq": "" },
 				"ETR": { "label": "Earth-Trailing", "launchreq": "" },
