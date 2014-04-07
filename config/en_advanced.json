@@ -411,7 +411,10 @@
 	},
 	"warnings": {
 		"uv": "You have a UV instrument but your mirror is not UV quality.",
-		"risky": "Your mission is quite risky."
+		"risky": "Your mission is quite risky.",
+		"warmorbitcryo": "The chosen orbit has reduced your cryogenic lifetime.",
+		"activenopassive": "Active cooling requires passive cooling to work.",
+		"cryonopassive": "Cryogenic cooling requires passive cooling to work."
 	},
 	"guide": {
 		"title": "Guide",

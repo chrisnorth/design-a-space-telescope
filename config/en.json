@@ -381,8 +381,7 @@
 		"bankrupt": "You are out of funds.",
 		"heavy": "Your satellite is too heavy for your launch vehicle.",
 		"size": "Your satellite is too large to fit in you launch vehicle.",
-		"hotorbitpassive": "The chosen orbit is not suitable for passive cooling.",
-		"hotorbitcryo": "The chosen orbit is not suitable for cryogenic cooling."
+		"hotorbitpassive": "The chosen orbit is not suitable for passive cooling."
 	},
 	"warnings": {
 		"uv": "You have a UV instrument but your mirror is not UV quality.",

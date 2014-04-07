@@ -2486,11 +2486,17 @@ console.log(sylda,fairing)
 								if(this.data.cooling.cryogenic[p].life) life = this.minValue(life,this.data.cooling.cryogenic[p].life);
 								if(this.choices.orbit){
 									life.value *= this.data.orbit[this.choices.orbit].multiplier.cryo.time;
-									if(this.data.orbit[this.choices.orbit].multiplier.cryo.time==0) this.errors.push({ 'text': this.phrases.errors.hotorbitcryo, 'link': '#designer_orbit' });
+									var mt = this.data.orbit[this.choices.orbit].multiplier.cryo.time;
+									//console.log(mt,'cyro')
+									if(mt==0) this.errors.push({ 'text': this.phrases.errors.hotorbitcryo, 'link': '#designer_orbit' });
+									if(mt < 1 && mt > 0) this.warnings.push({ 'text': this.phrases.warnings.warmorbitcryo, 'link': '#designer_orbit' });
 								}
 							}
 						}
 
+					}else{
+						if(this.data.cooling.active && this.getValue('input[name=cooling_active]:checked')=="yes" && p=="no") this.warnings.push({ 'text': this.phrases.warnings.activenopassive, 'link': '#designer_cooling' });
+						if(this.data.cooling.cryogenic && this.getValue('#cooling_cryogenic')!="none" && p=="no") this.warnings.push({ 'text': this.phrases.warnings.cryonopassive, 'link': '#designer_cooling' });
 					}
 				}
 				
