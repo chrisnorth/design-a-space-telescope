@@ -1087,9 +1087,9 @@ console.log(this.space.width,this.space.el.width())
 	
 	SpaceTelescope.prototype.updateSidePanels = function(){
 		var html = "";
-		if(this.choices.vehicle) html += '<div class="vehicle padded"><div class="image"><img src="'+this.data.vehicle[this.choices.vehicle].img+'" /></div><div class="info"><div>'+this.phrases.designer.vehicle.options[this.choices.vehicle].label+'</div><div>'+this.phrases.designer.vehicle.height+' '+this.formatValueSpan(this.data.vehicle[this.choices.vehicle].height)+'</div><div>'+this.phrases.designer.vehicle.diameter+' '+this.formatValueSpan(this.data.vehicle[this.choices.vehicle].diameter)+'</div><div>'+this.phrases.designer.vehicle.operator+' '+this.phrases.operator[this.data.vehicle[this.choices.vehicle].operator].label+'</div></div></div>';
+		if(this.choices.vehicle) html += '<div class="vehicle padded panel"><div class="image"><img src="'+this.data.vehicle[this.choices.vehicle].img+'" /></div><div class="info"><div>'+this.phrases.designer.vehicle.options[this.choices.vehicle].label+'</div><div>'+this.phrases.designer.vehicle.height+' '+this.formatValueSpan(this.data.vehicle[this.choices.vehicle].height)+'</div><div>'+this.phrases.designer.vehicle.diameter+' '+this.formatValueSpan(this.data.vehicle[this.choices.vehicle].diameter)+'</div><div>'+this.phrases.designer.vehicle.operator+' '+this.phrases.operator[this.data.vehicle[this.choices.vehicle].operator].label+'</div></div></div>';
 		if(this.choices.site){
-			html += '<div class="worldmap"><img src="images/worldmap.jpg" />';
+			html += '<div class="worldmap panel"><img src="images/worldmap.jpg" />';
 			var lat = this.data.site[this.choices.site].latitude;
 			var lon = this.data.site[this.choices.site].longitude;
 			if(!lat && !lon){
@@ -1098,6 +1098,9 @@ console.log(this.space.width,this.space.el.width())
 			}
 			html += '<a href="#" class="launchsite '+this.choices.site+'" title="'+this.phrases.designer.site.options[this.choices.site].label+'" style="left:'+Math.round(100*(lon+180)/360)+'%;top:'+Math.round(100*(90-lat)/180)+'%"></a>';
 			html += '</div>';
+		}
+		if(this.choices.orbit){
+			html+= '<div class="orbit panel"><img src="'+this.data.orbit[this.choices.orbit].img+'" /></div>';
 		}
 		$('#sidebar').html(html);
 

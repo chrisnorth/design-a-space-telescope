@@ -451,12 +451,15 @@ a.togglescience:hover { padding-bottom: 0.3em; border-bottom: 0.2em solid #69dff
 #main .doc p { margin-bottom: 1.5em; }
 #main .doc h3 { font-size: 1.2em; margin: 1.5em 0 0.5em 0;}
 
+#sidebar { background-color: rgba(0,0,0,0.5); }
+/*#sidebar .panel { border-bottom: 1px solid #ffffff; }*/
+#sidebar .panel:last-child { border-bottom: 0px; }
 #sidebar img { max-width: 100%; width: 100%; }
-#sidebar .vehicle { background-color: rgba(0,0,0,0.5); }
+#sidebar .vehicle { }
 #sidebar .vehicle .image { display: inline-block; height: 110px; }
 #sidebar .vehicle .image img { max-height: 100%; }
 #sidebar .vehicle .info { display: inline-block; width: auto; }
-
+#sidebar .worldmap { line-height: 0; }
 
 body.showguide #bar { display: none; }
 body.showguide #page { margin: 0em; }
