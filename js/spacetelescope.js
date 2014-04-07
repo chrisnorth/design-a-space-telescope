@@ -174,7 +174,7 @@ if(typeof $==="undefined") $ = {};
 
 		this.loadConfig(this.update);
 		this.loadLanguage(this.lang,this.update);
-		
+
 		// Build language list
 		var list = "";
 		for(l in this.langs) list += '<li class="baritem"><a href="#" title="'+this.langs[l]+'" data="'+l+'">'+this.langs[l]+' ['+l+']</a></li>'
@@ -182,7 +182,7 @@ if(typeof $==="undefined") $ = {};
 		// Redefine list variable to be the jQuery DOM object
 		list = $('#language ul li a');
 		// Add click events to each language in the list
-		for(var i = 0; i < list.length; i++) $(list[i]).on('click',{me:this},function(e){ e.data.me.loadLanguage($(this).attr('data'),e.data.me.update); });
+		for(var i = 0; i < list.length; i++) $(list[i]).on('click',{me:this},function(e){ e.preventDefault(); e.data.me.loadLanguage($(this).attr('data'),e.data.me.update); });
 
 
 		// Make menu toggles active
@@ -270,6 +270,10 @@ if(typeof $==="undefined") $ = {};
 	}
 	
 	SpaceTelescope.prototype.buildPage = function(){
+
+		// Make sure 
+		if(this.built) return this;
+		this.built = true;
 
 		console.log('buildPage')
 
@@ -412,8 +416,9 @@ if(typeof $==="undefined") $ = {};
 		this.table = {
 			'success': {
 				'list': {
-					'success_site': {},
 					'success_vehicle': {},
+					'success_site': {},
+					'success_orbit': {},
 					'success_deploy': {},
 					'success_cooling': {},
 					'success_instruments': {},
@@ -475,6 +480,7 @@ if(typeof $==="undefined") $ = {};
 					'profile_site': {},
 					'profile_vehicle': {},
 					'profile_instruments': {},
+					'profile_mirror': {},
 					'profile_temperature': {},
 					'profile_orbit': {},
 					'profile_launch': {},
@@ -705,7 +711,7 @@ if(typeof $==="undefined") $ = {};
 
 		this.updateLanguage();
 
-		this.makeSpace();
+		this.makeSpace().displayOrbits();
 
 		$('#language.dropdown').hide()
 		
@@ -776,6 +782,7 @@ console.log('makeSpace')
 
 	SpaceTelescope.prototype.resizeSpace = function(){
 
+console.log('resizeSpace',this.space)
 		// Hide the contents so we can calculate the size of the container
 		this.space.el.children().hide();
 
@@ -800,7 +807,7 @@ console.log('makeSpace')
 
 		// Show the contents again
 		this.space.el.children().show();
-
+console.log('end resize')
 		return this;	
 	}
 	
@@ -837,7 +844,7 @@ console.log('highlightOrbit',key,this.space)
 
 	SpaceTelescope.prototype.displayOrbits = function(key){
 
-console.log('displayOrbits',key)
+console.log('displayOrbits',key,this.space.paper,this.space.el)
 
 		if(!this.space.paper) return this;
 
@@ -1353,8 +1360,9 @@ console.log('displayOrbits',key)
 		var s = d.ui.summary;
 
 		this.table.success.label = s.success.title;
-		if(this.data.site[this.choices.site] && this.data.site[this.choices.site].risk) this.table.success.list.success_site.label = s.success.site;
-		if(this.data.vehicle[this.choices.vehicle] && this.data.vehicle[this.choices.vehicle].risk) this.table.success.list.success_vehicle.label = s.success.vehicle;
+		this.table.success.list.success_orbit.label = s.success.orbit;
+		this.table.success.list.success_site.label = s.success.site;
+		this.table.success.list.success_vehicle.label = s.success.vehicle;
 		this.table.success.list.success_deploy.label = s.success.deploy;
 		this.table.success.list.success_cooling.label = s.success.cooling;
 		this.table.success.list.success_instruments.label = s.success.instruments;
@@ -1394,6 +1402,7 @@ console.log('displayOrbits',key)
 		this.table.profile_total.list.profile_site.label = s.profile.site;
 		this.table.profile_total.list.profile_vehicle.label = s.profile.vehicle;
 		this.table.profile_total.list.profile_instruments.label = s.profile.instruments;
+		this.table.profile_total.list.profile_mirror.label = s.profile.mirror;
 		this.table.profile_total.list.profile_temperature.label = s.profile.temperature;
 		this.table.profile_total.list.profile_orbit.label = s.profile.orbit;
 		this.table.profile_total.list.profile_launch.label = s.profile.launch;
@@ -1493,7 +1502,7 @@ console.log('displayOrbits',key)
 			html += '<div><strong>'+d.cooling.mass+'</strong> '+this.formatValueSpan(this.choices.cooling.mass)+'</div>';
 			if(this.choices.cooling.time.value > 0) html += '<div><strong>'+d.cooling.devtime+'</strong> '+this.formatValueSpan(this.choices.cooling.time)+'</div>';
 			html += '<div><strong>'+d.cooling.life+'</strong> '+this.formatValueSpan(this.choices.cooling.life)+'</div>';
-			html += '<div><strong>'+d.cooling.risk+'</strong> '+this.formatValueSpan(this.choices.cooling.risk)+'</div>';
+			html += '<div><strong>'+d.cooling.risk+'</strong> '+this.formatValueSpan(this.makeValue(this.choices.cooling.risk*100,'%'))+'</div>';
 
 		}else if(area=="site"){
 
@@ -1656,6 +1665,8 @@ console.log('displayOrbits',key)
 			v = (this.choices.mirror ? this.copyValue(this.data.mirror[this.choices.mirror].risk) : 1);
 			if(this.choices.deployablemirror && this.data.deployablemirror.risk) v = v*this.data.deployablemirror.risk;
 			if(this.choices.uvmirror && this.data.uvmirror.risk) v = v*this.data.uvmirror.risk;
+		}else if(choice=="mirror"){
+			v = (this.choices.mirror) ? this.data.mirror[this.choices.mirror].diameter : this.makeValue(0,'m');
 		}else if(choice=="cooling.cost"){
 			v = (this.choices.cooling ? this.copyValue(this.choices.cooling.cost) : this.makeValue(0,'GBP'));
 			v.value = -v.value;
@@ -1663,6 +1674,9 @@ console.log('displayOrbits',key)
 			v = (this.choices.cooling ? this.copyValue(this.choices.cooling.mass) : this.makeValue(0,'kg'));
 		}else if(choice=="cooling.time"){
 			v = (this.choices.cooling ? this.copyValue(this.choices.cooling.time) : this.makeValue(0,'months'));
+		}else if(choice=="cooling.prob"){
+			v = 1;
+			if(this.choices.cooling && this.choices.cooling.risk) v = this.choices.cooling.risk;
 		}else if(choice=="satellite.cost"){
 			v = (this.choices.mirror ? this.copyValue(this.data.mirror[this.choices.mirror].bus.cost) : this.makeValue(0,'GBP'));
 			v.value = -v.value;
@@ -1722,6 +1736,8 @@ console.log('displayOrbits',key)
 			v.value *= -(this.choices.orbit ? this.data.orbit[this.choices.orbit].multiplier.launchcost : 1);
 		}else if(choice=="orbit"){
 			v = (this.choices.orbit) ? this.phrases.designer.orbit.options[this.choices.orbit].label : '';
+		}else if(choice=="orbit.prob"){
+			v = (this.choices.orbit) ? this.data.orbit[this.choices.orbit].risk : 1;
 		}else if(choice=="mission.time"){
 			v = (this.choices.mission ? this.copyValue(this.data.mission[this.choices.mission].life) : this.makeValue(0,'months'));
 		}else if(choice=="fuel.time"){
@@ -1785,10 +1801,11 @@ console.log('displayOrbits',key)
 		prob.mirror = this.getChoice('mirror.prob');
 		prob.site = this.getChoice('site.prob');
 		prob.vehicle = this.getChoice('vehicle.prob');
-		prob.cooling = 1;
+		prob.cooling = this.getChoice('cooling.prob');
+		prob.orbit = this.getChoice('orbit.prob');
 		prob.instruments = 1;
 		prob.mission = 1;
-		prob.total = prob.site*prob.vehicle*prob.mirror*prob.cooling*prob.instruments*prob.mission;
+		prob.total = prob.orbit*prob.site*prob.vehicle*prob.mirror*prob.cooling*prob.instruments*prob.mission;
 
 		// Format costs
 		cost.mirror = this.getChoice('mirror.cost');
@@ -1823,8 +1840,9 @@ console.log('displayOrbits',key)
 
 
 		this.table.success.value = this.formatPercent(prob.total);
-		if(this.data.site[this.choices.site] && this.data.site[this.choices.site].risk) this.table.success.list.success_site.value = this.formatPercent(prob.site);
-		if(this.data.vehicle[this.choices.vehicle] && this.data.vehicle[this.choices.vehicle].risk) this.table.success.list.success_vehicle.value = this.formatPercent(prob.vehicle);
+		this.table.success.list.success_orbit.value = this.formatPercent(prob.orbit);
+		this.table.success.list.success_site.value = this.formatPercent(prob.site);
+		this.table.success.list.success_vehicle.value = this.formatPercent(prob.vehicle);
 		this.table.success.list.success_deploy.value = this.formatPercent(prob.mirror);
 		this.table.success.list.success_cooling.value = this.formatPercent(prob.cooling);
 		this.table.success.list.success_instruments.value = this.formatPercent(prob.instruments);
@@ -1865,6 +1883,7 @@ console.log('displayOrbits',key)
 		this.table.profile_total.list.profile_site.value = this.getChoice('site');
 		this.table.profile_total.list.profile_vehicle.value = this.getChoice('vehicle');
 		this.table.profile_total.list.profile_instruments.value = (this.choices.instruments) ? this.choices.instruments.length : 0;
+		this.table.profile_total.list.profile_mirror.value = this.getChoice('mirror');
 		this.table.profile_total.list.profile_temperature.value = this.getChoice('temperature');
 		this.table.profile_total.list.profile_orbit.value = this.getChoice('orbit');
 		var d = new Date();
@@ -2241,26 +2260,71 @@ console.log('parseChoices')
 			"mass": this.makeValue(0,'kg'),
 			"life": this.makeValue(0,'months'),
 			"time": this.makeValue(0,'months'),
-			"risk": this.makeValue(100,'%')
+			"risk": 1
 		}
 		if(c){
 			if(c=="yes"){
+				var mass = this.makeValue(0,'kg');
+				var cost = this.makeValue(0,'GBP');
+				var life = this.makeValue(0,'months');
+				var time = this.makeValue(0,'months');
+				var temp = this.makeValue(400,'Kelvin');
+				var risk = 1;
+
 				if($('#cooling_temperature').length > 0){
 					t = this.data.cooling.temperature[$('#cooling_temperature').val()];
-					if(t.temperature) this.choices.temperature = t.temperature;
+					if(t.temperature) temp = t.temperature;
 					
-					if(t.mass) this.choices.cooling.mass = t.mass;
-					if(t.cost) this.choices.cooling.cost = t.cost;
-					if(t.devtime) this.choices.cooling.time = t.devtime;
-					if(t.life) this.choices.cooling.life = t.life;
-					if(t.risk) this.choices.cooling.risk = t.risk;
+					if(t.mass) mass = this.sumValues(mass,t.mass);
+					if(t.cost) cost = this.sumValues(cost,t.cost);
+					if(t.devtime) time = this.sumValues(time,t.devtime);
+					if(t.life) life = this.sumValues(life,t.life);
+					if(t.risk) risk *= t.risk;
 
 					if(this.choices.mirror && this.data.mirror[m]['passive']){
-						this.choices.cooling.mass = this.sumValues(this.choices.cooling.mass,this.data.mirror[m]['passive'].mass);
-						this.choices.cooling.cost = this.sumValues(this.choices.cooling.cost,this.data.mirror[m]['passive'].cost);
-						this.choices.cooling.time = this.sumValues(this.choices.cooling.time,this.data.mirror[m]['passive'].devtime);
+						mass = this.sumValues(mass,this.data.mirror[m]['passive'].mass);
+						cost = this.sumValues(cost,this.data.mirror[m]['passive'].cost);
+						time = this.sumValues(time,this.data.mirror[m]['passive'].devtime);
 					}
 				}
+				if(this.data.cooling.passive){
+					var p = this.getValue('input[name=cooling_passive]:checked');
+					time = this.sumValues(time,this.data.cooling.passive[p].devtime);
+					mass.value *= this.data.cooling.passive[p].multiplier.mass;
+					cost.value *= this.data.cooling.passive[p].multiplier.cost;
+					risk *= this.data.cooling.passive[p].risk;
+					if(this.data.cooling.passive[p].temperature < this.choices.temperature) temp = this.data.cooling.passive[p].temperature;
+					// TODO - something with life
+				}
+				if(this.data.cooling.active){
+					var p = this.getValue('input[name=cooling_active]:checked');
+					time = this.sumValues(time,this.data.cooling.active[p].devtime);
+					cost = this.sumValues(cost,this.data.cooling.active[p].cost);
+					mass = this.sumValues(mass,this.data.cooling.active[p].mass);
+					risk *= this.data.cooling.active[p].risk;
+					temp.value *= this.data.cooling.active[p].multiplier.temperature;
+					// TODO - something with life
+				}
+				if(this.data.cooling.cryogenic){
+					var p = this.getValue('#cooling_cryogenic');
+					console.log(p)
+					if(p){
+						time = this.sumValues(time,this.data.cooling.cryogenic[p].devtime);
+						cost = this.sumValues(cost,this.data.cooling.cryogenic[p].cost);
+						mass = this.sumValues(mass,this.data.cooling.cryogenic[p].mass);
+						risk *= this.data.cooling.cryogenic[p].risk;
+						temp.value *= this.data.cooling.cryogenic[p].multiplier.temperature;
+						// TODO - something with life
+					}
+				}
+				
+				this.choices.cooling.mass = mass;
+				this.choices.cooling.cost = cost;
+				this.choices.cooling.time = time;
+				this.choices.cooling.life = life;
+				this.choices.cooling.risk = risk;
+				this.choices.temperature = temp;
+
 			}
 		}
 

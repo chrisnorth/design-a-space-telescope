@@ -76,6 +76,7 @@
 		"summary": {
 			"success": {
 				"title": "Success probability",
+				"orbit": "Orbit insertion:",
 				"site": "Launch site:",
 				"vehicle": "Launch vehicle:",
 				"deploy": "Deployment:",
@@ -134,6 +135,7 @@
 				"title": "Mission profile",
 				"site": "Launch site:",
 				"vehicle": "Launch vehicle:",
+				"mirror": "Mirror diameter:",
 				"instruments": "Number of instruments:",
 				"orbit": "Orbit:",
 				"launch": "Launch date:",
@@ -229,6 +231,7 @@
 			"temperature": "Temperature:",
 			"devtime": "Development time:",
 			"life": "Life:",
+			"risk": "Success probability:",
 			"enable": {
 				"label": "Do you need cooling?",
 				"no": "No",

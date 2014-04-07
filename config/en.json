@@ -76,6 +76,7 @@
 		"summary": {
 			"success": {
 				"title": "Success probability",
+				"orbit": "Orbit insertion:",
 				"site": "Launch site:",
 				"vehicle": "Launch vehicle:",
 				"deploy": "Deployment:",
@@ -135,6 +136,7 @@
 				"site": "Launch site:",
 				"vehicle": "Launch vehicle:",
 				"instruments": "Number of instruments:",
+				"mirror": "Mirror diameter:",
 				"orbit": "Orbit:",
 				"launch": "Launch date:",
 				"end": "Mission end:",
