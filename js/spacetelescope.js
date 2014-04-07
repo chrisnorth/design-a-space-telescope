@@ -275,7 +275,7 @@ if(typeof $==="undefined") $ = {};
 		if(this.built) return this;
 		this.built = true;
 
-		console.log('buildPage')
+//console.log('buildPage')
 
 		// Disable keyboard shortcuts when in input fields and textareas
 		$(document).on('focus','input,textarea',{me:this},function(e){ e.data.me.keyboard = false; }).on('blur','input,textarea',{me:this},function(e){ e.data.me.keyboard = true; });
@@ -377,7 +377,6 @@ if(typeof $==="undefined") $ = {};
 		$(document).on('click','#designer_vehicle .options .info>li',{me:this},function(e){
 			if(!$(this).hasClass('withinfo')){
 				$('.withinfo').removeClass('withinfo');
-				console.log($(this),$(this).find('.vehicle_details').html())
 				$(this).addClass('withinfo');
 				$('#designer_vehicle .details').html($(this).find('.vehicle_details').html()).addClass('padded');
 			}
@@ -509,7 +508,7 @@ if(typeof $==="undefined") $ = {};
 	// Work out where we are based on the anchor tag
 	SpaceTelescope.prototype.navigate = function(e){
 		var a = location.href.split("#")[1];
-		console.log('navigate',a,e);
+//console.log('navigate',a,e);
 		if(typeof a!=="string") a = "";
 		this.showView(a,e);
 		return this;
@@ -638,7 +637,7 @@ if(typeof $==="undefined") $ = {};
 		if(!l) l = this.langshort;
 		var m = this.settings.mode;
 		var url = this.langurl.replace('%LANG%',l).replace('%MODE%',this.getMode());
-	console.log('loadLanguage',l,fn,url)
+//console.log('loadLanguage',l,fn,url)
 		$.ajax({
 			url: url,
 			method: 'GET',
@@ -663,7 +662,6 @@ if(typeof $==="undefined") $ = {};
 				// Store the data
 				this.phrases = data;
 				this.loadScenarios(fn);
-				console.log(data.title)
 			}
 		});
 		return this;
@@ -705,7 +703,7 @@ if(typeof $==="undefined") $ = {};
 	// Update the page using the JSON response
 	SpaceTelescope.prototype.update = function(){
 
-		console.log('update')
+//		console.log('update')
 
 		if(!this.phrases || !this.data) return this;
 
@@ -767,7 +765,7 @@ if(typeof $==="undefined") $ = {};
 	
 	SpaceTelescope.prototype.makeSpace = function(zoom){
 
-console.log('makeSpace')
+//console.log('makeSpace')
 
 		if(!this.space) this.space = { width: 0, height: 300, zoom: 0, scale: [1,0.022], anim: {}, orbits:{}, labels:{} };
 	
@@ -784,7 +782,7 @@ console.log('makeSpace')
 
 	SpaceTelescope.prototype.resizeSpace = function(){
 
-console.log('resizeSpace',this.space)
+//console.log('resizeSpace',this.space)
 		// Hide the contents so we can calculate the size of the container
 		this.space.el.children().hide();
 
@@ -809,7 +807,7 @@ console.log('resizeSpace',this.space)
 
 		// Show the contents again
 		this.space.el.children().show();
-console.log('end resize')
+
 		return this;	
 	}
 	
@@ -827,7 +825,7 @@ console.log('end resize')
 	// If necessary (i.e. if the zoom level has changed) redisplay the orbits first.
 	SpaceTelescope.prototype.highlightOrbit = function(key){
 
-console.log('highlightOrbit',key,this.space)
+//console.log('highlightOrbit',key,this.space)
 
 		if(!key) return this;
 
@@ -846,7 +844,7 @@ console.log('highlightOrbit',key,this.space)
 
 	SpaceTelescope.prototype.displayOrbits = function(key){
 
-console.log('displayOrbits',key,this.space.paper,this.space.el)
+//console.log('displayOrbits',key,this.space.paper,this.space.el)
 
 		if(!this.space.paper) return this;
 
@@ -1786,7 +1784,7 @@ console.log('displayOrbits',key,this.space.paper,this.space.el)
 
 	SpaceTelescope.prototype.updateSummary = function(){
 
-		console.log('updateSummary')
+//console.log('updateSummary')
 
 		var html = '';
 		var s = this.phrases.ui.summary;
@@ -2213,7 +2211,7 @@ console.log('displayOrbits',key,this.space.paper,this.space.el)
 
 	SpaceTelescope.prototype.parseChoices = function(view,e){
 
-console.log('parseChoices')
+//console.log('parseChoices')
 		//this.choices = {};
 		var l,m,d,u,c,t,v,s,p;
 		var cost,mass,temp,time,risk;
@@ -2328,7 +2326,6 @@ console.log('parseChoices')
 			"time": this.makeValue(0,'months'),
 			"risk": 1
 		}
-console.log('LIFE',this.choices.cooling.life)
 		if(c){
 			if(c=="yes"){
 				mass = this.makeValue(0,'kg');
@@ -2353,7 +2350,6 @@ console.log('LIFE',this.choices.cooling.life)
 						time = this.sumValues(time,this.data.mirror[m]['passive'].devtime);
 					}
 				}
-console.log('LIFE',life)
 				if(this.data.cooling.passive){
 					p = this.getValue('input[name=cooling_passive]:checked');
 					if(p=="yes"){
@@ -2370,7 +2366,6 @@ console.log('LIFE',life)
 						if(this.data.cooling.passive[p].life) life = this.minValue(life,this.data.cooling.passive[p].life);
 					}
 				}
-console.log('LIFE',life)
 				if(this.data.cooling.active){
 					p = this.getValue('input[name=cooling_active]:checked');
 					if(p=="yes"){
@@ -2383,7 +2378,6 @@ console.log('LIFE',life)
 						if(this.data.cooling.active[p].life) life = this.minValue(life,this.data.cooling.active[p].life);
 					}
 				}
-console.log('LIFE',life)
 				if(this.data.cooling.cryogenic){
 					p = this.getValue('#cooling_cryogenic');
 					if(p){
@@ -2411,7 +2405,7 @@ console.log('LIFE',life)
 	}
 
 	SpaceTelescope.prototype.updateChoices = function(){
-console.log('updateChoices')
+//console.log('updateChoices')
 		this.updateMessages("error",this.errors);
 		this.updateMessages("warning",this.warnings);
 		this.updateSummary();
@@ -2421,7 +2415,7 @@ console.log('updateChoices')
 
 	SpaceTelescope.prototype.updateMessages = function(category,e){
 
-console.log('updateMessages',e)
+//console.log('updateMessages',e)
 		if(category != "error" && category != "warning") return this;
 
 		var li = '';
@@ -2444,7 +2438,7 @@ console.log('updateMessages',e)
 	
 	SpaceTelescope.prototype.toggleView = function(view,e){
 
-		console.log('toggleView',view)
+//console.log('toggleView',view)
 
 		if(!$('#'+view).is(':visible')) this.showView(view,e);
 		else this.showView(e);
@@ -2454,7 +2448,7 @@ console.log('updateMessages',e)
 
 	SpaceTelescope.prototype.showView = function(view,e){
 
-		console.log('showView',view,e)
+//console.log('showView',view,e)
 
 		if(typeof view==="object"){
 			e = view;
@@ -2550,7 +2544,7 @@ console.log('updateMessages',e)
 	}
 
 	SpaceTelescope.prototype.setScroll = function(el){
-console.log('setScroll',el)
+//console.log('setScroll',el)
 		var b = $('#bar');
 		var offset = (b.is(':visible')) ? b.outerHeight() : 0;
 		var t = 0;
@@ -2565,7 +2559,7 @@ console.log('setScroll',el)
 
 	SpaceTelescope.prototype.toggleGuide = function(key,e){
 
-		console.log('toggleGuide',key)
+//console.log('toggleGuide',key)
 		if(typeof key==="object"){
 			e = key;
 			key = "";
@@ -2582,7 +2576,7 @@ console.log('setScroll',el)
 	}
 
 	SpaceTelescope.prototype.closeGuide = function(){
-		console.log('closeGuide')
+//console.log('closeGuide')
 		$('body').removeClass('showguide');
 		$('#guide').hide();
 		$('#intro').show();
@@ -2591,7 +2585,7 @@ console.log('setScroll',el)
 
 	SpaceTelescope.prototype.showGuide = function(key){
 
-		console.log('showGuide',key)
+//console.log('showGuide',key)
 		var origkey = key;
 
 		// Split the input by '.'
