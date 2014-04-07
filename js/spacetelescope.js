@@ -1158,7 +1158,7 @@ if(typeof $==="undefined") $ = {};
 		}else if(dropdown=="instruments"){
 			if(this.phrases.designer.instruments.options.instrument["none"]) options = '<option value="">'+this.phrases.designer.instruments.options.instrument["none"].label+'</option>';
 			for(var m in this.data.instrument.options){
-				v = this.phrases.designer.instruments.options.instrument[m].label+(this.data.instrument.options[m].cost ? ' ('+this.formatValue(this.data.instrument.options[m].cost)+')' : '');
+				v = this.phrases.designer.instruments.options.instrument[m].label;
 				if(o.length == 0) options += '<option value="'+m+'">'+v+'</option>';
 				else el.find('option[value="'+m+'"]').text(v);
 			}
@@ -2785,13 +2785,13 @@ console.log(sylda,fairing)
 	
 					if(this.settings.mode=="advanced"){
 						table = '';
-						for(i in this.data.instrument){
+						for(i in this.data.instrument.options){
 							if(i != "none"){
 								table += '<tr>';
-								table += '<td>'+this.phrases.designer.instruments.options[i].label+'</td>';
-								table += '<td>'+this.formatValue(this.data.instrument[i].mass)+'</td>';
-								table += '<td>'+this.formatValue(this.data.instrument[i].cost)+'</td>';
-								table += '<td>'+this.formatValue(this.data.instrument[i].devtime)+'</td>';
+								table += '<td>'+this.phrases.designer.instruments.options.instrument[i].label+'</td>';
+								table += '<td>'+this.formatValue(this.data.instrument.options[i].multiplier.mass)+'</td>';
+								table += '<td>'+this.formatValue(this.data.instrument.options[i].multiplier.cost)+'</td>';
+								table += '<td>'+this.formatValue(this.data.instrument.options[i].devtime)+'</td>';
 								table += '</tr>';
 							}
 						}

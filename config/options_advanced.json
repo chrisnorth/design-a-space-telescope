@@ -82,9 +82,9 @@
 	},
 	"instrument": {
 		"options": {
-			"camera": { "multiplier": { "cost": 1, "mass": 1 }, "mass": { "value": 50, "units": "kg", "dimension": "mass" }, "devtime": { "value": 0.5, "units": "years", "dimension": "time" }, "risk": 0.98 },
-			"spectrometer": { "multiplier": { "cost": 1, "mass": 1 }, "mass": { "value": 50, "units": "kg", "dimension": "mass" }, "devtime": { "value": 0.5, "units": "years", "dimension": "time" }, "risk": 0.98 },
-			"both": { "multiplier": { "cost": 1.5, "mass": 1.5 }, "mass": { "value": 75, "units": "kg", "dimension": "mass" }, "devtime": { "value": 1, "units": "years", "dimension": "time" }, "risk": 0.98 }
+			"camera": { "multiplier": { "cost": 1, "mass": 1 }, "devtime": { "value": 0.5, "units": "years", "dimension": "time" }, "risk": 0.98 },
+			"spectrometer": { "multiplier": { "cost": 1, "mass": 1 }, "devtime": { "value": 0.5, "units": "years", "dimension": "time" }, "risk": 0.98 },
+			"both": { "multiplier": { "cost": 1.5, "mass": 1.5 }, "devtime": { "value": 1, "units": "years", "dimension": "time" }, "risk": 0.98 }
 		},
 		"maxsize": [
 			{ "value": 2, "units": "m", "dimension": "length" },
