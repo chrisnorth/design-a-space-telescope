@@ -381,11 +381,13 @@
 		"bankrupt": "You are out of funds.",
 		"heavy": "Your satellite is too heavy for your launch vehicle.",
 		"size": "Your satellite is too large to fit in you launch vehicle.",
-		"hotorbitpassive": "The chosen orbit is not suitable for passive cooling."
+		"hotorbitpassive": "The chosen orbit is not suitable for passive cooling.",
+		"uv": "You have a UV instrument but your mirror is not UV quality."
 	},
 	"warnings": {
-		"uv": "You have a UV instrument but your mirror is not UV quality.",
-		"risky": "Your mission is quite risky."
+		"risky": "Your mission is quite risky.",
+		"fuellifetime": "Your fuel lifetime is shorter than the mission duration you have specified.",
+		"coolinglifetime": "Your cooling lifetime is shorter than the mission duration you have specified."
 	},
 	"guide": {
 		"title": "Guide",

@@ -1903,6 +1903,12 @@ if(typeof $==="undefined") $ = {};
 		time.lifecooling = this.getChoice('cooling.life');
 		time.fuel = this.getChoice('fuel.time');
 
+		var fuel = this.convertValue(time.fuel,time.mission.units);
+		if(time.mission.value > fuel.value) this.warnings.push({ 'text': this.phrases.warnings.fuellifetime });
+		var cool = this.convertValue(time.lifecooling,time.mission.units);
+		if(time.mission.value > cool.value) this.warnings.push({ 'text': this.phrases.warnings.coolinglifetime });
+		
+
 		// Format masses
 		mass.mirror = this.getChoice('mirror.mass');
 		mass.satellite = this.getChoice('satellite.mass');
@@ -2345,7 +2351,7 @@ if(typeof $==="undefined") $ = {};
 			var slots = (this.choices.mirror) ? this.data.mirror[this.choices.mirror].bus.instrumentslots : 0;
 			if(this.choices.instruments.length > slots) this.errors.push({ 'text': this.phrases.errors.slots, 'link': '#designer_instruments' });
 
-			if(!this.choices.uvmirror && uv)  this.warnings.push({ 'text': this.phrases.warnings.uv, 'link': '#designer_satellite' });
+			if(!this.choices.uvmirror && uv)  this.errors.push({ 'text': this.phrases.errors.uv, 'link': '#designer_satellite' });
 
 		}
 		

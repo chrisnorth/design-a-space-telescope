@@ -407,14 +407,16 @@
 		"heavy": "Your satellite is too heavy for your launch vehicle.",
 		"size": "Your satellite is too large to fit in you launch vehicle.",
 		"hotorbitpassive": "The chosen orbit is not suitable for passive cooling.",
-		"hotorbitcryo": "The chosen orbit is not suitable for cryogenic cooling."
+		"hotorbitcryo": "The chosen orbit is not suitable for cryogenic cooling.",
+		"uv": "You have a UV instrument but your mirror is not UV quality."
 	},
 	"warnings": {
-		"uv": "You have a UV instrument but your mirror is not UV quality.",
 		"risky": "Your mission is quite risky.",
 		"warmorbitcryo": "The chosen orbit has reduced your cryogenic lifetime.",
 		"activenopassive": "Active cooling requires passive cooling to work.",
-		"cryonopassive": "Cryogenic cooling requires passive cooling to work."
+		"cryonopassive": "Cryogenic cooling requires passive cooling to work.",
+		"fuellifetime": "Your fuel lifetime is shorter than the mission duration you have specified.",
+		"coolinglifetime": "Your cooling lifetime is shorter than the mission duration you have specified."
 	},
 	"guide": {
 		"title": "Guide",
