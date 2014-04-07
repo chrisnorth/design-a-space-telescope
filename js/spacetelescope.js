@@ -19,6 +19,10 @@ if(typeof $==="undefined") $ = {};
 
 (function($) {
 
+	var G = {};
+	G.log10 = function(v) { return Math.log(v)/2.302585092994046; };
+
+
 	// shim layer with setTimeout fallback
 	window.requestAnimFrame = (function(){
 		return  window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || function( callback ){ window.setTimeout(callback, 1000 / 60); };
@@ -786,7 +790,7 @@ if(typeof $==="undefined") $ = {};
 
 //console.log('resizeSpace',this.space)
 		// Hide the contents so we can calculate the size of the container
-		this.space.el.children().hide();
+		if(this.space.el.length > 0) this.space.el.children().hide();
 
 //this.warnings.push({ 'text': this.space.width+'x'+this.space.height });
 
@@ -2132,7 +2136,7 @@ if(typeof $==="undefined") $ = {};
 
 	function getPrecision(v){
 		if(v < 1e-9) return 1;
-		if(typeof v==="number" && v < 1) return Math.ceil(Math.log10(1/v))+1;
+		if(typeof v==="number" && v < 1) return Math.ceil(G.log10(1/v))+1;
 		else return 1;
 		return 1;
 	
@@ -2247,7 +2251,7 @@ if(typeof $==="undefined") $ = {};
 
 	// Display really large numbers as powers of ten
 	function powerOfTen(v,u){
-		var p = Math.floor(Math.log10(v));
+		var p = Math.floor(G.log10(v));
 		var a = Math.round(v/Math.pow(10,p))
 		return ''+a+'&times;10<sup>'+p+'</sup>'+u;
 	}
@@ -2335,7 +2339,7 @@ if(typeof $==="undefined") $ = {};
 		this.choices.instrument.time = time;
 		this.choices.instrument.risk = risk;
 
-
+//this.data.vehicle[this.choices.vehicle].diameter,
 		
 		// Process vehicle
 		v = $('#designer_vehicle input[name=vehicle_rocket]:checked').val();
@@ -2581,7 +2585,7 @@ if(typeof $==="undefined") $ = {};
 					if($('#'+view).find('input')) $('#'+view).find('input').eq(0).focus(); 
 					else $('#menubar a.toggle'+section).focus();
 				}
-				if(section=="orbit") this.makeSpace().displayOrbits();
+				if(section=="orbit") this.makeSpace();
 				else this.removeOrbits();
 				
 				if(section=="proposal") this.updateProposal();
