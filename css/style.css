@@ -320,6 +320,8 @@ a.togglescience:hover { padding-bottom: 0.3em; border-bottom: 0.2em solid #69dff
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00ffffff', endColorstr='#ffffff',GradientType=1 ); /* IE6-9 */
 }
 
+#messages ul.summary { list-style: disc; margin-left: 1em; }
+
 #designer {
 	width: 80em;
 	padding: 0;
@@ -458,7 +460,7 @@ a.togglescience:hover { padding-bottom: 0.3em; border-bottom: 0.2em solid #69dff
 #sidebar .vehicle { }
 #sidebar .vehicle .image { display: inline-block; height: 110px; }
 #sidebar .vehicle .image img { max-height: 100%; }
-#sidebar .vehicle .info { display: inline-block; width: auto; }
+#sidebar .vehicle .info { padding-left: 1em; display: inline-block; width: auto; }
 #sidebar .worldmap { line-height: 0; }
 
 body.showguide #bar { display: none; }

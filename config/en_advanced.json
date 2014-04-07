@@ -401,10 +401,14 @@
 	"errors": {
 		"site": "<strong>%SITE%</strong> is unsuitable for the <strong>%VEHICLE%</strong>.",
 		"orbit": "<strong>%ORBIT%</strong> cannot be reached from <strong>%SITE%</strong>.",
-		"slots": "You have more instruments than slots available on the satellite bus. Either reduce the number of instruments or choose a larger satellite structure."
+		"slots": "You have more instruments than slots available on the satellite bus. Either reduce the number of instruments or choose a larger satellite structure.",
+		"temperature": "Your instrument package is only cooled to %TEMPERATURE% but it requires %REQUIREMENT% to operate.",
+		"bankrupt": "You are out of funds.",
+		"heavy": "Your satellite is too heavy for your launch vehicle."
 	},
 	"warnings": {
-		"uv": "You have a UV instrument but your mirror is not UV quality."
+		"uv": "You have a UV instrument but your mirror is not UV quality.",
+		"risky": "Your mission is quite risky."
 	},
 	"guide": {
 		"title": "Guide",
