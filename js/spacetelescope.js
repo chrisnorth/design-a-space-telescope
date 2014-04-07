@@ -135,6 +135,7 @@ if(typeof $==="undefined") $ = {};
 		this.stage = "intro";
 		this.choices = {};
 		this.sections = ['objectives','satellite','instruments','cooling','vehicle','site','orbit','proposal'];
+		this.keyboard = true;	// Allow keyboard shortcuts (disable in inputs and textareas)
 
 		// Set some variables
 		this.langurl = "config/%LANG%%MODE%.json";
@@ -272,6 +273,9 @@ if(typeof $==="undefined") $ = {};
 
 		console.log('buildPage')
 
+		// Disable keyboard shortcuts when in input fields and textareas
+		$(document).on('focus','input,textarea',{me:this},function(e){ e.data.me.keyboard = false; }).on('blur','input,textarea',{me:this},function(e){ e.data.me.keyboard = true; });
+
 		// Build scenarios
 		$('#scenarios').html('<h2></h2><p class="about"></p><ul id="scenariolist"></ul>');
 		$(document).on('click','#scenarios .button',{me:this},function(e){ e.data.me.chooseScenario($(this).attr('data')); });
@@ -294,7 +298,21 @@ if(typeof $==="undefined") $ = {};
 		$('#designer_satellite .options').html('<form><ul class="bigpadded"><li class="option mirror_diameter"><label for="mirror_diameter"></label><select id="mirror_diameter" name="mirror_diameter"></select></li><li class="option mirror_deployable"><label for="mirror_deployable"></label>'+this.buildToggle("toggledeployable",{ "value": "no", "id": "mirror_deployable_no", "label": "", "checked": true },{ "value": "yes", "id": "mirror_deployable_yes", "label": "" })+'</li><li class="option mirror_uv"><label for="mirror_uv"></label>'+this.buildToggle("toggleuv",{ "value": "no", "id": "mirror_uv_no", "checked": true },{ "value": "yes", "id": "mirror_uv_yes" })+'</li></ul></form>');
 
 		// Build the instruments section
-		$('#designer_instruments .options').html('<form><ul class="bigpadded"><li><label for="instruments"></label><select id="wavelengths" name="wavelengths"></select><select id="instruments" name="instruments"></select> <input type="text" id="instrument_name" name="instrument_name" /><a href="#" class="add_instrument"><img src="images/cleardot.gif" class="icon add" /></a></li></ul></form>');
+		$('#designer_instruments .options').html('<div class="bigpadded"><form><ul><li><label for="instruments"></label><select id="wavelengths" name="wavelengths"></select><select id="instruments" name="instruments"></select> <input type="text" id="instrument_name" name="instrument_name" /><a href="#" class="add_instrument"><img src="images/cleardot.gif" class="icon add" /></a></li></ul></form><div class="instrument_details"></div></div><div class="instrument_list bigpadded"></div>');
+		$('#designer_instruments select').on('change',{me:this},function(e){
+			var i = e.data.me.getValue('#instruments');
+			var w = e.data.me.getValue('#wavelengths');
+			e.data.me.showDetails('instrument',{ 'wavelength': w, 'type': i});
+		});
+		$('#designer_instruments .add_instrument').on('click',{me:this},function(e){
+			e.preventDefault();
+			e.data.me.addInstrument();
+		});
+		$(document).on('click','.remove_instrument',{me:this},function(e){
+			e.preventDefault();
+			e.data.me.removeInstrument($(this).attr('data'));
+		});
+
 
 		// Build cooling options
 		$('#designer_cooling .options').html('<form><ul class="bigpadded"><li><label for="hascooling"></label>'+this.buildToggle("hascooling",{ "value": "no", "id": "cooling_no", "checked": true },{ "value": "yes", "id": "cooling_yes" })+'</li></ul></form>');
@@ -351,7 +369,7 @@ if(typeof $==="undefined") $ = {};
 			$('#designer_site #site').trigger('change');
 		});
 		$('#designer_site #site').on('change',{me:this},function(e){
-			var site = $(this).find(":selected").attr('value');
+			var site = e.data.me.getValue('#site');
 			$('.launchsite').removeClass('selected');
 			$('.launchsite[data='+site+']').addClass('selected');
 			e.data.me.showDetails('site',site);
@@ -360,8 +378,8 @@ if(typeof $==="undefined") $ = {};
 
 		// Build orbit options
 		$('#designer_orbit .options').html('<div id="orbits"></div><div class="bigpadded"><form><ul><li><label for="mission_orbit"></label><select id="mission_orbit" name="mission_orbit"></select></li><li><label for="mission_duration"></label><select id="mission_duration" name="mission_duration"></select></li></ul></form><div class="orbit_details"></div></div>');
-		$('#designer_orbit #mission_orbit').on('change',{me:this},function(e){
-			var key = $(this).find(":selected").attr('value');
+		$('#mission_orbit').on('change',{me:this},function(e){
+			var key = e.data.me.getValue('#mission_orbit');
 			e.data.me.highlightOrbit(key);
 			e.data.me.showDetails('orbit',key);
 		});
@@ -412,13 +430,13 @@ if(typeof $==="undefined") $ = {};
 				'list': {
 					'mass_satellite': {},
 					'mass_mirror': {},
-					'mass_cooling_total': {
+					'mass_cooling_total': (this.settings.mode=="advanced" ? {
 						'list': {
 							'mass_cooling_passive': {},
 							'mass_cooling_cryo': {},
 							'mass_cooling_active': {}
 						}
-					},
+					} : {}),
 					'mass_instruments': {}
 				}
 			},
@@ -476,11 +494,13 @@ if(typeof $==="undefined") $ = {};
 
 	// Process keypress events
 	SpaceTelescope.prototype.keypress = function(charCode,event){
-		if(!event) event = { altKey: false };
-		for(var i = 0 ; i < this.keys.length ; i++){
-			if(this.keys[i].charCode == charCode && event.altKey == this.keys[i].altKey){
-				this.keys[i].fn.call(this,{event:event});
-				break;
+		if(this.keyboard){
+			if(!event) event = { altKey: false };
+			for(var i = 0 ; i < this.keys.length ; i++){
+				if(this.keys[i].charCode == charCode && event.altKey == this.keys[i].altKey){
+					this.keys[i].fn.call(this,{event:event});
+					break;
+				}
 			}
 		}
 	}
@@ -685,36 +705,59 @@ if(typeof $==="undefined") $ = {};
 		return this;
 	}
 
-	SpaceTelescope.prototype.selectOrbit = function(key){
+	SpaceTelescope.prototype.addInstrument = function(){
+		if(!this.choices.instruments) this.choices.instruments = [];
 
-		if(key){
-			$('#designer_orbit #mission_orbit').val(key);
-			$('#designer_orbit #mission_orbit').trigger('change');
+		var i = this.getValue('#instruments');
+		var w = this.getValue('#wavelengths');
+		var n = this.getValue('#instrument_name');
+
+		if(i && w && this.choices.instruments.length < this.data.instrument.maxsize.length){
+			if(!n) n = this.phrases.designer.instruments.defaultname.replace(/%d%/,(this.choices.instruments.length+1));
+			this.choices.instruments.push({'name':n,'type':i,'wavelength':w});
+			this.updateInstruments();
 		}
-
 		return this;
 	}
 
-	// Highlight the selected orbit (uses the value from the select dropdown)
-	// If necessary (i.e. if the zoom level has changed) redisplay the orbits first.
-	SpaceTelescope.prototype.highlightOrbit = function(key){
+	SpaceTelescope.prototype.removeInstrument = function(i){
 
-		if(!key) return this;
+		i = parseInt(i,10);
+		if(i < this.choices.instruments.length) this.choices.instruments.splice(i,1)
+		this.updateInstruments();
+		return this;
+	}
+	
+	SpaceTelescope.prototype.updateInstruments = function(){
+		var d = this.phrases.designer;
+		var html = '';
+		if(this.choices.instruments.length > 0){
+			html += '<h3>'+d.instruments.table.title+'</h3><div class="tablewrapper"><table><tr><th>'+d.instruments.table.name+'</th><th>'+d.instruments.table.type+'</th><th>'+d.instruments.table.cost+'</th><th>'+d.instruments.table.mass+'</th><th>'+d.instruments.table.temperature+'</th><th></th></tr>';
+			for(var i = 0; i < this.choices.instruments.length; i++){
+				v = this.getDetails('instrument',{'wavelength':this.choices.instruments[i].wavelength,'type':this.choices.instruments[i].type})
+				console.log(v)
+				html += '<tr><td>'+this.choices.instruments[i].name+'</td><td>'+v.wavelength+' '+v.type+'</td><td>'+this.formatValueSpan(v.cost)+'</td><td>'+this.formatValueSpan(v.mass)+'</td><td>'+this.formatValueSpan(v.temp)+'</td><td><a class="remove_instrument" href="#" title="'+this.phrases.designer.instruments.options.remove+'" data="'+i+'"><img class="icon minus" src="images/cleardot.gif"></a></td></tr>';
+			}
+			html += '</table></div>';
+		}
+		$('#designer_instruments .instrument_list').html(html);
+		this.updateSummary();
+		return this;
+	}
+	
+	SpaceTelescope.prototype.makeSpace = function(zoom){
 
-		if(!this.space.orbits[key] || this.space.zoom!=this.space.orbits[key].zoom){
-			// We've changed the zoom level so remove existing orbits
-			this.space.zoom = (this.space.zoom==1) ? 0 : 1;
-			// Re-draw the orbits
-			this.displayOrbits();
-		}
-		
-		// Update SVG elements
-		for(var o in this.space.orbits){
-			if(o==key) this.space.orbits[o].selected = true;
-			else this.space.orbits[o].selected = false;
-			this.space.orbits[o].dotted.attr({'stroke-width':(this.space.orbits[o].selected ? this.space.orbits[o].inp.stroke.selected : this.space.orbits[o].inp.stroke.off)});
-			this.space.orbits[o].satellite.attr({'r':(this.space.orbits[o].selected ? 8 : 4)});
-		}
+console.log('makeSpace')
+
+		if(!this.space) this.space = { width: 0, height: 300, zoom: 0, scale: [1,0.022], anim: {}, orbits:{}, labels:{} };
+	
+		if(zoom) this.space.zoom = zoom;
+		//this.space.orbits = {};
+		if(!this.space.el) this.space.el = $('#orbits');
+
+		if(!this.space.el.is(':visible')) return this;
+
+		if(!this.space.paper) this.resizeSpace();
 
 		return this;
 	}
@@ -749,28 +792,55 @@ if(typeof $==="undefined") $ = {};
 		return this;	
 	}
 	
-	SpaceTelescope.prototype.makeSpace = function(zoom){
+	SpaceTelescope.prototype.selectOrbit = function(key){
 
-console.log('makeSpace')
-
-		if(!this.space) this.space = { width: 0, height: 300, zoom: 0, scale: [1,0.022], anim: {}, orbits:{}, labels:{} };
-	
-		if(zoom) this.space.zoom = zoom;
-		//this.space.orbits = {};
-		if(!this.space.el) this.space.el = $('#orbits');
-
-		if(!this.space.el.is(':visible')) return this;
-
-		if(!this.space.paper) this.resizeSpace();
-
-		this.displayOrbits();
+		if(key){
+			$('#designer_orbit #mission_orbit').val(key);
+			$('#designer_orbit #mission_orbit').trigger('change');
+		}
 
 		return this;
 	}
 
-	SpaceTelescope.prototype.displayOrbits = function(){
+	// Highlight the selected orbit (uses the value from the select dropdown)
+	// If necessary (i.e. if the zoom level has changed) redisplay the orbits first.
+	SpaceTelescope.prototype.highlightOrbit = function(key){
 
-console.log('displayOrbits',this.space.zoom)
+console.log('highlightOrbit',key,this.space)
+
+		if(!key) return this;
+
+		this.displayOrbits(key);
+
+		// Update SVG elements
+		for(var o in this.space.orbits){
+			if(o==key) this.space.orbits[o].selected = true;
+			else this.space.orbits[o].selected = false;
+			this.space.orbits[o].dotted.attr({'stroke-width':(this.space.orbits[o].selected ? this.space.orbits[o].inp.stroke.selected : this.space.orbits[o].inp.stroke.off)});
+			this.space.orbits[o].satellite.attr({'r':(this.space.orbits[o].selected ? 8 : 4)});
+		}
+
+		return this;
+	}
+
+	SpaceTelescope.prototype.displayOrbits = function(key){
+
+console.log('displayOrbits',key)
+
+		if(!this.space.paper) return this;
+
+		// Properties for the orbit animation
+		this.orbits = {
+			"GEO": { "inclination": 0, "color": "#048b9f", "ellipticity": 0.3, "zoom": 0 },
+			"SNS": { "inclination": -90, "color": "#7ac36a", "ellipticity": 0.4, "zoom": 0 },
+			"HEO": { "inclination": 30, "color": "#de1f2a", "ellipticity": 0.4, "r": this.space.E.r*3.3, "zoom": 0 },
+			"LEO": { "inclination": -30, "color": "#cccccc", "ellipticity": 0.4, "zoom": 0 },
+			"EM2": { "inclination": 0, "color": "#e6e6e6", "ellipticity": 1, "zoom": 1 },
+			"ES2": { "inclination": 0, "color": "#9467bd", "ellipticity": 1, "zoom": 1 },
+			"ETR": { "inclination": 0, "color": "#fac900", "ellipticity": 1, "zoom": 1 }
+		}
+		
+		if(key) this.space.zoom = this.orbits[key].zoom;
 
 		// r - radius
 		// e - ellipticity
@@ -833,15 +903,6 @@ console.log('displayOrbits',this.space.zoom)
 		else this.space.Earth = this.space.paper.path('M '+(this.space.E.x)+' '+(this.space.E.y)+' m 0 -43.6 c,-19.195,-0.359,-37.44,13.34,-41.865,32.015 c,-4.561096,17.1667748,2.72917,37.246587,17.656538,46.977656 c,13.373687,9.285707,32.0526208,9.996435,45.992018,1.508414 c,5.957424,-3.319826,11.075156,-8.039317,14.543607,-13.935126 c,10.546018,-15.6499112,8.720274,-38.18332,-4.018314,-52.068038 c,-8.07768,-9.096389,-20.115729,-14.609639,-32.30837958,-14.498209 z m,0.09375,5.375 c,12.57022058,-0.128555,24.94591858,6.5994,31.74999958,17.15625 c,-0.94917,5.002919,-6.086293,1.530374,-3.041063,-1.619594 c,-1.457671,-0.526126,-4.932858,2.878261,-6.847657,-0.603915 c,-3.184453,-1.308637,-6.3599,1.691261,-5.15979,4.188482 c,-3.782846,2.664376,-6.163477,-4.184848,-10.1526402,-1.250482 c,0.930713,-0.712397,6.3522672,-6.132291,1.9485113,-5.743768 c,-2.1471153,3.268504,-5.9001547,5.6116,-9.7549386,6.742359 c,-3.0333281,1.666497,3.4871809,3.919715,5.0848899,3.874212 c,4.4525294,2.286084,8.5800896,7.1007845,6.1927696,12.1877615 c,1.90772,3.21337796,3.996962,6.758283,2.957496,10.7455353 c,-1.088944,1.5975017,-1.993627,6.6457482,-3.8098779,5.9629142 c,0.09411,-5.5523502,-5.8551147,1.424572,-5.9032977,3.921686 c,-0.233555,1.607328,-2.089538,4.666463,0.316221,3.452139 c,1.5791784,3.031545,4.0433554,1.23024,2.5706854,-1.432668 c,-0.755832,-2.214988,1.071785,-4.450478,1.431817,-0.910521 c,3.4227102,1.986574,-2.079278,8.026424,-3.441317,4.221977 c,-0.05038,3.190668,-5.9116094,4.835384,-6.2547064,5.746188 c,2.90918203,2.904457,-1.551746,2.079951,-3.228894,2.254064 c,-1.300676,5.220523,5.49423002,3.315504,6.569102,-0.06951 c,2.572843,-3.120142,7.9417807,2.476723,8.2176023,0.158591 c,-5.1570029,-2.906592,4.3679773,1.498193,3.7328613,-0.172704 c,0.355589,-3.393695,5.711734,0.663429,6.832822,-2.635732 c,2.782198,1.056601,-3.254675,4.26505,-4.941003,4.473991 c,-2.714088,0.573027,-2.35272,4.236763,-5.7564619,2.583428 c,-3.9108453,-2.119881,-7.9960437,-0.807618,-12.0653907,-0.15703 c,-4.931145,2.236895,-10.2173174,1.74978,-14.8366384,-1.385684 c,-10.813803,-5.566552,-18.524599,-16.654538,-20.004852,-28.7192222 c,2.732778,2.989211,6.598056,4.7293091,8.998081,8.3559682 c,1.599527,0.730324,3.945675,3.523961,4.82994,3.171984 c,1.833841,-2.480098,4.151057,-5.772095,2.790203,-8.5464922 c,3.363681,-2.474446,-0.289772,-5.5676083,-3.153322,-3.525176 c,-4.391341,0.818177,-0.191169,-4.9463963,1.391046,-6.2324653 c,2.857681,-0.460706,3.513174,2.41500097,3.980956,3.732494 c,3.316523,-0.0353,0.834669,-3.882306,4.374542,-4.092336 c,0.130908,-1.411563,-3.481833,-2.709873,-0.211945,-1.771103 c,4.26026,-1.249006,1.634257,-4.365219,-0.493731,-3.1780419 c,2.763194,-2.1547021,4.181646,-7.6700956,8.5041634,-6.4331296 c,2.24906,-0.416067,2.612667,-2.860803,1.014942,-3.538046 c,2.719085,-1.835258,-1.409228,-1.787455,-0.10076,-4.29649 c,-1.830306,-0.309672,-4.304873,-0.973664,-2.132519,-3.101562 c,-3.3845944,2.57314,-3.5487544,7.860395,-8.9615664,7.398945 c,-4.539774,1.777416,-8.333796,-1.761858,-12.015717,-2.70409 c,-1.477835,0.696073,-6.487149,4.76626,-4.024621,0.665479 c,6.584664,-11.488859,19.533888,-19.038283,32.80405842,-18.874686 z m,-33.65625042,21.59375 c,-0.631472,0.607654,-1.285523,0.774007,0,0 z m,25.0312504,13.8749985 c,-1.378264,1.634778,-4.7210584,3.734578,-0.438841,3.849626 c,2.052676,0.491366,5.022044,2.343429,3.253406,-0.95631404 c,-0.419504,-1.86979296,-2.20923,-1.09186896,-2.814565,-2.89331196 z m,-4.0625014,1.78125 c,-4.153103,-0.46570203,-2.208863,6.0465023,-6.129842,6.4757613 c,-0.605185,2.103009,2.300217,1.325155,3.030352,1.204245 c,1.416321,-2.463228,3.738442,-4.4874303,3.09949,-7.6800063 z m,3.5312514,3.03125 c,0.05302,4.2453083,-2.3776964,7.126859,-5.9261904,8.5371375 c,-2.819523,3.208873,0.326358,5.688926,2.91859,2.404436 c,3.6624634,0.820099,7.4597394,0.468648,8.5987314,-3.8347225 c,3.98761402,-4.1394317,-1.837631,-7.108603,-5.591131,-7.106851 z m,2.65625,13.8750015 c,-4.0821284,2.583778,5.79884807,0.948002,0,0 z m,29.9999996,1 c,-0.310613,2.698258,7.000211,1.533177,2.616976,4.524626 c,-1.843124,0.0678,-6.305665,-2.59259,-2.616976,-4.524626 z m,-25.0937496,4.625 c,-2.608331,0.710104,1.04075402,4.160157,-0.444775,4.552104 c,-1.433649,1.942609,4.729631,-0.163724,1.34758302,-1.892931 c,-0.672,-1.046,-1.062,-1.697,-0.903,-2.659 z m,32.4999996,0.34375 c,-0.01479,2.705677,-5.791353,2.714607,-1.548038,0.956689 l,0.803335,-0.425532 z m,-12.78125,0.375 c,0.523617,1.617196,4.358842,0.626771,1.387,2.500788 c,-1.249506,2.929193,-6.666484,3.760447,-3.932662,-0.407517 c,1.533416,0.532153,2.258563,-0.753125,2.545662,-2.093271 z m,-21.9374996,1.15625 c,-3.15159,1.823608,0.365256,3.975785,0.815462,0.936364 c,-0.0466,-0.434703,-0.359015,-0.867276,-0.815462,-0.936364 z m,26.4374996,6.90625 c,-1.920358,1.510414,-1.942756,0.166742,0,0 z');
 		this.space.Earth.attr({ stroke: 0, fill: '#69DFFF', opacity:0.8 });
 
-		var orbits = {
-			"GEO": { "inclination": 0, "color": "#048b9f", "ellipticity": 0.3, "zoom": 0 },
-			"SNS": { "inclination": -90, "color": "#7ac36a", "ellipticity": 0.4, "zoom": 0 },
-			"HEO": { "inclination": 30, "color": "#de1f2a", "ellipticity": 0.4, "r": this.space.E.r*3.3, "zoom": 0 },
-			"LEO": { "inclination": -30, "color": "#cccccc", "ellipticity": 0.4, "zoom": 0 },
-			"EM2": { "inclination": 0, "color": "#e6e6e6", "ellipticity": 1, "zoom": 1 },
-			"ES2": { "inclination": 0, "color": "#9467bd", "ellipticity": 1, "zoom": 1 },
-			"ETR": { "inclination": 0, "color": "#fac900", "ellipticity": 1, "zoom": 1 }
-		}
 		var dx,dy,r,e,i,period;
 
 		var _obj = this;
@@ -901,9 +962,11 @@ console.log('displayOrbits',this.space.zoom)
 			return p;
 		}
 
+		if(!this.space.E || !this.space.M || !this.space.scale) return this;
+		
 		if(this.space.zoom == 0){
 			for(var o in this.data.orbit){
-				if(orbits[o] && orbits[o].zoom == this.space.zoom && !this.space.orbits[o]){
+				if(this.orbits[o] && this.orbits[o].zoom == this.space.zoom && !this.space.orbits[o]){
 					if(o=="HEO"){
 						dx = -this.space.E.r*1.2;
 						dy = -this.space.E.r*0.35;
@@ -911,9 +974,9 @@ console.log('displayOrbits',this.space.zoom)
 						dx = 0;
 						dy = 0;
 					}
-					if(!orbits[o].r) orbits[o].r = this.space.E.r*(1+this.data.orbit[o].altitude.value/this.space.E.radius);
-					period = this.convertValue(this.data.orbit[o].period,'hours')
-					this.space.orbits[o] = makeOrbit({key:o,period:period.value*3*1000,r:orbits[o].r,cx:(this.space.E.x+dx),cy:(this.space.E.y+dy),color:orbits[o].color,e:orbits[o].ellipticity,i:orbits[o].inclination});
+					if(!this.orbits[o].r) this.orbits[o].r = this.space.E.r*(1+this.data.orbit[o].altitude.value/this.space.E.radius);
+					period = this.convertValue(this.data.orbit[o].period,'hours');
+					this.space.orbits[o] = makeOrbit({key:o,period:period.value*3*1000,r:this.orbits[o].r,cx:(this.space.E.x+dx),cy:(this.space.E.y+dy),color:this.orbits[o].color,e:this.orbits[o].ellipticity,i:this.orbits[o].inclination});
 				}
 			}
 		}else if(this.space.zoom == 1){
@@ -923,24 +986,23 @@ console.log('displayOrbits',this.space.zoom)
 				this.space.Moonlagrangian = this.space.paper.path("M "+this.space.E.x+","+this.space.E.y+" "+makeOrbitPath(this.space.M.o*this.space.scale[1]*440000/380000,1)).attr({ stroke:'#000000','stroke-dasharray': '-','stroke-width':0.5,'opacity':0.01 });
 				period = this.convertValue(this.data.orbit["EM2"].period,'days');
 				this.space.Moon.animateAlong(this.space.Moonorbit, period.value*1000, Infinity,-1);
-				this.space.orbits["EM2"] = makeOrbit({key:"EM2",period:period.value*1000,orbit:this.space.Moonlagrangian,orbitdir:-1,r:this.space.M.o*((440000/380000)-1)*this.space.scale[1],cx:(this.space.E.x - this.space.M.o*this.space.scale[1]*Math.cos(Math.PI/6)),cy:(this.space.M.o*this.space.scale[1]*Math.sin(Math.PI/6)),color:orbits["EM2"].color,e:1,i:0});
+				this.space.orbits["EM2"] = makeOrbit({key:"EM2",period:period.value*1000,orbit:this.space.Moonlagrangian,orbitdir:-1,r:this.space.M.o*((440000/380000)-1)*this.space.scale[1],cx:(this.space.E.x - this.space.M.o*this.space.scale[1]*Math.cos(Math.PI/6)),cy:(this.space.M.o*this.space.scale[1]*Math.sin(Math.PI/6)),color:this.orbits["EM2"].color,e:1,i:0});
 				this.space.orbits["EM2"].dotted.animateAlong(this.space.Moonorbit, period.value*1000, Infinity,-1);
 				this.space.orbits["EM2"].solid.animateAlong(this.space.Moonorbit, period.value*1000, Infinity,-1);
 			}
 			if(!this.space.orbits["ES2"] && this.data.orbit["ES2"]){
 				period = this.convertValue(this.data.orbit["ES2"].period,'days');
-				this.space.orbits["ES2"] = makeOrbit({key:"ES2",period:period.value*1000,r:1,cx:(this.space.E.x + 4*this.space.M.o*this.space.scale[1]),cy:this.space.E.y,color:orbits["ES2"].color});
+				this.space.orbits["ES2"] = makeOrbit({key:"ES2",period:period.value*1000,r:1,cx:(this.space.E.x + 4*this.space.M.o*this.space.scale[1]),cy:this.space.E.y,color:this.orbits["ES2"].color});
 			}
 			var r = 9;
 			if(!this.space.orbits["ETR"] && this.data.orbit["ETR"]){
 				period = this.convertValue(this.data.orbit["ETR"].period,'days');
 				this.space.Earthorbit = this.space.paper.path("M "+(this.space.E.x-r)+",0 q "+(r*2)+","+(this.space.height/2)+" 0,"+(this.space.height)).attr({ stroke:'#606060','stroke-dasharray': '-','stroke-width':1.5 });
-				this.space.orbits["ETR"] = makeOrbit({key:"ETR",period:period.value*1000,r:1,cx:(this.space.E.x-r*0.78),cy:(this.space.E.y+2.1*this.space.M.o*this.space.scale[1]),color:orbits["ETR"].color});
+				this.space.orbits["ETR"] = makeOrbit({key:"ETR",period:period.value*1000,r:1,cx:(this.space.E.x-r*0.78),cy:(this.space.E.y+2.1*this.space.M.o*this.space.scale[1]),color:this.orbits["ETR"].color});
 			}
 			var m = this.space.M.o*this.space.scale[1];
 			var s = 0.3;
 			var fs = parseInt(this.space.el.css('font-size'));
-			console.log('font size',fs)
 			if(!this.space.labels) this.space.labels = {};
 			if(!this.space.labels.sun){
 				this.space.labels.sun = {
@@ -994,7 +1056,7 @@ console.log('displayOrbits',this.space.zoom)
 		if(this.space.scale[this.space.zoom] < 1) scale *= this.space.scale[this.space.zoom]*10;
 		// Now scale the path
 		if(this.space.Earth) transformer(this.space.Earth,['S',scale,scale,this.space.E.x,this.space.E.y]);
-
+		
 		return this;
 	}
 
@@ -1094,8 +1156,6 @@ console.log('displayOrbits',this.space.zoom)
 		$('body').attr('dir',(d.language.alignment=="right" ? 'rtl' : 'ltr')).removeClass('ltr rtl').addClass((d.language.alignment=="right" ? 'rtl' : 'ltr'));
 
 
-
-
 		// Update Designer
 
 		// Update objectives
@@ -1124,7 +1184,7 @@ console.log('displayOrbits',this.space.zoom)
 		$('#designer_instruments .options label').html(d.designer.instruments.options.label);
 		$('#designer_instruments .options input#instrument_name').attr('placeholder',d.designer.instruments.options.name);
 		$('#designer_instruments .options a.add_instrument').attr('title',d.designer.instruments.options.add);
-		if(d.designer.instruments.intro) $('#designer_instruments .intro').html(d.designer.instruments.intro).addClass('bigpadded');
+		if(d.designer.instruments.intro) $('#designer_instruments .intro').html(d.designer.instruments.intro.replace(/%MAX%/,this.data.instrument.maxsize.length)).addClass('bigpadded');
 
 		// Update the cooling section
 		// TODO: update selected
@@ -1303,9 +1363,11 @@ console.log('displayOrbits',this.space.zoom)
 		this.table.mass_total.list.mass_satellite.label = s.mass.satellite;
 		this.table.mass_total.list.mass_mirror.label = s.mass.mirror;
 		this.table.mass_total.list.mass_cooling_total.label = s.mass.cooling.title;
-		this.table.mass_total.list.mass_cooling_total.list.mass_cooling_passive.label = s.mass.cooling.passive;
-		this.table.mass_total.list.mass_cooling_total.list.mass_cooling_cryo.label = s.mass.cooling.cryo;
-		this.table.mass_total.list.mass_cooling_total.list.mass_cooling_active.label = s.mass.cooling.active;
+		if(this.settings.mode=="advanced"){
+			this.table.mass_total.list.mass_cooling_total.list.mass_cooling_passive.label = s.mass.cooling.passive;
+			this.table.mass_total.list.mass_cooling_total.list.mass_cooling_cryo.label = s.mass.cooling.cryo;
+			this.table.mass_total.list.mass_cooling_total.list.mass_cooling_active.label = s.mass.cooling.active;
+		}
 		this.table.mass_total.list.mass_instruments.label = s.mass.instruments;
 		this.table.science_total.label = s.science.title;
 		this.table.profile_total.label = s.profile.title;
@@ -1323,40 +1385,78 @@ console.log('displayOrbits',this.space.zoom)
 		return this;
 	}
 
+	SpaceTelescope.prototype.getDetails = function(area,value){
+
+		var v = value;
+
+		if(area=="instrument"){
+		
+			var cost = this.makeValue(0,'GBP');
+			var mass = this.makeValue(0,'kg');
+			var temp = this.makeValue(0,'K');
+			var time = this.makeValue(0,'months');
+
+			if(value.wavelength && this.data.wavelengths[value.wavelength]){
+				var w = this.data.wavelengths[value.wavelength];
+				if(w.cost) cost = w.cost;
+				if(w.mass) mass = w.mass;
+				if(w.temperature) temp = w.temperature;
+				v.wavelength = this.phrases.wavelengths[value.wavelength].label;
+			}
+			if(value["type"] && this.data.instrument.options[value["type"]]){
+				var t = this.data.instrument.options[value["type"]];
+				if(t.multiplier && t.multiplier.cost) cost.value *= t.multiplier.cost;
+				if(t.multiplier && t.multiplier.mass) mass.value *= t.multiplier.mass;
+				if(t.devtime) time = t.devtime;
+				v.type = this.phrases.designer.instruments.options.instrument[value["type"]].label;
+			}
+			v.cost = cost;
+			v.mass = mass;
+			v.temp = temp;
+			v.time = time;
+		}
+
+		return v;
+	}
+	
 	// Show the detail panel for the area/value
 	SpaceTelescope.prototype.showDetails = function(area,value){
 		var html = '';
 		if(!value || value == "") return this;
+		
+		var d = this.phrases.designer;
 
-		if(area=="site"){
+		if(area=="instrument"){
+			value = this.getDetails(area,value);
+			
+			html += '<div><strong>'+d.instruments.cost+'</strong> '+this.formatValueSpan(value.cost)+'</div>';
+			html += '<div><strong>'+d.instruments.mass+'</strong> '+this.formatValueSpan(value.mass)+'</div>';
+			html += '<div><strong>'+d.instruments.temperature+'</strong> '+this.formatValueSpan(value.temp)+'</div>';
+			html += '<div><strong>'+d.instruments.devtime+'</strong> '+this.formatValueSpan(value.time)+'</div>';
 
-			if(typeof this.data.site[value].latitude==="number") html += '<div><strong>'+this.phrases.designer.site.location+'</strong> <span class="value">'+this.data.site[value].latitude.toFixed(2)+'&deg;, '+this.data.site[value].longitude.toFixed(2)+'&deg;</span></div>';
-			if(this.data.site[value].operator) html += '<div><strong>'+this.phrases.designer.site.operator+'</strong> <span class="value">'+this.phrases.operator[this.data.site[value].operator].label+'</span></div>';
-			html += '<div><strong>'+this.phrases.designer.site.trajectories+'</strong> <span class="value">'+this.phrases.designer.site.options[value].trajectories+'</span></div>';
+		}else if(area=="site"){
 
-			html += '<div><strong>'+this.phrases.designer.site.orbits+'</strong> <span class="value">'
+			if(typeof this.data.site[value].latitude==="number") html += '<div><strong>'+d.site.location+'</strong> <span class="value">'+this.data.site[value].latitude.toFixed(2)+'&deg;, '+this.data.site[value].longitude.toFixed(2)+'&deg;</span></div>';
+			if(this.data.site[value].operator) html += '<div><strong>'+d.site.operator+'</strong> <span class="value">'+this.phrases.operator[this.data.site[value].operator].label+'</span></div>';
+			html += '<div><strong>'+d.site.trajectories+'</strong> <span class="value">'+d.site.options[value].trajectories+'</span></div>';
+
+			html += '<div><strong>'+d.site.orbits+'</strong> <span class="value">'
 			for(var o in this.data.site[value].orbits){
-				if(this.data.site[value].orbits[o]) html += ''+this.phrases.designer.orbit.options[o].label+'<br />';
+				if(this.data.site[value].orbits[o]) html += ''+d.orbit.options[o].label+'<br />';
 			}
 			html += '</span></div>';
 			
-			if(typeof this.data.site[value].risk==="number") html += '<div><strong>'+this.phrases.designer.site.risk+'</strong> <span class="value">'+(this.data.site[value].risk*100).toFixed(0)+'%</span></div>';
+			if(typeof this.data.site[value].risk==="number") html += '<div><strong>'+d.site.risk+'</strong> <span class="value">'+(this.data.site[value].risk*100).toFixed(0)+'%</span></div>';
 			
 		}else if(area=="orbit"){
 
-			if(this.data.orbit[value].altitude) html += '<div><strong>'+this.phrases.designer.orbit.altitude+'</strong> '+this.formatValueSpan(this.data.orbit[value].altitude)+'</div>';
-			if(this.data.orbit[value].period) html += '<div><strong>'+this.phrases.designer.orbit.period+'</strong> '+this.formatValueSpan(this.data.orbit[value].period)+'</div>';
-			if(this.data.orbit[value].obsfrac) html += '<div><strong>'+this.phrases.designer.orbit.obsfrac+'</strong> '+this.formatValueSpan({'value':this.data.orbit[value].obsfrac,'units':'%','dimension':'percent'})+'</div>';
-			if(this.data.orbit[value].fuellife) html += '<div><strong>'+this.phrases.designer.orbit.fuellife+'</strong> '+this.formatValueSpan(this.data.orbit[value].fuellife)+'</div>';
-			if(this.data.orbit[value].temperature) html += '<div><strong>'+this.phrases.designer.orbit.temperature+'</strong> '+this.formatValueSpan(this.data.orbit[value].temperature)+'</div>';
-			if(this.data.orbit[value].groundcost) html += '<div><strong>'+this.phrases.designer.orbit.groundcost+'</strong> '+this.formatValueSpan(this.data.orbit[value].groundcost)+'</div>';
-/*
-			"multiplier": {
-				"passive": "Passive cooling multiplier",
-				"cryo": "Cyrogenic cooling multiplier",
-				"launchcost": "Launch cost multiplier"
-			},
-*/
+			if(this.data.orbit[value].altitude) html += '<div><strong>'+d.orbit.altitude+'</strong> '+this.formatValueSpan(this.data.orbit[value].altitude)+'</div>';
+			if(this.data.orbit[value].period) html += '<div><strong>'+d.orbit.period+'</strong> '+this.formatValueSpan(this.data.orbit[value].period)+'</div>';
+			if(this.data.orbit[value].obsfrac) html += '<div><strong>'+d.orbit.obsfrac+'</strong> '+this.formatValueSpan({'value':this.data.orbit[value].obsfrac,'units':'%','dimension':'percent'})+'</div>';
+			if(this.data.orbit[value].fuellife) html += '<div><strong>'+d.orbit.fuellife+'</strong> '+this.formatValueSpan(this.data.orbit[value].fuellife)+'</div>';
+			if(this.data.orbit[value].temperature) html += '<div><strong>'+d.orbit.temperature+'</strong> '+this.formatValueSpan(this.data.orbit[value].temperature)+'</div>';
+			if(this.data.orbit[value].groundcost) html += '<div><strong>'+d.orbit.groundcost+'</strong> '+this.formatValueSpan(this.data.orbit[value].groundcost)+'</div>';
+
 		}
 
 		html += '<div class="clearall"></div>';
@@ -1468,6 +1568,16 @@ console.log('displayOrbits',this.space.zoom)
 		return JSON.parse(JSON.stringify(v));
 	}
 	
+	SpaceTelescope.prototype.getValue = function(v){
+
+		var el = $(v);
+		if(el.length > 0){
+			if(el.prop('tagName')=="SELECT") return el.find(":selected").attr('value');
+			if(el.prop('tagName')=="INPUT") return el.val();
+		}
+		return "";
+	}
+	
 	SpaceTelescope.prototype.getChoice = function(choice){
 		if(choice=="mirror.cost"){
 			v = (this.choices.mirror ? this.copyValue(this.data.mirror[this.choices.mirror].cost) : this.makeValue(0,'GBP'));
@@ -1502,7 +1612,30 @@ console.log('displayOrbits',this.space.zoom)
 		}else if(choice=="satellite.time"){
 			v = (this.choices.mirror ? this.copyValue(this.data.mirror[this.choices.mirror].bus.devtime) : this.makeValue(0,'months'));
 		}else if(choice=="instruments.time"){
-			v = (this.choices.instrument ? this.copyValue(this.data.instrument[this.choices.instrument].devtime) : this.makeValue(0,'months'));
+			v = this.makeValue(0,'months');
+			if(this.choices.instruments){
+				for(var i = 0; i < this.choices.instruments.length; i++){
+					var t = this.convertValue(this.data.instrument.options[this.choices.instruments[i].type].devtime,'months');
+					v.value += t.value;
+				}
+			}
+		}else if(choice=="instruments.cost"){
+			v = this.makeValue(0,'GBP');
+			if(this.choices.instruments){
+				for(var i = 0; i < this.choices.instruments.length; i++){
+					var t = this.convertValue(this.data.wavelengths[this.choices.instruments[i].wavelength].cost,'GBP');
+					v.value += t.value*this.data.instrument.options[this.choices.instruments[i].type].multiplier.cost;
+				}
+			}
+			v.value = -v.value;
+		}else if(choice=="instruments.mass"){
+			v = this.makeValue(0,'kg');
+			if(this.choices.instruments){
+				for(var i = 0; i < this.choices.instruments.length; i++){
+					var t = this.convertValue(this.data.wavelengths[this.choices.instruments[i].wavelength].mass,'kg');
+					v.value += t.value*this.data.instrument.options[this.choices.instruments[i].type].multiplier.mass;
+				}
+			}
 		}else if(choice=="site"){
 			v = (this.choices.site ? this.phrases.designer.site.options[this.choices.site].label : '');
 		}else if(choice=="site.prob"){
@@ -1524,10 +1657,11 @@ console.log('displayOrbits',this.space.zoom)
 			v = (this.choices.vehicle ? this.copyValue(this.data.vehicle[this.choices.vehicle].cost) : this.makeValue(0,'GBP'));
 			v.value *= -(this.choices.orbit ? this.data.orbit[this.choices.orbit].multiplier.launchcost : 1);
 		}else if(choice=="orbit"){
-			//'LEO (<span class="convertable" data-value="400000" data-units="m" data-dimension="length">400000m</span>)'
-			v = ' ';
+			v = (this.choices.orbit) ? this.phrases.designer.orbit.options[this.choices.orbit].label : '';
 		}else if(choice=="mission.time"){
 			v = (this.choices.mission ? this.copyValue(this.data.mission[this.choices.mission].life) : this.makeValue(0,'months'));
+		}else if(choice=="fuel.time"){
+			v = (this.choices.orbit ? this.copyValue(this.data.orbit[this.choices.orbit].fuellife) : this.makeValue(0,'months'));
 		}
 		return v;
 	}
@@ -1596,7 +1730,8 @@ console.log('displayOrbits',this.space.zoom)
 		cost.mirror = this.getChoice('mirror.cost');
 		cost.satellite = this.getChoice('satellite.cost');
 		cost.cooling = this.getChoice('cooling.cost');
-		cost.dev = this.sumValues(cost.mirror,cost.satellite,cost.cooling);
+		cost.instruments = this.getChoice('instruments.cost')
+		cost.dev = this.sumValues(cost.mirror,cost.satellite,cost.cooling,cost.instruments);
 
 		cost.vehicle = this.getChoice('vehicle.cost');
 		cost.ground = this.getChoice('ground.cost');
@@ -1614,12 +1749,14 @@ console.log('displayOrbits',this.space.zoom)
 		time.cooling = this.getChoice('cooling.time');
 		time.total = this.sumValues(time.mirror,time.satellite,time.cooling,time.instruments);
 		time.mission = this.getChoice('mission.time');
+		time.fuel = this.getChoice('fuel.time');
 
 		// Format masses
 		mass.mirror = this.getChoice('mirror.mass');
 		mass.satellite = this.getChoice('satellite.mass');
 		mass.cooling = this.getChoice('cooling.mass');
-		mass.total = this.sumValues(mass.mirror,mass.satellite,mass.cooling);
+		mass.instruments = this.getChoice('instruments.mass');
+		mass.total = this.sumValues(mass.mirror,mass.satellite,mass.cooling,mass.instruments);
 		
 		
 
@@ -1637,7 +1774,7 @@ console.log('displayOrbits',this.space.zoom)
 		this.updateTable('cost_dev_satellite','value',cost.satellite);
 		this.updateTable('cost_dev_mirror','value',cost.mirror);
 		this.updateTable('cost_dev_cooling','value',cost.cooling);
-		this.updateTable('cost_dev_instruments','value',this.makeValue(0,'GBP'));
+		this.updateTable('cost_dev_instruments','value',cost.instruments);
 		this.updateTable('cost_operations_total','value',cost.operations);
 		this.updateTable('cost_operations_launch','value',cost.launch);
 		this.updateTable('cost_operations_ground','value',cost.ground);
@@ -1651,19 +1788,21 @@ console.log('displayOrbits',this.space.zoom)
 		this.updateTable('time_dev_cooling','value',time.cooling);
 		this.updateTable('time_dev_instruments','value',time.instruments);
 		this.updateTable('time_mission','value',time.mission);
-		this.updateTable('time_fuel','value',this.makeValue(0,'months'));
+		this.updateTable('time_fuel','value',time.fuel);
 		this.table.mass_total.value = mass.total;
 		this.table.mass_total.list.mass_satellite.value = mass.satellite;
 		this.table.mass_total.list.mass_mirror.value = mass.mirror;
 		this.table.mass_total.list.mass_cooling_total.value = mass.cooling;
-		this.table.mass_total.list.mass_cooling_total.list.mass_cooling_passive.value = this.makeValue(0,'kg');
-		this.table.mass_total.list.mass_cooling_total.list.mass_cooling_cryo.value = this.makeValue(0,'kg');
-		this.table.mass_total.list.mass_cooling_total.list.mass_cooling_active.value = this.makeValue(0,'kg');
-		this.table.mass_total.list.mass_instruments.value = this.makeValue(0,'kg');
+		if(this.settings.mode=="advanced"){
+			this.table.mass_total.list.mass_cooling_total.list.mass_cooling_passive.value = this.makeValue(0,'kg');
+			this.table.mass_total.list.mass_cooling_total.list.mass_cooling_cryo.value = this.makeValue(0,'kg');
+			this.table.mass_total.list.mass_cooling_total.list.mass_cooling_active.value = this.makeValue(0,'kg');
+		}
+		this.table.mass_total.list.mass_instruments.value = mass.instruments;
 		this.table.science_total.value = this.makeValue(0,'%');
 		this.table.profile_total.list.profile_site.value = this.getChoice('site');
 		this.table.profile_total.list.profile_vehicle.value = this.getChoice('vehicle');
-		this.table.profile_total.list.profile_instruments.value = '0';
+		this.table.profile_total.list.profile_instruments.value = (this.choices.instruments) ? this.choices.instruments.length : 0;
 		this.table.profile_total.list.profile_temperature.value = this.getChoice('temperature');
 		this.table.profile_total.list.profile_orbit.value = this.getChoice('orbit');
 		var d = new Date();
@@ -1671,6 +1810,8 @@ console.log('displayOrbits',this.space.zoom)
 		d.setUTCMonth(d.getUTCMonth()+t.value);
 		this.table.profile_total.list.profile_launch.value = d.toDateString();
 		t = this.convertValue(time.mission,'months');
+		t2 = this.convertValue(time.fuel,'months');
+		if(t2.value < t.value) t = t2;
 		d.setUTCMonth(d.getUTCMonth()+t.value);
 		this.table.profile_total.list.profile_end.value = d.toDateString();
 
@@ -1970,7 +2111,7 @@ console.log('displayOrbits',this.space.zoom)
 
 	SpaceTelescope.prototype.parseChoices = function(view,e){
 
-		this.choices = {};
+		//this.choices = {};
 		var l,m,d,u,c,t,v,s;
 		this.errors = [];
 		this.warnings = [];
@@ -1978,14 +2119,19 @@ console.log('displayOrbits',this.space.zoom)
 		// Process mission
 		l = $('#mission_duration').val();
 		if(l && this.data.mission[l]) this.choices.mission = l;
+		else this.choices.mission = "";
 		
 		// Process satellite
 		m = $('#mirror_diameter').val();
-		if(m && this.data.mirror[m]) this.choices.mirror = m; 
+		if(m && this.data.mirror[m]) this.choices.mirror = m;
+		else this.choices.mirror = "";
+
 		d = $('input[name=toggledeployable]:checked').val();
 		if(d) this.choices.deployablemirror = (d=="yes" ? true : false);
+		else this.choices.deployablemirror = false;
 		u = $('input[name=toggleuv]:checked').val();
 		if(u) this.choices.uvmirror = (u=="yes" ? true : false);
+		else this.choices.uvmirror = false;
 		
 		// Process cooling
 		c = $('input[name=hascooling]:checked').val();
@@ -2022,6 +2168,7 @@ console.log('displayOrbits',this.space.zoom)
 		// Process vehicle
 		v = $('#designer_vehicle input[name=vehicle_rocket]:checked').val();
 		if(v && this.data.vehicle[v]) this.choices.vehicle = v;
+		else this.choices.vehicle = "";
 
 		// Process site
 		s = $('#site').val();
@@ -2038,7 +2185,7 @@ console.log('displayOrbits',this.space.zoom)
 				ok = true;
 			}
 			if(!ok) this.errors.push({ 'text': this.phrases.errors.site.replace(/%SITE%/g,this.phrases.designer.site.options[s].label).replace(/%VEHICLE%/,this.phrases.designer.vehicle.options[v].label), 'link': '#designer_site' });
-		}
+		}else this.choices.site = "";
 
 		// Process orbit
 		var o = $('#mission_orbit').val();
@@ -2052,7 +2199,7 @@ console.log('displayOrbits',this.space.zoom)
 				ok = true;
 			}
 			if(!ok) this.errors.push({ 'text': this.phrases.errors.orbit.replace(/%SITE%/g,this.phrases.designer.site.options[s].label).replace(/%ORBIT%/,this.phrases.designer.orbit.options[o].label), 'link': '#designer_orbit' });
-		}
+		}else this.choices.orbit = "";
 
 		console.log(this.choices)
 
@@ -2094,12 +2241,16 @@ console.log('displayOrbits',this.space.zoom)
 		$('#scenarios .button').eq(1).trigger('click');
 		location.href = '#designer_objectives';
 
-		$('#mirror_diameter').val('1.0m');
+		$('#mirror_diameter').val('1.0m').trigger('change');
 		$('#cooling_yes').attr('checked',true);
-		$('#cooling_temperature').val('100K');
+		$('#cooling_temperature').val('100K').trigger('change');
 		$('#vehicle_rocket_SOYZ').trigger('click');
 		$('.launchsite.KSC').trigger('click');
+		$('#mission_orbit').val('LEO').trigger('change');
+		$('#mission_duration').val('4');
+
 		this.parseChoices().updateChoices();
+
 		return this;
 	}
 	
@@ -2126,7 +2277,7 @@ console.log('displayOrbits',this.space.zoom)
 
 		// Don't do anything for certain views
 		if(view=="messages" || view=="menu" || view=="language" || view=="options" || view.indexOf("summaryext")==0){
-			if(e && typeof e==="object") e.preventDefault();
+			if(e && typeof e==="object" && typeof e.preventDefault==="function") e.preventDefault();
 			if(view=="options"){
 				if(e) e.preventDefault();
 				this.updateOptions();
@@ -2182,7 +2333,7 @@ console.log('displayOrbits',this.space.zoom)
 					if($('#'+view).find('input')) $('#'+view).find('input').eq(0).focus(); 
 					else $('#menubar a.toggle'+section).focus();
 				}
-				this.makeSpace();
+				this.makeSpace().displayOrbits();
 
 			}else{
 				$('#designer').show().find('a').eq(0).focus();

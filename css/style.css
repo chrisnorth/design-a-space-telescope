@@ -347,13 +347,20 @@ a.togglescience:hover { padding-bottom: 0.3em; border-bottom: 0.2em solid #69dff
 }
 
 #designer_objectives blockquote { background-color: #f6f6f6; border: 1px solid #d6d6d6; }
+#designer_instruments li input { width: 9em; }
+#designer_instruments li input, #designer_instruments li select { float: left; margin-right: 0.5em; }
+#designer_instruments label { display: none; }
+#designer_instruments .instrument_details { clear: both; }
+#designer_instruments .instrument_list { padding-top: 0em; }
+#designer_instruments table { width: 100%; }
+#designer_instruments table td img.icon { width: 1.5em; height: 1.2em; }
 #designer_vehicle li { cursor: pointer; margin: 0; display: inline-block; }
 #designer_vehicle .selector { text-align: center; margin-bottom: 1em; }
 #designer_vehicle .selector label { display: none; }
 #designer_vehicle input { margin: auto; float: none; }
 #designer_vehicle li .details { display: none; }
 #designer_vehicle li:hover, #designer_vehicle li:focus { background-color: #f6f6f6; }
-#designer_vehicle li.withinfo, #designer .vehicle_details, #designer .site_details, #designer .orbit_details { background-color: #e6e6e6; }
+#designer_vehicle li.withinfo, #designer .instrument_details, #designer .vehicle_details, #designer .site_details, #designer .orbit_details { background-color: #e6e6e6; }
 #designer_vehicle li.selected {
 	background-color: #cccccc;
 	background-image:-moz-linear-gradient(top,#202020,#cccccc);
@@ -388,7 +395,7 @@ a.togglescience:hover { padding-bottom: 0.3em; border-bottom: 0.2em solid #69dff
 #designer_site .worldmap .launchsite:hover,#designer_site .worldmap .launchsite:focus { border: 8px solid white; margin-left: -8px; margin-top: -8px; border-radius: 8px; box-shadow: 0px 0px 8px white; }
 #designer_site .worldmap .launchsite.selected { border-color: #fac900; }
 #designer_site .site_details div { clear: both; }
-#designer .site_details .value,#designer .orbit_details .value { float: right; text-align: right; }
+#designer .instrument_details .value, #designer .site_details .value, #designer .orbit_details .value { float: right; text-align: right; }
 
 #designer_orbit #orbits {
 	width: 99%;
@@ -402,13 +409,6 @@ a.togglescience:hover { padding-bottom: 0.3em; border-bottom: 0.2em solid #69dff
 	background-image:-o-linear-gradient(top,#101010,#000000);
 	background-image:linear-gradient(to bottom,#101010,#000000);
 	background-repeat:repeat-x;
-/*
-	background-color: transparent;
-	background-color: rgba(34,101,153,0.7);
-	background-image: linear-gradient(rgba(255,255,255,.5) 1px, transparent 2px), linear-gradient(90deg, rgba(255,255,255,.5) 1px, transparent 2px), linear-gradient(rgba(255,255,255,.15) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.15) 1px, transparent 1px);
-	background-size: 5em 5em, 5em 5em, 1em 1em, 1em 1em;
-	background-position:-2px -2px, -2px -2px, -1px -1px, -1px -1px;
-*/
 }
 
 #main {
@@ -453,6 +453,18 @@ body.showguide #page { margin: 0em; }
 .view .helper { float: right; cursor: pointer; }
 .rtl .view .close,.rtl .view .helper { float: left; }
 
+table { border-collapse: collapse; margin: 0 auto 1em; max-width: 100%; }
+table th { background-color: #404040; color: #e6e6e6; }
+table td, table th {
+	border: 1px solid #404040;
+	padding: 0.5em;
+	text-align: center;
+}
+table th a { color: #66aada; }
+.tablewrapper { max-width: 100%; overflow: hidden; overflow-x: auto; margin-bottom: 1em; }
+.tablewrapper table { margin-bottom: 0; }
+
+
 #guide .guidetop { display: block; }
 #guide .guidetop p { margin-bottom: 0px; }
 /* Hack to stop anchor tags sitting behind the fixed header */
@@ -464,16 +476,6 @@ body.showguide #page { margin: 0em; }
 #guide li { margin-bottom: 0.5em; }
 #guide ul.index li { margin-right: 1em; width: 48%; width: -webkit-calc(50% - 0.5em); width: calc(50% - 0.5em); display: inline-block; vertical-align: top; margin-bottom: 1em; }
 #guide ul.index li:nth-child(2n) { margin-right: 0; }
-#guide table { border-collapse: collapse; margin: 0 auto 1em; max-width: 100%; }
-#guide table th { background-color: #404040; color: #e6e6e6; }
-#guide table td, #guide table th {
-	border: 1px solid #404040;
-	padding: 0.5em;
-	text-align: center;
-}
-#guide table th a { color: #66aada; }
-#guide .tablewrapper { max-width: 100%; overflow: hidden; overflow-x: auto; margin-bottom: 1em; }
-#guide .tablewrapper table { margin-bottom: 0; }
 #guide blockquote { text-align: center; margin: 1em auto; }
 #guide h3 { clear: both; margin-top: 1em; }
 #guide .key { font-weight: bold; }
@@ -655,10 +657,10 @@ input.button { padding: 6px 8px; /* Bug fix for Firefox over-riding the line-hei
 	.hugepadded { padding: 2em; }
 	#guide figure.four figure { width: 48%; width: -webkit-calc(50% - 0.5em); width: calc(50% - 0.5em); }
 	#guide figure.four figure:nth-child(2n) { margin-right: 0; }
-	#guide table { width: 100%; }
-	#guide table td, #guide table th { padding: 0.25em; }
+	table { width: 100%; }
+	table td, table th { padding: 0.25em; }
 	#summary { height: 2.5em; overflow: hidden; }
-	#designer .designer_title a { padding: 0.5em; }
+	#designer .designer_title a { padding: 0.5em; height: auto; }
 	#main .doc { padding: 2em 1em 1em 1em; }
 }
 @media only screen and (max-width: 550px){
