@@ -318,6 +318,7 @@ if(typeof $==="undefined") $ = {};
 		$('#designer_satellite .options').html('<div class="bigpadded"><form><ul><li class="option mirror_diameter"><label for="mirror_diameter"></label><select id="mirror_diameter" name="mirror_diameter"></select></li><li class="option mirror_deployable"><label for="mirror_deployable"></label>'+this.buildToggle("toggledeployable",{ "value": "no", "id": "mirror_deployable_no", "label": "", "checked": true },{ "value": "yes", "id": "mirror_deployable_yes", "label": "" })+'</li><li class="option mirror_uv"><label for="mirror_uv"></label>'+this.buildToggle("toggleuv",{ "value": "no", "id": "mirror_uv_no", "checked": true },{ "value": "yes", "id": "mirror_uv_yes" })+'</li></ul></form><div class="details"></div></div>');
 		$('#designer_satellite select, #designer_satellite input').on('change',{me:this},function(e){
 			e.data.me.showDetails('satellite');
+			e.data.me.showDetails('cooling');
 		});
 
 
@@ -2449,6 +2450,7 @@ console.log(sylda,fairing)
 							this.choices.cooling.passive = this.data.mirror[this.choices.mirror].passive.mass;
 							cost = this.sumValues(cost,this.data.mirror[this.choices.mirror].passive.cost);
 						}
+						console.log('passive',cost)
 						mass.value *= this.data.cooling.passive[p].multiplier.mass;
 						cost.value *= this.data.cooling.passive[p].multiplier.cost;
 						risk *= this.data.cooling.passive[p].risk;
