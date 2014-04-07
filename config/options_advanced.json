@@ -99,8 +99,8 @@
 	},
 	"cooling": {
 		"passive": {
-			"yes": { "temperature": { "value": 0.1, "units": "K", "dimension": "temperature" }, "multiplier": { "cost": 1, "mass": 1 }, "life": { "value": 20, "units": "years", "dimension": "time" }, "devtime": { "value": 1, "units": "years", "dimension": "time" }, "risk": 0.99 },
-			"no": { "temperature": { "value": 1, "units": "K", "dimension": "temperature" }, "multiplier": { "cost": 0, "mass": 0 }, "life": { "value": 99, "units": "years", "dimension": "time" }, "devtime": { "value": 0, "units": "years", "dimension": "time" }, "risk": 1 }
+			"yes": { "multiplier": { "cost": 1, "mass": 1, "temperature": 0.1 }, "life": { "value": 20, "units": "years", "dimension": "time" }, "devtime": { "value": 1, "units": "years", "dimension": "time" }, "risk": 0.99 },
+			"no": { "multiplier": { "cost": 0, "mass": 0, "temperature": 1 }, "life": { "value": 99, "units": "years", "dimension": "time" }, "devtime": { "value": 0, "units": "years", "dimension": "time" }, "risk": 1 }
 		},
 		"cryogenic": {
 			"none": { "multiplier": { "temperature": 1 }, "cost": { "value": 0, "units": "GBP", "dimension": "currency" }, "mass": { "value": 0, "units": "kg", "dimension": "mass" }, "life": { "value": 99, "units": "years", "dimension": "time" }, "devtime": { "value": 0, "units": "years", "dimension": "time" }, "risk": 1 },

@@ -1214,7 +1214,7 @@ console.log('displayOrbits',key,this.space.paper,this.space.el)
 		if(d.designer.cooling.intro) $('#designer_cooling .intro').html(d.designer.cooling.intro).addClass('bigpadded');
 		$('#designer_cooling .options label[for=hascooling]').html(d.designer.cooling.enable.label);
 		this.updateToggle({ "id": "cooling_no", "label": d.designer.cooling.enable.no }, { "id": "cooling_yes", "label": d.designer.cooling.enable.yes }, this.phrases.designer.cooling.enable.label);
-		if(d.designer.cooling.options.temperature){
+		if(this.data.cooling.temperature){
 			this.updateDropdown('cooling_temperature');
 			$('#designer_cooling .options label[for=cooling_temperature]').html(d.designer.cooling.options.temperature.label);
 		}
@@ -1498,6 +1498,7 @@ console.log('displayOrbits',key,this.space.paper,this.space.el)
 			var mass = this.makeValue(0,'kg');
 			var time = this.makeValue(0,'months');
 
+			html += '<div><strong>'+d.cooling.temperature+'</strong> '+this.formatValueSpan(this.choices.temperature)+'</div>';
 			html += '<div><strong>'+d.cooling.cost+'</strong> '+this.formatValueSpan(this.choices.cooling.cost)+'</div>';
 			html += '<div><strong>'+d.cooling.mass+'</strong> '+this.formatValueSpan(this.choices.cooling.mass)+'</div>';
 			if(this.choices.cooling.time.value > 0) html += '<div><strong>'+d.cooling.devtime+'</strong> '+this.formatValueSpan(this.choices.cooling.time)+'</div>';
@@ -1525,6 +1526,7 @@ console.log('displayOrbits',key,this.space.paper,this.space.el)
 			if(this.data.orbit[value].fuellife) html += '<div><strong>'+d.orbit.fuellife+'</strong> '+this.formatValueSpan(this.data.orbit[value].fuellife)+'</div>';
 			if(this.data.orbit[value].temperature) html += '<div><strong>'+d.orbit.temperature+'</strong> '+this.formatValueSpan(this.data.orbit[value].temperature)+'</div>';
 			if(this.data.orbit[value].groundcost) html += '<div><strong>'+d.orbit.groundcost+'</strong> '+this.formatValueSpan(this.data.orbit[value].groundcost)+'</div>';
+			if(this.data.orbit[value].risk) html += '<div><strong>'+d.orbit.risk+'</strong> '+this.formatValueSpan({'value':this.data.orbit[value].risk*100,'units':'%','dimension':'percent'})+'</div>';
 
 		}
 
@@ -1634,7 +1636,8 @@ console.log('displayOrbits',key,this.space.paper,this.space.el)
 	}
 	
 	SpaceTelescope.prototype.copyValue = function(v){
-		return JSON.parse(JSON.stringify(v));
+		if(typeof v==="object") return JSON.parse(JSON.stringify(v));
+		return {};
 	}
 	
 	SpaceTelescope.prototype.getValue = function(v){
@@ -1662,9 +1665,9 @@ console.log('displayOrbits',key,this.space.paper,this.space.el)
 			if(this.choices.deployablemirror && this.data.deployablemirror.multiplier.time) v.value *= this.data.deployablemirror.multiplier.time;
 			if(this.choices.uvmirror && this.data.uvmirror.multiplier.time) v.value *= this.data.uvmirror.multiplier.time;
 		}else if(choice=="mirror.prob"){
-			v = (this.choices.mirror ? this.copyValue(this.data.mirror[this.choices.mirror].risk) : 1);
-			if(this.choices.deployablemirror && this.data.deployablemirror.risk) v = v*this.data.deployablemirror.risk;
-			if(this.choices.uvmirror && this.data.uvmirror.risk) v = v*this.data.uvmirror.risk;
+			v = (this.choices.mirror ? this.data.mirror[this.choices.mirror].risk : 1);
+			if(this.choices.deployablemirror && this.data.deployablemirror.risk) v *= this.data.deployablemirror.risk;
+			if(this.choices.uvmirror && this.data.uvmirror.risk) v *= this.data.uvmirror.risk;
 		}else if(choice=="mirror"){
 			v = (this.choices.mirror) ? this.data.mirror[this.choices.mirror].diameter : this.makeValue(0,'m');
 		}else if(choice=="cooling.cost"){
@@ -1672,6 +1675,12 @@ console.log('displayOrbits',key,this.space.paper,this.space.el)
 			v.value = -v.value;
 		}else if(choice=="cooling.mass"){
 			v = (this.choices.cooling ? this.copyValue(this.choices.cooling.mass) : this.makeValue(0,'kg'));
+		}else if(choice=="cooling.passive.mass"){
+			v = (this.choices.cooling ? this.copyValue(this.choices.cooling.passive) : this.makeValue(0,'kg'));
+		}else if(choice=="cooling.active.mass"){
+			v = (this.choices.cooling ? this.copyValue(this.choices.cooling.active) : this.makeValue(0,'kg'));
+		}else if(choice=="cooling.cryogenic.mass"){
+			v = (this.choices.cooling ? this.copyValue(this.choices.cooling.cryogenic) : this.makeValue(0,'kg'));
 		}else if(choice=="cooling.time"){
 			v = (this.choices.cooling ? this.copyValue(this.choices.cooling.time) : this.makeValue(0,'months'));
 		}else if(choice=="cooling.prob"){
@@ -1685,30 +1694,14 @@ console.log('displayOrbits',key,this.space.paper,this.space.el)
 		}else if(choice=="satellite.time"){
 			v = (this.choices.mirror ? this.copyValue(this.data.mirror[this.choices.mirror].bus.devtime) : this.makeValue(0,'months'));
 		}else if(choice=="instruments.time"){
-			v = this.makeValue(0,'months');
-			if(this.choices.instruments){
-				for(var i = 0; i < this.choices.instruments.length; i++){
-					var t = this.convertValue(this.data.instrument.options[this.choices.instruments[i].type].devtime,'months');
-					v.value += t.value;
-				}
-			}
+			v = (this.choices.instrument && this.choices.instrument.time) ? this.choices.instrument.time : this.makeValue(0,'months');
 		}else if(choice=="instruments.cost"){
-			v = this.makeValue(0,'GBP');
-			if(this.choices.instruments){
-				for(var i = 0; i < this.choices.instruments.length; i++){
-					var t = this.convertValue(this.data.wavelengths[this.choices.instruments[i].wavelength].cost,'GBP');
-					v.value += t.value*this.data.instrument.options[this.choices.instruments[i].type].multiplier.cost;
-				}
-			}
+			v = (this.choices.instrument && this.choices.instrument.cost) ? this.choices.instrument.cost : this.makeValue(0,'GBP');
 			v.value = -v.value;
 		}else if(choice=="instruments.mass"){
-			v = this.makeValue(0,'kg');
-			if(this.choices.instruments){
-				for(var i = 0; i < this.choices.instruments.length; i++){
-					var t = this.convertValue(this.data.wavelengths[this.choices.instruments[i].wavelength].mass,'kg');
-					v.value += t.value*this.data.instrument.options[this.choices.instruments[i].type].multiplier.mass;
-				}
-			}
+			v = (this.choices.instrument && this.choices.instrument.mass) ? this.choices.instrument.mass : this.makeValue(0,'kg');
+		}else if(choice=="instruments.prob"){
+			v = (this.choices.instrument && this.choices.instrument.risk) ? this.choices.instrument.risk : 1;
 		}else if(choice=="site"){
 			v = (this.choices.site ? this.phrases.designer.site.options[this.choices.site].label : '');
 		}else if(choice=="site.prob"){
@@ -1725,12 +1718,8 @@ console.log('displayOrbits',key,this.space.paper,this.space.el)
 			v = this.copyValue(this.data.orbit.LEO.groundcost);
 			v.value *= -this.convertValue(m,'years').value;	
 		}else if(choice=="temperature"){
-			v = this.makeValue(400,'K');
+			v = (this.choices.temperature) ? this.choices.temperature : this.makeValue(400,'K');
 			if(this.choices.orbit) v = this.data.orbit[this.choices.orbit].temperature;
-			if(this.choices.temperature){
-				t = this.choices.temperature;
-				if(t.value < v.value) v = t;
-			}
 		}else if(choice=="launch.cost"){
 			v = (this.choices.vehicle ? this.copyValue(this.data.vehicle[this.choices.vehicle].cost) : this.makeValue(0,'GBP'));
 			v.value *= -(this.choices.orbit ? this.data.orbit[this.choices.orbit].multiplier.launchcost : 1);
@@ -1740,6 +1729,8 @@ console.log('displayOrbits',key,this.space.paper,this.space.el)
 			v = (this.choices.orbit) ? this.data.orbit[this.choices.orbit].risk : 1;
 		}else if(choice=="mission.time"){
 			v = (this.choices.mission ? this.copyValue(this.data.mission[this.choices.mission].life) : this.makeValue(0,'months'));
+		}else if(choice=="mission.prob"){
+			v = (this.choices.mission && this.data.mission[this.choices.mission].risk ? this.data.mission[this.choices.mission].risk : 1);
 		}else if(choice=="fuel.time"){
 			v = (this.choices.orbit ? this.copyValue(this.data.orbit[this.choices.orbit].fuellife) : this.makeValue(0,'months'));
 		}
@@ -1803,8 +1794,8 @@ console.log('displayOrbits',key,this.space.paper,this.space.el)
 		prob.vehicle = this.getChoice('vehicle.prob');
 		prob.cooling = this.getChoice('cooling.prob');
 		prob.orbit = this.getChoice('orbit.prob');
-		prob.instruments = 1;
-		prob.mission = 1;
+		prob.instruments = this.getChoice('instruments.prob');
+		prob.mission = this.getChoice('mission.prob');
 		prob.total = prob.orbit*prob.site*prob.vehicle*prob.mirror*prob.cooling*prob.instruments*prob.mission;
 
 		// Format costs
@@ -1874,9 +1865,9 @@ console.log('displayOrbits',key,this.space.paper,this.space.el)
 		this.table.mass_total.list.mass_mirror.value = mass.mirror;
 		this.table.mass_total.list.mass_cooling_total.value = mass.cooling;
 		if(this.settings.mode=="advanced"){
-			this.table.mass_total.list.mass_cooling_total.list.mass_cooling_passive.value = this.makeValue(0,'kg');
-			this.table.mass_total.list.mass_cooling_total.list.mass_cooling_cryo.value = this.makeValue(0,'kg');
-			this.table.mass_total.list.mass_cooling_total.list.mass_cooling_active.value = this.makeValue(0,'kg');
+			this.table.mass_total.list.mass_cooling_total.list.mass_cooling_passive.value = this.getChoice('cooling.passive.mass');
+			this.table.mass_total.list.mass_cooling_total.list.mass_cooling_cryo.value = this.getChoice('cooling.cryogenic.mass');
+			this.table.mass_total.list.mass_cooling_total.list.mass_cooling_active.value = this.getChoice('cooling.active.mass');
 		}
 		this.table.mass_total.list.mass_instruments.value = mass.instruments;
 		this.table.science_total.value = this.makeValue(0,'%');
@@ -2051,6 +2042,25 @@ console.log('displayOrbits',key,this.space.paper,this.space.el)
 		}
 		return {};
 	}
+
+	// Return the minimum value in an array of input values	
+	SpaceTelescope.prototype.minValue = function(){
+		var args = Array.prototype.slice.call(arguments, 0);
+		var a,i,min;
+		if(args.length > 0){
+			min = this.convertValue(args[0],args[0].units);
+			for(i = 1 ; i < args.length ; i++){
+				if(typeof args[i]==="object" && args[i].dimension && args[i].dimension===args[0].dimension){
+					a = this.convertValue(args[i],args[0].units);
+					if(a.value < min.value) min = a;
+				}
+			}
+			return min;
+		}
+		return {};
+	}
+	
+		
 	
 
 	function getPrecision(v){
@@ -2196,7 +2206,8 @@ console.log('displayOrbits',key,this.space.paper,this.space.el)
 
 console.log('parseChoices')
 		//this.choices = {};
-		var l,m,d,u,c,t,v,s;
+		var l,m,d,u,c,t,v,s,p;
+		var cost,mass,temp,time,risk;
 		this.errors = [];
 		this.warnings = [];
 		
@@ -2220,26 +2231,30 @@ console.log('parseChoices')
 
 
 		// Process instruments
-		var cost = this.makeValue(0,'GBP');
-		var mass = this.makeValue(0,'kg');
-		var temp = this.makeValue(0,'K');
-		var time = this.makeValue(0,'months');
+		cost = this.makeValue(0,'GBP');
+		mass = this.makeValue(0,'kg');
+		temp = this.makeValue(0,'K');
+		time = this.makeValue(0,'months');
+		risk = 1;
 		if(!this.choices.instrument) this.choices.instrument = {};
 		if(this.choices.instruments){
 			var uv = false;
 			for(var i = 0; i < this.choices.instruments.length; i++){
-				var w = this.data.wavelengths[this.choices.instruments[i].wavelength];
 				var t = this.data.instrument.options[this.choices.instruments[i].type];
 				if(!t.multiplier) t.multiplier = { };
 				if(!t.multiplier.cost) t.multiplier.cost = 1;
 				if(!t.multiplier.mass) t.multiplier.mass = 1;
 
-				if(w.cost) cost = this.sumValues(cost,w.cost*t.multiplier.cost);
-				if(w.mass) mass = this.sumValues(mass,w.mass*t.multiplier.mass);
+				var w = this.data.wavelengths[this.choices.instruments[i].wavelength];
+				if(w.cost) cost = this.sumValues(cost,w.cost);
+				//cost.value *= t.multiplier.cost;
+				if(w.mass) mass = this.sumValues(mass,w.mass);
+				//mass.value *= t.multiplier.mass;
 				if(t.devtime) time = this.sumValues(time,t.devtime);
-
+				if(t.risk) risk *= t.risk;
 				if(this.choices.instruments[i].wavelength=="uv") uv = true;
 			}
+
 			var slots = (this.choices.mirror) ? this.data.mirror[this.choices.mirror].bus.instrumentslots : 0;
 			if(this.choices.instruments.length > slots) this.errors.push({ 'text': this.phrases.errors.slots, 'link': '#designer_instruments' });
 
@@ -2250,83 +2265,8 @@ console.log('parseChoices')
 		this.choices.instrument.mass = mass;
 		this.choices.instrument.temp = temp;
 		this.choices.instrument.time = time;
+		this.choices.instrument.risk = risk;
 
-
-		// Process cooling
-		c = $('input[name=hascooling]:checked').val();
-		this.choices.temperature = this.makeValue(400,'K'); // get from orbit
-		this.choices.cooling = {
-			"cost": this.makeValue(0,'GBP'),
-			"mass": this.makeValue(0,'kg'),
-			"life": this.makeValue(0,'months'),
-			"time": this.makeValue(0,'months'),
-			"risk": 1
-		}
-		if(c){
-			if(c=="yes"){
-				var mass = this.makeValue(0,'kg');
-				var cost = this.makeValue(0,'GBP');
-				var life = this.makeValue(0,'months');
-				var time = this.makeValue(0,'months');
-				var temp = this.makeValue(400,'Kelvin');
-				var risk = 1;
-
-				if($('#cooling_temperature').length > 0){
-					t = this.data.cooling.temperature[$('#cooling_temperature').val()];
-					if(t.temperature) temp = t.temperature;
-					
-					if(t.mass) mass = this.sumValues(mass,t.mass);
-					if(t.cost) cost = this.sumValues(cost,t.cost);
-					if(t.devtime) time = this.sumValues(time,t.devtime);
-					if(t.life) life = this.sumValues(life,t.life);
-					if(t.risk) risk *= t.risk;
-
-					if(this.choices.mirror && this.data.mirror[m]['passive']){
-						mass = this.sumValues(mass,this.data.mirror[m]['passive'].mass);
-						cost = this.sumValues(cost,this.data.mirror[m]['passive'].cost);
-						time = this.sumValues(time,this.data.mirror[m]['passive'].devtime);
-					}
-				}
-				if(this.data.cooling.passive){
-					var p = this.getValue('input[name=cooling_passive]:checked');
-					time = this.sumValues(time,this.data.cooling.passive[p].devtime);
-					mass.value *= this.data.cooling.passive[p].multiplier.mass;
-					cost.value *= this.data.cooling.passive[p].multiplier.cost;
-					risk *= this.data.cooling.passive[p].risk;
-					if(this.data.cooling.passive[p].temperature < this.choices.temperature) temp = this.data.cooling.passive[p].temperature;
-					// TODO - something with life
-				}
-				if(this.data.cooling.active){
-					var p = this.getValue('input[name=cooling_active]:checked');
-					time = this.sumValues(time,this.data.cooling.active[p].devtime);
-					cost = this.sumValues(cost,this.data.cooling.active[p].cost);
-					mass = this.sumValues(mass,this.data.cooling.active[p].mass);
-					risk *= this.data.cooling.active[p].risk;
-					temp.value *= this.data.cooling.active[p].multiplier.temperature;
-					// TODO - something with life
-				}
-				if(this.data.cooling.cryogenic){
-					var p = this.getValue('#cooling_cryogenic');
-					console.log(p)
-					if(p){
-						time = this.sumValues(time,this.data.cooling.cryogenic[p].devtime);
-						cost = this.sumValues(cost,this.data.cooling.cryogenic[p].cost);
-						mass = this.sumValues(mass,this.data.cooling.cryogenic[p].mass);
-						risk *= this.data.cooling.cryogenic[p].risk;
-						temp.value *= this.data.cooling.cryogenic[p].multiplier.temperature;
-						// TODO - something with life
-					}
-				}
-				
-				this.choices.cooling.mass = mass;
-				this.choices.cooling.cost = cost;
-				this.choices.cooling.time = time;
-				this.choices.cooling.life = life;
-				this.choices.cooling.risk = risk;
-				this.choices.temperature = temp;
-
-			}
-		}
 
 		
 		// Process vehicle
@@ -2353,6 +2293,7 @@ console.log('parseChoices')
 
 		// Process orbit
 		var o = $('#mission_orbit').val();
+		var temp = this.makeValue(400,'K');
 		if(o && this.data.orbit[o]){
 			this.choices.orbit = o;
 			ok = false;
@@ -2363,7 +2304,91 @@ console.log('parseChoices')
 				ok = true;
 			}
 			if(!ok) this.errors.push({ 'text': this.phrases.errors.orbit.replace(/%SITE%/g,this.phrases.designer.site.options[s].label).replace(/%ORBIT%/,this.phrases.designer.orbit.options[o].label), 'link': '#designer_orbit' });
+
+			// Set temperature from orbit
+			temp = this.copyValue(this.data.orbit[this.choices.orbit].temperature);
+
 		}else this.choices.orbit = "";
+
+		// Process cooling
+		c = $('input[name=hascooling]:checked').val();
+		this.choices.cooling = {
+			"cost": this.makeValue(0,'GBP'),
+			"mass": this.makeValue(0,'kg'),
+			"life": this.makeValue(0,'months'),
+			"time": this.makeValue(0,'months'),
+			"risk": 1
+		}
+		if(c){
+			if(c=="yes"){
+				mass = this.makeValue(0,'kg');
+				cost = this.makeValue(0,'GBP');
+				life = this.makeValue(99,'years');
+				time = this.makeValue(0,'months');
+				risk = 1;
+				
+				if($('#cooling_temperature').length > 0){
+					t = this.data.cooling.temperature[$('#cooling_temperature').val()];
+					if(t.temperature) temp = this.copyValue(t.temperature);
+					
+					if(t.mass) mass = this.sumValues(mass,t.mass);
+					if(t.cost) cost = this.sumValues(cost,t.cost);
+					if(t.devtime) time = this.sumValues(time,t.devtime);
+					if(t.life) life = this.minValue(life,t.life);
+					if(t.risk) risk *= t.risk;
+
+					if(this.choices.mirror && this.data.mirror[m]['passive']){
+						mass = this.sumValues(mass,this.data.mirror[m]['passive'].mass);
+						cost = this.sumValues(cost,this.data.mirror[m]['passive'].cost);
+						time = this.sumValues(time,this.data.mirror[m]['passive'].devtime);
+					}
+				}
+				if(this.data.cooling.passive){
+					p = this.getValue('input[name=cooling_passive]:checked');
+					time = this.sumValues(time,this.data.cooling.passive[p].devtime);
+					if(this.choices.mirror && this.data.mirror[this.choices.mirror].passive){
+						mass = this.sumValues(mass,this.data.mirror[this.choices.mirror].passive.mass);
+						this.choices.cooling.passive = this.data.mirror[this.choices.mirror].passive.mass;
+						cost = this.sumValues(cost,this.data.mirror[this.choices.mirror].passive.cost);
+					}
+					mass.value *= this.data.cooling.passive[p].multiplier.mass;
+					cost.value *= this.data.cooling.passive[p].multiplier.cost;
+					risk *= this.data.cooling.passive[p].risk;
+					temp.value *= this.data.cooling.passive[p].multiplier.temperature;
+					if(this.data.cooling.passive[p].life) life = this.minValue(life,this.data.cooling.passive[p].life);
+				}
+				if(this.data.cooling.active){
+					p = this.getValue('input[name=cooling_active]:checked');
+					time = this.sumValues(time,this.data.cooling.active[p].devtime);
+					cost = this.sumValues(cost,this.data.cooling.active[p].cost);
+					mass = this.sumValues(mass,this.data.cooling.active[p].mass);
+					this.choices.cooling.active = this.data.cooling.active[p].mass;
+					risk *= this.data.cooling.active[p].risk;
+					temp.value *= this.data.cooling.active[p].multiplier.temperature;
+					if(this.data.cooling.active[p].life) life = this.minValue(life,this.data.cooling.active[p].life);
+				}
+				if(this.data.cooling.cryogenic){
+					p = this.getValue('#cooling_cryogenic');
+					if(p){
+						time = this.sumValues(time,this.data.cooling.cryogenic[p].devtime);
+						cost = this.sumValues(cost,this.data.cooling.cryogenic[p].cost);
+						mass = this.sumValues(mass,this.data.cooling.cryogenic[p].mass);
+						this.choices.cooling.cryogenic = this.data.cooling.cryogenic[p].mass;
+						risk *= this.data.cooling.cryogenic[p].risk;
+						temp.value *= this.data.cooling.cryogenic[p].multiplier.temperature;
+						if(this.data.cooling.cryogenic[p].life) life = this.minValue(life,this.data.cooling.cryogenic[p].life);
+					}
+				}
+				
+				this.choices.cooling.mass = mass;
+				this.choices.cooling.cost = cost;
+				this.choices.cooling.time = time;
+				this.choices.cooling.life = life;
+				this.choices.cooling.risk = risk;
+			}
+		}
+		this.choices.temperature = temp;
+
 
 		return this;
 	}

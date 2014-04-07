@@ -324,7 +324,7 @@
 			"fuellife": "Fuel lifetime",
 			"temperature": "Ambient temperature:",
 			"groundcost": "Ground cost (per year):",
-			"risk": "Risk:",
+			"risk": "Orbit insertion probability:",
 			"multiplier": {
 				"passive": "Passive cooling multiplier",
 				"cryo": "Cyrogenic cooling multiplier",
