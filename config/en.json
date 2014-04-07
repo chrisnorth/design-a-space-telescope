@@ -95,6 +95,7 @@
 				},
 				"launch": "Launch date:",
 				"mission": "Mission lifetime:",
+				"cooling": "Cooling lifetime:",
 				"fuel": "Fuel lifetime:",
 				"end": "Mission end:"
 			},

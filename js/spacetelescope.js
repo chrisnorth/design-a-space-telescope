@@ -471,6 +471,7 @@ if(typeof $==="undefined") $ = {};
 						}
 					},
 					'time_mission': {},
+					'time_cooling': {},
 					'time_fuel': {}
 				}
 			},
@@ -1386,6 +1387,7 @@ console.log('displayOrbits',key,this.space.paper,this.space.el)
 		this.table.time_dev_total.list.time_dev_total.list.time_dev_cooling.label = s.time.dev.cooling;
 		this.table.time_dev_total.list.time_dev_total.list.time_dev_instruments.label = s.time.dev.instruments;
 		this.table.time_dev_total.list.time_mission.label = s.time.mission;
+		this.table.time_dev_total.list.time_cooling.label = s.time.cooling;
 		this.table.time_dev_total.list.time_fuel.label = s.time.fuel;
 		this.table.mass_total.label = s.mass.title;
 		this.table.mass_total.list.mass_satellite.label = s.mass.satellite;
@@ -1683,6 +1685,8 @@ console.log('displayOrbits',key,this.space.paper,this.space.el)
 			v = (this.choices.cooling ? this.copyValue(this.choices.cooling.cryogenic) : this.makeValue(0,'kg'));
 		}else if(choice=="cooling.time"){
 			v = (this.choices.cooling ? this.copyValue(this.choices.cooling.time) : this.makeValue(0,'months'));
+		}else if(choice=="cooling.life"){
+			v = (this.choices.cooling ? this.copyValue(this.choices.cooling.life) : this.makeValue(0,'months'));
 		}else if(choice=="cooling.prob"){
 			v = 1;
 			if(this.choices.cooling && this.choices.cooling.risk) v = this.choices.cooling.risk;
@@ -1715,8 +1719,12 @@ console.log('displayOrbits',key,this.space.paper,this.space.el)
 			v = (this.choices.vehicle && this.data.vehicle[this.choices.vehicle].risk ? this.data.vehicle[this.choices.vehicle].risk : 1);
 		}else if(choice=="ground.cost"){
 			var m = this.choices.mission ? this.copyValue(this.data.mission[this.choices.mission].life) : this.makeValue(0,'months');
-			v = this.copyValue(this.data.orbit.LEO.groundcost);
-			v.value *= -this.convertValue(m,'years').value;	
+			if(this.choices.orbit){
+				v = this.copyValue(this.data.orbit[this.choices.orbit].groundcost);
+				v.value *= -this.convertValue(m,'years').value;	
+			}else{
+				v = this.makeValue(0,'GBP');
+			}
 		}else if(choice=="temperature"){
 			v = (this.choices.temperature) ? this.choices.temperature : this.makeValue(400,'K');
 			if(this.choices.orbit) v = this.data.orbit[this.choices.orbit].temperature;
@@ -1820,6 +1828,7 @@ console.log('displayOrbits',key,this.space.paper,this.space.el)
 		time.cooling = this.getChoice('cooling.time');
 		time.total = this.sumValues(time.mirror,time.satellite,time.cooling,time.instruments);
 		time.mission = this.getChoice('mission.time');
+		time.lifecooling = this.getChoice('cooling.life');
 		time.fuel = this.getChoice('fuel.time');
 
 		// Format masses
@@ -1859,6 +1868,7 @@ console.log('displayOrbits',key,this.space.paper,this.space.el)
 		this.updateTable('time_dev_cooling','value',time.cooling);
 		this.updateTable('time_dev_instruments','value',time.instruments);
 		this.updateTable('time_mission','value',time.mission);
+		this.updateTable('time_cooling','value',time.cooling);
 		this.updateTable('time_fuel','value',time.fuel);
 		this.table.mass_total.value = mass.total;
 		this.table.mass_total.list.mass_satellite.value = mass.satellite;
@@ -1881,9 +1891,7 @@ console.log('displayOrbits',key,this.space.paper,this.space.el)
 		var t = this.convertValue(time.total,'months');
 		d.setUTCMonth(d.getUTCMonth()+t.value);
 		this.table.profile_total.list.profile_launch.value = d.toDateString();
-		t = this.convertValue(time.mission,'months');
-		t2 = this.convertValue(time.fuel,'months');
-		if(t2.value < t.value) t = t2;
+		t = this.minValue(time.mission,time.fuel,time.lifecooling);
 		d.setUTCMonth(d.getUTCMonth()+t.value);
 		this.table.profile_total.list.profile_end.value = d.toDateString();
 
