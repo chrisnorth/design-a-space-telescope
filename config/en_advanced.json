@@ -404,7 +404,8 @@
 		"slots": "You have more instruments than slots available on the satellite bus. Either reduce the number of instruments or choose a larger satellite structure.",
 		"temperature": "Your instrument package is only cooled to %TEMPERATURE% but it requires %REQUIREMENT% to operate.",
 		"bankrupt": "You are out of funds.",
-		"heavy": "Your satellite is too heavy for your launch vehicle."
+		"heavy": "Your satellite is too heavy for your launch vehicle.",
+		"size": "Your satellite is too large to fit in you launch vehicle."
 	},
 	"warnings": {
 		"uv": "You have a UV instrument but your mirror is not UV quality.",

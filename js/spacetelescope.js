@@ -2352,8 +2352,8 @@ if(typeof $==="undefined") $ = {};
 		this.choices.instrument.time = time;
 		this.choices.instrument.risk = risk;
 
-//this.data.vehicle[this.choices.vehicle].diameter, this.data.mirror[this.choices.mirror].bus.diameter*deployable.multiplier.size
-		
+
+
 		// Process vehicle
 		v = $('#designer_vehicle input[name=vehicle_rocket]:checked').val();
 		if(v && this.data.vehicle[v]) this.choices.vehicle = v;
@@ -2375,6 +2375,17 @@ if(typeof $==="undefined") $ = {};
 			}
 			if(!ok) this.errors.push({ 'text': this.phrases.errors.site.replace(/%SITE%/g,this.phrases.designer.site.options[s].label).replace(/%VEHICLE%/,this.phrases.designer.vehicle.options[v].label), 'link': '#designer_site' });
 		}else this.choices.site = "";
+
+		if(this.choices.vehicle && this.choices.mirror){
+			var fairing = this.copyValue(this.data.vehicle[this.choices.vehicle].diameter);
+			var sylda = this.copyValue(this.data.mirror[this.choices.mirror].bus.diameter);
+			if(this.choices.deployablemirror && this.data.deployablemirror.multiplier.bus.diameter) sylda.value *= this.data.deployablemirror.multiplier.bus.diameter;
+
+console.log(sylda,fairing)
+			if(sylda.value > fairing.value) this.errors.push({ 'text': this.phrases.errors.size, 'link': '#designer_satellite' });
+		}
+
+
 
 		// Process orbit
 		var o = $('#mission_orbit').val();
