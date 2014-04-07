@@ -1511,14 +1511,24 @@ if(typeof $==="undefined") $ = {};
 
 			if(this.choices.mirror && this.data.mirror[this.choices.mirror]){
 				var m = this.data.mirror[this.choices.mirror];
+				var multi = this.data.deployablemirror.multiplier;
 				var cost = this.copyValue(m.cost);
 				var mass = this.copyValue(m.mass);
 				var time = this.copyValue(m.devtime);
+				var buscost = this.copyValue(m.bus.cost);
+				var busmass = this.copyValue(m.bus.mass);
+				var bustime = this.copyValue(m.bus.devtime);
+				var busdiam = this.copyValue(m.bus.diameter);
 				
+				// Applies to both mirror and bus
 				if(this.choices.deployablemirror){
-					if(this.data.deployablemirror.multiplier.cost) cost.value *= this.data.deployablemirror.multiplier.cost;
-					if(this.data.deployablemirror.multiplier.mass) mass.value *= this.data.deployablemirror.multiplier.mass;
-					if(this.data.deployablemirror.multiplier.time) time.value *= this.data.deployablemirror.multiplier.time;
+					if(multi.cost) cost.value *= multi.cost;
+					if(multi.mass) mass.value *= multi.mass;
+					if(multi.time) time.value *= multi.time;
+					if(multi.bus.cost) buscost.value *= multi.bus.cost;
+					if(multi.bus.mass) busmass.value *= multi.bus.mass;
+					if(multi.bus.time) bustime.value *= multi.bus.time;
+					if(multi.bus.diameter) busdiam.value *= multi.bus.diameter;
 				}
 				if(this.choices.uvmirror){
 					if(this.data.uvmirror.multiplier.cost) cost.value *= this.data.uvmirror.multiplier.cost;
@@ -1529,10 +1539,10 @@ if(typeof $==="undefined") $ = {};
 				html += '<div><strong>'+d.satellite.cost+'</strong> '+this.formatValueSpan(cost)+'</div>';
 				html += '<div><strong>'+d.satellite.mass+'</strong> '+this.formatValueSpan(mass)+'</div>';
 				html += '<div><strong>'+d.satellite.devtime+'</strong> '+this.formatValueSpan(time)+'</div>';
-				html += '<div><strong>'+d.satellite.bus.cost+'</strong> '+this.formatValueSpan(m.bus.cost)+'</div>';
-				html += '<div><strong>'+d.satellite.bus.mass+'</strong> '+this.formatValueSpan(m.bus.mass)+'</div>';
-				html += '<div><strong>'+d.satellite.bus.devtime+'</strong> '+this.formatValueSpan(m.bus.devtime)+'</div>';
-				html += '<div><strong>'+d.satellite.bus.diameter+'</strong> '+this.formatValueSpan(m.bus.diameter)+'</div>';
+				html += '<div><strong>'+d.satellite.bus.cost+'</strong> '+this.formatValueSpan(buscost)+'</div>';
+				html += '<div><strong>'+d.satellite.bus.mass+'</strong> '+this.formatValueSpan(busmass)+'</div>';
+				html += '<div><strong>'+d.satellite.bus.devtime+'</strong> '+this.formatValueSpan(bustime)+'</div>';
+				html += '<div><strong>'+d.satellite.bus.diameter+'</strong> '+this.formatValueSpan(busdiam)+'</div>';
 				html += '<div><strong>'+d.satellite.bus.slots+'</strong> '+this.formatValueSpan(m.bus.instrumentslots)+'</div>';
 			}
 
@@ -1743,11 +1753,14 @@ if(typeof $==="undefined") $ = {};
 			if(this.choices.cooling && this.choices.cooling.risk) v = this.choices.cooling.risk;
 		}else if(choice=="satellite.cost"){
 			v = (this.choices.mirror ? this.copyValue(this.data.mirror[this.choices.mirror].bus.cost) : this.makeValue(0,'GBP'));
+			if(this.choices.deployablemirror && this.data.deployablemirror.multiplier.bus.cost) v.value *= this.data.deployablemirror.multiplier.bus.cost;
 			v.value = -v.value;
 		}else if(choice=="satellite.mass"){
 			v = (this.choices.mirror ? this.copyValue(this.data.mirror[this.choices.mirror].bus.mass) : this.makeValue(0,'kg'));
+			if(this.choices.deployablemirror && this.data.deployablemirror.multiplier.bus.mass) v.value *= this.data.deployablemirror.multiplier.bus.mass;
 		}else if(choice=="satellite.time"){
 			v = (this.choices.mirror ? this.copyValue(this.data.mirror[this.choices.mirror].bus.devtime) : this.makeValue(0,'months'));
+			if(this.choices.deployablemirror && this.data.deployablemirror.multiplier.bus.time) v.value *= this.data.deployablemirror.multiplier.bus.time;
 		}else if(choice=="instruments.time"){
 			v = (this.choices.instrument && this.choices.instrument.time) ? this.choices.instrument.time : this.makeValue(0,'months');
 		}else if(choice=="instruments.cost"){
@@ -2339,7 +2352,7 @@ if(typeof $==="undefined") $ = {};
 		this.choices.instrument.time = time;
 		this.choices.instrument.risk = risk;
 
-//this.data.vehicle[this.choices.vehicle].diameter,
+//this.data.vehicle[this.choices.vehicle].diameter, this.data.mirror[this.choices.mirror].bus.diameter*deployable.multiplier.size
 		
 		// Process vehicle
 		v = $('#designer_vehicle input[name=vehicle_rocket]:checked').val();

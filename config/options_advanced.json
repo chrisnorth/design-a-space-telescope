@@ -16,7 +16,7 @@
 	},
 	"deployablemirror": {
 		"risk": 0.9,
-		"multiplier": { "mass": 2, "cost": 4, "time": 1 }
+		"multiplier": { "mass": 2, "cost": 4, "time": 2, "diameter": 0.5, "bus": { "mass": 2, "cost": 2, "time": 2, "diameter": 0.5 } }
 	},
 	"uvmirror": {
 		"multiplier": { "cost": 2 }
