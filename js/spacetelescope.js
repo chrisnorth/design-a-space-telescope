@@ -516,7 +516,7 @@ if(typeof $==="undefined") $ = {};
 	// Work out where we are based on the anchor tag
 	SpaceTelescope.prototype.navigate = function(e){
 		var a = location.href.split("#")[1];
-//console.log('navigate',a,e);
+console.log('navigate',a,e);
 		if(typeof a!=="string") a = "";
 		this.showView(a,e);
 		return this;
@@ -703,6 +703,7 @@ if(typeof $==="undefined") $ = {};
 		this.stage = "designer";
 		$('#summary').show();
 		//$('.baritem.messages').show();
+console.log('chooseScenario')
 		this.updateSummary();
 		this.updateLanguage();
 		return this;
@@ -790,15 +791,19 @@ if(typeof $==="undefined") $ = {};
 
 	SpaceTelescope.prototype.resizeSpace = function(){
 
-//console.log('resizeSpace',this.space)
 		// Hide the contents so we can calculate the size of the container
 		if(this.space.el.length > 0) this.space.el.children().hide();
 
-//this.warnings.push({ 'text': this.space.width+'x'+this.space.height });
+		// Make the element fill the container's width
+		this.space.el.css({'width':'auto','display':'block'})
+		
+		// Get the inner width of the space container (i.e. without margins)
+		var w = this.space.el.innerWidth();
+		var h = w/2;
 
 		// Check if the HTML element has changed size due to responsive CSS
-		if(this.space.el.innerWidth() != this.space.width || this.space.el.innerHeight() != this.space.height){
-			this.space.width = this.space.el.width();
+		if(w != this.space.width || h != this.space.height){
+			this.space.width = w;
 			if(this.space.width == 0) this.space.width = 10;
 			this.space.height = this.space.width/2;
 
@@ -1217,7 +1222,7 @@ if(typeof $==="undefined") $ = {};
 	}
 	
 	SpaceTelescope.prototype.updateLanguage = function(){
-
+console.log('updateLanguage')
 		if(!this.phrases || !this.data) return this;
 
 		var d = this.phrases;
@@ -2558,7 +2563,7 @@ console.log(sylda,fairing)
 	
 	SpaceTelescope.prototype.toggleView = function(view,e){
 
-//console.log('toggleView',view)
+console.log('toggleView',view)
 
 		if(!$('#'+view).is(':visible')) this.showView(view,e);
 		else this.showView(e);
@@ -2568,7 +2573,7 @@ console.log(sylda,fairing)
 
 	SpaceTelescope.prototype.showView = function(view,e){
 
-//console.log('showView',view,e)
+console.log('showView',view,e)
 
 		if(typeof view==="object"){
 			e = view;
@@ -2605,15 +2610,14 @@ console.log(sylda,fairing)
 				if(view.indexOf('designer')==0) view = "scenarios";
 			}
 		}else if(this.stage=="scenarios"){
-			if(this.scenario) view = "designer";
-			else{
-				// We can't go back to the introduction
-				if(view.indexOf('intro')==0) view = "scenarios";
-			}
+			if(this.scenario) view = "designer_objectives";
+			else view = "scenarios";	// We can't go back to the introduction
 		}else if(this.stage=="designer"){
 			// We can't go backwards
 			if(view.indexOf('scenarios')==0 || view.indexOf('intro')==0) view = "designer";
 		}
+
+console.log('view',view,this.stage,this.scenario)
 
 		// Process view
 		if((view.indexOf('guide')==0 && view.length==5) || view.indexOf('guide_')==0){
@@ -2682,7 +2686,7 @@ console.log(sylda,fairing)
 
 	SpaceTelescope.prototype.toggleGuide = function(key,e){
 
-//console.log('toggleGuide',key)
+console.log('toggleGuide',key)
 		if(typeof key==="object"){
 			e = key;
 			key = "";

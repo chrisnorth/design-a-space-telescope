@@ -229,7 +229,7 @@
 			"intro": "A <a href=\"#guide_cooling\" class=\"guidelink\">cooling system</a> may be required for your satellite, particularly for instruments observing longer wavelengths.",
 			"cost": "Cost:",
 			"mass": "Mass:",
-			"temperature": "Temperature:",
+			"temperature": "Achieved temperature:",
 			"devtime": "Development time:",
 			"life": "Life:",
 			"risk": "Success probability:",
@@ -296,7 +296,7 @@
 		},
 		"site": {
 			"label": "Launch site",
-			"hint": "Choose the launch site",
+			"hint": "Choose the <a href=\"#guide_site\" class=\"guidelink\">launch site</a>",
 			"trajectories": "Trajectories:",
 			"location": "Location (latitude, longitude):",
 			"operator": "Operator:",
@@ -341,11 +341,11 @@
 				"ES2": { "label": "Earth-Sun L2", "launchreq": "" }
 			},
 			"orbit": {
-				"label": "Orbit",
+				"label": "<a href=\"#guide_orbit\" class=\"guidelink\">Orbit</a>",
 				"none": "Select orbit"
 			},
 			"duration": {
-				"label": "Mission duration:",
+				"label": "Mission <a href=\"#guide_lifetime\" class=\"guidelink\">duration</a>:",
 				"none": "Select mission duration"
 			},
 			"diagram": {

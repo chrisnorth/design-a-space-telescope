@@ -90,7 +90,7 @@
 			},
 			"budget": { "value": 4000, "units": "GBP", "dimension": "currency" },
 			"requires": [{
-				"rocket": "FLC9",
+				"vehicle": "FLC9",
 				"label": "You must use a SpaceX rocket.",
 				"error": "You have not chosen a SpaceX rocket."
 			},{

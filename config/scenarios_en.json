@@ -27,11 +27,11 @@
 				"label": "Wavelength coverage from sub-mm to far-infrared",
 				"error": "You are not able to observe the required wavelengths"
 			},{
-				"mirror": 1,
+				"mirror": { 'value': 1, 'units': 'm', 'dimension': 'length' },
 				"label": "You need a mirror.",
 				"error": "You have not selected a suitable mirror."
 			},{
-				"lifetime": 4,
+				"lifetime": { 'value': 4, 'units': 'years', 'dimension': 'time' },
 				"label": "Mission lifetime (4 years)",
 				"error": "Your mission will not observe for a long enough time."
 			}]
@@ -90,7 +90,7 @@
 			},
 			"budget": { "value": 4000, "units": "GBP", "dimension": "currency" },
 			"requires": [{
-				"rocket": "FLC9",
+				"vehicle": "FLC9",
 				"label": "You must use a SpaceX rocket.",
 				"error": "You have not chosen a SpaceX rocket."
 			},{
