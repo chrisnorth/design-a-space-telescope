@@ -326,15 +326,9 @@ a.togglescience:hover { padding-bottom: 0.3em; border-bottom: 0.2em solid #69dff
 	width: 80em;
 	padding: 0;
 	background-color: transparent;
-	background-color: rgba(34,101,153,0.7);
-	background-image: linear-gradient(rgba(255,255,255,.5) 1px, transparent 2px), linear-gradient(90deg, rgba(255,255,255,.5) 1px, transparent 2px), linear-gradient(rgba(255,255,255,.15) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.15) 1px, transparent 1px);
-	background-size: 5em 5em, 5em 5em, 1em 1em, 1em 1em;
-	background-position:-2px -2px, -2px -2px, -1px -1px, -1px -1px;
-	-moz-box-shadow: inset 0 0 5em rgba(0,0,0,0.7);
-	-webkit-box-shadow: inset 0 0 5em rgba(0,0,0,0.7);
-	box-shadow: inset 0 0 5em rgba(0,0,0,0.7);
+	box-shadow: none;
 }
-.designer_inner { background-color: rgba(0,0,0,0.4); }
+.designer_inner { background-color: rgba(0,0,0,0.7); }
 #designer .designer_title { display:none; }
 #designer form li:last-child { margin-bottom: 0px; }
 #designer .intro.bigpadded, #designer .summary.bigpadded { padding-bottom: 0px; }
@@ -438,6 +432,13 @@ a.togglescience:hover { padding-bottom: 0.3em; border-bottom: 0.2em solid #69dff
 	width: 25%;
 	min-width: 150px;
 	color: #f6f6f6;
+	background-color: rgba(34,101,153,0.7);
+	background-image: linear-gradient(rgba(255,255,255,.5) 1px, transparent 2px), linear-gradient(90deg, rgba(255,255,255,.5) 1px, transparent 2px), linear-gradient(rgba(255,255,255,.15) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.15) 1px, transparent 1px);
+	background-size: 5em 5em, 5em 5em, 1em 1em, 1em 1em;
+	background-position:-2px -2px, -2px -2px, -1px -1px, -1px -1px;
+	-moz-box-shadow: inset 0 0 5em rgba(0,0,0,0.7);
+	-webkit-box-shadow: inset 0 0 5em rgba(0,0,0,0.7);
+	box-shadow: inset 0 0 5em rgba(0,0,0,0.7);
 /*
 	background-color: #000000;
 	background-image:-moz-linear-gradient(top,#000000,#101010);
@@ -453,14 +454,15 @@ a.togglescience:hover { padding-bottom: 0.3em; border-bottom: 0.2em solid #69dff
 #main .doc p { margin-bottom: 1.5em; }
 #main .doc h3 { font-size: 1.2em; margin: 1.5em 0 0.5em 0;}
 
-#sidebar { background-color: rgba(0,0,0,0.5); }
+
+#sidebar .sidebar_inner { background-color: rgba(0,0,0,0.2); }
 /*#sidebar .panel { border-bottom: 1px solid #ffffff; }*/
 #sidebar .panel:last-child { border-bottom: 0px; }
 #sidebar img { max-width: 100%; width: 100%; }
-#sidebar .vehicle { }
-#sidebar .vehicle .image { display: inline-block; height: 110px; }
-#sidebar .vehicle .image img { max-height: 100%; }
-#sidebar .vehicle .info { padding-left: 1em; display: inline-block; width: auto; }
+#sidebar .vehicle { display: table; width: 100%; }
+#sidebar .vehicle .image { height: 110px; display: table-cell; vertical-align: bottom; text-align: center; }
+#sidebar .vehicle .image img { max-height: 100%; width: auto; }
+#sidebar .vehicle .info { padding-left: 1em;  display: table-cell; }
 #sidebar .worldmap { line-height: 0; }
 
 body.showguide #bar { display: none; }

@@ -1102,8 +1102,14 @@ if(typeof $==="undefined") $ = {};
 		return this;
 	}
 	
+	SpaceTelescope.prototype.updateProposal = function(){
+		if(!$('#proposal_mirror').val()) $('#proposal_mirror').val(this.formatValue(this.getChoice('mirror')));
+
+		return this;
+	}
+
 	SpaceTelescope.prototype.updateSidePanels = function(){
-		var html = "";
+		var html = '<div class="sidebar_inner">';
 		if(this.choices.vehicle) html += '<div class="vehicle padded panel"><div class="image"><img src="'+this.data.vehicle[this.choices.vehicle].img+'" /></div><div class="info"><div>'+this.phrases.designer.vehicle.options[this.choices.vehicle].label+'</div><!--<div>'+this.phrases.designer.vehicle.height+' '+this.formatValueSpan(this.data.vehicle[this.choices.vehicle].height)+'</div>--><div>'+this.phrases.designer.vehicle.diameter+' '+this.formatValueSpan(this.data.vehicle[this.choices.vehicle].diameter)+'</div><div>'+this.phrases.designer.vehicle.massLEO+' '+this.formatValueSpan(this.data.vehicle[this.choices.vehicle].mass.LEO)+'</div><div>'+this.phrases.designer.vehicle.massGTO+' '+this.formatValueSpan(this.data.vehicle[this.choices.vehicle].mass.GTO)+'</div><div>'+this.phrases.designer.vehicle.operator+' '+this.phrases.operator[this.data.vehicle[this.choices.vehicle].operator].label+'</div></div></div>';
 		if(this.choices.site){
 			html += '<div class="worldmap panel"><img src="images/worldmap.jpg" />';
@@ -1119,6 +1125,7 @@ if(typeof $==="undefined") $ = {};
 		if(this.choices.orbit){
 			html+= '<div class="orbit panel"><img src="'+this.data.orbit[this.choices.orbit].img+'" /></div>';
 		}
+		html += '</div>';
 		$('#sidebar').html(html);
 
 		return this;
@@ -1867,7 +1874,6 @@ if(typeof $==="undefined") $ = {};
 		// Warning about funds
 		if(cost.free.value < 0) this.errors.push({ 'text': this.phrases.errors.bankrupt });
 
-
 		// Format times
 		time.mirror = this.getChoice('mirror.time');
 		time.satellite = this.getChoice('satellite.time');
@@ -2577,6 +2583,8 @@ if(typeof $==="undefined") $ = {};
 				}
 				if(section=="orbit") this.makeSpace().displayOrbits();
 				else this.removeOrbits();
+				
+				if(section=="proposal") this.updateProposal();
 
 			}else{
 				$('#designer').show().find('a').eq(0).focus();
