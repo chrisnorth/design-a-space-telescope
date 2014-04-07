@@ -6013,9 +6013,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.42142302"
-     inkscape:cx="1135.6688"
-     inkscape:cy="383.85736"
+     inkscape:zoom="0.59598215"
+     inkscape:cx="627.21283"
+     inkscape:cy="427.8054"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -6055,6 +6055,26 @@
      inkscape:groupmode="layer"
      id="layer1"
      transform="translate(88.937768,47.909448)">
+    <rect
+       style="fill:#232323;fill-opacity:0.00881054;stroke:none"
+       id="rect24868"
+       width="160"
+       height="600"
+       x="1191.0623"
+       y="-47.909447"
+       inkscape:export-filename="/Users/stuartlowe/Projects/design-a-space-telescope/images/rocket_proton.png"
+       inkscape:export-xdpi="56.209949"
+       inkscape:export-ydpi="56.209949" />
+    <rect
+       inkscape:export-ydpi="36.28125"
+       inkscape:export-xdpi="36.28125"
+       inkscape:export-filename="/Users/stuartlowe/Projects/design-a-space-telescope/inspiration/rockets.png"
+       y="-47.909447"
+       x="-88.937767"
+       height="620"
+       width="1920"
+       id="rect5095"
+       style="fill:#232323;fill-opacity:0.00881054;stroke:none" />
     <g
        id="g6515"
        transform="matrix(1.25,0,0,-1.25,941.62982,243.55464)" />
@@ -11285,10 +11305,10 @@
          sodipodi:role="line">Ariane 5</tspan></text>
     <g
        id="g18578"
-       transform="translate(162.37754,-2.5168781)"
-       inkscape:export-filename="/Users/stuartlowe/Projects/design-a-space-telescope/inspiration/rockets.png"
-       inkscape:export-xdpi="36.28125"
-       inkscape:export-ydpi="36.28125">
+       transform="matrix(1.155902,0,0,1.155902,-10.468602,-88.971413)"
+       inkscape:export-filename="/Users/stuartlowe/Projects/design-a-space-telescope/images/rocket_proton.png"
+       inkscape:export-xdpi="56.209949"
+       inkscape:export-ydpi="56.209949">
       <path
          inkscape:connector-curvature="0"
          id="path18491"
@@ -13511,16 +13531,6 @@
        id="rect24866"
        style="fill:#232323;fill-opacity:0.00881054;stroke:none" />
     <rect
-       style="fill:#232323;fill-opacity:0.00881054;stroke:none"
-       id="rect24868"
-       width="160"
-       height="600"
-       x="1191.0623"
-       y="-47.909447"
-       inkscape:export-filename="/Users/stuartlowe/Projects/design-a-space-telescope/inspiration/rockets.png"
-       inkscape:export-xdpi="36.28125"
-       inkscape:export-ydpi="36.28125" />
-    <rect
        inkscape:export-ydpi="36.28125"
        inkscape:export-xdpi="36.28125"
        inkscape:export-filename="/Users/stuartlowe/Projects/design-a-space-telescope/inspiration/rockets.png"
@@ -13549,16 +13559,6 @@
        height="600"
        width="160"
        id="rect24874"
-       style="fill:#232323;fill-opacity:0.00881054;stroke:none" />
-    <rect
-       inkscape:export-ydpi="36.28125"
-       inkscape:export-xdpi="36.28125"
-       inkscape:export-filename="/Users/stuartlowe/Projects/design-a-space-telescope/inspiration/rockets.png"
-       y="-47.909447"
-       x="-88.937767"
-       height="620"
-       width="1920"
-       id="rect5095"
        style="fill:#232323;fill-opacity:0.00881054;stroke:none" />
   </g>
 </svg>

@@ -844,6 +844,25 @@ console.log(this.space.width,this.space.el.width())
 		return this;
 	}
 
+	SpaceTelescope.prototype.removeOrbits = function(){
+		for(var o in this.space.orbits){
+			if(this.space.orbits[o].dotted) this.space.orbits[o].dotted.stop().remove();
+			if(this.space.orbits[o].solid) this.space.orbits[o].solid.stop().remove();
+			if(this.space.orbits[o].satellite) this.space.orbits[o].satellite.stop().remove();
+			delete this.space.orbits[o];
+		}
+		if(this.space.Moon) this.space.Moon.remove();
+		if(this.space.Moonorbit) this.space.Moonorbit.remove();
+		if(this.space.Moonlagrangian) this.space.Moonlagrangian.remove();
+		if(this.space.Earthorbit) this.space.Earthorbit.remove();
+		for(var l in this.space.labels){
+			if(this.space.labels[l].arrow) this.space.labels[l].arrow.remove();
+			if(this.space.labels[l].label) this.space.labels[l].label.remove();
+			delete this.space.labels[l];
+		}
+		return this;
+	}
+
 	SpaceTelescope.prototype.displayOrbits = function(key){
 
 //console.log('displayOrbits',key,this.space.paper,this.space.el)
@@ -903,21 +922,7 @@ console.log(this.space.width,this.space.el.width())
 		}
 		
 		if(this.space.rebuild){
-			for(var o in this.space.orbits){
-				if(this.space.orbits[o].dotted) this.space.orbits[o].dotted.stop().remove();
-				if(this.space.orbits[o].solid) this.space.orbits[o].solid.stop().remove();
-				if(this.space.orbits[o].satellite) this.space.orbits[o].satellite.stop().remove();
-				delete this.space.orbits[o];
-			}
-			if(this.space.Moon) this.space.Moon.remove();
-			if(this.space.Moonorbit) this.space.Moonorbit.remove();
-			if(this.space.Moonlagrangian) this.space.Moonlagrangian.remove();
-			if(this.space.Earthorbit) this.space.Earthorbit.remove();
-			for(var l in this.space.labels){
-				if(this.space.labels[l].arrow) this.space.labels[l].arrow.remove();
-				if(this.space.labels[l].label) this.space.labels[l].label.remove();
-				delete this.space.labels[l];
-			}
+			this.removeOrbits();
 			this.space.rebuild = false;
 		}
 		
@@ -955,7 +960,7 @@ console.log(this.space.width,this.space.el.width())
 			// Make the satellie
 			if(inp.period){
 				p.satellite = _obj.space.paper.circle(inp.cx,inp.cy,4).attr({ 'fill': inp.color, 'stroke': 0 });
-				p.satellite.animateAlong((inp.orbit ? inp.orbit : p.dotted), inp.period, Infinity, inp.orbitdir);
+				p.anim = p.satellite.animateAlong((inp.orbit ? inp.orbit : p.dotted), inp.period, Infinity, inp.orbitdir);
 			}
 
 			p.dotted.attr({ stroke: inp.color,'stroke-dasharray': '-','stroke-width':inp.stroke.off });
@@ -1829,7 +1834,7 @@ console.log(this.space.width,this.space.el.width())
 		prob.mission = this.getChoice('mission.prob');
 		prob.total = prob.orbit*prob.site*prob.vehicle*prob.mirror*prob.cooling*prob.instruments*prob.mission;
 
-console.log(prob.orbit,prob.site,prob.vehicle,prob.mirror,prob.cooling,prob.instruments,prob.mission)
+
 		// Format costs
 		cost.mirror = this.getChoice('mirror.cost');
 		cost.satellite = this.getChoice('satellite.cost');
@@ -2540,7 +2545,8 @@ console.log(prob.orbit,prob.site,prob.vehicle,prob.mirror,prob.cooling,prob.inst
 					if($('#'+view).find('input')) $('#'+view).find('input').eq(0).focus(); 
 					else $('#menubar a.toggle'+section).focus();
 				}
-				this.makeSpace().displayOrbits();
+				if(section=="orbit") this.makeSpace().displayOrbits();
+				else this.removeOrbits();
 
 			}else{
 				$('#designer').show().find('a').eq(0).focus();
