@@ -410,6 +410,7 @@ if(typeof $==="undefined") $ = {};
 			var key = e.data.me.getValue('#mission_orbit');
 			e.data.me.highlightOrbit(key);
 			e.data.me.showDetails('orbit',key);
+			e.data.me.showDetails('cooling');
 		});
 
 
