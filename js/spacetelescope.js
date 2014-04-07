@@ -1479,14 +1479,14 @@ if(typeof $==="undefined") $ = {};
 		var time = this.makeValue(0,'months');
 
 		if(value.wavelength && this.data.wavelengths[value.wavelength]){
-			var w = this.data.wavelengths[value.wavelength];
+			var w = this.copyValue(this.data.wavelengths[value.wavelength]);
 			if(w.cost) cost = w.cost;
 			if(w.mass) mass = w.mass;
 			if(w.temperature) temp = w.temperature;
 			v.wavelength = this.phrases.wavelengths[value.wavelength].label;
 		}
 		if(value["type"] && this.data.instrument.options[value["type"]]){
-			var t = this.data.instrument.options[value["type"]];
+			var t = this.copyValue(this.data.instrument.options[value["type"]]);
 			if(t.multiplier && t.multiplier.cost) cost.value *= t.multiplier.cost;
 			if(t.multiplier && t.multiplier.mass) mass.value *= t.multiplier.mass;
 			if(t.devtime) time = t.devtime;
@@ -2326,16 +2326,16 @@ if(typeof $==="undefined") $ = {};
 		if(this.choices.instruments){
 			var uv = false;
 			for(var i = 0; i < this.choices.instruments.length; i++){
-				var t = this.data.instrument.options[this.choices.instruments[i].type];
+				var t = this.copyValue(this.data.instrument.options[this.choices.instruments[i].type]);
 				if(!t.multiplier) t.multiplier = { };
 				if(!t.multiplier.cost) t.multiplier.cost = 1;
 				if(!t.multiplier.mass) t.multiplier.mass = 1;
 
-				var w = this.data.wavelengths[this.choices.instruments[i].wavelength];
+				var w = this.copyValue(this.data.wavelengths[this.choices.instruments[i].wavelength]);
 				if(w.cost) cost = this.sumValues(cost,w.cost);
-				//cost.value *= t.multiplier.cost;
+				cost.value *= t.multiplier.cost;
 				if(w.mass) mass = this.sumValues(mass,w.mass);
-				//mass.value *= t.multiplier.mass;
+				mass.value *= t.multiplier.mass;
 				temp = this.minValue(temp,w.temperature);
 				if(t.devtime) time = this.sumValues(time,t.devtime);
 				if(t.risk) risk *= t.risk;
@@ -2348,6 +2348,7 @@ if(typeof $==="undefined") $ = {};
 			if(!this.choices.uvmirror && uv)  this.warnings.push({ 'text': this.phrases.warnings.uv, 'link': '#designer_satellite' });
 
 		}
+		
 		this.choices.instrument.cost = cost;
 		this.choices.instrument.mass = mass;
 		this.choices.instrument.temp = temp;
