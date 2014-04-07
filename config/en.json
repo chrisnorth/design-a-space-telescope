@@ -375,7 +375,7 @@
 		"slots": "You have more instruments than slots available on the satellite bus. Either reduce the number of instruments or choose a larger satellite structure."
 	},
 	"warnings": {
-	
+		"uv": "You have a UV instrument but your mirror is not UV quality."
 	},
 	"guide": {
 		"title": "Guide",

@@ -2207,6 +2207,7 @@ console.log('parseChoices')
 		var time = this.makeValue(0,'months');
 		if(!this.choices.instrument) this.choices.instrument = {};
 		if(this.choices.instruments){
+			var uv = false;
 			for(var i = 0; i < this.choices.instruments.length; i++){
 				var w = this.data.wavelengths[this.choices.instruments[i].wavelength];
 				var t = this.data.instrument.options[this.choices.instruments[i].type];
@@ -2218,10 +2219,13 @@ console.log('parseChoices')
 				if(w.mass) mass = this.sumValues(mass,w.mass*t.multiplier.mass);
 				if(t.devtime) time = this.sumValues(time,t.devtime);
 
+				if(this.choices.instruments[i].wavelength=="uv") uv = true;
 			}
 			var slots = (this.choices.mirror) ? this.data.mirror[this.choices.mirror].bus.instrumentslots : 0;
 			if(this.choices.instruments.length > slots) this.errors.push({ 'text': this.phrases.errors.slots, 'link': '#designer_instruments' });
-console.log(slots,this.choices.instruments.length,this.errors)
+
+			if(!this.choices.uvmirror && uv)  this.warnings.push({ 'text': this.phrases.warnings.uv, 'link': '#designer_satellite' });
+
 		}
 		this.choices.instrument.cost = cost;
 		this.choices.instrument.mass = mass;
