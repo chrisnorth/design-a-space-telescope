@@ -27,11 +27,11 @@
 				"label": "Wavelength coverage from sub-mm to far-infrared",
 				"error": "You are not able to observe the required wavelengths"
 			},{
-				"mirror": { 'value': 1, 'units': 'm', 'dimension': 'length' },
+				"mirror": { "value": 1, "units": "m", "dimension": "length" },
 				"label": "You need a mirror.",
 				"error": "You have not selected a suitable mirror."
 			},{
-				"lifetime": { 'value': 4, 'units': 'years', 'dimension': 'time' },
+				"lifetime": { "value": 4, "units": "years", "dimension": "time" },
 				"label": "Mission lifetime (4 years)",
 				"error": "Your mission will not observe for a long enough time."
 			}]

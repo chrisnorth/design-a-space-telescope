@@ -222,9 +222,9 @@ if(typeof $==="undefined") $ = {};
 		});
 
 		// Attach specific keypress events
-		this.registerKey(['g','?'],function(e){ this.toggleGuide(e); });
-		this.registerKey(['o'],function(e){ this.showView('options',e); });
-		this.registerKey(['r'],function(e){ this.loadLanguage(this.lang,this.updateLanguage); });
+		this.registerKey(['?'],function(e){ this.toggleGuide(e); });
+		//this.registerKey(['o'],function(e){ this.showView('options',e); });
+		//this.registerKey(['r'],function(e){ this.loadLanguage(this.lang,this.updateLanguage); });
 
 		// Deal with back/forwards navigation
 		if(this.pushstate){
@@ -414,6 +414,14 @@ if(typeof $==="undefined") $ = {};
 			e.data.me.showDetails('cooling');
 		});
 
+		// Don't submit the forms otherwise we leave the page!
+		$(document).on('submit','form',{me:this},function(e){
+			e.preventDefault();
+		});
+		$('#designer_instruments form').on('submit',{me:this},function(e){
+			e.preventDefault();
+			$(this).find('a.add_instrument').trigger('click');
+		});
 
 		// Build proposal document holder
 		$('#designer_proposal .options').html('<div class="padded"><div class="doc"></div></div>');
@@ -791,22 +799,25 @@ console.log('chooseScenario')
 
 	SpaceTelescope.prototype.resizeSpace = function(){
 
+		if(!this.space) this.makeSpace();
+
 		// Hide the contents so we can calculate the size of the container
-		if(this.space.el.length > 0) this.space.el.children().hide();
+		if(this.space && this.space.el.length > 0) this.space.el.children().hide();
 
 		// Make the element fill the container's width
 		this.space.el.css({'width':'auto','display':'block'});
 		
 		// Get the inner width of the space container (i.e. without margins)
 		var w = this.space.el.innerWidth();
+		if(w < $('#designer_orbit').width()/2) w = $('#designer_orbit').width()-(parseInt(this.space.el.css('margin-left'),10) + parseInt(this.space.el.css('margin-right'),10));
 		var h = w/2;
 
 //console.log(w,$('#designer_orbit').width())
 		// Check if the HTML element has changed size due to responsive CSS
-		if(w != this.space.width || h != this.space.height){
+		if(w != this.space.width || h != this.space.height || this.space.width==0){
 			this.space.width = w;
-			if(this.space.width == 0) this.space.width = 10;
-			this.space.height = this.space.width/2;
+			if(this.space.width == 0) this.space.width = $('#designer_orbit').width()-(parseInt(this.space.el.css('margin-left'),10) + parseInt(this.space.el.css('margin-right'),10));
+			this.space.height = h;
 
 			// Create the Raphael object to hold the vector graphics
 			if(!this.space.paper){
@@ -1013,7 +1024,7 @@ console.log('displayOrbits',key)
 
 			return p;
 		}
-
+console.log('here',this.space,this.space.E,this.space.M,this.space.scale,this.space.zoom)
 		if(!this.space.E || !this.space.M || !this.space.scale) return this;
 		
 		if(this.space.zoom == 0){
@@ -1032,11 +1043,12 @@ console.log('displayOrbits',key)
 				}
 			}
 		}else if(this.space.zoom == 1){
-
+console.log('zoom',this.space.Moonorbit)
 			if(!this.space.Moonorbit){
 				this.space.Moonorbit = this.space.paper.path("M "+this.space.E.x+","+this.space.E.y+" "+makeOrbitPath(this.space.M.o*this.space.scale[1],1)).attr({ stroke:'#606060','stroke-dasharray': '-','stroke-width':1.5 });
 				this.space.Moon = this.space.paper.circle(this.space.E.x - this.space.M.o*this.space.scale[1]*Math.cos(Math.PI/6),this.space.E.y - this.space.M.o*this.space.scale[1]*Math.sin(Math.PI/6),this.space.M.r).attr({ 'fill': '#606060', 'stroke': 0 });
 				var r = 9;
+console.log(this.space.Moonorbit,this.space.Moon)
 				if(!this.space.orbits["ETR"] && this.data.orbit["ETR"]){
 					period = this.convertValue(this.data.orbit["ETR"].period,'days');
 					this.space.Earthorbit = this.space.paper.path("M "+(this.space.E.x-r)+",0 q "+(r*2)+","+(this.space.height/2)+" 0,"+(this.space.height)).attr({ stroke:'#606060','stroke-dasharray': '-','stroke-width':1.5 });
@@ -1125,7 +1137,7 @@ console.log('displayOrbits',key)
 		var html = '<div class="sidebar_inner">';
 		if(this.choices.vehicle) html += '<div class="vehicle padded panel"><div class="image"><img src="'+this.data.vehicle[this.choices.vehicle].img+'" /></div><div class="info"><div>'+this.phrases.designer.vehicle.options[this.choices.vehicle].label+'</div><!--<div>'+this.phrases.designer.vehicle.height+' '+this.formatValueSpan(this.data.vehicle[this.choices.vehicle].height)+'</div>--><div>'+this.phrases.designer.vehicle.diameter+' '+this.formatValueSpan(this.data.vehicle[this.choices.vehicle].diameter)+'</div><div>'+this.phrases.designer.vehicle.massLEO+' '+this.formatValueSpan(this.data.vehicle[this.choices.vehicle].mass.LEO)+'</div><div>'+this.phrases.designer.vehicle.massGTO+' '+this.formatValueSpan(this.data.vehicle[this.choices.vehicle].mass.GTO)+'</div><div>'+this.phrases.designer.vehicle.operator+' '+this.phrases.operator[this.data.vehicle[this.choices.vehicle].operator].label+'</div></div></div>';
 		if(this.choices.site){
-			html += '<div class="worldmap panel"><img src="images/worldmap.jpg" />';
+			html += '<div class="worldmap panel"><img src="images/worldmap.png" />';
 			var lat = this.data.site[this.choices.site].latitude;
 			var lon = this.data.site[this.choices.site].longitude;
 			if(!lat && !lon){
@@ -1377,11 +1389,23 @@ console.log('updateLanguage')
 
 
 		// Update the proposal section
-		$('#designer_proposal .options .doc').html(d.designer.proposal.doc.replace(/%FUNDER%/g,'Funder').replace(/%DATE%/,(new Date()).toDateString()).replace(/%TO%/,'<input type="text" name="proposal_to" id="proposal_to" value="" >').replace(/%NAME%/,'<input type="text" name="proposal_name" id="proposal_name" value="" >').replace(/%AIM%/,'<textarea name="proposal_aim" id="proposal_aim"></textarea>').replace(/%PREVIOUS%/,'<input type="text" name="proposal_previous" id="proposal_previous" value="" >').replace(/%ADVANCE%/,'<textarea name="proposal_advance" id="proposal_advance"></textarea>').replace(/%INSTRUMENTS%/,'<textarea name="proposal_instruments" id="proposal_instruments"></textarea>').replace(/%GOALS%/,'<textarea name="proposal_goal" id="proposal_goal"></textarea>').replace(/%RESLOW%/,'<input type="text" name="proposal_reslow" id="proposal_reslow" value="" >').replace(/%RESHIGH%/,'<input type="text" name="proposal_reshigh" id="proposal_reshigh" value="" >').replace(/%MIRROR%/,'<input type="text" name="proposal_mirror" id="proposal_mirror" value="" >').replace(/%REQTEMPERATURE%/,'<input type="text" name="proposal_reqtemp" id="proposal_reqtemp" value="" >').replace(/%TEMPERATURE%/,'<input type="text" name="proposal_temp" id="proposal_temp" value="" >').replace(/%MASS%/,'<input type="text" name="proposal_mass" id="proposal_mass" value="" >').replace(/%MASSSATELLITE%/,'<input type="text" name="proposal_mass_satellite" id="proposal_mass_satellite" value="" >').replace(/%MASSMIRROR%/,'<input type="text" name="proposal_mass_mirror" id="proposal_mass_mirror" value="" >').replace(/%MASSCOOLING%/,'<input type="text" name="proposal_mass_cooling" id="proposal_mass_cooling" value="" >').replace(/%MASSINSTRUMENTS%/,'<input type="text" name="proposal_mass_instruments" id="proposal_mass_instruments" value="" >').replace(/%ORBIT%/,'<input type="text" name="proposal_orbit" id="proposal_orbit" value="" >').replace(/%DISTANCE%/,'<input type="text" name="proposal_distance" id="proposal_distance" value="" >').replace(/%PERIOD%/,'<input type="text" name="proposal_period" id="proposal_period" value="" >').replace(/%FUEL%/,'<input type="text" name="proposal_fuel" id="proposal_fuel" value="" >').replace(/%DURATION%/,'<input type="text" name="proposal_duration" id="proposal_duration" value="" >').replace(/%VEHICLE%/,'<input type="text" name="proposal_vehicle" id="proposal_vehicle" value="" >').replace(/%OPERATOR%/,'<input type="text" name="proposal_operator" id="proposal_operator" value="" >').replace(/%SITE%/,'<input type="text" name="proposal_site" id="proposal_site" value="" >').replace(/%LAUNCHMASS%/,'<input type="text" name="proposal_launchmass" id="proposal_launchmass" value="" >').replace(/%COST%/,'<input type="text" name="proposal_cost" id="proposal_cost" value="" >').replace(/%COSTSATELLITE%/,'<input type="text" name="proposal_cost_satellite" id="proposal_cost_satellite" value="" >').replace(/%COSTMIRROR%/,'<input type="text" name="proposal_cost_mirror" id="proposal_cost_mirror" value="" >').replace(/%COSTCOOLING%/,'<input type="text" name="proposal_cost_cooling" id="proposal_cost_cooling" value="" >').replace(/%COSTINSTRUMENTS%/,'<input type="text" name="proposal_cost_instruments" id="proposal_cost_instruments" value="" >').replace(/%COSTDEV%/,'<input type="text" name="proposal_cost_dev" id="proposal_cost_dev" value="" >').replace(/%COSTLAUNCH%/,'<input type="text" name="proposal_cost_launch" id="proposal_cost_launch" value="" >').replace(/%COSTGROUND%/,'<input type="text" name="proposal_cost_ground" id="proposal_cost_ground" value="" >').replace(/%COSTOPERATIONS%/,'<input type="text" name="proposal_cost_operations" id="proposal_cost_operations" value="" >'));
+		var _book = (d.designer.proposal.labels ? d.designer.proposal.labels : {});
+		String.prototype.formify = function(key,t,name,value,label){
+			if(!label && _book[key]) label = _book[key];
+			if(label) label = '<label for="'+name+'">'+label+'</label>';
+			else label = '';
+			if(!value) value = "";
+			if(t=="text") var form = '<input type="text" name="'+name+'" id="'+name+'" value="'+value+'" >';
+			else if(t=="textarea") var form = '<textarea name="'+name+'" id="'+name+'">'+value+'</textarea>';
+			return this.replace("%"+key+"%",label+form,"g");
+		}
+		var str = d.designer.proposal.doc;
+		$('#designer_proposal .options .doc').html(str.replace(/%FUNDER%/g,'Funder').replace(/%DATE%/,(new Date()).toDateString()).formify("TO",'text','proposal_to').formify('NAME','text','proposal_name').formify('AIM','textarea','proposal_aim').formify('PREVIOUS','text','proposal_previous').formify("ADVANCE",'textarea','proposal_advance').formify("INSTRUMENTS",'textarea','proposal_instruments').formify('GOALS','textarea','proposal_goal').formify('RESLOW','text','proposal_reslow').formify('RESHIGH','text','proposal_reshigh').formify('MIRROR','text','proposal_mirror').formify('REQTEMPERATURE','text','proposal_reqtemp').formify('TEMPERATURE','text','proposal_temp').formify('MASS','text','proposal_mass').formify('MASSSATELLITE','text','proposal_mass_satellite').formify('MASSMIRROR','text','proposal_mass_mirror').formify('MASSCOOLING','text','proposal_mass_cooling').formify('MASSINSTRUMENTS','text','proposal_mass_instruments').formify('ORBIT','text','proposal_orbit').formify('DISTANCE','text','proposal_distance').formify('PERIOD','text','proposal_period').formify('FUEL','text','proposal_fuel').formify('DURATION','text','proposal_duration').formify('VEHICLE','text','proposal_vehicle').formify('OPERATOR','text','proposal_operator').formify('SITE','text','proposal_site').formify('LAUNCHMASS','text','proposal_launchmass').formify('COST','text','proposal_cost').formify('COSTSATELLITE','text','proposal_cost_satellite').formify('COSTMIRROR','text','proposal_cost_mirror').formify('COSTCOOLING','text','proposal_cost_cooling').formify('COSTINSTRUMENTS','text','proposal_cost_instruments').formify('COSTDEV','text','proposal_cost_dev').formify('COSTLAUNCH','text','proposal_cost_launch').formify('COSTGROUND','text','proposal_cost_ground').formify('COSTOPERATIONS','text','proposal_cost_operations'));
+
 
 		// Update designer toggle buttons
 		for(var i = 0; i < this.sections.length; i++){
-			if(d.designer[this.sections[i]]) $('.toggle'+this.sections[i]).text(d.designer[this.sections[i]].label).attr('title',d.designer[this.sections[i]].hint);
+			if(d.designer[this.sections[i]]) $('.toggle'+this.sections[i]).text(d.designer[this.sections[i]].label).attr('title',d.designer[this.sections[i]].hint.replace(/<([^>]*)>/g,''));	// remove any HTML that has been added
 		}
 
 		// Update menu items
@@ -1911,9 +1935,9 @@ console.log('updateLanguage')
 		time.fuel = this.getChoice('fuel.time');
 
 		var fuel = this.convertValue(time.fuel,time.mission.units);
-		if(time.mission.value > fuel.value) this.warnings.push({ 'text': this.phrases.warnings.fuellifetime });
+		if(time.mission.value > fuel.value) this.warnings.push({ 'text': this.phrases.warnings.fuellifetime.replace(/%LIFE%/,this.formatValue(fuel)).replace(/%DURATION%/,this.formatValue(time.mission)), 'link':'#designer_orbit' });
 		var cool = this.convertValue(time.lifecooling,time.mission.units);
-		if(time.mission.value > cool.value) this.warnings.push({ 'text': this.phrases.warnings.coolinglifetime });
+		if(time.mission.value > cool.value) this.warnings.push({ 'text': this.phrases.warnings.coolinglifetime.replace(/%LIFE%/,this.formatValue(cool)).replace(/%DURATION%/,this.formatValue(time.mission)), 'link':'#designer_orbit' });
 		
 
 		// Format masses
@@ -2603,21 +2627,8 @@ console.log('showView',view,e)
 
 		$('body').removeClass('showguide showintro showoptions showmessages');
 
-		// Check which stage we are at and stop people seeing the designer if they haven't picked a scenario yet
-		if(this.stage=="intro"){
-			if(this.scenario){
-				view = "designer";
-			}else{
-				// If we are on the introduction we can't skip ahead to the designer section before we've chosen a scenario
-				if(view.indexOf('designer')==0) view = "scenarios";
-			}
-		}else if(this.stage=="scenarios"){
-			if(this.scenario) view = "designer_objectives";
-			else view = "scenarios";	// We can't go back to the introduction
-		}else if(this.stage=="designer"){
-			// We can't go backwards
-			if(view.indexOf('scenarios')==0 || view.indexOf('intro')==0) view = "designer";
-		}
+		// Less restrictive than before; if no scenario has been picked we go to the intro
+		if(view.indexOf('designer')==0 && !this.scenario) view = "intro";
 
 console.log('view',view,this.stage,this.scenario)
 
@@ -2929,7 +2940,7 @@ console.log('toggleGuide',key)
 			// Add closer
 			$('#guide').html(html);
 
-			if(html.indexOf('script')>= 0 && MathJax) MathJax.Hub.Queue(["Typeset",MathJax.Hub,'guide']);
+			if(html.indexOf('script')>= 0 && typeof MathJax==="object") MathJax.Hub.Queue(["Typeset",MathJax.Hub,'guide']);
 
 			// Add events to guide close
 			this.addCloser($('#guide'),{me:this},function(e){ e.preventDefault(); e.data.me.toggleGuide(); });
@@ -3080,14 +3091,12 @@ console.log('toggleGuide',key)
 		var tall = $(window).height();
 		var l = 0;
 		var t = 0;
-		if(lb.css('max-width').indexOf('px') > 0){
-			l = ((wide-lb.outerWidth())/2);
-			lb.css({left:((wide-lb.outerWidth())/2)+'px'});
-			if($(window).height() > lb.height()){
-				//t = (window.scrollY+(tall-lb.outerHeight())/2);
-				t = ((tall-lb.outerHeight())/2 + $(window).scrollTop());
-				$('body').css('overflow-y','hidden');
-			}
+		l = ((wide-lb.outerWidth())/2);
+		lb.css({left:((wide-lb.outerWidth())/2)+'px'});
+		if($(window).height() > lb.height()){
+			//t = (window.scrollY+(tall-lb.outerHeight())/2);
+			t = ((tall-lb.outerHeight())/2 + $(window).scrollTop());
+			$('body').css('overflow-y','hidden');
 		}
 		lb.css({left:l+"px",top:t+'px','position':'absolute'});
 	}

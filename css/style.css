@@ -128,10 +128,10 @@ strong { font-weight: bold; }
 .baritem { display: inline-block; }
 .baritem a {
 	color: inherit;
-	padding: 0.5em 0.5em;
+	padding: 0.75em;
 	text-decoration: none;
 	display: block;
-	height: 2.5em;
+	height: 3em;
 }
 .baritem:hover, .baritem a:focus {
 	background-color: #404040;
@@ -156,7 +156,7 @@ img.icon {
 	display: none;
 	z-index: 100;
 	position: absolute;
-	top: 2.5em;
+	top: 3em;
 	width: auto;
 	right: 0;
 	padding: 0;
@@ -167,7 +167,7 @@ img.icon {
 }
 .rtl .dropdown { left: 0; border-right: 1px solid rgba(255,255,255,0.8); border-left: 0px; right: auto; }
 .dropdown .baritem, .rtl .dropdown .baritem { float: none; display: block; }
-.dropdown .baritem a { padding: 0.5em 1em; }
+.dropdown .baritem a { padding: 0.75em 1em; }
 .dropdown.fullwidth { width: 100%; left: 0px; border-left: 0px; }
 
 #menu { z-index: 102; }
@@ -180,7 +180,7 @@ img.icon {
 
 #designer, #options, #scenarios, .errors, .warnings { display: none; }
 
-#summary { height: 2.5em; overflow: hidden; display: none; }
+#summary { height: 3em; overflow: hidden; display: none; }
 .dropdown.fullwidth { color: #efefef; vertical-align: top; }
 #summaryext.dropdown.fullwidth>ul { display:block; }
 #summaryext.dropdown.fullwidth>ul>li { display: inline-block; float: left; width: 33.3%; min-height: 7em; }
@@ -283,13 +283,14 @@ a.togglescience:hover { padding-bottom: 0.3em; border-bottom: 0.2em solid #69dff
 .padded { padding: 1em; }
 .bigpadded { padding: 2em; }
 .hugepadded { padding: 4em; }
-#menubar li { text-align: right; font-weight: bold; }
+#menubar li { text-align: right; }
 #menubar li a, #designer .designer_title a {
 	padding: 0.75em 1em;
 	height: 3em;
 	display: block;
 	text-decoration: none;
 	color: inherit;
+	font-weight: normal;
 }
 #menubar li a {
 	-moz-transition: all 0.25s ease-in-out;
@@ -411,6 +412,7 @@ a.togglescience:hover { padding-bottom: 0.3em; border-bottom: 0.2em solid #69dff
 	background-image:linear-gradient(to bottom,#101010,#000000);
 	background-repeat:repeat-x;
 }
+#designer_proposal label { display: none; }
 
 #main {
 	display: table;
@@ -454,10 +456,9 @@ a.togglescience:hover { padding-bottom: 0.3em; border-bottom: 0.2em solid #69dff
 #main .doc p { margin-bottom: 1.5em; }
 #main .doc h3 { font-size: 1.2em; margin: 1.5em 0 0.5em 0;}
 
-
+#sidebar { border: 2px solid white; border-left: 0px; }
 #sidebar .sidebar_inner { background-color: rgba(0,0,0,0.2); }
-/*#sidebar .panel { border-bottom: 1px solid #ffffff; }*/
-#sidebar .panel:last-child { border-bottom: 0px; }
+#sidebar .panel { border-bottom: 2px solid #ffffff; }
 #sidebar img { max-width: 100%; width: 100%; }
 #sidebar .vehicle { display: table; width: 100%; }
 #sidebar .vehicle .image { height: 110px; display: table-cell; vertical-align: bottom; text-align: center; }
@@ -661,9 +662,11 @@ input.button { padding: 6px 8px; /* Bug fix for Firefox over-riding the line-hei
 	.designer { display: block; }
 	#designer .designer_title { display:block; font-size: 1em; margin-bottom: 0px; }
 	#designer .designer_title a { border-top: 1px solid #202020; }
+	#sidebar { border-left: 2px solid white; }
 }
 @media only screen and (max-width: 700px){
-	.baritem a { padding: 0.5em 0.25em; }
+	#bar { height: 2.5em; }
+	.baritem a { padding: 0.5em 0.25em; height: 2.5em; }
 	.baritem span { margin: 0; }
 	.barmenu .baritem span { margin: 0; }
 	#menu { left: 0; width: 100%; border-left: 0px; }
