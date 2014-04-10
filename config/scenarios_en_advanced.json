@@ -12,28 +12,36 @@
 			"budget": { "value": 2000, "units": "GBP", "dimension": "currency" },
 			"requires": [{
 				"instruments": [{ 
-					"instrument": "camera",
+					"type": "camera",
+					"wavelength": "farir"
+				},{ 
+					"type": "spectrometer",
 					"wavelength": "farir"
 				},{
-					"instrument": "spectrometer",
-					"wavelength": "farir"
-				},{
-					"instrument": "camera",
+					"type": "camera",
 					"wavelength": "submm"
 				},{
-					"instrument": "spectrometer",
+					"type": "spectrometer",
 					"wavelength": "submm"
 				}],
-				"label": "Wavelength coverage from sub-mm to far-infrared",
+				"label": "Wavelength coverage from sub-mm to far-IR",
 				"error": "You are not able to observe the required wavelengths"
 			},{
-				"mirror": 1,
+				"mirror": { "value": 1, "units": "m", "dimension": "length" },
 				"label": "You need a mirror.",
 				"error": "You have not selected a suitable mirror."
 			},{
-				"lifetime": 4,
-				"label": "Mission lifetime (4 years)",
-				"error": "Your mission will not observe for a long enough time."
+				"observingtime": { "value": 3, "units": "years", "dimension": "time" },
+				"label": "Observe for %VALUE%",
+				"error": "Your mission will observe for a total of %OBSERVINGTIME%. That isn't a long enough time to meet your mission targets."
+			},{
+				"devtime": { "value": 12, "units": "years", "dimension": "time" },
+				"label": "Develop within 10 years",
+				"error": "Your mission will not be launched soon enough."
+			},{
+				"vehicle": ["ARI5","VEGA"],
+				"label": "Use an ESA launch vehicle",
+				"error": "You only have funding for European Space Agency rockets."
 			}]
 		},{
 			"name": "Multi-wavelength Sky Mapper",
@@ -47,17 +55,17 @@
 			"budget": { "value": 800, "units": "GBP", "dimension": "currency" },
 			"requires": [{
 				"instruments": [{
-					"instrument": "camera",
+					"type": "camera",
 					"wavelength": "uv",
 					"label": "A UV camera",
 					"error": "You don't have a UV camera"
 				},{
-					"instrument": "camera",
+					"type": "camera",
 					"wavelength": "optical",
 					"label": "An optical camera",
 					"error": "You don't have an optical camera"
 				},{ 
-					"instrument": "camera",
+					"type": "camera",
 					"wavelength": "nearir",
 					"label": "A nearir camera",
 					"error": "You can't observe warm dust"
@@ -65,7 +73,7 @@
 				"label": "Wavelength coverage from UV to Near IR",
 				"error": "You are not able to observe the required wavelengths"
 			},{
-				"mirror": 0.5,
+				"mirror": { "value": 0.5, "units": "m", "dimension": "length" },
 				"label": "You need a mirror",
 				"error": "You have not selected a mirror"
 			}]
@@ -75,7 +83,7 @@
 			"funder": "University",
 			"budget": { "value": 9000, "units": "GBP", "dimension": "currency" },
 			"requires": [{
-				"mirror": 0.5,
+				"mirror": { "value": 0.5, "units": "m", "dimension": "length" },
 				"label": "You need a mirror.",
 				"error": "You have not selected a suitable mirror."
 			}]
@@ -94,7 +102,7 @@
 				"label": "You must use a SpaceX rocket.",
 				"error": "You have not chosen a SpaceX rocket."
 			},{
-				"mirror": 2,
+				"mirror": { "value": 2, "units": "m", "dimension": "length" },
 				"label": "A resolution at least four times better than previous equivalent missions.",
 				"error": "You have not selected a suitable mirror to acheive the required resolution."
  			}]
@@ -105,17 +113,17 @@
 			"budget": { "value": 1200, "units": "GBP", "dimension": "currency" },
 			"requires": [{
 				"instruments": [{
-					"instrument": "camera",
+					"type": "camera",
 					"wavelength": "nearir"
 				},{
-					"instrument": "camera",
+					"type": "camera",
 					"wavelength": "midir"
 				},{
-					"instrument": "camera",
+					"type": "camera",
 					"wavelength": "farir"
 				}]
 			},{
-				"mirror": 0.5,
+				"mirror": { "value": 0.5, "units": "m", "dimension": "length" },
 				"label": "You need a mirror.",
 				"error": "You have not selected a suitable mirror."
 			}]
@@ -126,19 +134,19 @@
 			"budget": { "value": 10000, "units": "GBP", "dimension": "currency" },
 			"requires": [{
 				"instruments": [{
-					"instrument": "camera",
+					"type": "camera",
 					"wavelength": "nearir"
 				},{
-					"instrument": "camera",
+					"type": "camera",
 					"wavelength": "optical",
 					"label": "An optical camera",
 					"error": "You don't have an optical camera"
 				},{
-					"instrument": "camera",
+					"type": "camera",
 					"wavelength": "uv"
 				}]
 			},{
-				"mirror": 8,
+				"mirror": { "value": 8, "units": "m", "dimension": "length" },
 				"label": "The resolution must be as high as possible.",
 				"error": "You have not selected a suitable mirror to acheive the required resolution."
 			}]
@@ -148,7 +156,7 @@
 			"funder": "Government",
 			"budget": { "value": 700, "units": "GBP", "dimension": "currency" },
 			"requires": [{
-				"mirror": 0.5,
+				"mirror": { "value": 0.5, "units": "m", "dimension": "length" },
 				"label": "You need a mirror.",
 				"error": "You have not selected a suitable mirror."
 			},{

@@ -289,6 +289,13 @@ if(typeof $==="undefined") $ = {};
 		$('#scenarios').html('<h2></h2><p class="about"></p><ul id="scenariolist"></ul>');
 		$(document).on('click','#scenarios .button',{me:this},function(e){ e.data.me.chooseScenario($(this).attr('data')); });
 
+		// Update messages dropdown menu
+		$('#messages .warnings').html('<div class="bigpadded"><h3 class="warning"><img src="images/cleardot.gif" class="icon warning" /> <span class="title"></span> <span class="warning value">0</span></h3><ul class="summary"></ul>');
+		$('#messages .errors').html('<div class="bigpadded"><h3 class="error"><img src="images/cleardot.gif" class="icon error" /> <span class="title"></span> <span class="error value">0</span></h3><ul class="summary"></ul>');
+
+		// Construct the designer
+		$('#designer').html('<div class="designer_inner bigpadded"><div id="main"><div id="menubar"></div><div id="output"></div><div id="sidebar"><div class="padded"></div></div></div></div>');
+
 
 		// Add containers for each designer section
 		for(var i = 0; i < this.sections.length; i++){
@@ -297,14 +304,15 @@ if(typeof $==="undefined") $ = {};
 		var html = '';
 		// Build menu item for each designer section
 		for(var i = 0; i < this.sections.length; i++) html += '<li><a href="#designer_'+this.sections[i]+'" class="toggle'+this.sections[i]+'"></a></li>';
-		$('#menubar').html('<ul>'+html+'</ul>')
+		$('#menubar').html('<ul>'+html+'</ul>');
+		$('.barmenu').append('<div class="baritem togglelaunch"><a href="#launch" class="">Launch</a></div>');
+		
 
 		// Close messages when clicking on a link in the message list
 		$(document).on('click','#messages a',{me:this},function(e){
 			$('#messages').hide();
 		});
 
-		
 		// Build the objectives section
 		$('#designer_objectives .intro').after('<div class="summary"></div>');
 
@@ -473,7 +481,8 @@ if(typeof $==="undefined") $ = {};
 					},
 					'time_mission': {},
 					'time_cooling': {},
-					'time_fuel': {}
+					'time_fuel': {},
+					'time_observing': {}
 				}
 			},
 			'science_total': {},
@@ -1369,7 +1378,7 @@ console.log('updateLanguage')
 
 		// Update designer toggle buttons
 		for(var i = 0; i < this.sections.length; i++){
-			if(d.designer[this.sections[i]]) $('.toggle'+this.sections[i]).text(d.designer[this.sections[i]].label).attr('title',d.designer[this.sections[i]].hint.replace(/<([^>]*)>/g,''));	// remove any HTML that has been added
+			if(d.designer[this.sections[i]]) $('.toggle'+this.sections[i]).text(d.designer[this.sections[i]].label).attr('title',(d.designer[this.sections[i]].hint ? d.designer[this.sections[i]].hint.replace(/<([^>]*)>/g,'') : ''));	// remove any HTML that has been added
 		}
 
 		// Update menu items
@@ -1404,6 +1413,10 @@ console.log('updateLanguage')
 		$('#messages h3.error .title').text(this.phrases.ui.error.title);
 
 
+		// Update launch section
+		$('.togglelaunch a').text(this.phrases.launch.label).attr('title',(this.phrases.launch.hint ? this.phrases.launch.hint : ''));
+
+
 
 		// Update summary table labels
 		var s = d.ui.summary;
@@ -1436,6 +1449,7 @@ console.log('updateLanguage')
 		this.table.time_dev_total.list.time_mission.label = s.time.mission;
 		this.table.time_dev_total.list.time_cooling.label = s.time.cooling;
 		this.table.time_dev_total.list.time_fuel.label = s.time.fuel;
+		this.table.time_dev_total.list.time_observing.label = s.time.observing;
 		this.table.mass_total.label = s.mass.title;
 		this.table.mass_total.list.mass_satellite.label = s.mass.satellite;
 		this.table.mass_total.list.mass_mirror.label = s.mass.mirror;
@@ -1512,7 +1526,6 @@ console.log('showDetails')
 
 			if(this.choices.mirror && this.data.mirror[this.choices.mirror]){
 				var m = this.data.mirror[this.choices.mirror];
-				var multi = this.data.deployablemirror.multiplier;
 				var cost = this.copyValue(m.cost);
 				var mass = this.copyValue(m.mass);
 				var time = this.copyValue(m.devtime);
@@ -1523,18 +1536,21 @@ console.log('showDetails')
 				
 				// Applies to both mirror and bus
 				if(this.choices.deployablemirror){
-					if(multi.cost) cost.value *= multi.cost;
-					if(multi.mass) mass.value *= multi.mass;
-					if(multi.time) time.value *= multi.time;
-					if(multi.bus.cost) buscost.value *= multi.bus.cost;
-					if(multi.bus.mass) busmass.value *= multi.bus.mass;
-					if(multi.bus.time) bustime.value *= multi.bus.time;
-					if(multi.bus.diameter) busdiam.value *= multi.bus.diameter;
+					var mu = this.data.deployablemirror.multiplier;
+					if(mu.cost) cost.value *= mu.cost;
+					if(mu.mass) mass.value *= mu.mass;
+					if(mu.time) time.value *= mu.time;
+					if(mu.bus.cost) buscost.value *= mu.bus.cost;
+					if(mu.bus.mass) busmass.value *= mu.bus.mass;
+					if(mu.bus.time) bustime.value *= mu.bus.time;
+					if(mu.bus.diameter) busdiam.value *= mu.bus.diameter;
 				}
+				// If we have a UV mirror we apply the cost/mass/time multipliers
 				if(this.choices.uvmirror){
-					if(this.data.uvmirror.multiplier.cost) cost.value *= this.data.uvmirror.multiplier.cost;
-					if(this.data.uvmirror.multiplier.mass) mass.value *= this.data.uvmirror.multiplier.mass;
-					if(this.data.uvmirror.multiplier.time) time.value *= this.data.uvmirror.multiplier.time;
+					var mu = this.data.uvmirror.multiplier;
+					if(mu.cost) cost.value *= mu.cost;
+					if(mu.mass) mass.value *= mu.mass;
+					if(mu.time) time.value *= mu.time;
 				}
 				html += this.buildRow(d.satellite.cost,cost);
 				html += this.buildRow(d.satellite.mass,mass);
@@ -1556,9 +1572,6 @@ console.log('showDetails')
 
 		}else if(area=="cooling"){
 
-			var cost = this.makeValue(0,'GBP');
-			var mass = this.makeValue(0,'kg');
-			var time = this.makeValue(0,'months');
 			html += this.buildRow(d.cooling.temperature,this.choices.temperature);
 			html += this.buildRow(d.cooling.cost,this.choices.cooling.cost);
 			html += this.buildRow(d.cooling.mass,this.choices.cooling.mass);
@@ -1771,14 +1784,20 @@ console.log('showDetails')
 		}else if(choice=="site"){
 			v = (this.choices.site ? this.phrases.designer.site.options[this.choices.site].label : '');
 		}else if(choice=="site.prob"){
-			v = (this.choices.site && this.data.site[this.choices.site].risk ? this.data.site[this.choices.site].risk : 1);
+			v = 0;
+			if(this.choices.site){
+				v = (this.data.site[this.choices.site].risk ? this.data.site[this.choices.site].risk : 1);
+			}
 		}else if(choice=="vehicle"){
 			v = (this.choices.vehicle ? this.phrases.designer.vehicle.options[this.choices.vehicle].label : '');
 		}else if(choice=="vehicle.cost"){
 			v = (this.choices.vehicle ? this.copyValue(this.data.vehicle[this.choices.vehicle].cost) : this.makeValue(0,'GBP'));
 			v.value = -v.value;		
 		}else if(choice=="vehicle.prob"){
-			v = (this.choices.vehicle && this.data.vehicle[this.choices.vehicle].risk ? this.data.vehicle[this.choices.vehicle].risk : 1);
+			v = 0;
+			if(this.choices.vehicle){
+				v = (this.data.vehicle[this.choices.vehicle].risk ? this.data.vehicle[this.choices.vehicle].risk : 1);
+			}
 		}else if(choice=="ground.cost"){
 			var m = this.choices.mission ? this.copyValue(this.data.mission[this.choices.mission].life) : this.makeValue(0,'months');
 			if(this.choices.orbit){
@@ -1796,7 +1815,10 @@ console.log('showDetails')
 		}else if(choice=="orbit"){
 			v = (this.choices.orbit) ? this.phrases.designer.orbit.options[this.choices.orbit].label : '';
 		}else if(choice=="orbit.prob"){
-			v = (this.choices.orbit && this.data.orbit[this.choices.orbit].risk) ? this.data.orbit[this.choices.orbit].risk : 1;
+			v = 0;
+			if(this.choices.orbit){
+				v = (this.data.orbit[this.choices.orbit].risk) ? this.data.orbit[this.choices.orbit].risk : 1;
+			}
 		}else if(choice=="mission.time"){
 			v = (this.choices.mission ? this.copyValue(this.data.mission[this.choices.mission].life) : this.makeValue(0,'months'));
 		}else if(choice=="mission.prob"){
@@ -1857,7 +1879,6 @@ console.log('showDetails')
 		var cost = {};
 		var mass = {};
 		var time = {};
-		var scie = {};
 		var prof = {};
 
 		prob.mirror = this.getChoice('mirror.prob');
@@ -1870,7 +1891,8 @@ console.log('showDetails')
 		prob.total = prob.orbit*prob.site*prob.vehicle*prob.mirror*prob.cooling*prob.instruments*prob.mission;
 
 		// Warning about risk
-		if(prob.total < 0.5) this.warnings.push({ 'text': this.phrases.warnings.risky });
+		if(prob.total < 0.5 && prob.total > 0) this.warnings.push({ 'text': this.phrases.warnings.risky });
+		if(prob.total == 0) this.errors.push({ 'text': this.phrases.errors.impossible });
 
 
 		// Format costs
@@ -1900,6 +1922,10 @@ console.log('showDetails')
 		time.lifecooling = this.getChoice('cooling.life');
 		time.fuel = this.getChoice('fuel.time');
 
+		var v = this.minValue(time.mission,time.lifecooling,time.fuel);
+		v.value *= (this.choices.orbit) ? this.data.orbit[this.choices.orbit].obsfrac : 0;
+		time.observing = v;
+
 		var fuel = this.convertValue(time.fuel,time.mission.units);
 		if(time.mission.value > fuel.value) this.warnings.push({ 'text': this.phrases.warnings.fuellifetime.replace(/%LIFE%/,this.formatValue(fuel)).replace(/%DURATION%/,this.formatValue(time.mission)), 'link':'#designer_orbit' });
 		var cool = this.convertValue(time.lifecooling,time.mission.units);
@@ -1917,6 +1943,7 @@ console.log('showDetails')
 		if(this.choices.orbit && this.choices.vehicle){
 			var m = this.convertValue((this.data.orbit[this.choices.orbit].LEO ? this.data.vehicle[this.choices.vehicle].mass.LEO : this.data.vehicle[this.choices.vehicle].mass.GTO),mass.total.units);
 			if(mass.total.value > m.value) this.errors.push({ 'text': this.phrases.errors.heavy });
+			if(mass.total.value <= m.value && mass.total.value > 0.8*m.value) this.warnings.push({ 'text': this.phrases.warnings.heavy });
 		}
 
 
@@ -1951,6 +1978,7 @@ console.log('showDetails')
 		this.updateTable('time_mission','value',time.mission);
 		this.updateTable('time_cooling','value',time.lifecooling);
 		this.updateTable('time_fuel','value',time.fuel);
+		this.updateTable('time_observing','value',time.observing);
 		this.table.mass_total.value = mass.total;
 		this.table.mass_total.list.mass_satellite.value = mass.satellite;
 		this.table.mass_total.list.mass_mirror.value = mass.mirror;
@@ -1961,7 +1989,76 @@ console.log('showDetails')
 			this.table.mass_total.list.mass_cooling_total.list.mass_cooling_active.value = this.getChoice('cooling.active.mass');
 		}
 		this.table.mass_total.list.mass_instruments.value = mass.instruments;
-		this.table.science_total.value = this.makeValue(0,'%');
+		
+		// Check mission targets
+		var av = 0;
+		this.table.science_total.list = {};
+		if(this.scenario && this.scenario.requires && typeof this.scenario.requires==="object"){ 
+			var requires = this.scenario.requires;
+			var v, ok, pc, w;
+			// Build mission target list
+			this.table.science_total.list = {};
+			for(var r = 0; r < requires.length; r++){
+				pc = 0;
+				if(requires[r]["instruments"]){
+					ok = false;
+					//"instrument": "camera",
+					//"wavelength": "farir"
+					if(this.choices.instruments){
+						for(var i = 0; i < requires[r]["instruments"].length ; i++){
+							ok = false;
+							for(var j = 0; j < this.choices.instruments.length ; j++){
+								if((this.choices.instruments[j].type==requires[r]["instruments"][i].type || this.choices.instruments[j].type=="both") && this.choices.instruments[j].wavelength==requires[r]["instruments"][i].wavelength) ok = true;
+							}
+							if(ok) pc += 100;
+						}
+					}
+					if(requires[r]["instruments"].length > 0) pc /= requires[r]["instruments"].length;
+					if(pc!=100) this.errors.push({ 'text': requires[r].error });
+				}
+				if(requires[r]["mirror"]){
+					w = this.copyValue(requires[r]["mirror"]);
+					v = this.convertValue(this.getChoice('mirror'),w.units);
+					if(v.value < w.value) this.errors.push({ 'text': requires[r].error });
+					else pc = 100;
+				}
+				if(requires[r]["devtime"]){
+					w = this.copyValue(requires[r]["devtime"]);
+					v = this.convertValue(this.table.time_dev_total.value,w.units);
+					if(v.value > w.value) this.errors.push({ 'text': requires[r].error.replace(/%DEVTIME%/,this.formatValue(v)) });
+					else pc = 100;
+				}
+				if(requires[r]["vehicle"]){
+					ok = false;
+					if(typeof requires[r]["vehicle"]==="object"){
+						for(var i = 0; i < requires[r]["vehicle"].length ; i++){
+							if(this.choices.vehicle==requires[r]["vehicle"][i]) ok = true;
+						}
+					}else{
+						if(this.choices.vehicle==requires[r]["vehicle"]) ok = true;
+					}
+					if(!ok) this.errors.push({ 'text': requires[r].error });
+					else pc = 100;
+				}
+				if(requires[r]["site"]){
+					w = (this.choices.vehicle) ? this.phrases.designer.vehicle.options[this.choices.vehicle].label : '';
+					if(this.choices.vehicle == requires[r]["vehicle"]) this.errors.push({ 'text': requires[r].error });
+					else pc = 100;
+				}
+				if(requires[r]["observingtime"]){
+					w = this.copyValue(requires[r]["observingtime"]);
+					v = this.convertValue(this.table.time_dev_total.list.time_observing.value,w.units)
+					if(v.value < w.value) this.errors.push({ 'text': requires[r].error.replace(/%OBSERVINGTIME%/,this.formatValue(v)) });
+					else pc = 100;
+				}
+				this.table.science_total.list['target'+r] = { 'label': (v ? requires[r].label.replace(/%VALUE%/,this.formatValue(w)) : requires[r].label), 'value': this.makeValue(pc,'%') };
+				av += pc;
+			}
+			if(requires.length > 0) av /= requires.length;
+		}
+		this.table.science_total.value = this.makeValue(av,'%');
+
+
 		this.table.profile_total.list.profile_site.value = this.getChoice('site');
 		this.table.profile_total.list.profile_vehicle.value = this.getChoice('vehicle');
 		this.table.profile_total.list.profile_instruments.value = (this.choices.instruments) ? this.choices.instruments.length : 0;
@@ -1971,16 +2068,187 @@ console.log('showDetails')
 		var d = new Date();
 		var t = this.convertValue(time.total,'months');
 		d.setUTCMonth(d.getUTCMonth()+t.value);
+		this.launchdate = d.toDateString();
 		this.table.profile_total.list.profile_launch.value = d.toDateString();
 		t = this.convertValue(this.minValue(time.mission,time.fuel,time.lifecooling),'months');
 		d.setUTCMonth(d.getUTCMonth()+t.value);
 		this.table.profile_total.list.profile_end.value = d.toDateString();
 
+		if(this.choices.orbit && this.choices.site && this.choices.vehicle && this.errors.length==0) this.enableLaunch();
+		else this.disableLaunch();
+
 		this.updateSummaryList();
 
 		return this;
 	}
+
+	SpaceTelescope.prototype.enableLaunch = function(){
+		this.launchable = true;
+		$('.togglelaunch').show();
+		return this;
+	}
 	
+	SpaceTelescope.prototype.disableLaunch = function(){
+		this.launchable = false;
+		$('.togglelaunch').hide();
+		return this;
+	}
+	SpaceTelescope.prototype.test = function(){
+
+		$('#introduction .fancybtn').trigger('click');
+		$('#scenarios .button').eq(7).trigger('click');
+		
+		$('#mirror_diameter').val('1.0m');
+		$('#wavelengths').val('submm');
+		$('#instruments').val('camera');
+		$('#instrument_name').val('SPIRE');
+		$('.add_instrument').trigger('click');
+		$('#wavelengths').val('farir');
+		$('#instrument_name').val('FIRAS');
+		$('.add_instrument').trigger('click');
+		$('#wavelengths').val('optical');
+		$('#instrument_name').val('WFPC2');
+		$('.add_instrument').trigger('click');
+		$('input[name=hascooling]').trigger('click');
+		$('input[name=cooling_active]').trigger('click');
+		$('#cooling_cryogenic').val('2yr');
+		$('#cooling_temperature').val('0.3K');
+		$('#vehicle_rocket_ARI5').trigger('click');
+		$('#site').val('CSG');
+		$('#mission_duration').val('7')
+		$('#mission_orbit').val('ES2').trigger('change');
+		
+		return this;
+	}
+	SpaceTelescope.prototype.goForLaunch = function(){
+
+console.log('goForLaunch')
+
+		if(!this.launchable){
+			this.showView('designer');
+			return this;
+		}
+		
+		$('.togglelaunch').hide();
+
+		var orbit = this.phrases.designer.orbit.options[this.choices.orbit].label;
+		var vehicle = this.phrases.designer.vehicle.options[this.choices.vehicle].label;
+		var site = this.phrases.designer.site.options[this.choices.site].label;
+		var devtime = this.formatValue(this.table.time_dev_total.list.time_dev_total.value);
+
+		// Build launch progress
+		$('#launch').html('<h2>'+this.phrases.launch.title+'</h2><p>'+this.phrases.launch.intro.replace(/%DEVTIME%/,devtime).replace(/%VEHICLE%/,vehicle).replace(/%SITE%/,site).replace(/%ORBIT%/,orbit).replace(/%LAUNCHDATE%/,this.launchdate)+'</p><ul id="launchtimeline"></ul>');
+
+		
+		var ms = 1000;
+
+		var prob = {};
+		prob.mirror = this.getChoice('mirror.prob');
+		prob.site = this.getChoice('site.prob');
+		prob.vehicle = this.getChoice('vehicle.prob');
+		prob.cooling = this.getChoice('cooling.prob');
+		prob.orbit = this.getChoice('orbit.prob');
+		prob.mission = this.getChoice('mission.prob');
+
+		var status = this.phrases.launch.status;
+		var ok = true;
+		var okcool = true;
+		var okpassive = true;
+		var percent = 0;
+		// Set temperature from orbit
+		var temp = this.copyValue(this.data.orbit[this.choices.orbit].temperature);
+
+		$('#launchtimeline').append('<li>'+this.buildRow(this.phrases.launch.countdown["10"]+'...'+this.phrases.launch.countdown["9"]+'...'+this.phrases.launch.countdown["8"]+'...'+this.phrases.launch.countdown["7"]+'...'+this.phrases.launch.countdown["6"]+'...'+this.phrases.launch.countdown["5"]+'...'+this.phrases.launch.countdown["4"]+'...'+this.phrases.launch.countdown["3"]+'...'+this.phrases.launch.countdown["2"]+'...'+this.phrases.launch.countdown["1"]+'...'+this.phrases.launch.countdown["0"]+'...'+this.phrases.launch.countdown["liftoff"],'')+'</li>');
+
+		ok = this.roll(prob.site*prob.vehicle);
+		$('#launchtimeline').append('<li>'+this.buildRow(this.phrases.launch.launch,(ok ? status.success : status.fail))+'</li>');
+		if(ok){
+			ok = this.roll(prob.orbit);
+			$('#launchtimeline').append('<li>'+this.buildRow(this.phrases.launch.orbit,(ok ? status.success : status.fail))+'</li>');
+			if(ok){
+				ok = this.roll(prob.mirror);
+				$('#launchtimeline').append('<li>'+this.buildRow(this.phrases.launch.deploy,(ok ? status.success : status.fail))+'</li>');
+				if(ok){
+	
+					// Has the user requested cooling?
+					if(this.choices.hascooling){
+						// Do we have temperature-based cooling (normal mode)
+						if(this.choices.cool.temperature){
+							var t = this.data.cooling.temperature[$('#cooling_temperature').val()];
+							if(t.temperature) temp = this.copyValue(t.temperature);
+							if(!t.risk) t.risk = 1;
+							okcool = this.roll(t.risk);
+							$('#launchtimeline').append('<li>'+this.buildRow(this.phrases.launch.cooling.label,(okcool ? status.success : status.fail))+'</li>');
+						}
+						
+						// Do we have passive cooling
+						if(this.data.cooling.passive){
+							$('#launchtimeline').append('<li>'+this.buildRow(this.phrases.launch.cooling.label,'')+'</li>');
+							p = this.choices.cool.passive;
+							if(p=="yes"){
+								okcool = this.roll(this.data.cooling.passive[p].risk);
+								okpassive = okcool;
+								if(okcool) temp.value *= this.data.cooling.passive[p].multiplier.temperature;
+								$('#launchtimeline').append('<li class="indent">'+this.buildRow(this.phrases.launch.cooling.passive,(okcool ? status.success : status.fail))+'</li>');
+	
+								// Do we have active cooling (requires passive cooling)?
+								if(this.data.cooling.active && okpassive){
+									p = this.choices.cool.active;
+									if(p=="yes"){
+										okcool = this.roll(this.data.cooling.active[p].risk);
+										if(okcool) temp.value *= this.data.cooling.active[p].multiplier.temperature;
+										$('#launchtimeline').append('<li class="indent">'+this.buildRow(this.phrases.launch.cooling.active,(okcool ? status.success : status.fail))+'</li>');
+									}
+								}
+								// Do we have cryogenic cooling (requires passive cooling)?
+								if(this.data.cooling.cryogenic && okpassive){
+									p = this.choices.cool.cryogenic;
+									if(p && p!="none"){
+										okcool = this.roll(this.data.cooling.cryogenic[p].risk);
+										if(okcool) temp.value *= this.data.cooling.cryogenic[p].multiplier.temperature;
+										$('#launchtimeline').append('<li class="indent">'+this.buildRow(this.phrases.launch.cooling.cryogenic,(okcool ? status.success : status.fail))+'</li>');
+									}
+								}
+							}
+						}
+					}
+					$('#launchtimeline').append('<li>'+this.buildRow(this.phrases.launch.cooling.achieved,temp)+'</li>');
+
+					if(this.choices.instruments){
+						$('#launchtimeline').append('<li>'+this.buildRow(this.phrases.launch.instruments,'')+'</li>');
+						for(var i = 0; i < this.choices.instruments.length; i++){
+							var therm = this.convertValue(this.data.wavelengths[this.choices.instruments[i].wavelength].temperature,temp.units);
+							ok = (therm.value >= temp.value) ? true : false;
+							this.choices.instruments[i].ok = ok;
+							$('#launchtimeline').append('<li class="indent">'+this.buildRow(this.choices.instruments[i].name,(ok ? status.success : status.fail))+'</li>');
+						}
+						$('#launchtimeline').append('<li>'+this.buildRow(this.phrases.launch.science,'')+'</li>');
+						for(var i = 0; i < this.choices.instruments.length; i++){
+							if(this.choices.instruments[i].ok){
+								var t = this.copyValue(this.data.instrument.options[this.choices.instruments[i].type]);
+								if(!t.risk) t.risk = 1;
+								t.risk *= prob.mission;
+								ok = this.roll(t.risk);
+								console.log(i,t.risk,ok)
+								var pc = 100;
+								if(!ok) pc = Math.random()*100;
+								percent += pc;
+								$('#launchtimeline').append('<li class="indent">'+this.buildRow(this.choices.instruments[i].name,this.makeValue(pc,'%'))+'</li>');
+							}
+						}
+						if(this.choices.instruments.length > 0) percent /= this.choices.instruments.length;
+					}
+				}
+			}
+		}
+		$('#launchtimeline').append('<li>'+this.buildRow(this.phrases.launch.overall,this.makeValue(percent,'%'),'finalresult')+'</li>');
+		
+		return this;
+	}
+	SpaceTelescope.prototype.roll = function(prob){
+		if(!prob) prob = 1;
+		return (Math.random() > prob) ? false : true;
+	}
 	SpaceTelescope.prototype.setKey = function(t,key,typ,value){
 		for(i in t){
 			if(i==key){
@@ -2511,17 +2779,10 @@ console.log('parseChoices',view)
 		return this;
 	}
 
-
-	// Step through the requirements of the scenario and see which we've done.
-	SpaceTelescope.prototype.checkRequirements = function(){
-		if(!this.scenario || !this.scenario.requires || typeof this.scenario.requires!=="object") return this;
-		
-		
-	}
 	
 	SpaceTelescope.prototype.updateMessages = function(category,e){
 
-//console.log('updateMessages',e)
+console.log('updateMessages',e)
 		if(category != "error" && category != "warning") return this;
 
 		var li = '';
@@ -2585,8 +2846,6 @@ console.log('showView',view,e)
 		// Less restrictive than before; if no scenario has been picked we go to the intro
 		if(view.indexOf('designer')==0 && !this.scenario) view = "intro";
 
-console.log('view',view,this.stage,this.scenario)
-
 		// Process view
 		if((view.indexOf('guide')==0 && view.length==5) || view.indexOf('guide_')==0){
 			$('#summaryext').hide();
@@ -2628,6 +2887,13 @@ console.log('view',view,this.stage,this.scenario)
 			$('#scenarios').show();
 			this.updateBodyClass('showscenarios');
 			this.stage = "scenarios";
+		}else if(view=="launch"){
+			$('#summary').hide();
+			this.updateMessages("error",{}).updateMessages("warning",{});
+			$('#launch').show();
+			this.goForLaunch();
+			this.updateBodyClass('showlaunch');
+			this.stage = "launch";
 		}else{
 			$('#'+this.stage).show();
 			this.updateBodyClass('show'+this.stage);
@@ -2663,9 +2929,7 @@ console.log('toggleGuide',key)
 		if(!$('#guide').is(':visible')){
 			if(!key) key = "guide";
 			this.showView(key);
-		}else{
-			this.showView();
-		}
+		}else this.showView();
 
 		return this;
 	}
@@ -2680,7 +2944,7 @@ console.log('toggleGuide',key)
 
 	SpaceTelescope.prototype.showGuide = function(key){
 
-//console.log('showGuide',key)
+console.log('showGuide',key)
 		var origkey = key;
 
 		// Split the input by '.'
@@ -2904,9 +3168,7 @@ console.log('toggleGuide',key)
 			$('#guide').show(function(){ _obj.setScroll('#'+origkey); });
 			$('#intro').hide();
 	
-		}else{
-			this.closeGuide();		
-		}
+		}else this.closeGuide();
 
 		$('#guide').show().find('a').eq(0).focus();
 		this.updateBodyClass('showguide');
@@ -2972,43 +3234,6 @@ console.log('toggleGuide',key)
 		return this;
 	}
 
-	// Add commas every 10^3
-	function addCommas(nStr) {
-		nStr += '';
-		var x = nStr.split('.');
-		var x1 = x[0];
-		var x2 = x.length > 1 ? '.' + x[1] : '';
-		var rgx = /(\d+)(\d{3})/;
-		while (rgx.test(x1)) {
-			x1 = x1.replace(rgx, '$1' + ',' + '$2');
-		}
-		return x1 + x2;
-	}
-
-	// Add commas to separate thousands	
-	function addCommas2(v){
-		var str = "";
-		var v2;
-		if(typeof v==="string") v = parseFloat(v,10)
-		if(v < 1000) return ''+v;
-		while(v > 1000){
-			v2 = (v - Math.floor(v/1000)*1000);
-			if(v2 < 100) v2 = "0"+v2;
-			if(v2 < 10) v2 = "0"+v2;
-			if(str) str = ","+str;
-			str = ''+v2+''+str;
-			v = (v - v2)/1000;
-		}
-		if(str!="") str = ','+str;
-		if(v > 0) str = v+str;
-		return str;
-	}
-
-	// Helper functions
-	function htmlDecode(input){
-		return $('<div />').html(input).text();
-	}
-	
 	SpaceTelescope.prototype.showModal = function(lb){
 		var wide = $(window).width();
 		var tall = $(window).height();
@@ -3041,6 +3266,25 @@ console.log('toggleGuide',key)
 		return this;
 	}
 
+	// Helper functions
+
+	// Add commas every 10^3
+	function addCommas(nStr) {
+		nStr += '';
+		var x = nStr.split('.');
+		var x1 = x[0];
+		var x2 = x.length > 1 ? '.' + x[1] : '';
+		var rgx = /(\d+)(\d{3})/;
+		while (rgx.test(x1)) {
+			x1 = x1.replace(rgx, '$1' + ',' + '$2');
+		}
+		return x1 + x2;
+	}
+
+	function htmlDecode(input){
+		return $('<div />').html(input).text();
+	}
+	
 	function centre(lb){
 		var wide = $(window).width();
 		var tall = $(window).height();

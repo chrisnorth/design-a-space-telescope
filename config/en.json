@@ -97,6 +97,7 @@
 				"mission": "Mission lifetime:",
 				"cooling": "Cooling lifetime:",
 				"fuel": "Fuel lifetime:",
+				"observing": "Observing time:",
 				"end": "Mission end:"
 			},
 			"cost": {
@@ -346,10 +347,6 @@
 				"RESHIGH": "The higher limits of the resolution",
 				"ADVANCE": "Ways your mission will advance on previous missions"
 			}
-		},
-		"launch": {
-			"label": "Launch",
-			"help": ""
 		}
 	},
 	"operator": {
@@ -392,12 +389,51 @@
 		"heavy": "Your satellite is too heavy for your launch vehicle.",
 		"size": "Your satellite is too large to fit in you launch vehicle.",
 		"hotorbitpassive": "The chosen orbit is not suitable for passive cooling.",
-		"uv": "You have a UV instrument but your mirror is not UV quality."
+		"uv": "You have a UV instrument but your mirror is not UV quality.",
+		"impossible": "Your proposed mission cannot go ahead."
 	},
 	"warnings": {
 		"risky": "Your mission is quite risky.",
+		"heavy": "Your satellite's mass is getting close to the limit for your launcher",
 		"fuellifetime": "Your fuel lifetime (%LIFE%) is shorter than the mission duration (%DURATION%) you have specified. You could reduce your mission duration to save on ground costs.",
 		"coolinglifetime": "Your cooling lifetime (%LIFE%) is shorter than the mission duration (%DURATION%) you have specified. You could reduce your mission duration to save on ground costs."
+	},
+	"launch": {
+		"label": "Launch",
+		"hint": "Launch your space telescope",
+		"title": "Go for launch",
+		"intro": "Your proposal was accepted. Congratulations! After %DEVTIME% of development you completed construction of your space telescope. It was shipped to %SITE% and installed on %VEHICLE%. It is now %LAUNCHDATE% and the rocket is on the pad waiting for the countdown.",
+		"countdown": {
+			"10": 10,
+			"9": 9,
+			"8": 8,
+			"7": 7,
+			"6": 6,
+			"5": 5,
+			"4": 4,
+			"3": 3,
+			"2": 2,
+			"1": 1,
+			"0": 0,
+			"liftoff": "Lift-off!"
+		},
+		"launch": "Launch:",
+		"orbit": "Orbit insertion:",
+		"deploy": "Deploying mirror:",
+		"cooling": {
+			"label": "Cooling systems:",
+			"passive": "Passive cooling system:",
+			"active": "Active cooling system:",
+			"cryogenic": "Cryogenic cooling system:",
+			"achieved": "Achieved temperature:"
+		},
+		"instruments": "Turning on instruments:",
+		"science": "Scientific results:",
+		"overall": "Overall mission success:",
+		"status": {
+			"success": "success",
+			"fail": "fail"
+		}
 	},
 	"guide": {
 		"title": "Guide",
