@@ -140,7 +140,9 @@
 				},{
 					"type": "camera",
 					"wavelength": "farir"
-				}]
+				}],
+				"label": "Wavelength coverage from near-IR to far-IR",
+				"error": "You are not able to observe the required wavelengths"
 			},{
 				"mirror": { "value": 0.5, "units": "m", "dimension": "length" },
 				"label": "You need a mirror.",
@@ -154,20 +156,16 @@
 			"requires": [{
 				"instruments": [{
 					"type": "camera",
-					"wavelength": "nearir",
-					"label": "A near-IR camera",
-					"error": "You don't have a near-IR camera"
+					"wavelength": "nearir"
 				},{
 					"type": "camera",
-					"wavelength": "optical",
-					"label": "An optical camera",
-					"error": "You don't have an optical camera"
+					"wavelength": "optical"
 				},{
 					"type": "camera",
-					"wavelength": "uv",
-					"label": "A UV camera",
-					"error": "You don't have a UV camera"
-				}]
+					"wavelength": "uv"
+				}],
+				"label": "Wavelength coverage from near-IR to UV",
+				"error": "You are not able to observe the required wavelengths"
 			},{
 				"mirror": { "value": 8, "units": "m", "dimension": "length" },
 				"label": "The resolution must be as high as possible.",
