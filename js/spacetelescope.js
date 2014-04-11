@@ -1113,6 +1113,7 @@ console.log('displayOrbits',key)
 	
 	SpaceTelescope.prototype.updateProposal = function(){
 console.log('updateProposal')
+		$('.printable').remove();
 		if(this.proposalCompleteness()!=0){
 			// Show print button
 			$('.doc').after('<div class="printable bigpadded"><a href="#" class="button fancybtn">Print your proposal letter</a></div>');
@@ -1120,8 +1121,6 @@ console.log('updateProposal')
 				e.preventDefault();
 				e.data.me.printProposal();
 			});
-		}else{
-			$('.printable').remove();
 		}
 		return this;
 	}
