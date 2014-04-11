@@ -480,6 +480,8 @@ a.togglescience:hover { padding-bottom: 0.3em; border-bottom: 0.2em solid #69dff
 .togglelaunch:hover, .togglelaunch:focus { -o-background-size: 100% 100%;-moz-background-size: 100% 100%;-webkit-background-size: 100% 100%;background-size: 100% 100%;/* Internet Explorer */*background: #263c6f;background: #263c6f;filter: progid:DXImageTransform.Microsoft.gradient(gradientType=0, startColorstr=#FF1b5278, endColorstr=#FF1a294b);/* Recent browsers */background-image: -webkit-gradient(linear,left top, left bottom,from(#1b5278),to(#1a294b));background-image: -webkit-linear-gradient(top,#1b5278,#1a294b);background-image: -moz-linear-gradient(top,#1b5278,#1a294b);background-image: -o-linear-gradient(top,#1b5278,#1a294b);background-image: linear-gradient(top,#1b5278,#1a294b); }
 #launch li span.value { float: right; }
 #launch li.indent { margin-left: 1em; }
+#launchvideo { text-align: center; }
+#launchvideo iframe { margin: auto; max-width: 100%; }
 
 
 body.showguide #bar { display: none; }

@@ -264,7 +264,7 @@
 				"ARI5": { "label": "Ariane 5" },
 				"SOYZ": { "label": "Soyuz" },
 				"DLT2": { "label": "Delta II" },
-				"DLT4": { "label": "Delta IV" },
+				"DLT4": { "label": "Delta IV Heavy" },
 				"PRTM": { "label": "Proton-M" },
 				"H2B4": { "label": "H-2B" },
 				"VEGA": { "label": "Vega" },
@@ -402,7 +402,7 @@
 		"label": "Launch",
 		"hint": "Launch your space telescope",
 		"title": "Go for launch",
-		"intro": "Your proposal was accepted. Congratulations! After %DEVTIME% of development you completed construction of your space telescope. It was shipped to %SITE% and installed on %VEHICLE%. It is now %LAUNCHDATE% and the rocket is on the pad waiting for the countdown.",
+		"intro": "Your proposal was accepted. Congratulations! After %DEVTIME% of development you have completed construction of your space telescope. It was shipped to %SITE% and installed on %VEHICLE%. It is now %LAUNCHDATE% and the rocket is on the pad waiting for the countdown.",
 		"countdown": {
 			"10": 10,
 			"9": 9,
