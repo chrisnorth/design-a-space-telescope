@@ -466,6 +466,8 @@ a.togglescience:hover { padding-bottom: 0.3em; border-bottom: 0.2em solid #69dff
 #main .doc p { margin-bottom: 1.5em; }
 #main .doc h3 { font-size: 1.2em; margin: 1.5em 0 0.5em 0;}
 #main .doc ul li { line-height: 2em; }
+#main .doc .userinput { font-weight: bold; }
+#main .doc .emptyinput { color: #df0000; }
 
 #sidebar { border: 2px solid white; border-left: 0px; }
 #sidebar .sidebar_inner { background-color: rgba(0,0,0,0.2); }

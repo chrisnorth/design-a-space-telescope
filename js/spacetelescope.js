@@ -1145,7 +1145,7 @@ console.log('isProposalComplete')
 console.log('printProposal')
 
 		var html = $('.doc').eq(0).html();
-		html = html.replace(/<input [^\>]*id=\"([^\"]*)\"[^\>]*>/g,function(match,p1){ var v = $('#'+p1).val(); return '<span class="userinput">'+(v!='' ? v : 'BLANK')+'</span>'; }).replace(/<textarea [^\>]*id=\"([^\"]*)\"[^\>]*>/g,function(match,p1){ var v = $('#'+p1).text(); return '<span class="userinput">'+(v!='' ? v : 'BLANK')+''; });
+		html = html.replace(/<label[^\>]*>[^\<]*<\/label>/g,'').replace(/<input [^\>]*id=\"([^\"]*)\"[^\>]*>/g,function(match,p1){ var v = $('#'+p1).val(); return (v!='' ? '<span class="userinput">'+v+'</span>' : '<span class="emptyinput">BLANK</span>'); }).replace(/<textarea [^\>]*id=\"([^\"]*)\"[^\>]*>/g,function(match,p1){ var v = $('#'+p1).text(); return (v!='' ? '<span class="userinput">'+v+'</span>' : '<span class="emptyinput">BLANK</span>'); });
 		var w = window.open('', '', 'width='+$(window).width()+',height='+$(window).height()+',resizeable,scrollbars');
 		w.document.write('<!DOCTYPE html><html><head><link type="text/css" href="css/fonts.css" media="all" rel="stylesheet"><link type="text/css" href="css/style.css" media="all" rel="stylesheet"><script>function onload(){ window.print(); }</script></head><body onload="onload()"><div id="main" class="bigpadded"><div class="doc">'+html+'</div></div></body></html>');
 		w.document.close(); // needed for chrome and safari
