@@ -2134,7 +2134,7 @@ console.log('showDetails')
 	SpaceTelescope.prototype.test = function(){
 
 		$('#introduction .fancybtn').trigger('click');
-		$('#scenarios .button').eq(7).trigger('click');
+		$('#scenarios .button').eq(8).trigger('click');
 		
 		$('#mirror_diameter').val('1.0m');
 		$('#wavelengths').val('submm');
@@ -2269,7 +2269,7 @@ console.log('goForLaunch')
 							var therm = this.convertValue(this.data.wavelengths[this.choices.instruments[i].wavelength].temperature,temp.units);
 							ok = (therm.value >= temp.value) ? true : false;
 							this.choices.instruments[i].ok = ok;
-							$('#launchtimeline').append('<li class="indent">'+this.buildRow(this.choices.instruments[i].name,(ok ? status.success : status.fail),'launch_instrument')+'</li>');
+							$('#launchtimeline').append('<li class="indent">'+this.buildRow(this.choices.instruments[i].name+' ('+this.phrases.wavelengths[this.choices.instruments[i].wavelength].label+' '+this.phrases.designer.instruments.options.instrument[this.choices.instruments[i].type].label+')',(ok ? status.success : status.fail),'launch_instrument')+'</li>');
 						}
 						$('#launchtimeline').append('<li>'+this.buildRow(this.phrases.launch.science,'')+'</li>');
 						for(var i = 0; i < this.choices.instruments.length; i++){
@@ -2282,7 +2282,7 @@ console.log('goForLaunch')
 								var pc = 100;
 								if(!ok) pc = Math.random()*100;
 								percent += pc;
-								$('#launchtimeline').append('<li class="indent">'+this.buildRow(this.choices.instruments[i].name,this.makeValue(pc,'%'),'launch_science')+'</li>');
+								$('#launchtimeline').append('<li class="indent">'+this.buildRow(this.choices.instruments[i].name+' ('+this.phrases.wavelengths[this.choices.instruments[i].wavelength].label+' '+this.phrases.designer.instruments.options.instrument[this.choices.instruments[i].type].label+')',this.makeValue(pc,'%'),'launch_science')+'</li>');
 							}
 						}
 						if(this.choices.instruments.length > 0) percent /= this.choices.instruments.length;
