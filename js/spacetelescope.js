@@ -2677,8 +2677,8 @@ console.log('parseChoices',view)
 				if(!t.multiplier.mass) t.multiplier.mass = 1;
 
 				var w = this.copyValue(this.data.wavelengths[this.choices.instruments[i].wavelength]);
-				if(w.cost) this.choices.instrument.cost = this.sumValues(this.choices.instrument.cost,w.cost);
-				this.choices.instrument.cost.value *= t.multiplier.cost;
+				if(w.cost) w.cost.value *= t.multiplier.cost;
+				this.choices.instrument.cost = this.sumValues(this.choices.instrument.cost,w.cost);
 				if(w.mass) this.choices.instrument.mass = this.sumValues(this.choices.instrument.mass,w.mass);
 				this.choices.instrument.mass.value *= t.multiplier.mass;
 				this.choices.instrument.temp = this.minValue(this.choices.instrument.temp,w.temperature);
