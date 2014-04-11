@@ -178,7 +178,7 @@ img.icon {
 #modalbg { z-index: 104; }
 #options { z-index: 105; }
 
-#designer, #options, #scenarios, .errors, .warnings { display: none; }
+#designer, #options, #scenarios, .errors, .warnings, #launch { display: none; }
 
 #summary { height: 3em; overflow: hidden; display: none; }
 .dropdown.fullwidth { color: #efefef; vertical-align: top; }
