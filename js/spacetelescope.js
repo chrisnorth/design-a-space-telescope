@@ -419,6 +419,9 @@ if(typeof $==="undefined") $ = {};
 
 		// Build proposal document holder
 		$('#designer_proposal .options').html('<div class="padded"><div class="doc"></div></div>');
+		$(document).on('change','.doc input,.doc textarea',{me:this},function(e){
+			e.data.me.updateProposal();
+		});
 
 
 		// Barebones summary table
@@ -1109,8 +1112,44 @@ console.log('displayOrbits',key)
 	}
 	
 	SpaceTelescope.prototype.updateProposal = function(){
-		//if(!$('#proposal_mirror').val()) $('#proposal_mirror').val(this.formatValue(this.getChoice('mirror')));
+console.log('updateProposal')
+		if(this.proposalCompleteness()!=0){
+			// Show print button
+			$('.doc').after('<div class="printable bigpadded"><a href="#" class="button fancybtn">Print your proposal letter</a></div>');
+			$('.printable a.button').on('click',{me:this},function(e){
+				e.preventDefault();
+				e.data.me.printProposal();
+			});
+		}else{
+			$('.printable').remove();
+		}
+		return this;
+	}
 
+	SpaceTelescope.prototype.proposalCompleteness = function(){
+console.log('isProposalComplete')
+
+		var level = 0;
+		var inputs = $('.doc').find('input');
+		var textarea = $('.doc').find('textarea');
+		var n = inputs.length+textarea.length;
+		for(var i = 0; i < inputs.length ; i++){
+			if($(inputs[i]).val()!="") level++;
+		}
+		for(var i = 0; i < textarea.length ; i++){
+			if($(textarea[i]).val()!="") level++;
+		}
+		return level/n;
+	}
+
+	SpaceTelescope.prototype.printProposal = function(){
+console.log('printProposal')
+
+		var html = $('.doc').eq(0).html();
+		html = html.replace(/<input [^\>]*id=\"([^\"]*)\"[^\>]*>/g,function(match,p1){ var v = $('#'+p1).val(); return '<span class="userinput">'+(v!='' ? v : 'BLANK')+'</span>'; }).replace(/<textarea [^\>]*id=\"([^\"]*)\"[^\>]*>/g,function(match,p1){ var v = $('#'+p1).text(); return '<span class="userinput">'+(v!='' ? v : 'BLANK')+''; });
+		var w = window.open('', '', 'width='+$(window).width()+',height='+$(window).height()+',resizeable,scrollbars');
+		w.document.write('<!DOCTYPE html><html><head><link type="text/css" href="css/fonts.css" media="all" rel="stylesheet"><link type="text/css" href="css/style.css" media="all" rel="stylesheet"><script>function onload(){ window.print(); }</script></head><body onload="onload()"><div id="main" class="bigpadded"><div class="doc">'+html+'</div></div></body></html>');
+		w.document.close(); // needed for chrome and safari
 		return this;
 	}
 
@@ -2130,6 +2169,9 @@ console.log('goForLaunch')
 		}
 		
 		$('.togglelaunch').hide();
+		$('body').addClass('showlaunch');
+		$('#launch').show();
+
 
 		var orbit = this.phrases.designer.orbit.options[this.choices.orbit].label;
 		var vehicle = this.phrases.designer.vehicle.options[this.choices.vehicle].label;
@@ -2896,9 +2938,8 @@ console.log('showView',view,e)
 			this.updateBodyClass('showscenarios');
 			this.stage = "scenarios";
 		}else if(view=="launch"){
-			$('#summary').hide();
+			$('#summaryext').hide();
 			this.updateMessages("error",{}).updateMessages("warning",{});
-			$('#launch').show();
 			this.goForLaunch();
 			this.updateBodyClass('showlaunch');
 			this.stage = "launch";
@@ -3185,7 +3226,7 @@ console.log('showGuide',key)
 	}
 
 	SpaceTelescope.prototype.updateBodyClass = function(cls){
-		$('body').removeClass('showguide showintro showoptions showmessages').addClass(cls);
+		$('body').removeClass('showguide showintro showoptions showmessages showlaunch').addClass(cls);
 		return this;
 	}
 	
