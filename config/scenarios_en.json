@@ -129,7 +129,9 @@
 			"requires": [{
 				"instruments": [{
 					"type": "camera",
-					"wavelength": "nearir"
+					"wavelength": "nearir",
+					"label": "A near-IR camera",
+					"error": "You don't have a near-IR camera"
 				},{
 					"type": "camera",
 					"wavelength": "optical",
@@ -137,7 +139,9 @@
 					"error": "You don't have an optical camera"
 				},{
 					"type": "camera",
-					"wavelength": "uv"
+					"wavelength": "uv",
+					"label": "A UV camera",
+					"error": "You don't have a UV camera"
 				}]
 			},{
 				"mirror": { "value": 8, "units": "m", "dimension": "length" },
