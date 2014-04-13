@@ -359,7 +359,46 @@
 		"proposal": {
 			"label": "Proposal Letter",
 			"hint": "Complete your mission proposal document",
-			"doc": "<h2>Proposal Letter</h2><p class=\"letter_date\">%DATE%<\/p><p>Dear %TO%,<\/p><p>We would like to propose a project to send a telescope into space on board a telescope. The aim of the mission is to %AIM%<\/p><p>Previous similar missions are %PREVIOUS%. This mission will advance on these by %ADVANCE%<\/p><h3>Instruments<\/h3><p>The instruments on board will be %INSTRUMENTS% They will allow the science goals to be met by %GOALS%<\/p><h3>Mirror<\/h3><p>The main mirror of the telescope will be %MIRROR% . This will allow the instruments to achieve resolutions from %RESLOW% to %RESHIGH%.<\/p><h3>Cooling System<\/h3><p>The minimum operating temperature required by the instruments is %REQTEMPERATURE%. The temperature on board the satellite will be %TEMPERATURE%. <\/p><h3>Mass budget<\/h3><p>The total mass of the satellite will be %MASS%. The breakdown from the individual components is given below<\/p><ul><li>Satellite Structure: %MASSSATELLITE%</li><li>Mirror: %MASSMIRROR%</li><li>Cooling System: %MASSCOOLING%</li><li>Instruments: %MASSINSTRUMENTS%</li></ul><h3>Orbit Selection<\/h3><p>The satellite will observe from %ORBIT%, at a distance of %DISTANCE% from Earth. The orbital period will be %PERIOD%, and the maximum fuel lifetime for maintaining such an orbit is %FUEL%. The mission duration will be %DURATION%.<\/p><h3>Launch vehicle and site<\/h3><p>To reach orbit, the satellite will be launched on a %VEHICLE%, operated by %OPERATOR%, from %SITE%.  The maximum capacity of this launch vehicle is %LAUNCHMASS%.<\/p><h3>Budget<\/h3><p>The total cost of the mission will be %COST%.<\/p><ul><li>Satellite Structure: %COSTSATELLITE%</li><li>Mirror: %COSTMIRROR%</li><li>Cooling System: %COSTCOOLING%</li><li>Instruments: %COSTINSTRUMENTS%</li><li>Development cost: %COSTDEV%</li><li>Launch cost: %COSTLAUNCH%</li><li>Ground control cost: %COSTGROUND%</li><li>Operations cost: %COSTOPERATIONS%</li></ul><br /><p>Kind Regards,<\/p><p>%NAME%<\/p>"
+			"doc": "<h2>Proposal Letter</h2><p class=\"letter_date\">%DATE%<\/p><p>Dear %TO%,<\/p><p>We would like to propose a project to send a telescope into space on board a telescope. The aim of the mission is to %AIM%<\/p><p>Previous similar missions are %PREVIOUS%. This mission will advance on these by %ADVANCE%<\/p><h3>Instruments<\/h3><p>The instruments on board will be %INSTRUMENTS% They will allow the science goals to be met by %GOALS%<\/p><h3>Mirror<\/h3><p>The main mirror of the telescope will be %MIRROR% . This will allow the instruments to achieve resolutions from %RESLOW% to %RESHIGH%.<\/p><h3>Cooling System<\/h3><p>The minimum operating temperature required by the instruments is %REQTEMPERATURE%. The temperature on board the satellite will be %TEMPERATURE%. <\/p><h3>Mass budget<\/h3><p>The total mass of the satellite will be %MASS%. The breakdown from the individual components is given below<\/p><ul><li>Satellite Structure: %MASSSATELLITE%</li><li>Mirror: %MASSMIRROR%</li><li>Cooling System: %MASSCOOLING%</li><li>Instruments: %MASSINSTRUMENTS%</li></ul><h3>Orbit Selection<\/h3><p>The satellite will observe from %ORBIT%, at a distance of %DISTANCE% from Earth. The orbital period will be %PERIOD%, and the maximum fuel lifetime for maintaining such an orbit is %FUEL%. The mission duration will be %DURATION%.<\/p><h3>Launch vehicle and site<\/h3><p>To reach orbit, the satellite will be launched on a %VEHICLE%, operated by %OPERATOR%, from %SITE%.  The maximum capacity of this launch vehicle is %LAUNCHMASS%.<\/p><h3>Budget<\/h3><p>The total cost of the mission will be %COST%.<\/p><ul><li>Satellite Structure: %COSTSATELLITE%</li><li>Mirror: %COSTMIRROR%</li><li>Cooling System: %COSTCOOLING%</li><li>Instruments: %COSTINSTRUMENTS%</li><li>Development cost: %COSTDEV%</li><li>Launch cost: %COSTLAUNCH%</li><li>Ground control cost: %COSTGROUND%</li><li>Operations cost: %COSTOPERATIONS%</li></ul><br /><p>Kind Regards,<\/p><p>%NAME%<\/p>",
+			"print": "Print your proposal letter",
+			"reprint": "Reprint your proposal letter",
+			"labels": {
+				"TO": "Name of organisation",
+				"NAME": "Your name",
+				"AIM": "Your mission aims",
+				"PREVIOUS": "List previous similar missions",
+				"MIRROR": "Main mirror diameter",
+				"RESLOW": "The lower limits of the resolution",
+				"RESHIGH": "The higher limits of the resolution",
+				"ADVANCE": "Ways your mission will advance on previous missions",
+				"INSTRUMENTS": "List your instruments",
+				"GOALS": "Explain how your instruments meet your science goals",
+				"REQTEMPERATURE": "Minimum operating temperature required by the instruments",
+				"TEMPERATURE": "Cooling temperature",
+				"MASS": "Total satellite mass",
+				"MASSSATELLITE": "Mass of satellite structure",
+				"MASSMIRROR": "Mass of mirror",
+				"MASSCOOLING": "Mass of cooling system",
+				"MASSINSTRUMENTS": "Mass of instruments",
+				"ORBIT": "Your chosen orbit",
+				"DISTANCE": "Altitude of orbit",
+				"PERIOD": "Orbital period",
+				"FUEL": "Fuel lifetime",
+				"DURATION": "Mission duration",
+				"VEHICLE": "Name of launch vehicle",
+				"OPERATOR": "Launch vehicle operator",
+				"SITE": "Launch site",
+				"LAUNCHMASS": "The mass that the launch vehicle can lift",
+				"COST": "Total cost of mission",
+				"COSTSATELLITE": "Cost of satellite structure",
+				"COSTMIRROR": "Cost of mirror",
+				"COSTCOOLING": "Cost of cooling",
+				"COSTINSTRUMENTS": "Cost of instruments",
+				"COSTDEV": "Cost of development",
+				"COSTLAUNCH": "Cost of launch",
+				"COSTGROUND": "Cost of ground control",
+				"COSTOPERATIONS": "Cost of operations"
+			}
 		}
 	},
 	"operator": {
@@ -406,7 +445,7 @@
 		"hotorbitpassive": "The chosen orbit is not suitable for passive cooling.",
 		"hotorbitcryo": "The chosen orbit is not suitable for cryogenic cooling.",
 		"uv": "You have a UV instrument but your mirror is not UV quality.",
-		"impossible": "Your proposed mission cannot go ahead."
+		"impossible": "Your proposed mission cannot go ahead. Make sure you've chosen a launch site, vehicle and orbit."
 	},
 	"warnings": {
 		"risky": "Your mission is quite risky.",
@@ -415,7 +454,8 @@
 		"activenopassive": "Active cooling requires passive cooling to work.",
 		"cryonopassive": "Cryogenic cooling requires passive cooling to work.",
 		"fuellifetime": "Your fuel lifetime (%LIFE%) is shorter than the mission duration (%DURATION%) you have specified. You could reduce your mission duration to save on ground costs.",
-		"coolinglifetime": "Your cooling lifetime (%LIFE%) is shorter than the mission duration (%DURATION%) you have specified. You could reduce your mission duration to save on ground costs."
+		"coolinglifetime": "Your cooling lifetime (%LIFE%) is shorter than the mission duration (%DURATION%) you have specified. You could reduce your mission duration to save on ground costs.",
+		"proposal": "You have not completed your proposal."
 	},
 	"launch": {
 		"label": "Launch",

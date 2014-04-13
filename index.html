@@ -11,9 +11,8 @@
 	var spacetel;
 
 	$(document).ready(function(){
-		spacetel = $.spacetelescope({id:"image",width:455,height:333,langs:{'en':'English','cy':'Cymraeg','he':'&#1506;&#1489;&#1512;&#1497;&#1514;'}});
-
-	
+		//spacetel = $.spacetelescope({id:"image",width:455,height:333,langs:{'en':'English','cy':'Cymraeg','he':'&#1506;&#1489;&#1512;&#1497;&#1514;'}});
+		spacetel = $.spacetelescope({id:"image",width:455,height:333,langs:{'en':'English'}});
 	});
 	</script>
 	<link rel="stylesheet" media="all" href="css/fonts.css" type="text/css"/>
@@ -44,7 +43,7 @@
 		</div>
 
 		<div id="messages" class="dropdown fullwidth">
-			<ul><li class="warnings"></li><li class="errors"></li></ul>
+			<ul><li class="errors"></li><li class="warnings"></li></ul>
 		</div>
 
 		<div id="summaryext" class="dropdown fullwidth">

@@ -439,7 +439,8 @@ a.togglescience:hover { padding-bottom: 0.3em; border-bottom: 0.2em solid #69dff
 	min-width: 150px;
 	color: #f6f6f6;
 	background-color: rgba(34,101,153,0.7);
-	background-image: linear-gradient(rgba(255,255,255,.5) 1px, transparent 2px), linear-gradient(90deg, rgba(255,255,255,.5) 1px, transparent 2px), linear-gradient(rgba(255,255,255,.15) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.15) 1px, transparent 1px);
+	background-image: -webkit-linear-gradient(rgba(255,255,255,.3) 2px, transparent 2px), -webkit-linear-gradient(0deg, rgba(255,255,255,.3) 2px, transparent 2px), -webkit-linear-gradient(rgba(255, 255, 255, .1) 1px, transparent 1px), -webkit-linear-gradient(0deg, rgba(255, 255, 255, .1) 1px, transparent 1px);
+	background-image: linear-gradient(rgba(255,255,255,.3) 1px, transparent 2px), linear-gradient(90deg, rgba(255,255,255,.3) 1px, transparent 2px), linear-gradient(rgba(255,255,255,.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.1) 1px, transparent 1px);
 	background-size: 5em 5em, 5em 5em, 1em 1em, 1em 1em;
 	background-position:-2px -2px, -2px -2px, -1px -1px, -1px -1px;
 	-moz-box-shadow: inset 0 0 5em rgba(0,0,0,0.7);
@@ -473,6 +474,7 @@ a.togglescience:hover { padding-bottom: 0.3em; border-bottom: 0.2em solid #69dff
 #sidebar .sidebar_inner { background-color: rgba(0,0,0,0.2); }
 #sidebar .panel { border-bottom: 2px solid #ffffff; }
 #sidebar img { max-width: 100%; width: 100%; }
+#sidebar .satellite { line-height: 0px; }
 #sidebar .vehicle { display: table; width: 100%; }
 #sidebar .vehicle .image { height: 110px; display: table-cell; vertical-align: bottom; text-align: center; }
 #sidebar .vehicle .image img { max-height: 100%; width: auto; }

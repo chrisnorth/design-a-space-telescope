@@ -130,17 +130,17 @@ if(typeof $==="undefined") $ = {};
 	function SpaceTelescope(inp){
 	
 		// Error checking for jQuery
-		if(typeof $!=="function"){ console.log('No jQuery! Abort! Abort!'); return this; }
+		if(typeof $!=="function"){ this.log('No jQuery! Abort! Abort!'); return this; }
 
 		// Set some variables
-		this.q = $.query();
-		this.i = inp;
-		this.stage = "intro";
-		this.choices = {};
+		this.q = $.query();    // Query string
+		this.i = inp;          // Input parameters
+		this.stage = "intro";  // Current stage - "intro" -> "scenario" -> "designer" -> "launch"
+		this.choices = {};     // User's choices
 		this.sections = ['objectives','satellite','instruments','cooling','vehicle','site','orbit','proposal'];
-		this.keyboard = true;	// Allow keyboard shortcuts (disable in inputs and textareas)
-		this.errors = [];
-		this.warnings = [];
+		this.keyboard = true;  // Allow keyboard shortcuts (disable in inputs and textareas)
+		this.errors = [];      // Holder for errors
+		this.warnings = [];    // Holder for warnings
 
 		// Set some URLs
 		this.langurl = "config/%LANG%%MODE%.json";
@@ -182,13 +182,17 @@ if(typeof $==="undefined") $ = {};
 
 		// Build language list
 		var list = "";
-		for(l in this.langs) list += '<li class="baritem"><a href="#" title="'+this.langs[l]+'" data="'+l+'">'+this.langs[l]+' ['+l+']</a></li>'
+		var n = 0;
+		for(l in this.langs){
+			list += '<li class="baritem"><a href="#" title="'+this.langs[l]+'" data="'+l+'">'+this.langs[l]+' ['+l+']</a></li>'
+			n++;
+		}
 		$('#language ul').html(list);
+		if(n < 2) $('.togglelang').closest('.baritem').hide();
 		// Redefine list variable to be the jQuery DOM object
 		list = $('#language ul li a');
 		// Add click events to each language in the list
 		for(var i = 0; i < list.length; i++) $(list[i]).on('click',{me:this},function(e){ e.preventDefault(); e.data.me.loadLanguage($(this).attr('data'),e.data.me.update); });
-
 
 		// Make menu toggles active
 		$('#summary a').on('click',{me:this},function(e){ e.data.me.toggleMenus('summaryext',e); });
@@ -226,7 +230,7 @@ if(typeof $==="undefined") $ = {};
 		// Deal with back/forwards navigation
 		if(this.pushstate){
 			var _obj = this;
-			window.onpopstate = function(e){ console.log('onpopstate',e); _obj.navigate(e); };
+			window.onpopstate = function(e){ _obj.navigate(e); };
 		}
 
 		// Make sure the menu stays attached to the menu bar (unless scrolling down)
@@ -419,9 +423,14 @@ if(typeof $==="undefined") $ = {};
 
 		// Build proposal document holder
 		$('#designer_proposal .options').html('<div class="padded"><div class="doc"></div></div>');
-		$(document).on('change','.doc input,.doc textarea',{me:this},function(e){
-			e.data.me.updateProposal();
-		});
+		$(document).on('change','.doc input,.doc textarea',{me:this},function(e){ e.data.me.updateProposal(); });
+
+
+
+		$('#sidebar').html('<div class="sidebar_inner"><div class="satellite panel"></div><div class="vehicle padded panel"></div><div class="site worldmap panel"></div><div class="orbit panel"></div></div>');
+		$('#sidebar .panel').hide();
+
+		$(document).on('click','.printable a.button',{me:this},function(e){ e.preventDefault(); e.data.me.printProposal(); });
 
 
 		// Barebones summary table
@@ -520,7 +529,7 @@ if(typeof $==="undefined") $ = {};
 	// Work out where we are based on the anchor tag
 	SpaceTelescope.prototype.navigate = function(e){
 		var a = location.href.split("#")[1];
-console.log('navigate',a,e);
+		this.log('navigate',a,e);
 		if(typeof a!=="string") a = "";
 		this.showView(a,e);
 		return this;
@@ -627,7 +636,7 @@ console.log('navigate',a,e);
 			dataType: 'json',
 			context: this,
 			error: function(){
-				console.log('Error loading '+url);
+				this.log('Error loading '+url);
 			},
 			success: function(data){
 				// Store the data
@@ -654,13 +663,13 @@ console.log('navigate',a,e);
 			dataType: 'json',
 			context: this,
 			error: function(){
-				console.log('Error loading '+l+' ('+m+')');
+				this.log('Error loading '+l+' ('+m+')');
 				if(this.lang.length == 2){
-					console.log('Attempting to load default (en) instead');
+					this.log('Attempting to load default (en) instead');
 					this.loadLanguage('en',fn);
 				}else{
 					if(url.indexOf(this.lang) > 0){
-						console.log('Attempting to load '+this.langshort+' instead');
+						this.log('Attempting to load '+this.langshort+' instead');
 						this.loadLanguage(this.langshort,fn);
 					}
 				}
@@ -686,7 +695,7 @@ console.log('navigate',a,e);
 			dataType: 'json',
 			context: this,
 			error: function(){
-				console.log('Error loading '+url+' ('+m+')');
+				this.log('Error loading '+url+' ('+m+')');
 				if(typeof fn==="function") fn.call(this);
 			},
 			success: function(data){
@@ -699,10 +708,10 @@ console.log('navigate',a,e);
 
 	// Select scenario
 	SpaceTelescope.prototype.chooseScenario = function(i){
+		this.log('chooseScenario');
 		this.scenario = this.scenarios[i];
 		this.stage = "designer";
 		$('#summary').show();
-console.log('chooseScenario');
 		this.updateSummary().updateLanguage();
 		return this;
 	}
@@ -710,7 +719,7 @@ console.log('chooseScenario');
 	// Update the page using the JSON response
 	SpaceTelescope.prototype.update = function(){
 
-console.log('update')
+		this.log('update')
 
 		if(!this.phrases || !this.data) return this;
 
@@ -752,7 +761,7 @@ console.log('update')
 	
 	SpaceTelescope.prototype.updateInstruments = function(){
 
-console.log('updateInstruments')
+		this.log('updateInstruments')
 		var d = this.phrases.designer;
 		var html = '';
 		if(this.choices.instruments.length > 0){
@@ -768,10 +777,169 @@ console.log('updateInstruments')
 		return this;
 	}
 	
+	SpaceTelescope.prototype.makeSatellite = function(){
+
+		this.log('makeSatellite');
+		if(!this.satellite) this.satellite = {};
+		var s = this.satellite;
+		if(!s.el) s.el = $('#sidebar .satellite.panel');
+		if(s.el.find('#schematic').length==0) s.el.html('<div id="schematic"></div>')
+
+		var h = 160;
+		var w = $('#sidebar').innerWidth();
+		var d;
+		var prop = { 'max': 0.5, 'mirror': 0, 'bus': 0, 'slots': 0 };
+
+		var c = Math.cos(Math.PI*30/180);
+		if(this.choices.mirror){
+			for(var m in this.data.mirror){
+				d = this.convertValue(this.data.mirror[m].diameter,'m');
+				if(m==this.choices.mirror) prop.mirror = d.value;
+				if(d.value > prop.max) prop.max = d.value;
+			}
+			for(var m in this.data.mirror){
+				d = this.convertValue(this.data.mirror[m].bus.diameter,'m');
+				if(m==this.choices.mirror){
+					prop.bus = d.value;
+					prop.slots = this.data.mirror[m].bus.instrumentslots;
+				}
+				if(d.value > prop.max) prop.max = d.value;
+			}
+		}
+console.log(prop)
+		var f = Math.floor(w/32);
+		var fb = f*(prop.bus/prop.mirror);
+		var bodyh = 8;
+		var padd = 1;
+		var hbus = 10*fb;
+		var hbody = ((bodyh+5)*f);
+		var hmirror = 13*f;
+		h = (this.choices.mirror) ? hbus+hbody+hmirror+(2*padd)*f : 0;
+		
+
+		this.resizeSatellite("auto",h);
+
+		if(this.satellite.bus) this.satellite.bus.remove();
+		if(this.satellite.body) this.satellite.body.remove();
+		if(this.satellite.mirror) this.satellite.mirror.remove();
+		
+		if(this.choices.mirror){
+			s.bus = s.paper.set();
+			// Solar shield
+			s.bus.push(s.paper.ellipse(0,3.5*fb,10*fb,6*fb).attr({'stroke':'white','stroke-width':1,'fill':'white','fill-opacity':0.5}));
+			// Top of bus
+			s.bus.push(s.paper.path('m '+(-8.5*fb)+', '+(-2*fb)+' l0,'+(4*fb)+' l'+(5*fb)+','+(3*fb)+' l'+(7*fb)+',0 l'+(5*fb)+','+(-3*fb)+' l0,'+(-4*fb)+' l'+(-5*fb)+','+(-3*fb)+' l'+(-7*fb)+',0 z').attr({'stroke':'white','stroke-width':1,'fill':'white','fill-opacity':0.5}));
+			// Bus sides
+			s.bus.push(s.paper.path('m '+(-8.5*fb)+', '+(2*fb)+' l0,'+(3.5*fb)+' l'+(5*fb)+','+(3*fb)+' l0,'+(-3.5*fb)+' z').attr({'stroke':'white','stroke-width':1,'fill':'white','fill-opacity':0.5}));
+			s.bus.push(s.paper.path('m '+(-3.5*fb)+', '+(5*fb)+' l'+(7*fb)+',0 l0,'+(3.5*fb)+' l'+(-7*fb)+',0 z').attr({'stroke':'white','stroke-width':1,'fill':'white','fill-opacity':0.5}));
+			s.bus.push(s.paper.path('m '+(8.5*fb)+', '+(2*fb)+' l0,'+(3.5*fb)+' l'+(-5*fb)+','+(3*fb)+' l0,'+(-3.5*fb)+' z').attr({'stroke':'white','stroke-width':1,'fill':'white','fill-opacity':0.5}));
+		}
+
+		if(this.choices.mirror){
+			s.body = s.paper.set();
+			// Base circle for body
+			s.body.push(s.paper.ellipse(0,0,7*f,4*f).attr({'stroke':'white','stroke-width':1}));
+			// Shape of body
+			s.body.push(s.paper.path('m '+(-7*f)+',0 a '+(7*f)+','+(4*f)+' 0 0,0 '+(14*f)+',0 l 0,'+(-bodyh*f)+' q 0,'+(-2*f)+' '+(-4*f)+','+(-4*f)+' l0,'+(-1*f)+' a '+(3*f)+','+(1.6*f)+' 0 0,0 '+(-6*f)+',0 l0,'+(1*f)+' q '+(-4*f)+','+(1*f)+' '+(-4*f)+','+(4*f)+' z').attr({'stroke':'white','stroke-width':1,'fill':'white','fill-opacity':0.5}));
+			// Top circle
+			s.body.push(s.paper.ellipse(0,(-(bodyh+5)*f),3*f,1.6*f).attr({'stroke':'white','stroke-width':1}));
+
+			// Build instrument slots
+			var cols = Math.ceil(prop.slots/2);	// How many columns of instruments do we have?
+			var x,y;
+			var instw = 2.5; // The width of the instrument
+			var insth = 3;   // The height of the instrument
+			var i2 = instw/2; // Half the width
+			var i4 = instw/4; // Quarter the width
+			// Styles for slots
+			var open = {'stroke':'white','stroke-width':1,'stroke-dasharray':'- ','fill':'white','fill-opacity':0.2};
+			var filled = {'stroke':'white','stroke-width':1,'fill':$('.science').css('color'),'fill-opacity':1}; // Use the 'science' colour
+			var n = 0;
+			var ni = 0;
+			if(this.choices.instruments) ni = this.choices.instruments.length;
+			for(var i = 0 ; i < cols; i++){
+				x = (i-(cols-1)/2)*(instw*f*1.25);
+				for(var j = 0; j < 2; j++){
+					y = (j==0) ? 0 : 5;
+					s.body.push(s.paper.path('m'+(x-i2*f)+','+(-y*f)+' l'+(i2*f)+','+(i4*f)+' l'+(i2*f)+','+(-i4*f)+' l0,'+(-insth*f)+' l'+(-i2*f)+','+(-i4*f)+' l'+(-i2*f)+','+(i4*f)+' z m'+(i2*f)+','+(i4*f)+' l0,'+(-insth*f)+' l'+(-i2*f)+','+(-i4*f)+'m'+(i2*f)+','+(i4*f)+'l'+(i2*f)+','+(-i4*f)).attr((n < ni) ? filled : open));
+					n++;
+				}
+			}
+		}
+
+		if(this.choices.mirror){
+			s.mirror = s.paper.set();
+			// Primary mirror
+			s.mirror.push(s.paper.ellipse(0,-2.5*f,10*f,6*f).attr({'stroke':'white','stroke-width':1,'fill':'white','fill-opacity':0.5}));
+			// Hole in primary mirror
+			s.mirror.push(s.paper.ellipse(0,0,1*f,0.6*f).attr({'stroke':'white','stroke-width':1,'fill':'white','fill-opacity':0.5}));
+			// Draw back struts
+			s.mirror.push(s.paper.path('m '+(-2*f)+','+(-11*f)+' l'+(-3*f)+','+(6*f)+' l '+(5*f)+','+(-7*f)+' l'+(5*f)+','+(7*f)+' l'+(-3*f)+','+(-6*f)).attr({'stroke':'white','stroke-width':1}));
+			// Draw front struts
+			s.mirror.push(s.paper.path('m '+(-2*f)+','+(-11*f)+' l'+(2*f)+','+(-1*f)+' l 0,'+(-1*f)+' l'+(-2*f)+','+(1*f)+' z').attr({'stroke':'white','stroke-width':1,'fill':'white','fill-opacity':0.5}));
+			// Draw back secondary mirror structure
+			s.mirror.push(s.paper.path('m '+(2*f)+','+(-11*f)+' l'+(-2*f)+','+(-1*f)+' l 0,'+(-1*f)+' l'+(2*f)+','+(1*f)+' z').attr({'stroke':'white','stroke-width':1,'fill':'white','fill-opacity':0.5}));
+			s.mirror.push(s.paper.path('m '+(-2*f)+','+(-11*f)+' l'+(-4*f)+','+(12*f)+' l '+(6*f)+','+(-11*f)+' l'+(6*f)+','+(11*f)+' l'+(-4*f)+','+(-12*f)).attr({'stroke':'white','stroke-width':1}));
+			// Draw secondary mirror
+			s.mirror.push(s.paper.ellipse(0,(-11*f),2*f,1*f).attr({'stroke':'white','stroke-width':1,'fill':'white','fill-opacity':0.5}));
+			// Draw front of secondary mirror structure
+			s.mirror.push(s.paper.path('m '+(-2*f)+','+(-12*f)+' l'+(2*f)+','+(1*f)+' l 0,'+(1*f)+' l'+(-2*f)+','+(-1*f)+' z').attr({'stroke':'white','stroke-width':1,'fill':'white','fill-opacity':0.5}));
+			s.mirror.push(s.paper.path('m '+(2*f)+','+(-12*f)+' l'+(-2*f)+','+(1*f)+' l 0,'+(1*f)+' l'+(2*f)+','+(-1*f)+' z').attr({'stroke':'white','stroke-width':1,'fill':'white','fill-opacity':0.5}));
+		}
+
+		// Move bus
+		if(s.bus) for(var i = 0; i < s.bus.length; i++) transformer(s.bus[i],['t',w/2,h - padd*f - hbus]);
+		// Move body
+		if(s.body) for(var i = 0; i < s.body.length; i++) transformer(s.body[i],['t',w/2,h - padd*f -hbus]);
+		// Move mirror
+		if(s.mirror) for(var i = 0; i < s.mirror.length; i++) transformer(s.mirror[i],['t',w/2,h - padd*f -hbus - hbody]);
+
+
+		this.satellite = s;
+		return this;
+	}
+	
+	SpaceTelescope.prototype.resizeSatellite = function(w,h){
+
+		this.log('resizeSatellite');
+		var s = $('#sidebar');
+		
+		// Hide the contents so we can calculate the size of the container
+		this.satellite.el.children().hide();
+
+		// Make the element fill the container's width
+		this.satellite.el.css({'width':'auto','display':'block'});
+
+		// Get the inner width of the space container (i.e. without margins)
+		if(!w || w=="auto") w = this.satellite.el.innerWidth();
+		if(w < s.width()/2) w = s.width()-(parseInt(this.satellite.el.css('margin-left'),10) + parseInt(this.satellite.el.css('margin-right'),10));
+		if(!h) h = w/2;
+
+		// Check if the HTML element has changed size due to responsive CSS
+		if(w != this.satellite.width || h != this.satellite.height || this.satellite.width==0){
+			this.satellite.width = w;
+			if(this.satellite.width == 0) this.satellite.width = s.width()-(parseInt(this.satellite.el.css('margin-left'),10) + parseInt(this.satellite.el.css('margin-right'),10));
+			this.satellite.height = h;
+
+			// Create the Raphael object to hold the vector graphics
+			if(!this.satellite.paper){
+				this.satellite.paper = Raphael('schematic', this.satellite.width, this.satellite.height);
+			}else{
+				this.satellite.paper.setSize(this.satellite.width,this.satellite.height);
+				this.satellite.rebuild = true;
+			}
+		}
+
+		// Show the contents again
+		this.satellite.el.children().show();
+
+		return this;	
+	}
+	
 	// Create an animation area for the orbit animations
 	SpaceTelescope.prototype.makeSpace = function(zoom){
 
-console.log('makeSpace')
+		this.log('makeSpace')
 
 		if(!this.space) this.space = { width: 0, height: 300, zoom: 0, scale: [1,0.022], anim: {}, orbits:{}, labels:{} };
 		if(zoom) this.space.zoom = zoom;
@@ -839,7 +1007,7 @@ console.log('makeSpace')
 	// If necessary (i.e. if the zoom level has changed) redisplay the orbits first.
 	SpaceTelescope.prototype.highlightOrbit = function(key){
 
-console.log('highlightOrbit',key,this.space)
+		this.log('highlightOrbit',key,this.space)
 
 		if(!key) return this;
 
@@ -850,7 +1018,7 @@ console.log('highlightOrbit',key,this.space)
 			if(o==key) this.space.orbits[o].selected = true;
 			else this.space.orbits[o].selected = false;
 			this.space.orbits[o].dotted.attr({'stroke-width':(this.space.orbits[o].selected ? this.space.orbits[o].inp.stroke.selected : this.space.orbits[o].inp.stroke.off)});
-			this.space.orbits[o].satellite.attr({'r':(this.space.orbits[o].selected ? 8 : 4)});
+			this.space.orbits[o].satellite.attr({'r':(this.space.orbits[o].selected ? 8 : 4),'stroke-width':(this.space.orbits[o].selected ? 8 : 0),'stroke':'white','stroke-opacity':0.5});
 		}
 
 		return this;
@@ -884,7 +1052,7 @@ console.log('highlightOrbit',key,this.space)
 
 	SpaceTelescope.prototype.displayOrbits = function(key){
 
-console.log('displayOrbits',key)
+		this.log('displayOrbits',key)
 
 		if(!this.space.paper) return this;
 
@@ -894,7 +1062,7 @@ console.log('displayOrbits',key)
 			"SNS": { "inclination": -90, "color": "#7ac36a", "ellipticity": 0.4, "zoom": 0 },
 			"HEO": { "inclination": 30, "color": "#de1f2a", "ellipticity": 0.4, "r": this.space.E.r*3.3, "zoom": 0 },
 			"LEO": { "inclination": -30, "color": "#cccccc", "ellipticity": 0.4, "zoom": 0 },
-			"EM2": { "inclination": 0, "color": "#e6e6e6", "ellipticity": 1, "zoom": 1 },
+			"EM2": { "inclination": 0, "color": "#cccccc", "ellipticity": 1, "zoom": 1 },
 			"ES2": { "inclination": 0, "color": "#9467bd", "ellipticity": 1, "zoom": 1 },
 			"ETR": { "inclination": 0, "color": "#fac900", "ellipticity": 1, "zoom": 1 }
 		}
@@ -919,27 +1087,6 @@ console.log('displayOrbits',key)
 		function hide(el){ if(el) el.hide(); }
 		function show(el){ if(el) el.show(); }
 
-		// Update the transforms on a Raphael element
-		function transformer(el,trans){
-			t = el.data('transform');
-			if(typeof t==="undefined") t = el.attr('transform');
-			if(typeof t!=="object") t = [];
-			m = false;
-			for(i = 0; i < t.length ; i++){
-				for(j = 0; j < trans.length ; j++){
-					if(t[i][0] == trans[j][0]){
-						t[i] = trans[j][0];
-						m = true;
-					}
-				}
-			}
-			if(!m) t.push(trans);
-			// Re-apply the transform
-			// For some reason IE 8 has a bug in using .attr('transform') to get the transform.
-			// As a work-around we make a function that stores the transform in .data('transform')
-			el.transform(t).data('transform',t);
-		}
-		
 		if(this.space.rebuild){
 			this.removeOrbits();
 			this.space.rebuild = false;
@@ -960,7 +1107,7 @@ console.log('displayOrbits',key)
 			if(!inp.cy) inp.cy = 0;
 			if(!inp.e) inp.e = 1;
 			if(!inp.i) inp.i = 0;
-			if(!inp.r) inp.r = 0;
+			if(!inp.r) inp.r = 1;
 			if(!inp.color) inp.color = '#999999';
 			if(!inp.stroke) inp.stroke = {};
 			if(!inp.stroke.on) inp.stroke.on = 2.5;
@@ -1027,12 +1174,12 @@ console.log('displayOrbits',key)
 				}
 			}
 		}else if(this.space.zoom == 1){
-//console.log('zoom',this.space.Moonorbit)
+//this.log('zoom',this.space.Moonorbit)
 			if(!this.space.Moonorbit){
 				this.space.Moonorbit = this.space.paper.path("M "+this.space.E.x+","+this.space.E.y+" "+makeOrbitPath(this.space.M.o*this.space.scale[1],1)).attr({ stroke:'#606060','stroke-dasharray': '-','stroke-width':1.5 });
 				this.space.Moon = this.space.paper.circle(this.space.E.x - this.space.M.o*this.space.scale[1]*Math.cos(Math.PI/6),this.space.E.y - this.space.M.o*this.space.scale[1]*Math.sin(Math.PI/6),this.space.M.r).attr({ 'fill': '#606060', 'stroke': 0 });
 				var r = 9;
-//console.log(this.space.Moonorbit,this.space.Moon)
+//this.log(this.space.Moonorbit,this.space.Moon)
 				if(!this.space.orbits["ETR"] && this.data.orbit["ETR"]){
 					period = this.convertValue(this.data.orbit["ETR"].period,'days');
 					this.space.Earthorbit = this.space.paper.path("M "+(this.space.E.x-r)+",0 q "+(r*2)+","+(this.space.height/2)+" 0,"+(this.space.height)).attr({ stroke:'#606060','stroke-dasharray': '-','stroke-width':1.5 });
@@ -1112,21 +1259,18 @@ console.log('displayOrbits',key)
 	}
 	
 	SpaceTelescope.prototype.updateProposal = function(){
-console.log('updateProposal')
+		this.log('updateProposal')
 		$('.printable').remove();
 		if(this.proposalCompleteness()!=0){
 			// Show print button
-			$('.doc').after('<div class="printable bigpadded"><a href="#" class="button fancybtn">Print your proposal letter</a></div>');
-			$('.printable a.button').on('click',{me:this},function(e){
-				e.preventDefault();
-				e.data.me.printProposal();
-			});
+			$('.doc').after('<div class="printable bigpadded"><a href="#" class="button fancybtn">'+this.phrases.designer.proposal.print+'</a></div>');
 		}
 		return this;
 	}
 
 	SpaceTelescope.prototype.proposalCompleteness = function(){
-console.log('isProposalComplete')
+
+		this.log('proposalCompleteness')
 
 		var level = 0;
 		var inputs = $('.doc').find('input');
@@ -1142,7 +1286,7 @@ console.log('isProposalComplete')
 	}
 
 	SpaceTelescope.prototype.printProposal = function(){
-console.log('printProposal')
+		this.log('printProposal')
 
 		var html = $('.doc').eq(0).html();
 		html = html.replace(/<label[^\>]*>[^\<]*<\/label>/g,'').replace(/<input [^\>]*id=\"([^\"]*)\"[^\>]*>/g,function(match,p1){ var v = $('#'+p1).val(); return (v!='' ? '<span class="userinput">'+v+'</span>' : '<span class="emptyinput">BLANK</span>'); }).replace(/<textarea [^\>]*id=\"([^\"]*)\"[^\>]*>/g,function(match,p1){ var v = $('#'+p1).text(); return (v!='' ? '<span class="userinput">'+v+'</span>' : '<span class="emptyinput">BLANK</span>'); });
@@ -1153,10 +1297,15 @@ console.log('printProposal')
 	}
 
 	SpaceTelescope.prototype.updateSidePanels = function(){
-		var html = '<div class="sidebar_inner">';
-		if(this.choices.vehicle) html += '<div class="vehicle padded panel"><div class="image"><img src="'+this.data.vehicle[this.choices.vehicle].img+'" /></div><div class="info"><div>'+this.phrases.designer.vehicle.options[this.choices.vehicle].label+'</div><!--<div>'+this.phrases.designer.vehicle.height+' '+this.formatValueSpan(this.data.vehicle[this.choices.vehicle].height)+'</div>--><div>'+this.phrases.designer.vehicle.diameter+' '+this.formatValueSpan(this.data.vehicle[this.choices.vehicle].diameter)+'</div><div>'+this.phrases.designer.vehicle.massLEO+' '+this.formatValueSpan(this.data.vehicle[this.choices.vehicle].mass.LEO)+'</div><div>'+this.phrases.designer.vehicle.massGTO+' '+this.formatValueSpan(this.data.vehicle[this.choices.vehicle].mass.GTO)+'</div><div>'+this.phrases.designer.vehicle.operator+' '+this.phrases.operator[this.data.vehicle[this.choices.vehicle].operator].label+'</div></div></div>';
+		
+		if(this.choices.mirror || this.choices.hascooling || this.choices.instruments){ this.makeSatellite(); $('#sidebar .satellite.panel').show(); }
+		else $('#sidebar .satellite.panel').hide();
+
+		if(this.choices.vehicle) $('#sidebar .vehicle.panel').html('<div class="image"><img src="'+this.data.vehicle[this.choices.vehicle].img+'" /></div><div class="info"><div>'+this.phrases.designer.vehicle.options[this.choices.vehicle].label+'</div><div>'+this.phrases.designer.vehicle.diameter+' '+this.formatValueSpan(this.data.vehicle[this.choices.vehicle].diameter)+'</div><div>'+this.phrases.designer.vehicle.massLEO+' '+this.formatValueSpan(this.data.vehicle[this.choices.vehicle].mass.LEO)+'</div><div>'+this.phrases.designer.vehicle.massGTO+' '+this.formatValueSpan(this.data.vehicle[this.choices.vehicle].mass.GTO)+'</div><div>'+this.phrases.designer.vehicle.operator+' '+this.phrases.operator[this.data.vehicle[this.choices.vehicle].operator].label+'</div></div>').show();
+		else $('#sidebar .vehicle.panel').hide();
+
 		if(this.choices.site){
-			html += '<div class="worldmap panel"><img src="images/worldmap.png" />';
+			html = '<img src="images/worldmap.png" />';
 			var lat = this.data.site[this.choices.site].latitude;
 			var lon = this.data.site[this.choices.site].longitude;
 			if(!lat && !lon){
@@ -1164,19 +1313,16 @@ console.log('printProposal')
 				lon = -116;
 			}
 			html += '<a href="#" class="launchsite '+this.choices.site+'" title="'+this.phrases.designer.site.options[this.choices.site].label+'" style="left:'+Math.round(100*(lon+180)/360)+'%;top:'+Math.round(100*(90-lat)/180)+'%"></a>';
-			html += '</div>';
-		}
-		if(this.choices.orbit){
-			html+= '<div class="orbit panel"><img src="'+this.data.orbit[this.choices.orbit].img+'" /></div>';
-		}
-		html += '</div>';
-		$('#sidebar').html(html);
+			$('#sidebar .site.panel').html(html).show();
+		}else $('#sidebar .site.panel').hide();
+
+		if(this.choices.orbit) $('#sidebar .orbit.panel').html('<img src="'+this.data.orbit[this.choices.orbit].img+'" />').show();
+		else $('#sidebar .orbit.panel').hide();
 
 		return this;
 	}
 
 	// Update the text of a specific dropdown select box
-	// TODO: Keep selected
 	SpaceTelescope.prototype.updateDropdown = function(dropdown){
 
 		var options = "";
@@ -1255,7 +1401,7 @@ console.log('printProposal')
 	}
 	
 	SpaceTelescope.prototype.updateLanguage = function(){
-console.log('updateLanguage')
+		this.log('updateLanguage')
 		if(!this.phrases || !this.data) return this;
 
 		var d = this.phrases;
@@ -1554,7 +1700,7 @@ console.log('updateLanguage')
 	// Show the detail panel for the area/value
 	SpaceTelescope.prototype.showDetails = function(area,value){
 
-console.log('showDetails')
+		this.log('showDetails')
 		var html = '';
 		if(!area || area == "") return this;
 		
@@ -1908,7 +2054,7 @@ console.log('showDetails')
 	// Update the summary screen based on the user's choices
 	SpaceTelescope.prototype.updateSummary = function(){
 
-//console.log('updateSummary')
+		this.log('updateSummary')
 
 		var html = '';
 		var s = this.phrases.ui.summary;
@@ -2093,6 +2239,7 @@ console.log('showDetails')
 				av += pc;
 			}
 			if(requires.length > 0) av /= requires.length;
+			else av = 100;
 		}
 		this.table.science_total.value = this.makeValue(av,'%');
 
@@ -2160,7 +2307,7 @@ console.log('showDetails')
 	}
 	SpaceTelescope.prototype.goForLaunch = function(){
 
-console.log('goForLaunch')
+		this.log('goForLaunch')
 
 		if(!this.launchable){
 			this.showView('designer');
@@ -2278,7 +2425,7 @@ console.log('goForLaunch')
 								if(!t.risk) t.risk = 1;
 								t.risk *= prob.mission;
 								ok = this.roll(t.risk);
-								console.log(i,t.risk,ok)
+								this.log(i,t.risk,ok)
 								var pc = 100;
 								if(!ok) pc = Math.random()*100;
 								percent += pc;
@@ -2291,6 +2438,8 @@ console.log('goForLaunch')
 			}
 		}
 		$('#launchtimeline').append('<li>'+this.buildRow(this.phrases.launch.overall,this.makeValue(percent,'%'),'finalresult')+'</li>');
+
+		$('#launch').append('<div class="printable bigpadded"><a href="#" class="button fancybtn">'+this.phrases.designer.proposal.reprint+'</a></div>');
 		
 		return this;
 	}
@@ -2613,7 +2762,7 @@ console.log('goForLaunch')
 
 		view = (view && view.indexOf('designer_')==0) ? view.substr(9) : "";
 
-console.log('parseChoices',view)
+		this.log('parseChoices',view)
 
 		var l,m,d,u,c,t,v,s,p;
 		var cost,mass,temp,time,risk;
@@ -2804,7 +2953,6 @@ console.log('parseChoices',view)
 							if(this.choices.orbit){
 								this.choices.cooling.life.value *= this.data.orbit[this.choices.orbit].multiplier.cryo.time;
 								var mt = this.data.orbit[this.choices.orbit].multiplier.cryo.time;
-								//console.log(mt,'cyro')
 								if(mt==0) this.errors.push({ 'text': this.phrases.errors.hotorbitcryo, 'link': '#designer_orbit' });
 								if(mt < 1 && mt > 0) this.warnings.push({ 'text': this.phrases.warnings.warmorbitcryo, 'link': '#designer_orbit' });
 							}
@@ -2823,6 +2971,8 @@ console.log('parseChoices',view)
 		var b = this.convertValue(this.choices.temperature,'K');
 		if(b.value > a.value) this.errors.push({ 'text': this.phrases.errors.temperature.replace(/%TEMPERATURE%/,'<strong>'+this.formatValue(b)+'</strong>').replace(/%REQUIREMENT%/,'<strong>'+this.formatValue(a)+'</strong>'), 'link': '#designer_cooling' });
 
+		if(this.proposalCompleteness() < 1) this.warnings.push({ 'text': this.phrases.warnings.proposal, 'link': '#designer_proposal' })
+
 		this.updateSummary().updateSidePanels().updateMessages("error",this.errors).updateMessages("warning",this.warnings);
 
 		return this;
@@ -2831,7 +2981,7 @@ console.log('parseChoices',view)
 	
 	SpaceTelescope.prototype.updateMessages = function(category,e){
 
-console.log('updateMessages',e)
+		this.log('updateMessages',e)
 		if(category != "error" && category != "warning") return this;
 
 		var li = '';
@@ -2854,7 +3004,7 @@ console.log('updateMessages',e)
 	
 	SpaceTelescope.prototype.toggleView = function(view,e){
 
-console.log('toggleView',view)
+		this.log('toggleView',view)
 
 		if(!$('#'+view).is(':visible')) this.showView(view,e);
 		else this.showView(e);
@@ -2864,7 +3014,7 @@ console.log('toggleView',view)
 
 	SpaceTelescope.prototype.showView = function(view,e){
 
-console.log('showView',view,e)
+		this.log('showView',view,e)
 
 		if(typeof view==="object"){
 			e = view;
@@ -2953,7 +3103,7 @@ console.log('showView',view,e)
 	}
 
 	SpaceTelescope.prototype.setScroll = function(el){
-//console.log('setScroll',el)
+		this.log('setScroll',el)
 		var b = $('#bar');
 		var offset = (b.is(':visible')) ? b.outerHeight() : 0;
 		var t = 0;
@@ -2968,7 +3118,7 @@ console.log('showView',view,e)
 
 	SpaceTelescope.prototype.toggleGuide = function(key,e){
 
-console.log('toggleGuide',key)
+		this.log('toggleGuide',key)
 		if(typeof key==="object"){
 			e = key;
 			key = "";
@@ -2983,7 +3133,7 @@ console.log('toggleGuide',key)
 	}
 
 	SpaceTelescope.prototype.closeGuide = function(){
-//console.log('closeGuide')
+		this.log('closeGuide')
 		$('body').removeClass('showguide');
 		$('#guide').hide();
 		$('#intro').show();
@@ -2992,7 +3142,7 @@ console.log('toggleGuide',key)
 
 	SpaceTelescope.prototype.showGuide = function(key){
 
-console.log('showGuide',key)
+		this.log('showGuide',key)
 		var origkey = key;
 
 		// Split the input by '.'
@@ -3314,6 +3464,14 @@ console.log('showGuide',key)
 		return this;
 	}
 
+	// Attempt to save a file
+	// Blob() requires browser >= Chrome 20, Firefox 13, IE 10, Opera 12.10 or Safari 6
+	SpaceTelescope.prototype.log = function(){
+		var args = Array.prototype.slice.call(arguments, 0);
+		if(console && typeof console.log==="function") console.log('LOG',args);
+		return this;
+	}
+
 	// Helper functions
 
 	// Add commas every 10^3
@@ -3347,6 +3505,28 @@ console.log('showGuide',key)
 		}
 		lb.css({left:l+"px",top:t+'px','position':'absolute'});
 	}
+	
+	// Update the transforms on a Raphael element
+	function transformer(el,trans){
+		t = el.data('transform');
+		if(typeof t==="undefined") t = el.attr('transform');
+		if(typeof t!=="object") t = [];
+		m = false;
+		for(i = 0; i < t.length ; i++){
+			for(j = 0; j < trans.length ; j++){
+				if(t[i][0] == trans[j][0]){
+					t[i] = trans[j][0];
+					m = true;
+				}
+			}
+		}
+		if(!m) t.push(trans);
+		// Re-apply the transform
+		// For some reason IE 8 has a bug in using .attr('transform') to get the transform.
+		// As a work-around we make a function that stores the transform in .data('transform')
+		el.transform(t).data('transform',t);
+	}
+	
 
 	function makeYouTubeEmbed(video){
 		if(!video.url) return "";
