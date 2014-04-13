@@ -788,40 +788,56 @@ if(typeof $==="undefined") $ = {};
 		var h = 160;
 		var w = $('#sidebar').innerWidth();
 		var d;
-		var prop = { 'max': 0.5, 'mirror': 0, 'bus': 0, 'slots': 0 };
+		var prop = { 'mirror': 0, 'bus': 0, 'slots': 0 };
 
 		var c = Math.cos(Math.PI*30/180);
 		if(this.choices.mirror){
 			for(var m in this.data.mirror){
 				d = this.convertValue(this.data.mirror[m].diameter,'m');
 				if(m==this.choices.mirror) prop.mirror = d.value;
-				if(d.value > prop.max) prop.max = d.value;
 			}
 			for(var m in this.data.mirror){
 				d = this.convertValue(this.data.mirror[m].bus.diameter,'m');
 				if(m==this.choices.mirror){
 					prop.bus = d.value;
+					if(this.choices.deployablemirror && this.data.deployablemirror.multiplier.diameter) prop.bus *= this.data.deployablemirror.multiplier.diameter;
 					prop.slots = this.data.mirror[m].bus.instrumentslots;
 				}
-				if(d.value > prop.max) prop.max = d.value;
 			}
 		}
-console.log(prop)
-		var f = Math.floor(w/32);
-		var fb = f*(prop.bus/prop.mirror);
-		var bodyh = 8;
-		var padd = 1;
+
+		var padd = 16;	// padding in pixels
+
+		var f = Math.floor(w/32);	// scale factor
+		var fb = f*(prop.bus/prop.mirror);	// scale factor for bus width
+		var bodyh = 8;	// height of satellite body in units of f
+		var insth = 2;   // The height of the instruments
 		var hbus = 10*fb;
-		var hbody = ((bodyh+5)*f);
+		var tank = (this.choices.cooling.cryogenic ? this.choices.cooling.cyrogeniclife : 0);
+		var bodytop = 4;
+		var hbody = ((bodyh+bodytop+tank)*f);
 		var hmirror = 13*f;
-		h = (this.choices.mirror) ? hbus+hbody+hmirror+(2*padd)*f : 0;
-		
+		var hvgroove = (this.choices.cooling.passive ? 2*f : 0);
+		h = (this.choices.mirror) ? hbus+hbody+hmirror+hvgroove+(2*padd) : 0;
 
 		this.resizeSatellite("auto",h);
 
-		if(this.satellite.bus) this.satellite.bus.remove();
-		if(this.satellite.body) this.satellite.body.remove();
-		if(this.satellite.mirror) this.satellite.mirror.remove();
+		if(this.satellite.bus){
+			this.satellite.bus.remove();
+			delete this.satellite.bus;
+		}
+		if(this.satellite.body){
+			this.satellite.body.remove();
+			delete this.satellite.body;
+		}
+		if(this.satellite.vgroove){
+			this.satellite.vgroove.remove();
+			delete this.satellite.vgroove;
+		}
+		if(this.satellite.mirror){
+			this.satellite.mirror.remove();
+			delete this.satellite.mirror;
+		}
 		
 		if(this.choices.mirror){
 			s.bus = s.paper.set();
@@ -835,20 +851,36 @@ console.log(prop)
 			s.bus.push(s.paper.path('m '+(8.5*fb)+', '+(2*fb)+' l0,'+(3.5*fb)+' l'+(-5*fb)+','+(3*fb)+' l0,'+(-3.5*fb)+' z').attr({'stroke':'white','stroke-width':1,'fill':'white','fill-opacity':0.5}));
 		}
 
+		if(this.choices.cooling.passive){
+			s.vgroove = s.paper.set();
+			s.vgroove.push(s.paper.ellipse(0,-0.6*fb,8.5*fb,5*fb).attr({'stroke':'white','stroke-width':1,'fill':'white','fill-opacity':0.15}));
+			s.vgroove.push(s.paper.ellipse(0,-1.2*fb,8.5*fb,5*fb).attr({'stroke':'white','stroke-width':1,'fill':'white','fill-opacity':0.15}));
+			s.vgroove.push(s.paper.ellipse(0,-1.8*fb,8.5*fb,5*fb).attr({'stroke':'white','stroke-width':1,'fill':'white','fill-opacity':0.15}));
+			s.vgroove.push(s.paper.path('m 0,'+(-0.6*fb)+' l'+(-5.5*fb)+','+(2.5*fb)+' m'+(5.5*fb)+','+(-2.5*fb)+' l'+(1.5*fb)+','+(3.5*fb)+' m'+(-1.5*fb)+','+(-3.5*fb)+' l'+(8*fb)+','+(-fb)+' m'+(-8*fb)+','+(fb)+' l'+(5*fb)+','+(-5*fb)+' m'+(-5*fb)+','+(5*fb)+' l'+(-2*fb)+','+(-5.5*fb)+' m'+(2*fb)+','+(5.5*fb)+' l'+(-7*fb)+','+(-3*fb)).attr({'stroke':'white','stroke-width':1,'stroke-opacity':0.4}))
+		}
+		
 		if(this.choices.mirror){
 			s.body = s.paper.set();
+			var bw = Math.min(7,8.5*(prop.bus/prop.mirror));
+			var bt = bw*0.4;
+			var bh = (bw-bt);
 			// Base circle for body
-			s.body.push(s.paper.ellipse(0,0,7*f,4*f).attr({'stroke':'white','stroke-width':1}));
+			s.body.push(s.paper.ellipse(0,0,bw*f,bh*f).attr({'stroke':'white','stroke-width':1}));
 			// Shape of body
-			s.body.push(s.paper.path('m '+(-7*f)+',0 a '+(7*f)+','+(4*f)+' 0 0,0 '+(14*f)+',0 l 0,'+(-bodyh*f)+' q 0,'+(-2*f)+' '+(-4*f)+','+(-4*f)+' l0,'+(-1*f)+' a '+(3*f)+','+(1.6*f)+' 0 0,0 '+(-6*f)+',0 l0,'+(1*f)+' q '+(-4*f)+','+(1*f)+' '+(-4*f)+','+(4*f)+' z').attr({'stroke':'white','stroke-width':1,'fill':'white','fill-opacity':0.5}));
+			s.body.push(s.paper.path('m '+(-bw*f)+',0 a '+(bw*f)+','+(bh*f)+' 0 0,0 '+(2*bw*f)+',0 l 0,'+(-(bodyh+tank-1)*f)+' q 0,'+(-2*f)+' '+(-bh*f)+','+(-bodytop*f)+' l0,'+(-1*f)+' a'+(bt*f)+','+(bt*0.5*f)+' 0 0,0 '+(-2*bt*f)+',0 l0,'+(1*f)+' q'+(-bh*f)+','+(1*f)+' '+(-bh*f)+','+(bh*f)+' z').attr({'stroke':'white','stroke-width':1,'fill':'white','fill-opacity':0.5}));
+			if(this.choices.cooling.cyrogeniclife>0){
+				// Tank 
+				s.body.push(s.paper.path('m '+(-bw*f)+',0 a '+(bw*f)+','+(bh*f)+' 0 0,0 '+(2*bw*f)+',0 l 0,'+(-tank*f)+' a '+(bw*f)+','+(bh*f)+' 0 0,0 '+(-2*bw*f)+',0 z').attr({'stroke':'white','stroke-width':1,'fill':$('.mass').css('color'),'fill-opacity':0.3}));
+				s.body.push(s.paper.ellipse(0,(-tank*f),bw*f,bh*f).attr({'stroke':'white','stroke-width':1}));
+			}
 			// Top circle
-			s.body.push(s.paper.ellipse(0,(-(bodyh+5)*f),3*f,1.6*f).attr({'stroke':'white','stroke-width':1}));
+			s.body.push(s.paper.ellipse(0,(-(bodyh+tank+bodytop)*f),bt*f,bt*0.5*f).attr({'stroke':'white','stroke-width':1}));
 
 			// Build instrument slots
 			var cols = Math.ceil(prop.slots/2);	// How many columns of instruments do we have?
 			var x,y;
-			var instw = 2.5; // The width of the instrument
-			var insth = 3;   // The height of the instrument
+			var instw = 2.2; // The width of the instrument
+			instw = bw*2/(cols+2)
 			var i2 = instw/2; // Half the width
 			var i4 = instw/4; // Quarter the width
 			// Styles for slots
@@ -860,7 +892,7 @@ console.log(prop)
 			for(var i = 0 ; i < cols; i++){
 				x = (i-(cols-1)/2)*(instw*f*1.25);
 				for(var j = 0; j < 2; j++){
-					y = (j==0) ? 0 : 5;
+					y = tank + 1.5 + (j==0 ? 0 : insth*2);
 					s.body.push(s.paper.path('m'+(x-i2*f)+','+(-y*f)+' l'+(i2*f)+','+(i4*f)+' l'+(i2*f)+','+(-i4*f)+' l0,'+(-insth*f)+' l'+(-i2*f)+','+(-i4*f)+' l'+(-i2*f)+','+(i4*f)+' z m'+(i2*f)+','+(i4*f)+' l0,'+(-insth*f)+' l'+(-i2*f)+','+(-i4*f)+'m'+(i2*f)+','+(i4*f)+'l'+(i2*f)+','+(-i4*f)).attr((n < ni) ? filled : open));
 					n++;
 				}
@@ -888,11 +920,13 @@ console.log(prop)
 		}
 
 		// Move bus
-		if(s.bus) for(var i = 0; i < s.bus.length; i++) transformer(s.bus[i],['t',w/2,h - padd*f - hbus]);
+		if(s.bus) for(var i = 0; i < s.bus.length; i++) transformer(s.bus[i],['t',w/2,h - padd - hbus]);
+		// Move vgroove
+		if(s.vgroove) for(var i = 0; i < s.vgroove.length; i++) transformer(s.vgroove[i],['t',w/2,h - padd -hbus]);
 		// Move body
-		if(s.body) for(var i = 0; i < s.body.length; i++) transformer(s.body[i],['t',w/2,h - padd*f -hbus]);
+		if(s.body) for(var i = 0; i < s.body.length; i++) transformer(s.body[i],['t',w/2,h - padd - hbus - hvgroove]);
 		// Move mirror
-		if(s.mirror) for(var i = 0; i < s.mirror.length; i++) transformer(s.mirror[i],['t',w/2,h - padd*f -hbus - hbody]);
+		if(s.mirror) for(var i = 0; i < s.mirror.length; i++) transformer(s.mirror[i],['t',w/2,h - padd -hbus - hvgroove - hbody]);
 
 
 		this.satellite = s;
@@ -2939,6 +2973,7 @@ console.log(prop)
 							if(this.data.cooling.active[p].life) this.choices.cooling.life = this.minValue(this.choices.cooling.life,this.data.cooling.active[p].life);
 						}
 					}
+					this.choices.cooling.cryogeniclife = 0;
 					// Do we have cryogenic cooling (requires passive cooling)?
 					if(this.data.cooling.cryogenic){
 						p = this.choices.cool.cryogenic;
@@ -2949,7 +2984,11 @@ console.log(prop)
 							this.choices.cooling.cryogenic = this.data.cooling.cryogenic[p].mass;
 							this.choices.cooling.risk *= this.data.cooling.cryogenic[p].risk;
 							this.choices.temperature.value *= this.data.cooling.cryogenic[p].multiplier.temperature;
-							if(this.data.cooling.cryogenic[p].life) this.choices.cooling.life = this.minValue(this.choices.cooling.life,this.data.cooling.cryogenic[p].life);
+							if(this.data.cooling.cryogenic[p].life){
+								this.choices.cooling.life = this.minValue(this.choices.cooling.life,this.data.cooling.cryogenic[p].life);
+								this.choices.cooling.cyrogeniclife = this.convertValue(this.data.cooling.cryogenic[p].life,"years");
+								this.choices.cooling.cyrogeniclife = this.choices.cooling.cyrogeniclife.value;
+							}
 							if(this.choices.orbit){
 								this.choices.cooling.life.value *= this.data.orbit[this.choices.orbit].multiplier.cryo.time;
 								var mt = this.data.orbit[this.choices.orbit].multiplier.cryo.time;
