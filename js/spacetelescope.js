@@ -800,7 +800,7 @@ if(typeof $==="undefined") $ = {};
 				d = this.convertValue(this.data.mirror[m].bus.diameter,'m');
 				if(m==this.choices.mirror){
 					prop.bus = d.value;
-					if(this.choices.deployablemirror && this.data.deployablemirror.multiplier.diameter) prop.bus *= this.data.deployablemirror.multiplier.diameter;
+					if(this.choices.deployablemirror && this.data.deployablemirror.multiplier.bus.diameter) prop.bus *= this.data.deployablemirror.multiplier.bus.diameter;
 					prop.slots = this.data.mirror[m].bus.instrumentslots;
 				}
 			}
