@@ -156,7 +156,7 @@
 		"objectives": {
 			"label": "Mission overview",
 			"hint": "Review your mission",
-			"intro": "Use the menu options to choose a mirror, instruments, a rocket, a launch site and an orbit for your space telescope. Once you are happy with your plans you will need to fill out a proposal letter. After that you'll be go for launch.",
+			"intro": "<h3>What now?</h3><p>Use the menu options to choose a mirror, instruments, a rocket, a launch site and an orbit for your space telescope. Once you are happy with your plans, and you've met any mission requirements, you will need to fill out a proposal letter. Then you'll be go for launch.</p>",
 			"intronofunder": "You have chosen the <strong>%TITLE%</strong> mission. Use the menu options to design the different parts of your space telescope. You will need to choose a mirror, instruments, a rocket, a launch site and an orbit. Once you are happy with your plans you will need to fill out a proposal letter. You will then be able to launch your mission.",
 			"options": {
 			}

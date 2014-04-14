@@ -813,11 +813,22 @@ if(typeof $==="undefined") $ = {};
 		var bodyh = 8;	// height of satellite body in units of f
 		var insth = 2;   // The height of the instruments
 		var hbus = 10*fb;
+		// Work out size of cryogenic tank based on the cryo-life
 		var tank = (this.choices.cooling.cryogenic ? this.choices.cooling.cyrogeniclife : 0);
-		var bodytop = 4;
-		var hbody = ((bodyh+bodytop+tank)*f);
-		var hmirror = 13*f;
-		var hvgroove = (this.choices.cooling.passive ? 2*f : 0);
+		// If we've not set the tank size and we're in basic mode we'll draw a tank if the set temperatue is low enough
+		if(tank==0 && this.choices.cool.temperature){
+			var t = this.convertValue(this.choices.temperature,'K');
+			// Scale the tank based on the temperature acheived
+			if(t.value < 50) tank = Math.log(50/t.value);
+		}
+		var bodytop = 4; // The height of the neck at the top of the dewar
+		var hbody = ((bodyh+bodytop+tank)*f);	// The height of the dewar
+		var hmirror = 13*f;	// The height of the mirror
+		var hvgroove = (this.choices.cooling.passive ? 2*f : 0); // The height of the vgrooves
+		if(this.choices.cool.temperature){
+			var t = this.convertValue(this.choices.temperature,'K');
+			if(t.value < 300) hvgroove = 2*f;
+		}
 		h = (this.choices.mirror) ? hbus+hbody+hmirror+hvgroove+(2*padd) : 0;
 
 		this.resizeSatellite("auto",h);
@@ -838,24 +849,29 @@ if(typeof $==="undefined") $ = {};
 			this.satellite.mirror.remove();
 			delete this.satellite.mirror;
 		}
-		
+
+		// Define some styles
+		var solid = {'stroke':'white','stroke-width':1,'fill':'white','fill-opacity':0.5};		
+		var solidlight = {'stroke':'white','stroke-width':1,'fill':'white','fill-opacity':0.15};		
+		var stroke = {'stroke':'white','stroke-width':1};
+
 		if(this.choices.mirror){
 			s.bus = s.paper.set();
 			// Solar shield
-			s.bus.push(s.paper.ellipse(0,3.5*fb,10*fb,6*fb).attr({'stroke':'white','stroke-width':1,'fill':'white','fill-opacity':0.5}));
+			s.bus.push(s.paper.ellipse(0,3.5*fb,10*fb,6*fb).attr(solid));
 			// Top of bus
-			s.bus.push(s.paper.path('m '+(-8.5*fb)+', '+(-2*fb)+' l0,'+(4*fb)+' l'+(5*fb)+','+(3*fb)+' l'+(7*fb)+',0 l'+(5*fb)+','+(-3*fb)+' l0,'+(-4*fb)+' l'+(-5*fb)+','+(-3*fb)+' l'+(-7*fb)+',0 z').attr({'stroke':'white','stroke-width':1,'fill':'white','fill-opacity':0.5}));
+			s.bus.push(s.paper.path('m '+(-8.5*fb)+', '+(-2*fb)+' l0,'+(4*fb)+' l'+(5*fb)+','+(3*fb)+' l'+(7*fb)+',0 l'+(5*fb)+','+(-3*fb)+' l0,'+(-4*fb)+' l'+(-5*fb)+','+(-3*fb)+' l'+(-7*fb)+',0 z').attr(solid));
 			// Bus sides
-			s.bus.push(s.paper.path('m '+(-8.5*fb)+', '+(2*fb)+' l0,'+(3.5*fb)+' l'+(5*fb)+','+(3*fb)+' l0,'+(-3.5*fb)+' z').attr({'stroke':'white','stroke-width':1,'fill':'white','fill-opacity':0.5}));
-			s.bus.push(s.paper.path('m '+(-3.5*fb)+', '+(5*fb)+' l'+(7*fb)+',0 l0,'+(3.5*fb)+' l'+(-7*fb)+',0 z').attr({'stroke':'white','stroke-width':1,'fill':'white','fill-opacity':0.5}));
-			s.bus.push(s.paper.path('m '+(8.5*fb)+', '+(2*fb)+' l0,'+(3.5*fb)+' l'+(-5*fb)+','+(3*fb)+' l0,'+(-3.5*fb)+' z').attr({'stroke':'white','stroke-width':1,'fill':'white','fill-opacity':0.5}));
+			s.bus.push(s.paper.path('m '+(-8.5*fb)+', '+(2*fb)+' l0,'+(3.5*fb)+' l'+(5*fb)+','+(3*fb)+' l0,'+(-3.5*fb)+' z').attr(solid));
+			s.bus.push(s.paper.path('m '+(-3.5*fb)+', '+(5*fb)+' l'+(7*fb)+',0 l0,'+(3.5*fb)+' l'+(-7*fb)+',0 z').attr(solid));
+			s.bus.push(s.paper.path('m '+(8.5*fb)+', '+(2*fb)+' l0,'+(3.5*fb)+' l'+(-5*fb)+','+(3*fb)+' l0,'+(-3.5*fb)+' z').attr(solid));
 		}
 
-		if(this.choices.cooling.passive){
+		if(hvgroove > 0){
 			s.vgroove = s.paper.set();
-			s.vgroove.push(s.paper.ellipse(0,-0.6*fb,8.5*fb,5*fb).attr({'stroke':'white','stroke-width':1,'fill':'white','fill-opacity':0.15}));
-			s.vgroove.push(s.paper.ellipse(0,-1.2*fb,8.25*fb,4.75*fb).attr({'stroke':'white','stroke-width':1,'fill':'white','fill-opacity':0.15}));
-			s.vgroove.push(s.paper.ellipse(0,-1.8*fb,8*fb,4.5*fb).attr({'stroke':'white','stroke-width':1,'fill':'white','fill-opacity':0.15}));
+			s.vgroove.push(s.paper.ellipse(0,-0.6*fb,8.5*fb,5*fb).attr(solidlight));
+			s.vgroove.push(s.paper.ellipse(0,-1.2*fb,8.25*fb,4.75*fb).attr(solidlight));
+			s.vgroove.push(s.paper.ellipse(0,-1.8*fb,8*fb,4.5*fb).attr(solidlight));
 			s.vgroove.push(s.paper.path('m 0,'+(-0.6*fb)+' l'+(-5.5*fb)+','+(2.5*fb)+' m'+(5.5*fb)+','+(-2.5*fb)+' l'+(1.5*fb)+','+(3.5*fb)+' m'+(-1.5*fb)+','+(-3.5*fb)+' l'+(8*fb)+','+(-fb)+' m'+(-8*fb)+','+(fb)+' l'+(5*fb)+','+(-5*fb)+' m'+(-5*fb)+','+(5*fb)+' l'+(-2*fb)+','+(-5.5*fb)+' m'+(2*fb)+','+(5.5*fb)+' l'+(-7*fb)+','+(-3*fb)).attr({'stroke':'white','stroke-width':1,'stroke-opacity':0.4}))
 		}
 		
@@ -865,16 +881,16 @@ if(typeof $==="undefined") $ = {};
 			var bt = bw*0.4;
 			var bh = (bw-bt);
 			// Base circle for body
-			s.body.push(s.paper.ellipse(0,0,bw*f,bh*f).attr({'stroke':'white','stroke-width':1}));
+			s.body.push(s.paper.ellipse(0,0,bw*f,bh*f).attr(stroke));
 			// Shape of body
-			s.body.push(s.paper.path('m '+(-bw*f)+',0 a '+(bw*f)+','+(bh*f)+' 0 0,0 '+(2*bw*f)+',0 l 0,'+(-(bodyh+tank-1)*f)+' q 0,'+(-2*f)+' '+(-bh*f)+','+(-bodytop*f)+' l0,'+(-1*f)+' a'+(bt*f)+','+(bt*0.5*f)+' 0 0,0 '+(-2*bt*f)+',0 l0,'+(1*f)+' q'+(-bh*f)+','+(1*f)+' '+(-bh*f)+','+(bh*f)+' z').attr({'stroke':'white','stroke-width':1,'fill':'white','fill-opacity':0.5}));
-			if(this.choices.cooling.cyrogeniclife>0){
+			s.body.push(s.paper.path('m '+(-bw*f)+',0 a '+(bw*f)+','+(bh*f)+' 0 0,0 '+(2*bw*f)+',0 l 0,'+(-(bodyh+tank-1)*f)+' q 0,'+(-2*f)+' '+(-bh*f)+','+(-bodytop*f)+' l0,'+(-1*f)+' a'+(bt*f)+','+(bt*0.5*f)+' 0 0,0 '+(-2*bt*f)+',0 l0,'+(1*f)+' q'+(-bh*f)+','+(1*f)+' '+(-bh*f)+','+(bh*f)+' z').attr(solid));
+			if(tank > 0){
 				// Tank 
 				s.body.push(s.paper.path('m '+(-bw*f)+',0 a '+(bw*f)+','+(bh*f)+' 0 0,0 '+(2*bw*f)+',0 l 0,'+(-tank*f)+' a '+(bw*f)+','+(bh*f)+' 0 0,0 '+(-2*bw*f)+',0 z').attr({'stroke':'white','stroke-width':1,'fill':$('.mass').css('color'),'fill-opacity':0.3}));
-				s.body.push(s.paper.ellipse(0,(-tank*f),bw*f,bh*f).attr({'stroke':'white','stroke-width':1}));
+				s.body.push(s.paper.ellipse(0,(-tank*f),bw*f,bh*f).attr(stroke));
 			}
 			// Top circle
-			s.body.push(s.paper.ellipse(0,(-(bodyh+tank+bodytop)*f),bt*f,bt*0.5*f).attr({'stroke':'white','stroke-width':1}));
+			s.body.push(s.paper.ellipse(0,(-(bodyh+tank+bodytop)*f),bt*f,bt*0.5*f).attr(stroke));
 
 			// Build instrument slots
 			var cols = Math.ceil(prop.slots/2);	// How many columns of instruments do we have?
@@ -916,21 +932,21 @@ if(typeof $==="undefined") $ = {};
 		if(this.choices.mirror){
 			s.mirror = s.paper.set();
 			// Primary mirror
-			s.mirror.push(s.paper.ellipse(0,-2.5*f,10*f,6*f).attr({'stroke':'white','stroke-width':1,'fill':'white','fill-opacity':0.5}));
+			s.mirror.push(s.paper.ellipse(0,-2.5*f,10*f,6*f).attr(solid));
 			// Hole in primary mirror
-			s.mirror.push(s.paper.ellipse(0,0,1*f,0.6*f).attr({'stroke':'white','stroke-width':1,'fill':'white','fill-opacity':0.5}));
+			s.mirror.push(s.paper.ellipse(0,0,1*f,0.6*f).attr(solid));
 			// Draw back struts
-			s.mirror.push(s.paper.path('m '+(-2*f)+','+(-11*f)+' l'+(-3*f)+','+(6*f)+' l '+(5*f)+','+(-7*f)+' l'+(5*f)+','+(7*f)+' l'+(-3*f)+','+(-6*f)).attr({'stroke':'white','stroke-width':1}));
+			s.mirror.push(s.paper.path('m '+(-2*f)+','+(-11*f)+' l'+(-3*f)+','+(6*f)+' l '+(5*f)+','+(-7*f)+' l'+(5*f)+','+(7*f)+' l'+(-3*f)+','+(-6*f)).attr(stroke));
 			// Draw front struts
-			s.mirror.push(s.paper.path('m '+(-2*f)+','+(-11*f)+' l'+(2*f)+','+(-1*f)+' l 0,'+(-1*f)+' l'+(-2*f)+','+(1*f)+' z').attr({'stroke':'white','stroke-width':1,'fill':'white','fill-opacity':0.5}));
+			s.mirror.push(s.paper.path('m '+(-2*f)+','+(-11*f)+' l'+(2*f)+','+(-1*f)+' l 0,'+(-1*f)+' l'+(-2*f)+','+(1*f)+' z').attr(solid));
 			// Draw back secondary mirror structure
-			s.mirror.push(s.paper.path('m '+(2*f)+','+(-11*f)+' l'+(-2*f)+','+(-1*f)+' l 0,'+(-1*f)+' l'+(2*f)+','+(1*f)+' z').attr({'stroke':'white','stroke-width':1,'fill':'white','fill-opacity':0.5}));
-			s.mirror.push(s.paper.path('m '+(-2*f)+','+(-11*f)+' l'+(-4*f)+','+(12*f)+' l '+(6*f)+','+(-11*f)+' l'+(6*f)+','+(11*f)+' l'+(-4*f)+','+(-12*f)).attr({'stroke':'white','stroke-width':1}));
+			s.mirror.push(s.paper.path('m '+(2*f)+','+(-11*f)+' l'+(-2*f)+','+(-1*f)+' l 0,'+(-1*f)+' l'+(2*f)+','+(1*f)+' z').attr(solid));
+			s.mirror.push(s.paper.path('m '+(-2*f)+','+(-11*f)+' l'+(-4*f)+','+(12*f)+' l '+(6*f)+','+(-11*f)+' l'+(6*f)+','+(11*f)+' l'+(-4*f)+','+(-12*f)).attr(stroke));
 			// Draw secondary mirror
-			s.mirror.push(s.paper.ellipse(0,(-11*f),2*f,1*f).attr({'stroke':'white','stroke-width':1,'fill':'white','fill-opacity':0.5}));
+			s.mirror.push(s.paper.ellipse(0,(-11*f),2*f,1*f).attr(solid));
 			// Draw front of secondary mirror structure
-			s.mirror.push(s.paper.path('m '+(-2*f)+','+(-12*f)+' l'+(2*f)+','+(1*f)+' l 0,'+(1*f)+' l'+(-2*f)+','+(-1*f)+' z').attr({'stroke':'white','stroke-width':1,'fill':'white','fill-opacity':0.5}));
-			s.mirror.push(s.paper.path('m '+(2*f)+','+(-12*f)+' l'+(-2*f)+','+(1*f)+' l 0,'+(1*f)+' l'+(2*f)+','+(-1*f)+' z').attr({'stroke':'white','stroke-width':1,'fill':'white','fill-opacity':0.5}));
+			s.mirror.push(s.paper.path('m '+(-2*f)+','+(-12*f)+' l'+(2*f)+','+(1*f)+' l 0,'+(1*f)+' l'+(-2*f)+','+(-1*f)+' z').attr(solid));
+			s.mirror.push(s.paper.path('m '+(2*f)+','+(-12*f)+' l'+(-2*f)+','+(1*f)+' l 0,'+(1*f)+' l'+(2*f)+','+(-1*f)+' z').attr(solid));
 		}
 
 		// Move bus
