@@ -1904,7 +1904,7 @@ if(typeof $==="undefined") $ = {};
 			if(v && u && d) el.html(this.formatValue({ 'value': v, 'units': u, 'dimension': d }));
 		}
 
-		this.updateDropdown('mirror');
+		this.updateDropdown('mirror_diameter');
 		this.updateDropdown('cooling_temperature');
 		return this;
 	}
