@@ -1164,7 +1164,7 @@ if(typeof $==="undefined") $ = {};
 				console.log(e.data.me.space.zoom)
 				e.data.me.displayOrbits('',(e.data.me.space.zoom==0 ? 1 : 0));
 				console.log(e.data.me.space.zoom)				
-				$(this).html(e.data.me.space.zoom==0 ? '&minus;' : '&plus;');
+				$(this).html(e.data.me.space.zoom==0 ? '&minus;' : '&plus;').attr('title',(e.data.me.space.zoom==0 ? e.data.me.phrases.designer.orbit.zoomout : e.data.me.phrases.designer.orbit.zoomin));
 			});
 		}
 

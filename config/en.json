@@ -309,6 +309,8 @@
 				"cryo": "Cyrogenic cooling multiplier",
 				"launchcost": "Launch cost multiplier"
 			},
+			"zoomin": "Zoom in",
+			"zoomout": "Zoom out",
 			"options": {
 				"LEO": { "label": "Low Earth Orbit", "altitude": "<", "launchreq": "Requires ability to de-orbit" },
 				"HEO": { "label": "Highly Elliptical Orbit", "altitude": ">", "launchreq": "" },
