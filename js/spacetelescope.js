@@ -1095,7 +1095,7 @@ if(typeof $==="undefined") $ = {};
 			if(this.space.orbits[o].satellite) this.space.orbits[o].satellite.stop().remove();
 			delete this.space.orbits[o];
 		}
-		var a = ['Moon','Moonorbit','Moonlagrangian','Earthorbit'];
+		var a = ['Moon','Moonorbit','Moonlagrangian','Earthorbit','L2orbit'];
 		for(var i = 0 ; i < a.length; i++){
 			if(this.space[a[i]]){
 				this.space[a[i]].remove();
@@ -1191,19 +1191,24 @@ if(typeof $==="undefined") $ = {};
 			if(!inp.stroke.off) inp.stroke.off = 1.5;
 			if(!inp.stroke.selected) inp.stroke.selected = 2.5;
 			var p = { inp: inp };
-			if(inp.e==1){
-				p.dotted = _obj.space.paper.circle(inp.cx,inp.cy,inp.r);
-				p.solid = _obj.space.paper.circle(inp.cx,inp.cy,inp.r);
+			if(inp.key=="ES2"){
+				p.dotted = _obj.space.paper.path("M "+(inp.cx-inp.r)+",0 q "+(inp.r*2)+","+(_obj.space.height/2)+" 0,"+(_obj.space.height));
+				p.solid = _obj.space.paper.path("M "+(inp.cx-inp.r)+",0 q "+(inp.r*2)+","+(_obj.space.height/2)+" 0,"+(_obj.space.height));
 			}else{
-				var path = "m "+inp.cx+","+inp.cy+" "+makeOrbitPath(inp.r,inp.e,inp.i);
-				p.dotted = _obj.space.paper.path(path);
-				p.solid = _obj.space.paper.path(path);
+				if(inp.e==1){
+					p.dotted = _obj.space.paper.circle(inp.cx,inp.cy,inp.r);
+					p.solid = _obj.space.paper.circle(inp.cx,inp.cy,inp.r);
+				}else{
+					var path = "m "+inp.cx+","+inp.cy+" "+makeOrbitPath(inp.r,inp.e,inp.i);
+					p.dotted = _obj.space.paper.path(path);
+					p.solid = _obj.space.paper.path(path);
+				}
 			}
 
-			// Make the satellie
+			// Make the satellite
 			if(inp.period){
 				p.satellite = _obj.space.paper.circle(inp.cx,inp.cy,4).attr({ 'fill': inp.color, 'stroke': 0 });
-				p.anim = p.satellite.animateAlong((inp.orbit ? inp.orbit : p.dotted), inp.period, Infinity, inp.orbitdir);
+				if(inp.key!="ES2") p.anim = p.satellite.animateAlong((inp.orbit ? inp.orbit : p.dotted), inp.period, Infinity, inp.orbitdir);
 			}
 
 			p.dotted.attr({ stroke: inp.color,'stroke-dasharray': '-','stroke-width':inp.stroke.off });
@@ -1251,12 +1256,10 @@ if(typeof $==="undefined") $ = {};
 				}
 			}
 		}else if(this.space.zoom == 1){
-//this.log('zoom',this.space.Moonorbit)
 			if(!this.space.Moonorbit){
 				this.space.Moonorbit = this.space.paper.path("M "+this.space.E.x+","+this.space.E.y+" "+makeOrbitPath(this.space.M.o*this.space.scale[1],1)).attr({ stroke:'#606060','stroke-dasharray': '-','stroke-width':1.5 });
 				this.space.Moon = this.space.paper.circle(this.space.E.x - this.space.M.o*this.space.scale[1]*Math.cos(Math.PI/6),this.space.E.y - this.space.M.o*this.space.scale[1]*Math.sin(Math.PI/6),this.space.M.r).attr({ 'fill': '#606060', 'stroke': 0 });
 				var r = 9;
-//this.log(this.space.Moonorbit,this.space.Moon)
 				if(!this.space.orbits["ETR"] && this.data.orbit["ETR"]){
 					period = this.convertValue(this.data.orbit["ETR"].period,'days');
 					this.space.Earthorbit = this.space.paper.path("M "+(this.space.E.x-r)+",0 q "+(r*2)+","+(this.space.height/2)+" 0,"+(this.space.height)).attr({ stroke:'#606060','stroke-dasharray': '-','stroke-width':1.5 });
@@ -1272,7 +1275,7 @@ if(typeof $==="undefined") $ = {};
 				}
 				if(!this.space.orbits["ES2"] && this.data.orbit["ES2"]){
 					period = this.convertValue(this.data.orbit["ES2"].period,'days');
-					this.space.orbits["ES2"] = makeOrbit({key:"ES2",period:period.value*1000,r:1,cx:(this.space.E.x + 4*this.space.M.o*this.space.scale[1]),cy:this.space.E.y,color:this.orbits["ES2"].color});
+					this.space.orbits["ES2"] = makeOrbit({key:"ES2",period:period.value*1000,r:9,cx:(this.space.E.x + 4*this.space.M.o*this.space.scale[1]),cy:this.space.E.y,color:this.orbits["ES2"].color});
 				}
 				var m = this.space.M.o*this.space.scale[1];
 				var s = 0.3;
@@ -1309,9 +1312,11 @@ if(typeof $==="undefined") $ = {};
 				if(this.space.zoom == 0){
 					hide(this.space.Moonlagrangian);
 					hide(this.space.Earthorbit);
+					hide(this.space.L2orbit);
 				}else{
 					show(this.space.Moonlagrangian);
 					show(this.space.Earthorbit);
+					show(this.space.L2orbit);
 				}
 			}
 		}
