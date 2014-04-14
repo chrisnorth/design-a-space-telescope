@@ -854,8 +854,8 @@ if(typeof $==="undefined") $ = {};
 		if(this.choices.cooling.passive){
 			s.vgroove = s.paper.set();
 			s.vgroove.push(s.paper.ellipse(0,-0.6*fb,8.5*fb,5*fb).attr({'stroke':'white','stroke-width':1,'fill':'white','fill-opacity':0.15}));
-			s.vgroove.push(s.paper.ellipse(0,-1.2*fb,8.5*fb,5*fb).attr({'stroke':'white','stroke-width':1,'fill':'white','fill-opacity':0.15}));
-			s.vgroove.push(s.paper.ellipse(0,-1.8*fb,8.5*fb,5*fb).attr({'stroke':'white','stroke-width':1,'fill':'white','fill-opacity':0.15}));
+			s.vgroove.push(s.paper.ellipse(0,-1.2*fb,8.25*fb,4.75*fb).attr({'stroke':'white','stroke-width':1,'fill':'white','fill-opacity':0.15}));
+			s.vgroove.push(s.paper.ellipse(0,-1.8*fb,8*fb,4.5*fb).attr({'stroke':'white','stroke-width':1,'fill':'white','fill-opacity':0.15}));
 			s.vgroove.push(s.paper.path('m 0,'+(-0.6*fb)+' l'+(-5.5*fb)+','+(2.5*fb)+' m'+(5.5*fb)+','+(-2.5*fb)+' l'+(1.5*fb)+','+(3.5*fb)+' m'+(-1.5*fb)+','+(-3.5*fb)+' l'+(8*fb)+','+(-fb)+' m'+(-8*fb)+','+(fb)+' l'+(5*fb)+','+(-5*fb)+' m'+(-5*fb)+','+(5*fb)+' l'+(-2*fb)+','+(-5.5*fb)+' m'+(2*fb)+','+(5.5*fb)+' l'+(-7*fb)+','+(-3*fb)).attr({'stroke':'white','stroke-width':1,'stroke-opacity':0.4}))
 		}
 		
@@ -893,9 +893,8 @@ if(typeof $==="undefined") $ = {};
 			var html = "";
 
 			// Detect if the CSS transform attribute is available
-			var prefixes = 'transform WebkitTransform MozTransform OTransform msTransform'.split(' '),
-			el = document.createElement('div'),
-			cantransform=false;
+			var prefixes = 'transform WebkitTransform MozTransform OTransform msTransform'.split(' ');
+			var cantransform=false;
 			while(cantransform !== true) cantransform = document.createElement('div').style[prefixes[cantransform++]] != undefined || cantransform;
 
 			// Loop over instruments
