@@ -878,7 +878,7 @@ if(typeof $==="undefined") $ = {};
 
 			// Build instrument slots
 			var cols = Math.ceil(prop.slots/2);	// How many columns of instruments do we have?
-			var x,y;
+			var x,y,xl,yl;
 			var instw = 2.2; // The width of the instrument
 			instw = bw*2/(cols+2)
 			var i2 = instw/2; // Half the width
@@ -889,14 +889,29 @@ if(typeof $==="undefined") $ = {};
 			var n = 0;
 			var ni = 0;
 			if(this.choices.instruments) ni = this.choices.instruments.length;
+			$('#schematic .label').remove();
+			var html = "";
+
+			// Detect if the CSS transform attribute is available
+			var prefixes = 'transform WebkitTransform MozTransform OTransform msTransform'.split(' '),
+			el = document.createElement('div'),
+			cantransform=false;
+			while(cantransform !== true) cantransform = document.createElement('div').style[prefixes[cantransform++]] != undefined || cantransform;
+
+			// Loop over instruments
 			for(var i = 0 ; i < cols; i++){
 				x = (i-(cols-1)/2)*(instw*f*1.25);
 				for(var j = 0; j < 2; j++){
 					y = tank + 1.5 + (j==0 ? 0 : insth*2);
+					xl = 0.5 + (x+(j==0 ? i4*f : 0))/w;
+					yl = (padd+(hbus+hvgroove+(y+(j==0 ? -insth : +insth*1.5))*f))/h;
 					s.body.push(s.paper.path('m'+(x-i2*f)+','+(-y*f)+' l'+(i2*f)+','+(i4*f)+' l'+(i2*f)+','+(-i4*f)+' l0,'+(-insth*f)+' l'+(-i2*f)+','+(-i4*f)+' l'+(-i2*f)+','+(i4*f)+' z m'+(i2*f)+','+(i4*f)+' l0,'+(-insth*f)+' l'+(-i2*f)+','+(-i4*f)+'m'+(i2*f)+','+(i4*f)+'l'+(i2*f)+','+(-i4*f)).attr((n < ni) ? filled : open));
+					// Add a label if we can apply a CSS3 transform
+					if(n < ni && this.choices.instruments[n] && cantransform) html += '<div class="label '+(j==0 ? 'bottom':'top')+'" style="bottom:'+(100*yl)+'%; left:'+(100*xl)+'%">'+this.choices.instruments[n].name+'</div>';
 					n++;
 				}
 			}
+			if(html) $('#schematic').prepend(html);
 		}
 
 		if(this.choices.mirror){
