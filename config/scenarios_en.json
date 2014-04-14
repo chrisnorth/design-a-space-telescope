@@ -1,43 +1,6 @@
 {
 	"scenarios": [
 		{
-			"name": "Test scenario",
-			"description": "A private organization has funded your group to research into the birth and evolution of stars in the distant and nearby Universe, with full analysis of the spectra of the event. The budget of your mission is <span class=\"cost\">%COST%</span>. You will need the appropriate instruments on board your satellite in order to observe such objects.",
-			"funder": "Private Organization",
-			"image": {
-				"banner": "images/mission_stellar.jpg",
-				"alt": "The Orion Nebula",
-				"credit": "HST/NASA/ESA"
-			},
-			"budget": { "value": 2000, "units": "GBP", "dimension": "currency" },
-			"requires": [{
-				"instruments": [{ 
-					"type": "camera",
-					"wavelength": "farir"
-				},{
-					"type": "camera",
-					"wavelength": "submm"
-				}],
-				"label": "Wavelength coverage from sub-mm to far-IR",
-				"error": "You are not able to observe the required wavelengths"
-			},{
-				"mirror": { "value": 1, "units": "m", "dimension": "length" },
-				"label": "You need a mirror.",
-				"error": "You have not selected a suitable mirror."
-			},{
-				"observingtime": { "value": 3, "units": "years", "dimension": "time" },
-				"label": "Observe for %VALUE%",
-				"error": "Your mission will observe for a total of %OBSERVINGTIME%. That isn't a long enough time to meet your mission targets."
-			},{
-				"devtime": { "value": 10, "units": "years", "dimension": "time" },
-				"label": "Develop within 10 years",
-				"error": "Your mission will not be launched soon enough."
-			},{
-				"vehicle": ["ARI5","VEGA"],
-				"label": "Use an ESA launch vehicle",
-				"error": "You only have funding for European Space Agency rockets."
-			}]
-		},{
 			"name": "Star Birth and Evolution",
 			"description": "A private organization has funded your group to research into the birth and evolution of stars in the distant and nearby Universe, with full analysis of the spectra of the event. The budget of your mission is <span class=\"cost\">%COST%</span>. You will need the appropriate instruments on board your satellite in order to observe such objects.",
 			"funder": "Private Organization",
