@@ -180,6 +180,10 @@ if(typeof $==="undefined") $ = {};
 		this.loadConfig(this.update);
 		this.loadLanguage(this.lang,this.update);
 
+		// Deal with back/forwards navigation. Use popstate or onhashchange (IE) if pushstate doesn't seem to exist
+		var _obj = this;
+		window[(this.pushstate) ? 'onpopstate' : 'onhashchange'] = function(e){ _obj.navigate(e); };
+
 		// Build language list
 		var list = "";
 		var n = 0;
@@ -215,6 +219,7 @@ if(typeof $==="undefined") $ = {};
 		// Add events to guide links
 		$('body').on('click','a.guidelink',{me:this},function(e){
 			if($(this).attr('href').indexOf('#')==0) e.data.me.showView($(this).attr('href').substr(1),e);
+			e.data.me;
 		});
 
 		// Attach event to keypresses
@@ -226,12 +231,6 @@ if(typeof $==="undefined") $ = {};
 
 		// Attach keypress events
 		this.registerKey(['?'],function(e){ this.toggleGuide(e); });
-
-		// Deal with back/forwards navigation
-		if(this.pushstate){
-			var _obj = this;
-			window.onpopstate = function(e){ _obj.navigate(e); };
-		}
 
 		// Make sure the menu stays attached to the menu bar (unless scrolling down)
 		$(document).on('scroll',{me:this},function(e){ e.data.me.scrollMenus(); });
@@ -261,7 +260,7 @@ if(typeof $==="undefined") $ = {};
 
 		return html;
 	}
-	
+
 	// Update the text of a toggle input
 	// Inputs:
 	//   a = { "id": "ID", "value": "value", "label": "The displayed label A" }
@@ -291,7 +290,7 @@ if(typeof $==="undefined") $ = {};
 
 		// Build scenarios
 		$('#scenarios').html('<h2></h2><p class="about"></p><ul id="scenariolist"></ul>');
-		$(document).on('click','#scenarios .button',{me:this},function(e){ e.data.me.chooseScenario($(this).attr('data')); });
+		$(document).on('click','#scenarios .button',{me:this},function(e){ console.log('click2'); e.data.me.chooseScenario($(this).attr('data')); });
 
 		// Update messages dropdown menu
 		$('#messages .warnings').html('<div class="bigpadded"><h3 class="warning"><img src="images/cleardot.gif" class="icon warning" /> <span class="title"></span> <span class="warning value">0</span></h3><ul class="summary"></ul>');
@@ -527,8 +526,8 @@ if(typeof $==="undefined") $ = {};
 	}
 	
 	// Work out where we are based on the anchor tag
-	SpaceTelescope.prototype.navigate = function(e){
-		var a = location.href.split("#")[1];
+	SpaceTelescope.prototype.navigate = function(e,a){
+		if(!a) var a = location.href.split("#")[1];
 		this.log('navigate',a,e);
 		if(typeof a!=="string") a = "";
 		this.showView(a,e);
@@ -708,7 +707,7 @@ if(typeof $==="undefined") $ = {};
 
 	// Select scenario
 	SpaceTelescope.prototype.chooseScenario = function(i){
-		this.log('chooseScenario');
+		this.log('chooseScenario',i);
 		this.scenario = this.scenarios[i];
 		this.stage = "designer";
 		$('#summary').show();
