@@ -158,6 +158,15 @@ if(typeof $==="undefined") $ = {};
 
 		this.init(inp);
 
+		// Detect if the CSS transform attribute is available
+		var prefixes = 'transform WebkitTransform MozTransform OTransform msTransform'.split(' ');
+		this.hastransform=false;
+		// Safe for IE8 check of style
+		for(var k = 0; k < prefixes.length; k++){
+			var div = document.createElement('div');
+			if(div.style[prefixes[k]] != undefined) this.hastransform = true;	
+		}
+
 		return this;
 	}
 
@@ -250,7 +259,7 @@ if(typeof $==="undefined") $ = {};
 
 		if(typeof id!=="string" && typeof a != "object" && typeof b != "object") return "";
 
-		html = '<div class="toggleinput"><label class="toggle-label1" for="'+a.id+'"></label>';
+		html = '<div class="toggleinput toggler"><label class="toggle-label1" for="'+a.id+'"></label>';
 		html += '<div class="toggle-bg">';
 		html += '	<input id="'+a.id+'" type="radio" '+(a.checked ? 'checked="checked" ' : '')+'name="'+id+'" value="'+a.value+'">';
 		html += '	<input id="'+b.id+'" type="radio" '+(b.checked ? 'checked="checked" ' : '')+'name="'+id+'" value="'+b.value+'">';
@@ -321,7 +330,7 @@ if(typeof $==="undefined") $ = {};
 
 
 		// Build the satellite section
-		$('#designer_satellite .options').html('<div class="bigpadded"><form><ul><li class="option mirror_diameter"><label for="mirror_diameter"></label><select id="mirror_diameter" name="mirror_diameter"></select></li><li class="option mirror_deployable"><label for="mirror_deployable"></label>'+this.buildToggle("toggledeployable",{ "value": "no", "id": "mirror_deployable_no", "label": "", "checked": true },{ "value": "yes", "id": "mirror_deployable_yes", "label": "" })+'</li><li class="option mirror_uv"><label for="mirror_uv"></label>'+this.buildToggle("toggleuv",{ "value": "no", "id": "mirror_uv_no", "checked": true },{ "value": "yes", "id": "mirror_uv_yes" })+'</li></ul></form><div class="details"></div></div>');
+		$('#designer_satellite .options').html('<div class="bigpadded"><form><ul><li class="option mirror_diameter"><label for="mirror_size"></label><select id="mirror_size" name="mirror_size"></select></li><li class="option mirror_deployable"><label for="mirror_deployable"></label>'+this.buildToggle("toggledeployable",{ "value": "no", "id": "mirror_deployable_no", "label": "", "checked": true },{ "value": "yes", "id": "mirror_deployable_yes", "label": "" })+'</li><li class="option mirror_uv"><label for="mirror_uv"></label>'+this.buildToggle("toggleuv",{ "value": "no", "id": "mirror_uv_no", "checked": true },{ "value": "yes", "id": "mirror_uv_yes" })+'</li></ul></form><div class="details"></div></div>');
 		$('#designer_satellite select, #designer_satellite input').on('change',{me:this},function(e){
 			e.data.me.parseChoices().showDetails('satellite').showDetails('cooling');
 		});
@@ -430,6 +439,13 @@ if(typeof $==="undefined") $ = {};
 		$('#sidebar .panel').hide();
 
 		$(document).on('click','.printable a.button',{me:this},function(e){ e.preventDefault(); e.data.me.printProposal(); });
+
+		$(document).on('click','.toggler',{me:this},function(e){
+			//e.preventDefault();
+			var input = $(this).find('input:checked');
+			if(input.attr('value')=="yes") $(this).addClass('checked');
+			else $(this).removeClass('checked');
+		});
 
 
 		// Barebones summary table
@@ -903,14 +919,10 @@ if(typeof $==="undefined") $ = {};
 			var filled = {'stroke':'white','stroke-width':1,'fill':$('.science').css('color'),'fill-opacity':1}; // Use the 'science' colour
 			var n = 0;
 			var ni = 0;
+
 			if(this.choices.instruments) ni = this.choices.instruments.length;
 			$('#schematic .label').remove();
 			var html = "";
-
-			// Detect if the CSS transform attribute is available
-			var prefixes = 'transform WebkitTransform MozTransform OTransform msTransform'.split(' ');
-			var cantransform=false;
-			while(cantransform !== true) cantransform = document.createElement('div').style[prefixes[cantransform++]] != undefined || cantransform;
 
 			// Loop over instruments
 			for(var i = 0 ; i < cols; i++){
@@ -921,7 +933,7 @@ if(typeof $==="undefined") $ = {};
 					yl = (padd+(hbus+hvgroove+(y+(j==0 ? -insth : +insth*1.5))*f))/h;
 					s.body.push(s.paper.path('m'+(x-i2*f)+','+(-y*f)+' l'+(i2*f)+','+(i4*f)+' l'+(i2*f)+','+(-i4*f)+' l0,'+(-insth*f)+' l'+(-i2*f)+','+(-i4*f)+' l'+(-i2*f)+','+(i4*f)+' z m'+(i2*f)+','+(i4*f)+' l0,'+(-insth*f)+' l'+(-i2*f)+','+(-i4*f)+'m'+(i2*f)+','+(i4*f)+'l'+(i2*f)+','+(-i4*f)).attr((n < ni) ? filled : open));
 					// Add a label if we can apply a CSS3 transform
-					if(n < ni && this.choices.instruments[n] && cantransform) html += '<div class="label '+(j==0 ? 'bottom':'top')+'" style="bottom:'+(100*yl)+'%; left:'+(100*xl)+'%">'+this.choices.instruments[n].name+'</div>';
+					if(n < ni && this.choices.instruments[n] && this.hastransform) html += '<div class="label '+(j==0 ? 'bottom':'top')+'" style="bottom:'+(100*yl)+'%; left:'+(100*xl)+'%">'+this.choices.instruments[n].name+'</div>';
 					n++;
 				}
 			}
@@ -1374,7 +1386,7 @@ if(typeof $==="undefined") $ = {};
 	}
 
 	SpaceTelescope.prototype.updateSidePanels = function(){
-		
+
 		if(this.choices.mirror || this.choices.hascooling || this.choices.instruments){ this.makeSatellite(); $('#sidebar .satellite.panel').show(); }
 		else $('#sidebar .satellite.panel').hide();
 
@@ -1408,14 +1420,10 @@ if(typeof $==="undefined") $ = {};
 		if(el.length == 0) return this;
 		o = el.find('option');
 
-		if(dropdown=="mirror_diameter"){
+		if(dropdown=="mirror_size"){
 			if(this.phrases.designer.satellite.options.diameter.placeholder) options = '<option value="">'+this.phrases.designer.satellite.options.diameter.placeholder+'</option>';
-			if(o.length == 0){
-				for(var m in this.data.mirror) options += '<option value="'+m+'">'+this.formatValue(this.data.mirror[m].diameter)+'</option>';
-				el.html(options);
-			}else{
-				for(var m in this.data.mirror) el.find('option[value="'+m+'"]').text(this.formatValue(this.data.mirror[m].diameter));
-			}
+			for(var m in this.data.mirror) options += '<option value="'+m+'">'+this.formatValue(this.data.mirror[m].diameter)+'</option>';
+			el.html(options);
 		}else if(dropdown=="instruments"){
 			if(this.phrases.designer.instruments.options.instrument["none"]) options = '<option value="">'+this.phrases.designer.instruments.options.instrument["none"].label+'</option>';
 			for(var m in this.data.instrument.options){
@@ -1485,7 +1493,7 @@ if(typeof $==="undefined") $ = {};
 		var html,i,r,li,rk;
 		
 		// Update page title (make sure we encode the HTML entities)
-		if(d.title) $('html title').text(htmlDecode(d.title));
+		if(d.title) document.title = htmlDecode(d.title);
 
 		// Update title
 		$('h1').text(d.title);
@@ -1506,7 +1514,7 @@ if(typeof $==="undefined") $ = {};
 
 		// Update the satellite section
 		$('#designer_satellite .options .mirror_diameter label').html(d.designer.satellite.options.diameter.label)
-		this.updateDropdown('mirror_diameter');
+		this.updateDropdown('mirror_size');
 		$('#designer_satellite .options .mirror_deployable label').html(d.designer.satellite.options.deployable.label);
 		$('#designer_satellite .options .mirror_uv label').html(d.designer.satellite.options.uv.label);
 		if(d.designer.satellite.intro) $('#designer_satellite .intro').html(d.designer.satellite.intro).addClass('bigpadded');
@@ -1514,7 +1522,6 @@ if(typeof $==="undefined") $ = {};
 		this.updateToggle({ "id": "mirror_uv_no", "label": this.phrases.designer.satellite.options.uv.no }, { "id": "mirror_uv_yes", "label": this.phrases.designer.satellite.options.uv.yes }, this.phrases.designer.satellite.options.uv.label);
 
 		// Update the instruments section
-		// TODO: update selected
 		this.updateDropdown('instruments');
 		this.updateDropdown('wavelengths');
 		$('#designer_instruments .options label').html(d.designer.instruments.options.label);
@@ -1917,7 +1924,7 @@ if(typeof $==="undefined") $ = {};
 			if(v && u && d) el.html(this.formatValue({ 'value': v, 'units': u, 'dimension': d }));
 		}
 
-		this.updateDropdown('mirror_diameter');
+		this.updateDropdown('mirror_size');
 		this.updateDropdown('cooling_temperature');
 		return this;
 	}
@@ -2111,7 +2118,6 @@ if(typeof $==="undefined") $ = {};
 	
 
 	SpaceTelescope.prototype.updateSummaryList = function(){
-
 		for(var key in this.table){
 			var html = '';
 			var base = key;
@@ -2360,7 +2366,7 @@ if(typeof $==="undefined") $ = {};
 		$('#introduction .fancybtn').trigger('click');
 		$('#scenarios .button').eq(8).trigger('click');
 		
-		$('#mirror_diameter').val('1.0m');
+		$('#mirror_size').val('1.0m');
 		$('#wavelengths').val('submm');
 		$('#instruments').val('camera');
 		$('#instrument_name').val('SPIRE');
@@ -2849,11 +2855,13 @@ if(typeof $==="undefined") $ = {};
 		// Get mission
 		l = $('#mission_duration').val();
 		this.choices.mission = (l && this.data.mission[l]) ? l : "";
-		
+
 		// Get satellite
-		m = $('#mirror_diameter').val();
+		m = $('#mirror_size').val();
+
 		this.choices.mirror = (m && this.data.mirror[m]) ? m : "";
 		d = $('input[name=toggledeployable]:checked').val();
+
 		this.choices.deployablemirror = (d && d=="yes") ? true : false;
 		u = $('input[name=toggleuv]:checked').val();
 		this.choices.uvmirror = (u && u=="yes") ? true : false;
@@ -2883,8 +2891,6 @@ if(typeof $==="undefined") $ = {};
 		this.choices.cool.cryogenic = $('#cooling_cryogenic').val();
 		// Set a maximum temperature
 		this.choices.temperature = this.makeValue(400,'K');
-
-
 
 		// Process instruments
 		this.choices.instrument = {
@@ -2956,8 +2962,6 @@ if(typeof $==="undefined") $ = {};
 			this.choices.temperature = this.copyValue(this.data.orbit[this.choices.orbit].temperature);
 		}
 
-
-
 		// Process cooling
 		this.choices.cooling = {
 			"cost": this.makeValue(0,'GBP'),
@@ -2983,7 +2987,7 @@ if(typeof $==="undefined") $ = {};
 					this.choices.cooling.time = this.sumValues(this.choices.cooling.time,this.data.mirror[m]['passive'].devtime);
 				}
 			}
-			
+
 			// Do we have passive cooling
 			if(this.data.cooling.passive){
 				p = this.choices.cool.passive;
