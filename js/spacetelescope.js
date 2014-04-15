@@ -290,7 +290,7 @@ if(typeof $==="undefined") $ = {};
 
 		// Build scenarios
 		$('#scenarios').html('<h2></h2><p class="about"></p><ul id="scenariolist"></ul>');
-		$(document).on('click','#scenarios .button',{me:this},function(e){ console.log('click2'); e.data.me.chooseScenario($(this).attr('data')); });
+		$(document).on('click','#scenarios .button',{me:this},function(e){ e.data.me.chooseScenario($(this).attr('data')); });
 
 		// Update messages dropdown menu
 		$('#messages .warnings').html('<div class="bigpadded"><h3 class="warning"><img src="images/cleardot.gif" class="icon warning" /> <span class="title"></span> <span class="warning value">0</span></h3><ul class="summary"></ul>');
@@ -1160,9 +1160,7 @@ if(typeof $==="undefined") $ = {};
 			$('#orbits').prepend('<a href="#" class="zoomer button">-</a>');
 			$('#orbits .zoomer').on('click',{me:this},function(e){
 				e.preventDefault();
-				console.log(e.data.me.space.zoom)
 				e.data.me.displayOrbits('',(e.data.me.space.zoom==0 ? 1 : 0));
-				console.log(e.data.me.space.zoom)				
 				$(this).html(e.data.me.space.zoom==0 ? '&minus;' : '&plus;').attr('title',(e.data.me.space.zoom==0 ? e.data.me.phrases.designer.orbit.zoomout : e.data.me.phrases.designer.orbit.zoomin));
 			});
 		}
