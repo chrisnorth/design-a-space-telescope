@@ -1095,7 +1095,7 @@ if(typeof $==="undefined") $ = {};
 			if(this.space.orbits[o].satellite) this.space.orbits[o].satellite.stop().remove();
 			delete this.space.orbits[o];
 		}
-		var a = ['Moon','Moonorbit','Moonlagrangian','Earthorbit','L2orbit'];
+		var a = ['Moon','Moonorbit','Moonlagrangian','Earthorbit'];
 		for(var i = 0 ; i < a.length; i++){
 			if(this.space[a[i]]){
 				this.space[a[i]].remove();
@@ -1312,11 +1312,9 @@ if(typeof $==="undefined") $ = {};
 				if(this.space.zoom == 0){
 					hide(this.space.Moonlagrangian);
 					hide(this.space.Earthorbit);
-					hide(this.space.L2orbit);
 				}else{
 					show(this.space.Moonlagrangian);
 					show(this.space.Earthorbit);
-					show(this.space.L2orbit);
 				}
 			}
 		}
