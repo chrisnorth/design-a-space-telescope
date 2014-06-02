@@ -259,7 +259,8 @@ if(typeof $==="undefined") $ = {};
 
 		if(typeof id!=="string" && typeof a != "object" && typeof b != "object") return "";
 
-		html = '<div class="toggleinput toggler"><label class="toggle-label1" for="'+a.id+'"></label>';
+		if(a.checked) html = '<div class="toggleinput toggler"><label class="toggle-label1" for="'+a.id+'"></label>';
+                else html = '<div class="toggleinput toggler checked"><label class="toggle-label1" for="'+a.id+'"></label>';
 		html += '<div class="toggle-bg">';
 		html += '	<input id="'+a.id+'" type="radio" '+(a.checked ? 'checked="checked" ' : '')+'name="'+id+'" value="'+a.value+'">';
 		html += '	<input id="'+b.id+'" type="radio" '+(b.checked ? 'checked="checked" ' : '')+'name="'+id+'" value="'+b.value+'">';
@@ -356,12 +357,16 @@ if(typeof $==="undefined") $ = {};
 		// Build cooling options
 		$('#designer_cooling .options').html('<div class="bigpadded"><form><ul><li><label for="hascooling"></label>'+this.buildToggle("hascooling",{ "value": "no", "id": "cooling_no", "checked": true },{ "value": "yes", "id": "cooling_yes" })+'</li></ul></form><div class="details"></div></div>');
 		if(this.data.cooling.temperature) $('#designer_cooling .options form ul').append('<li class="hascooling"><label for="cooling_temperature"></label><select id="cooling_temperature" name="cooling_temperature"></select></li>');
-		if(this.data.cooling.passive) $('#designer_cooling .options form ul').append('<li class="hascooling"><label for="cooling_passive"></label>'+this.buildToggle("cooling_passive",{ "value": "no", "id": "cooling_passive_no"},{ "value": "yes", "id": "cooling_passive_yes", "checked": true })+'</li>');
+		if(this.data.cooling.passive) $('#designer_cooling .options form ul').append('<li class="hascooling"><label for="cooling_passive"></label>'+this.buildToggle("cooling_passive",{ "value": "no", "id": "cooling_passive_no"},{ "value": "yes", "id": "cooling_passive_yes","checked": true})+'</li>');
 		if(this.data.cooling.active) $('#designer_cooling .options form ul').append('<li class="hascooling"><label for="cooling_active"></label>'+this.buildToggle("cooling_active",{ "value": "no", "id": "cooling_active_no", "checked": true },{ "value": "yes", "id": "cooling_active_yes" })+'</li>');
 		if(this.data.cooling.cryogenic) $('#designer_cooling .options form ul').append('<li class="hascooling"><label for="cooling_cryogenic"></label><select id="cooling_cryogenic" name="cooling_cryogenic"></select></li>');
 		$(document).on('change','#designer_cooling .options input,#designer_cooling .options select',{me:this},function(e){
-			if(e.data.me.getValue('input[name=hascooling]:checked')=="yes") $('#designer_cooling li.hascooling').show();
+			if(e.data.me.getValue('input[name=hascooling]:checked')=="yes"){
+			    $('#designer_cooling li.hascooling').show();
+			    if(e.data.me.getValue('input[name=cooling_passive]:checked')=="no") console.log('no cooling')
+			}
 			else $('#designer_cooling li.hascooling').hide();
+       		        console.log(e.data.me.getValue('input[name=cooling_passive]:checked'));
 			e.data.me.parseChoices().showDetails('cooling');
 		});
 
