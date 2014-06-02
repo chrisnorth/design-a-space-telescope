@@ -213,7 +213,7 @@
 			},
 			"options": {
 				"instrument": {
-					"none": { "label": "Type" },
+					"none": { "label": "Select Type" },
 					"camera": { "label": "Camera" },
 					"spectrometer": { "label": "Spectrometer" },
 					"both": { "label": "Camera and Spectrometer" }
