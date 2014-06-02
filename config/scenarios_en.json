@@ -46,11 +46,6 @@
 					"wavelength": "optical",
 					"label": "An optical camera",
 					"error": "You don't have an optical camera"
-				},{ 
-					"type": "camera",
-					"wavelength": "nearir",
-					"label": "A nearir camera",
-					"error": "You can't observe warm dust"
 				}],
 				"label": "Wavelength coverage from UV to Near IR",
 				"error": "You are not able to observe the required wavelengths"
@@ -115,7 +110,7 @@
 			"name": "Nearby Galaxy Explorer",
 			"description": "Your group has received funding to send a telescope on board a satellite into space with the main objective of analysing stars in a nearby galaxy at very high resolution. The budget of your mission is <span class=\"cost\">%COST%</span>. Your group will need to use the appropriate instruments in order to collect data if it is to be analysed.",
 			"funder": "",
-			"budget": { "value": 10000, "units": "GBP", "dimension": "currency" },
+			"budget": { "value": 13000, "units": "GBP", "dimension": "currency" },
 			"requires": [{
 				"instruments": [{
 					"type": "camera",
@@ -138,7 +133,7 @@
 			"name": "Near-Earth Asteroid Study",
 			"description": "The government has asked you to design a satellite to take images of near-Earth asteroids. The mission should last for as long as possible. The European Space Agency will provide the launch and operations cost, also up to a total of <span class=\"cost\">%COST%</span>, but you have to use their launch site.",
 			"funder": "Government",
-			"budget": { "value": 700, "units": "GBP", "dimension": "currency" },
+			"budget": { "value": 900, "units": "GBP", "dimension": "currency" },
 			"requires": [{
 				"mirror": { "value": 0.5, "units": "m", "dimension": "length" },
 				"label": "You need a mirror.",
