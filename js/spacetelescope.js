@@ -2203,7 +2203,9 @@ if(typeof $==="undefined") $ = {};
 		var cool = this.convertValue(time.lifecooling,time.mission.units);
 		if(time.mission.value > cool.value) this.warnings.push({ 'text': this.phrases.warnings.coolinglifetime.replace(/%LIFE%/,this.formatValue(cool)).replace(/%DURATION%/,this.formatValue(time.mission)), 'link':'#designer_orbit' });
 		
-
+		// Warning about mission time
+		if(prob.total > 0 && time.mission.value == 0) this.warnings.push({ 'text': this.phrases.warnings.missionlife,'link':'#designer_orbit'});
+	    
 		// Format masses
 		mass.mirror = this.getChoice('mirror.mass');
 		mass.satellite = this.getChoice('satellite.mass');

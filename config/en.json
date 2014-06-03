@@ -428,7 +428,8 @@
 		"heavy": "Your satellite's mass is getting close to the limit for your launcher",
 		"fuellifetime": "Your fuel lifetime (%LIFE%) is shorter than the mission duration (%DURATION%) you have specified. You could reduce your mission duration to save on ground costs.",
 		"coolinglifetime": "Your cooling lifetime (%LIFE%) is shorter than the mission duration (%DURATION%) you have specified. You could reduce your mission duration to save on ground costs.",
-		"proposal": "You have not completed your proposal."
+		"proposal": "You have not completed your proposal.",
+		"missionlife": "You have not selected a mission duration."
 	},
 	"launch": {
 		"label": "Launch",
