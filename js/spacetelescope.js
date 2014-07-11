@@ -3561,7 +3561,7 @@ if(typeof $==="undefined") $ = {};
 	// Blob() requires browser >= Chrome 20, Firefox 13, IE 10, Opera 12.10 or Safari 6
 	SpaceTelescope.prototype.log = function(){
 		var args = Array.prototype.slice.call(arguments, 0);
-		if(console && typeof console.log==="function") console.log('LOG',args);
+		//if(console && typeof console.log==="function") console.log('LOG',args);
 		return this;
 	}
 
