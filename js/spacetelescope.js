@@ -363,10 +363,10 @@ if(typeof $==="undefined") $ = {};
 		$(document).on('change','#designer_cooling .options input,#designer_cooling .options select',{me:this},function(e){
 			if(e.data.me.getValue('input[name=hascooling]:checked')=="yes"){
 			    $('#designer_cooling li.hascooling').show();
-			    if(e.data.me.getValue('input[name=cooling_passive]:checked')=="no") console.log('no cooling')
+			    //if(e.data.me.getValue('input[name=cooling_passive]:checked')=="no") console.log('no cooling')
 			}
 			else $('#designer_cooling li.hascooling').hide();
-       		        console.log(e.data.me.getValue('input[name=cooling_passive]:checked'));
+       		        //console.log(e.data.me.getValue('input[name=cooling_passive]:checked'));
 			e.data.me.parseChoices().showDetails('cooling');
 		});
 
