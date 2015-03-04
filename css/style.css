@@ -357,7 +357,7 @@ a.togglescience:hover { padding-bottom: 0.3em; border-bottom: 0.2em solid #69dff
 #designer_instruments .instrument_list { padding-top: 0em; }
 #designer_instruments table { width: 100%; }
 #designer_instruments table td img.icon { width: 1.5em; height: 1.2em; }
-#designer_instruments a.add_instrument { display: inline-block; padding: 0.2em; padding-right: 0.4em; float: right; }
+#designer_instruments a.add_instrument { display: inline-block; padding: 0.2em; padding-right: 0.4em; float: right; color: inherit; }
 #designer_instruments a.add_instrument img { display: block; }
 #designer_instruments a.add_instrument { background-color: #e6e6e6; }
 #designer_cooling li.hascooling { display: none; }
