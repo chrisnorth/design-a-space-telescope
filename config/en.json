@@ -456,19 +456,19 @@
 			"liftoff": "Lift-off!"
 		},
 		"next": "Next",
-		"launch": { "label": "Launch:", "success": "Cleared the launch pad", "fail": "Rocket exploded" },
-		"orbit": { "label": "Orbit insertion:", "success": "Reached %ORBIT%", "fail": "fail" },
-		"deploy": { "label": "Deploying mirror:", "success": "Success", "fail": "fail" },
+		"launch": { "label": "Launch:", "success": "Cleared the launch pad", "fail": "Exploded on launch pad" },
+		"orbit": { "label": "Orbit insertion:", "success": "Reached %ORBIT%", "fail": "Failed to reach orbit" },
+		"deploy": { "label": "Deploying mirror:", "success": "Success", "fail": "Failed" },
 		"cooling": {
-			"label": { "label": "Cooling systems:", "success": "Turning on", "fail": "fail" },
-			"passive": { "label": "Passive cooling system:", "success": "Operational", "fail": "fail" },
-			"active": { "label": "Active cooling system:", "success": "Operational", "fail": "fail" },
-			"cryogenic": { "label": "Cryogenic cooling system:", "success": "Operational", "fail": "fail" },
-			"achieved": { "label": "Achieved temperature:", "success": "%TEMPERATURE%", "fail": "fail" }
+			"label": { "label": "Cooling systems:", "success": "Turning on", "fail": "Failed" },
+			"passive": { "label": "Passive cooling system:", "success": "Operational", "fail": "Failed" },
+			"active": { "label": "Active cooling system:", "success": "Operational", "fail": "Failed" },
+			"cryogenic": { "label": "Cryogenic cooling system:", "success": "Operational", "fail": "Failed" },
+			"achieved": { "label": "Achieved temperature:", "success": "%TEMPERATURE%", "fail": "Failed" }
 		},
-		"instruments": { "label": "Turning on instruments:", "success": "Operational", "fail": "fail" },
-		"science": { "label": "Scientific results:", "success": "%PERCENT% of results", "fail": "fail" },
-		"overall": { "label": "Overall mission success:", "success": "%PERCENT%", "fail": "fail" }
+		"instruments": { "label": "Turning on instruments:", "success": "Operational", "fail": "Failed" },
+		"science": { "label": "Scientific results:", "success": "%PERCENT% of results", "fail": "No results" },
+		"overall": { "label": "Overall mission success:", "success": "%PERCENT%", "fail": "Failed" }
 	},
 	"guide": {
 		"title": "Guide",
