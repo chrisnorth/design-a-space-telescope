@@ -197,7 +197,7 @@
 		"instruments": {
 			"label": "Instruments",
 			"hint": "Choose your scientific instruments",
-			"intro": "To get any results from your mission you will need <a href=\"#guide_instruments\" class=\"guidelink\">scientific instruments</a>. Select a type of instrument and give it a name if you wish. When you are happy with your instrument choice, press the <strong>&plus;</strong> button to add it to your satellite.",
+			"intro": "To get any results from your mission you will need scientific instruments. Select a type of instrument and give it a name if you wish. <br/><br/><a href=\"#guide_instruments\" class=\"guidelink\">More information about instruments</a>",
 			"cost": "Cost:",
 			"mass": "Mass:",
 			"temperature": "Required temperature:",
