@@ -2572,7 +2572,13 @@ if(typeof $==="undefined") $ = {};
 						this.choices.instruments[i].ok = ok;
 						$('#launchtimeline').append('<li class="indent">'+this.buildRow(this.choices.instruments[i].name+' ('+this.phrases.wavelengths[this.choices.instruments[i].wavelength].label+' '+this.phrases.designer.instruments.options.instrument[this.choices.instruments[i].type].label+')',(ok ? this.phrases.launch.instruments.success : this.phrases.launch.instruments.fail),'launch_instrument')+'</li>');
 					}
+				}
+			}
+			if(this.launchstep==7){
+				var percent = 0;
+				if(this.choices.instruments){
 					$('#launchtimeline').append('<li>'+this.buildRow(this.phrases.launch.science.label,'')+'</li>');
+
 					for(var i = 0; i < this.choices.instruments.length; i++){
 						if(this.choices.instruments[i].ok){
 							var t = this.copyValue(this.data.instrument.options[this.choices.instruments[i].type]);
@@ -2594,7 +2600,8 @@ if(typeof $==="undefined") $ = {};
 				$('#launchtimeline').append('<li>'+this.buildRow(this.phrases.launch.overall.label,tmp,'finalresult')+'</li>');
 				$('.printable').remove();
 				$('#launchtimeline').after('<div class="printable toppadded"><a href="#" class="button fancybtn">'+this.phrases.designer.proposal.reprint+'</a></div>');
-				$('#launchnav').html("")
+				$('#launchnav').html("");
+				this.launchstep = 0;
 			}
 		}
 		
