@@ -1430,13 +1430,16 @@ if(typeof $==="undefined") $ = {};
 			for(var m in this.data.mirror) options += '<option value="'+m+'">'+this.formatValue(this.data.mirror[m].diameter)+'</option>';
 			el.html(options);
 		}else if(dropdown=="instruments"){
-			if(this.phrases.designer.instruments.options.instrument["none"]) options = '<option value="">'+this.phrases.designer.instruments.options.instrument["none"].label+'</option>';
+			// Only add select label for advanced mode
+			if(this.phrases.designer.instruments.options.instrument["none"] && this.settings.mode=="advanced") options = '<option value="">'+this.phrases.designer.instruments.options.instrument["none"].label+'</option>';
 			for(var m in this.data.instrument.options){
 				v = this.phrases.designer.instruments.options.instrument[m].label;
 				if(o.length == 0) options += '<option value="'+m+'">'+v+'</option>';
 				else el.find('option[value="'+m+'"]').text(v);
 			}
 			if(o.length == 0) el.html(options);
+			// Now select default option in basic mode
+			if(this.settings.mode!="advanced") $('#instruments option:first-child').attr('selected','selected')
 		}else if(dropdown=="wavelengths"){
 			if(this.phrases.wavelengths["none"].label) options = '<option value="">'+this.phrases.wavelengths["none"].label+'</option>';
 			for(var m in this.data.wavelengths){
@@ -2381,8 +2384,8 @@ if(typeof $==="undefined") $ = {};
 		$('#wavelengths').val('farir');
 		$('#instrument_name').val('FIRAS');
 		$('.add_instrument').trigger('click');
-		$('#wavelengths').val('optical');
-		$('#instrument_name').val('WFPC2');
+		$('#wavelengths').val('midir');
+		$('#instrument_name').val('MIRIR');
 		$('.add_instrument').trigger('click');
 		$('input[name=hascooling]').trigger('click');
 		$('input[name=cooling_active]').trigger('click');
