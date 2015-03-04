@@ -779,20 +779,26 @@ if(typeof $==="undefined") $ = {};
 		return this;
 	}
 	
-	SpaceTelescope.prototype.updateInstruments = function(){
-
-		this.log('updateInstruments')
+	SpaceTelescope.prototype.displayInstruments = function(){
+		var html = "";
 		var d = this.phrases.designer;
-		var html = '';
-		if(this.choices.instruments.length > 0){
-			html += '<h3>'+d.instruments.table.title+'</h3><div class="tablewrapper"><table><tr><th>'+d.instruments.table.name+'</th><th>'+d.instruments.table.type+'</th><th>'+d.instruments.table.cost+'</th><th>'+d.instruments.table.mass+'</th><th>'+d.instruments.table.temperature+'</th><th></th></tr>';
+		this.log('displayInstruments');
+		html += '<h3>'+d.instruments.table.title+'</h3><div class="tablewrapper"><table><tr><th>'+d.instruments.table.name+'</th><th>'+d.instruments.table.type+'</th><th>'+d.instruments.table.cost+'</th><th>'+d.instruments.table.mass+'</th><th>'+d.instruments.table.temperature+'</th><th></th></tr>';
+		if(this.choices.instruments && this.choices.instruments.length > 0){
 			for(var i = 0; i < this.choices.instruments.length; i++){
 				v = this.getInstrument({'wavelength':this.choices.instruments[i].wavelength,'type':this.choices.instruments[i].type})
 				html += '<tr><td>'+this.choices.instruments[i].name+'</td><td>'+v.wavelength+' '+v.type+'</td><td>'+this.formatValueSpan(v.cost)+'</td><td>'+this.formatValueSpan(v.mass)+'</td><td>'+this.formatValueSpan(v.temp)+'</td><td><a class="remove_instrument" href="#" title="'+this.phrases.designer.instruments.options.remove+'" data="'+i+'"><img class="icon minus" src="images/cleardot.gif"></a></td></tr>';
 			}
-			html += '</table></div>';
 		}
+		html += '</table></div>';
 		$('#designer_instruments .instrument_list').html(html);
+		return html;
+	}
+	
+	SpaceTelescope.prototype.updateInstruments = function(){
+
+		this.log('updateInstruments');
+		this.displayInstruments();
 		this.parseChoices('designer_instruments');
 		return this;
 	}
@@ -1439,7 +1445,8 @@ if(typeof $==="undefined") $ = {};
 			}
 			if(o.length == 0) el.html(options);
 			// Now select default option in basic mode
-			if(this.settings.mode!="advanced") $('#instruments option:first-child').attr('selected','selected')
+			if(this.settings.mode!="advanced") $('#instruments option:first-child').attr('selected','selected');
+			this.displayInstruments();
 		}else if(dropdown=="wavelengths"){
 			if(this.phrases.wavelengths["none"].label) options = '<option value="">'+this.phrases.wavelengths["none"].label+'</option>';
 			for(var m in this.data.wavelengths){
