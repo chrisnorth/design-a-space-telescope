@@ -499,8 +499,39 @@ a.togglescience:hover { padding-bottom: 0.3em; border-bottom: 0.2em solid #69dff
 #launch li.indent { margin-left: 1em; }
 #launchvideo { text-align: center; }
 #launchvideo iframe { margin: auto; max-width: 100%; }
+#launchnav { text-align: right; }
+#countdown {
+	text-align: center;
+	font-size: 2em;
+	opacity: 1;
+}
+@keyframes pulse {
+	from { opacity: 0.0; font-size: 2em; }
+	to { opacity: 1.0; font-size: 3em; }
+}
+@-webkit-keyframes pulse {
+  from {
+    opacity: 0.0;
+    font-size: 2em;
+  }
+  to {
+    opacity: 1.0;
+    font-size: 3em;
+  }
+}
 
-
+.tick {
+	-webkit-animation-name: pulse;
+	-webkit-animation-iteration-count: infinite;
+	-webkit-animation-timing-function: ease-in-out;
+	-webkit-animation-direction: alternate;
+	-webkit-animation-duration: 0.5s;
+	animation-name: pulse;
+	animation-iteration-count: infinite;
+	animation-timing-function: ease-in-out;
+	animation-direction: alternate;
+	animation-duration: 0.5s;
+}​
 
 body.showguide #bar, body.showlaunch #bar { display: none; }
 body.showguide #page, body.showlaunch #page { margin: 0em; }

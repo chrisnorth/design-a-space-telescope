@@ -484,6 +484,7 @@
 			"0": 0,
 			"liftoff": "Lift-off!"
 		},
+		"next": "Next",
 		"launch": { "label": "Launch:", "success": "success", "fail": "fail" },
 		"orbit": { "label": "Orbit insertion:", "success": "success", "fail": "fail" },
 		"deploy": { "label": "Deploying mirror:", "success": "success", "fail": "fail" },

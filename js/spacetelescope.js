@@ -141,6 +141,7 @@ if(typeof $==="undefined") $ = {};
 		this.keyboard = true;  // Allow keyboard shortcuts (disable in inputs and textareas)
 		this.errors = [];      // Holder for errors
 		this.warnings = [];    // Holder for warnings
+		this.launchstep = 0;
 
 		// Set some URLs
 		this.langurl = "config/%LANG%%MODE%.json";
@@ -251,6 +252,7 @@ if(typeof $==="undefined") $ = {};
 		this.data = null;
 		this.phrases = null;
 		this.choices = {};
+		this.scenarios = null;
 		this.buildTable();
 		
 		this.loadConfig(this.update);
@@ -461,6 +463,7 @@ if(typeof $==="undefined") $ = {};
 		$('#sidebar .panel').hide();
 
 		$(document).on('click','.printable a.button',{me:this},function(e){ e.preventDefault(); e.data.me.printProposal(); });
+		$(document).on('click','#launchnav a.button',{me:this},function(e){ e.preventDefault(); e.data.me.launch(); });
 
 		$(document).on('click','.toggler',{me:this},function(e){
 			//e.preventDefault();
@@ -2408,7 +2411,7 @@ if(typeof $==="undefined") $ = {};
 	SpaceTelescope.prototype.test = function(){
 
 		$('#introduction .fancybtn').trigger('click');
-		$('#scenarios .button').eq(8).trigger('click');
+		this.chooseScenario(this.scenarios.length-1)
 		
 		$('#mirror_size').val('1.0m');
 		$('#wavelengths').val('submm');
@@ -2432,6 +2435,8 @@ if(typeof $==="undefined") $ = {};
 		
 		return this;
 	}
+
+	// Function to launch
 	SpaceTelescope.prototype.goForLaunch = function(){
 
 		this.log('goForLaunch')
@@ -2441,142 +2446,167 @@ if(typeof $==="undefined") $ = {};
 			return this;
 		}
 		
-		$('.togglelaunch').hide();
-		$('body').addClass('showlaunch');
-		$('#launch').show();
+		if(this.stage=="launch"){
+			$('.togglelaunch').hide();
+			$('body').addClass('showlaunch');
+			$('#launch').show();
+	
+			var orbit = this.phrases.designer.orbit.options[this.choices.orbit].label;
+			var vehicle = this.phrases.designer.vehicle.options[this.choices.vehicle].label;
+			var site = this.phrases.designer.site.options[this.choices.site].label;
+			var devtime = this.formatValue(this.table.time_dev_total.list.time_dev_total.value);
+	
+			// Build launch progress
+			$('#launch').html('<h2>'+this.phrases.launch.title+'</h2><p>'+this.phrases.launch.intro.replace(/%DEVTIME%/,devtime).replace(/%VEHICLE%/,vehicle).replace(/%SITE%/,site).replace(/%ORBIT%/,orbit).replace(/%LAUNCHDATE%/,this.launchdate)+'</p><div id="countdown" class="padded">Countdown</div><ul id="launchtimeline"></ul><div id="launchnav"></div>');
+	
+			if(this.launchstep==0) this.countdown(0);
+		}
+	}
 
+	SpaceTelescope.prototype.countdown = function(i){
 
-		var orbit = this.phrases.designer.orbit.options[this.choices.orbit].label;
-		var vehicle = this.phrases.designer.vehicle.options[this.choices.vehicle].label;
-		var site = this.phrases.designer.site.options[this.choices.site].label;
-		var devtime = this.formatValue(this.table.time_dev_total.list.time_dev_total.value);
+		this.launchstep = 1;
 
-		// Build launch progress
-		$('#launch').html('<h2>'+this.phrases.launch.title+'</h2><p>'+this.phrases.launch.intro.replace(/%DEVTIME%/,devtime).replace(/%VEHICLE%/,vehicle).replace(/%SITE%/,site).replace(/%ORBIT%/,orbit).replace(/%LAUNCHDATE%/,this.launchdate)+'</p><ul id="launchtimeline"></ul>');
+		var _obj = this;
+		if(i > 0){
+			$('#countdown').html('<div class="tick">'+this.phrases.launch.countdown[i.toFixed(0)]+'</div>');
+			i--;
+			if(!this.outtatime) clearTimeout(this.outtatime);
+			this.outtatime = setTimeout(function(){ _obj.countdown(i); },1000);
+		}else{
+			$('#countdown').html(''+this.phrases.launch.countdown["liftoff"])
+			this.ok = true;
+			this.okcool = true;
+			// Set temperature from orbit
+			this.temperature = this.copyValue(this.data.orbit[this.choices.orbit].temperature);
+			this.launch();
+		}
+	}
 
+	SpaceTelescope.prototype.launch = function(){
+
+		this.launchstep++;
 		
-		var ms = 1000;
+		// Build launch progress
+		$('#launchnav').html('<a href="#" class="button fancybtn">'+this.phrases.launch.next+'</a>');
 
-		var prob = {};
-		prob.mirror = this.getChoice('mirror.prob');
-		prob.site = this.getChoice('site.prob');
-		prob.vehicle = this.getChoice('vehicle.prob');
-		prob.cooling = this.getChoice('cooling.prob');
-		prob.orbit = this.getChoice('orbit.prob');
-		prob.mission = this.getChoice('mission.prob');
+		var prob = {
+			'mirror': this.getChoice('mirror.prob'),
+			'site': this.getChoice('site.prob'),
+			'vehicle': this.getChoice('vehicle.prob'),
+			'cooling': this.getChoice('cooling.prob'),
+			'orbit': this.getChoice('orbit.prob'),
+			'mission': this.getChoice('mission.prob')
+		}
 
 		var status = this.phrases.launch.status;
 		var ok = true;
-		var okcool = true;
-		var okpassive = true;
-		var percent = 0;
-		// Set temperature from orbit
-		var temp = this.copyValue(this.data.orbit[this.choices.orbit].temperature);
 
-		var video = '';
-		if(this.data.vehicle[this.choices.vehicle].sites.length == this.data.vehicle[this.choices.vehicle].video.length){
-			for(var s = 0; s < this.data.vehicle[this.choices.vehicle].sites.length; s++){
-				if(this.data.vehicle[this.choices.vehicle].sites[s]==this.choices.site) video = makeYouTubeEmbed(this.data.vehicle[this.choices.vehicle].video[s]);
+		if(this.ok){
+			if(this.launchstep==2){
+				this.ok = this.roll(prob.site*prob.vehicle);
+				$('#launchtimeline').append('<li>'+this.buildRow(this.phrases.launch.launch.label,(this.ok ? this.phrases.launch.launch.success : this.phrases.launch.launch.fail),'launch_launch')+'</li>');
 			}
-		}else{
-			video = makeYouTubeEmbed(this.data.vehicle[this.choices.vehicle].video);
-		}
-		$('#launchtimeline').before('<div id="launchvideo" class="padded">'+this.phrases.launch.countdown["10"]+'...'+this.phrases.launch.countdown["9"]+'...'+this.phrases.launch.countdown["8"]+'...'+this.phrases.launch.countdown["7"]+'...'+this.phrases.launch.countdown["6"]+'...'+this.phrases.launch.countdown["5"]+'...'+this.phrases.launch.countdown["4"]+'...'+this.phrases.launch.countdown["3"]+'...'+this.phrases.launch.countdown["2"]+'...'+this.phrases.launch.countdown["1"]+'...'+this.phrases.launch.countdown["0"]+'...'+this.phrases.launch.countdown["liftoff"]+'<br />'+video+'</div>')
-
-		ok = this.roll(prob.site*prob.vehicle);
-		$('#launchtimeline').append('<li>'+this.buildRow(this.phrases.launch.launch.label,(ok ? this.phrases.launch.launch.success : this.phrases.launch.launch.fail),'launch_launch')+'</li>');
-		if(ok){
-			ok = this.roll(prob.orbit);
-			$('#launchtimeline').append('<li>'+this.buildRow(this.phrases.launch.orbit.label,(ok ? this.phrases.launch.orbit.success : this.phrases.launch.orbit.fail),'launch_orbit')+'</li>');
-			if(ok){
-				ok = this.roll(prob.mirror);
-				$('#launchtimeline').append('<li>'+this.buildRow(this.phrases.launch.deploy.label,(ok ? this.phrases.launch.deploy.success : this.phrases.launch.deploy.fail),'launch_mirror')+'</li>');
-				if(ok){
-	
-					okcool = true;
-					// Has the user requested cooling?
-					if(this.choices.hascooling){
-						// Do we have temperature-based cooling (normal mode)
-						if(this.choices.cool.temperature){
-							var t = this.data.cooling.temperature[$('#cooling_temperature').val()];
-							if(t.temperature) temp = this.copyValue(t.temperature);
-							if(!t.risk) t.risk = 1;
-							okcool = this.roll(t.risk);
-							$('#launchtimeline').append('<li>'+this.buildRow(this.phrases.launch.cooling.label.label,(okcool ? this.phrases.launch.cooling.label.success : this.phrases.launch.cooling.label.fail),'launch_temperature')+'</li>');
-						}
-						
-						// Do we have passive cooling
-						if(this.data.cooling.passive){
-							$('#launchtimeline').append('<li>'+this.buildRow(this.phrases.launch.cooling.label,'','launch_cooling')+'</li>');
-							p = this.choices.cool.passive;
-							if(p=="yes"){
-								okcool = this.roll(this.data.cooling.passive[p].risk);
-								okpassive = okcool;
-								if(okcool) temp.value *= this.data.cooling.passive[p].multiplier.temperature;
-								$('#launchtimeline').append('<li class="indent">'+this.buildRow(this.phrases.launch.cooling.passive.label,(okcool ? this.phrases.launch.cooling.passive.success : this.phrases.launch.cooling.passive.fail),'launch_passive')+'</li>');
-	
-								// Do we have active cooling (requires passive cooling)?
-								if(this.data.cooling.active && okpassive){
-									p = this.choices.cool.active;
-									if(p=="yes"){
-										okcool = this.roll(this.data.cooling.active[p].risk);
-										if(okcool) temp.value *= this.data.cooling.active[p].multiplier.temperature;
-										$('#launchtimeline').append('<li class="indent">'+this.buildRow(this.phrases.launch.cooling.active.label,(okcool ? this.phrases.launch.cooling.active.success : this.phrases.launch.cooling.active.fail),'launch_active')+'</li>');
-									}
-								}
-								// Do we have cryogenic cooling (requires passive cooling)?
-								if(this.data.cooling.cryogenic && okpassive){
-									p = this.choices.cool.cryogenic;
-									if(p && p!="none"){
-										okcool = this.roll(this.data.cooling.cryogenic[p].risk);
-										if(okcool) temp.value *= this.data.cooling.cryogenic[p].multiplier.temperature;
-										$('#launchtimeline').append('<li class="indent">'+this.buildRow(this.phrases.launch.cooling.cryogenic.label,(okcool ? this.phrases.launch.cooling.cryogenic.success : this.phrases.launch.cooling.cryogenic.fail),'launch_cryogenic')+'</li>');
-									}
-								}
-							}
-						}
+			if(this.launchstep==3){	
+				this.ok = this.roll(prob.orbit);
+				$('#launchtimeline').append('<li>'+this.buildRow(this.phrases.launch.orbit.label,(this.ok ? this.phrases.launch.orbit.success : this.phrases.launch.orbit.fail).replace(/%ORBIT%/,this.getChoice('orbit')),'launch_orbit')+'</li>');
+			}
+			if(this.launchstep==4){	
+				this.ok = this.roll(prob.mirror);
+				$('#launchtimeline').append('<li>'+this.buildRow(this.phrases.launch.deploy.label,(this.ok ? this.phrases.launch.deploy.success : this.phrases.launch.deploy.fail),'launch_mirror')+'</li>');
+			}
+			if(this.launchstep==5){
+				var okcool = true;
+				var okpassive = true;
+				// Has the user requested cooling?
+				if(this.choices.hascooling){
+					// Do we have temperature-based cooling (normal mode)
+					if(this.choices.cool.temperature){
+						var t = this.data.cooling.temperature[$('#cooling_temperature').val()];
+						if(t.temperature) this.temperature = this.copyValue(t.temperature);
+						if(!t.risk) t.risk = 1;
+						okcool = this.roll(t.risk);
+						$('#launchtimeline').append('<li>'+this.buildRow(this.phrases.launch.cooling.label.label,(okcool ? this.phrases.launch.cooling.label.success : this.phrases.launch.cooling.label.fail),'launch_temperature')+'</li>');
 					}
-					$('#launchtimeline').append('<li class="indent">'+this.buildRow(this.phrases.launch.cooling.achieved.label,(okcool ? this.phrases.launch.cooling.achieved.success : this.phrases.launch.cooling.achieved.fail).replace(/\%TEMPERATURE%/,this.formatValue(temp)))+'</li>');	// Had "temp" as second argument
+					
+					// Do we have passive cooling
+					if(this.data.cooling.passive){
+						$('#launchtimeline').append('<li>'+this.buildRow(this.phrases.launch.cooling.label,'','launch_cooling')+'</li>');
+						p = this.choices.cool.passive;
+						if(p=="yes"){
+							okcool = this.roll(this.data.cooling.passive[p].risk);
+							okpassive = okcool;
+							if(okcool) this.temperature.value *= this.data.cooling.passive[p].multiplier.temperature;
+							$('#launchtimeline').append('<li class="indent">'+this.buildRow(this.phrases.launch.cooling.passive.label,(okcool ? this.phrases.launch.cooling.passive.success : this.phrases.launch.cooling.passive.fail),'launch_passive')+'</li>');
 
-					if(this.choices.instruments){
-						$('#launchtimeline').append('<li>'+this.buildRow(this.phrases.launch.instruments.label,'')+'</li>');
-						for(var i = 0; i < this.choices.instruments.length; i++){
-							var therm = this.convertValue(this.data.wavelengths[this.choices.instruments[i].wavelength].temperature,temp.units);
-							ok = (therm.value >= temp.value) ? true : false;
-							this.choices.instruments[i].ok = ok;
-							$('#launchtimeline').append('<li class="indent">'+this.buildRow(this.choices.instruments[i].name+' ('+this.phrases.wavelengths[this.choices.instruments[i].wavelength].label+' '+this.phrases.designer.instruments.options.instrument[this.choices.instruments[i].type].label+')',(ok ? this.phrases.launch.instruments.success : this.phrases.launch.instruments.fail),'launch_instrument')+'</li>');
-						}
-						$('#launchtimeline').append('<li>'+this.buildRow(this.phrases.launch.science.label,'')+'</li>');
-						for(var i = 0; i < this.choices.instruments.length; i++){
-							if(this.choices.instruments[i].ok){
-								var t = this.copyValue(this.data.instrument.options[this.choices.instruments[i].type]);
-								if(!t.risk) t.risk = 1;
-								t.risk *= prob.mission;
-								ok = this.roll(t.risk);
-								this.log(i,t.risk,ok)
-								var pc = 100;
-								if(!ok) pc = Math.random()*100;
-								percent += pc;
-								tmp = (ok ? this.phrases.launch.science.success : this.phrases.launch.science.fail).replace(/%PERCENT%/,this.formatValue(this.makeValue(pc,'%')));
-								$('#launchtimeline').append('<li class="indent">'+this.buildRow(this.choices.instruments[i].name+' ('+this.phrases.wavelengths[this.choices.instruments[i].wavelength].label+' '+this.phrases.designer.instruments.options.instrument[this.choices.instruments[i].type].label+')',tmp,'launch_science')+'</li>');
+							// Do we have active cooling (requires passive cooling)?
+							if(this.data.cooling.active && okpassive){
+								p = this.choices.cool.active;
+								if(p=="yes"){
+									okcool = this.roll(this.data.cooling.active[p].risk);
+									if(okcool) this.temperature.value *= this.data.cooling.active[p].multiplier.temperature;
+									$('#launchtimeline').append('<li class="indent">'+this.buildRow(this.phrases.launch.cooling.active.label,(okcool ? this.phrases.launch.cooling.active.success : this.phrases.launch.cooling.active.fail),'launch_active')+'</li>');
+								}
+							}
+							// Do we have cryogenic cooling (requires passive cooling)?
+							if(this.data.cooling.cryogenic && okpassive){
+								p = this.choices.cool.cryogenic;
+								if(p && p!="none"){
+									okcool = this.roll(this.data.cooling.cryogenic[p].risk);
+									if(okcool) this.temperature.value *= this.data.cooling.cryogenic[p].multiplier.temperature;
+									$('#launchtimeline').append('<li class="indent">'+this.buildRow(this.phrases.launch.cooling.cryogenic.label,(okcool ? this.phrases.launch.cooling.cryogenic.success : this.phrases.launch.cooling.cryogenic.fail),'launch_cryogenic')+'</li>');
+								}
 							}
 						}
-						if(this.choices.instruments.length > 0) percent /= this.choices.instruments.length;
 					}
 				}
+				$('#launchtimeline').append('<li class="indent">'+this.buildRow(this.phrases.launch.cooling.achieved.label,(okcool ? this.phrases.launch.cooling.achieved.success : this.phrases.launch.cooling.achieved.fail).replace(/\%TEMPERATURE%/,this.formatValue(this.temperature)))+'</li>');
+			}
+			if(this.launchstep==6){
+				var percent = 0;
+				if(this.choices.instruments){
+					$('#launchtimeline').append('<li>'+this.buildRow(this.phrases.launch.instruments.label,'')+'</li>');
+					for(var i = 0; i < this.choices.instruments.length; i++){
+						var therm = this.convertValue(this.data.wavelengths[this.choices.instruments[i].wavelength].temperature,this.temperature.units);
+						ok = (therm.value >= this.temperature.value) ? true : false;
+						this.choices.instruments[i].ok = ok;
+						$('#launchtimeline').append('<li class="indent">'+this.buildRow(this.choices.instruments[i].name+' ('+this.phrases.wavelengths[this.choices.instruments[i].wavelength].label+' '+this.phrases.designer.instruments.options.instrument[this.choices.instruments[i].type].label+')',(ok ? this.phrases.launch.instruments.success : this.phrases.launch.instruments.fail),'launch_instrument')+'</li>');
+					}
+					$('#launchtimeline').append('<li>'+this.buildRow(this.phrases.launch.science.label,'')+'</li>');
+					for(var i = 0; i < this.choices.instruments.length; i++){
+						if(this.choices.instruments[i].ok){
+							var t = this.copyValue(this.data.instrument.options[this.choices.instruments[i].type]);
+							if(!t.risk) t.risk = 1;
+							t.risk *= prob.mission;
+							ok = this.roll(t.risk);
+							this.log(i,t.risk,ok)
+							var pc = 100;
+							if(!ok) pc = Math.random()*100;
+							percent += pc;
+							tmp = (ok ? this.phrases.launch.science.success : this.phrases.launch.science.fail).replace(/%PERCENT%/,this.formatValue(this.makeValue(pc,'%')));
+							$('#launchtimeline').append('<li class="indent">'+this.buildRow(this.choices.instruments[i].name+' ('+this.phrases.wavelengths[this.choices.instruments[i].wavelength].label+' '+this.phrases.designer.instruments.options.instrument[this.choices.instruments[i].type].label+')',tmp,'launch_science')+'</li>');
+						}
+					}
+					if(this.choices.instruments.length > 0) percent /= this.choices.instruments.length;
+				}
+	
+				tmp = (this.ok ? this.phrases.launch.overall.success : this.phrases.launch.overall.fail).replace(/\%PERCENT%/,this.formatValue(this.makeValue(percent,'%')));
+				$('#launchtimeline').append('<li>'+this.buildRow(this.phrases.launch.overall.label,tmp,'finalresult')+'</li>');
+				$('.printable').remove();
+				$('#launchtimeline').after('<div class="printable toppadded"><a href="#" class="button fancybtn">'+this.phrases.designer.proposal.reprint+'</a></div>');
+				$('#launchnav').html("")
 			}
 		}
-		tmp = (ok ? this.phrases.launch.overall.success : this.phrases.launch.overall.fail).replace(/\%PERCENT%/,this.formatValue(this.makeValue(percent,'%')));
-		$('#launchtimeline').append('<li>'+this.buildRow(this.phrases.launch.overall.label,tmp,'finalresult')+'</li>');
-
-		$('#launch').append('<div class="printable bigpadded"><a href="#" class="button fancybtn">'+this.phrases.designer.proposal.reprint+'</a></div>');
 		
 		return this;
 	}
+
+
 	SpaceTelescope.prototype.roll = function(prob){
 		if(!prob) prob = 1;
 		return (Math.random() > prob) ? false : true;
 	}
+
 	SpaceTelescope.prototype.setKey = function(t,key,typ,value){
 		for(i in t){
 			if(i==key){
@@ -3222,8 +3252,8 @@ if(typeof $==="undefined") $ = {};
 		}else if(view=="launch"){
 			$('#summaryext').hide();
 			this.updateMessages("error",{}).updateMessages("warning",{});
-			this.goForLaunch();
 			this.updateBodyClass('showlaunch');
+			this.goForLaunch();
 			this.stage = "launch";
 		}else{
 			$('#'+this.stage).show();
@@ -3601,7 +3631,7 @@ if(typeof $==="undefined") $ = {};
 	// Blob() requires browser >= Chrome 20, Firefox 13, IE 10, Opera 12.10 or Safari 6
 	SpaceTelescope.prototype.log = function(){
 		var args = Array.prototype.slice.call(arguments, 0);
-		if(console && typeof console.log==="function") console.log('LOG',args);
+		//if(console && typeof console.log==="function") console.log('LOG',args);
 		return this;
 	}
 

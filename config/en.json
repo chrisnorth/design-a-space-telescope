@@ -455,11 +455,12 @@
 			"0": 0,
 			"liftoff": "Lift-off!"
 		},
-		"launch": { "label": "Launch:", "success": "Launch successful", "fail": "Rocket exploded" },
-		"orbit": { "label": "Orbit insertion:", "success": "Orbit obtained", "fail": "fail" },
-		"deploy": { "label": "Deploying mirror:", "success": "Deployment successful", "fail": "fail" },
+		"next": "Next",
+		"launch": { "label": "Launch:", "success": "Cleared the launch pad", "fail": "Rocket exploded" },
+		"orbit": { "label": "Orbit insertion:", "success": "Reached %ORBIT%", "fail": "fail" },
+		"deploy": { "label": "Deploying mirror:", "success": "Success", "fail": "fail" },
 		"cooling": {
-			"label": { "label": "Cooling systems:", "success": "Cooling system operational", "fail": "fail" },
+			"label": { "label": "Cooling systems:", "success": "Turning on", "fail": "fail" },
 			"passive": { "label": "Passive cooling system:", "success": "Operational", "fail": "fail" },
 			"active": { "label": "Active cooling system:", "success": "Operational", "fail": "fail" },
 			"cryogenic": { "label": "Cryogenic cooling system:", "success": "Operational", "fail": "fail" },
