@@ -2459,7 +2459,7 @@ if(typeof $==="undefined") $ = {};
 			// Build launch progress
 			$('#launch').html('<h2>'+this.phrases.launch.title+'</h2><p>'+this.phrases.launch.intro.replace(/%DEVTIME%/,devtime).replace(/%VEHICLE%/,vehicle).replace(/%SITE%/,site).replace(/%ORBIT%/,orbit).replace(/%LAUNCHDATE%/,this.launchdate)+'</p><div id="countdown" class="padded">Countdown</div><ul id="launchtimeline"></ul><div id="launchnav"></div>');
 	
-			if(this.launchstep==0) this.countdown(0);
+			if(this.launchstep==0) this.countdown(10);
 		}
 	}
 
