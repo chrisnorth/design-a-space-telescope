@@ -450,23 +450,19 @@
 			"0": 0,
 			"liftoff": "Lift-off!"
 		},
-		"launch": "Launch:",
-		"orbit": "Orbit insertion:",
-		"deploy": "Deploying mirror:",
+		"launch": { "label": "Launch:", "success": "Launch successful", "fail": "Rocket exploded" },
+		"orbit": { "label": "Orbit insertion:", "success": "Orbit obtained", "fail": "fail" },
+		"deploy": { "label": "Deploying mirror:", "success": "Deployment successful", "fail": "fail" },
 		"cooling": {
-			"label": "Cooling systems:",
-			"passive": "Passive cooling system:",
-			"active": "Active cooling system:",
-			"cryogenic": "Cryogenic cooling system:",
-			"achieved": "Achieved temperature:"
+			"label": { "label": "Cooling systems:", "success": "Cooling system operational", "fail": "fail" },
+			"passive": { "label": "Passive cooling system:", "success": "Operational", "fail": "fail" },
+			"active": { "label": "Active cooling system:", "success": "Operational", "fail": "fail" },
+			"cryogenic": { "label": "Cryogenic cooling system:", "success": "Operational", "fail": "fail" },
+			"achieved": { "label": "Achieved temperature:", "success": "%TEMPERATURE%", "fail": "fail" }
 		},
-		"instruments": "Turning on instruments:",
-		"science": "Scientific results:",
-		"overall": "Overall mission success:",
-		"status": {
-			"success": "success",
-			"fail": "fail"
-		}
+		"instruments": { "label": "Turning on instruments:", "success": "Operational", "fail": "fail" },
+		"science": { "label": "Scientific results:", "success": "%PERCENT% of results", "fail": "fail" },
+		"overall": { "label": "Overall mission success:", "success": "%PERCENT%", "fail": "fail" }
 	},
 	"guide": {
 		"title": "Guide",

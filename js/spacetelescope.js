@@ -2447,15 +2447,16 @@ if(typeof $==="undefined") $ = {};
 		$('#launchtimeline').before('<div id="launchvideo" class="padded">'+this.phrases.launch.countdown["10"]+'...'+this.phrases.launch.countdown["9"]+'...'+this.phrases.launch.countdown["8"]+'...'+this.phrases.launch.countdown["7"]+'...'+this.phrases.launch.countdown["6"]+'...'+this.phrases.launch.countdown["5"]+'...'+this.phrases.launch.countdown["4"]+'...'+this.phrases.launch.countdown["3"]+'...'+this.phrases.launch.countdown["2"]+'...'+this.phrases.launch.countdown["1"]+'...'+this.phrases.launch.countdown["0"]+'...'+this.phrases.launch.countdown["liftoff"]+'<br />'+video+'</div>')
 
 		ok = this.roll(prob.site*prob.vehicle);
-		$('#launchtimeline').append('<li>'+this.buildRow(this.phrases.launch.launch,(ok ? status.success : status.fail),'launch_launch')+'</li>');
+		$('#launchtimeline').append('<li>'+this.buildRow(this.phrases.launch.launch.label,(ok ? this.phrases.launch.launch.success : this.phrases.launch.launch.fail),'launch_launch')+'</li>');
 		if(ok){
 			ok = this.roll(prob.orbit);
-			$('#launchtimeline').append('<li>'+this.buildRow(this.phrases.launch.orbit,(ok ? status.success : status.fail),'launch_orbit')+'</li>');
+			$('#launchtimeline').append('<li>'+this.buildRow(this.phrases.launch.orbit.label,(ok ? this.phrases.launch.orbit.success : this.phrases.launch.orbit.fail),'launch_orbit')+'</li>');
 			if(ok){
 				ok = this.roll(prob.mirror);
-				$('#launchtimeline').append('<li>'+this.buildRow(this.phrases.launch.deploy,(ok ? status.success : status.fail),'launch_mirror')+'</li>');
+				$('#launchtimeline').append('<li>'+this.buildRow(this.phrases.launch.deploy.label,(ok ? this.phrases.launch.deploy.success : this.phrases.launch.deploy.fail),'launch_mirror')+'</li>');
 				if(ok){
 	
+					okcool = true;
 					// Has the user requested cooling?
 					if(this.choices.hascooling){
 						// Do we have temperature-based cooling (normal mode)
@@ -2464,7 +2465,7 @@ if(typeof $==="undefined") $ = {};
 							if(t.temperature) temp = this.copyValue(t.temperature);
 							if(!t.risk) t.risk = 1;
 							okcool = this.roll(t.risk);
-							$('#launchtimeline').append('<li>'+this.buildRow(this.phrases.launch.cooling.label,(okcool ? status.success : status.fail),'launch_temperature')+'</li>');
+							$('#launchtimeline').append('<li>'+this.buildRow(this.phrases.launch.cooling.label.label,(okcool ? this.phrases.launch.cooling.label.success : this.phrases.launch.cooling.label.fail),'launch_temperature')+'</li>');
 						}
 						
 						// Do we have passive cooling
@@ -2475,7 +2476,7 @@ if(typeof $==="undefined") $ = {};
 								okcool = this.roll(this.data.cooling.passive[p].risk);
 								okpassive = okcool;
 								if(okcool) temp.value *= this.data.cooling.passive[p].multiplier.temperature;
-								$('#launchtimeline').append('<li class="indent">'+this.buildRow(this.phrases.launch.cooling.passive,(okcool ? status.success : status.fail),'launch_passive')+'</li>');
+								$('#launchtimeline').append('<li class="indent">'+this.buildRow(this.phrases.launch.cooling.passive.label,(okcool ? this.phrases.launch.cooling.passive.success : this.phrases.launch.cooling.passive.fail),'launch_passive')+'</li>');
 	
 								// Do we have active cooling (requires passive cooling)?
 								if(this.data.cooling.active && okpassive){
@@ -2483,7 +2484,7 @@ if(typeof $==="undefined") $ = {};
 									if(p=="yes"){
 										okcool = this.roll(this.data.cooling.active[p].risk);
 										if(okcool) temp.value *= this.data.cooling.active[p].multiplier.temperature;
-										$('#launchtimeline').append('<li class="indent">'+this.buildRow(this.phrases.launch.cooling.active,(okcool ? status.success : status.fail),'launch_active')+'</li>');
+										$('#launchtimeline').append('<li class="indent">'+this.buildRow(this.phrases.launch.cooling.active.label,(okcool ? this.phrases.launch.cooling.active.success : this.phrases.launch.cooling.active.fail),'launch_active')+'</li>');
 									}
 								}
 								// Do we have cryogenic cooling (requires passive cooling)?
@@ -2492,23 +2493,23 @@ if(typeof $==="undefined") $ = {};
 									if(p && p!="none"){
 										okcool = this.roll(this.data.cooling.cryogenic[p].risk);
 										if(okcool) temp.value *= this.data.cooling.cryogenic[p].multiplier.temperature;
-										$('#launchtimeline').append('<li class="indent">'+this.buildRow(this.phrases.launch.cooling.cryogenic,(okcool ? status.success : status.fail),'launch_cryogenic')+'</li>');
+										$('#launchtimeline').append('<li class="indent">'+this.buildRow(this.phrases.launch.cooling.cryogenic.label,(okcool ? this.phrases.launch.cooling.cryogenic.success : this.phrases.launch.cooling.cryogenic.fail),'launch_cryogenic')+'</li>');
 									}
 								}
 							}
 						}
 					}
-					$('#launchtimeline').append('<li class="indent">'+this.buildRow(this.phrases.launch.cooling.achieved,temp)+'</li>');
+					$('#launchtimeline').append('<li class="indent">'+this.buildRow(this.phrases.launch.cooling.achieved.label,(okcool ? this.phrases.launch.cooling.achieved.success : this.phrases.launch.cooling.achieved.fail).replace(/\%TEMPERATURE%/,this.formatValue(temp)))+'</li>');	// Had "temp" as second argument
 
 					if(this.choices.instruments){
-						$('#launchtimeline').append('<li>'+this.buildRow(this.phrases.launch.instruments,'')+'</li>');
+						$('#launchtimeline').append('<li>'+this.buildRow(this.phrases.launch.instruments.label,'')+'</li>');
 						for(var i = 0; i < this.choices.instruments.length; i++){
 							var therm = this.convertValue(this.data.wavelengths[this.choices.instruments[i].wavelength].temperature,temp.units);
 							ok = (therm.value >= temp.value) ? true : false;
 							this.choices.instruments[i].ok = ok;
-							$('#launchtimeline').append('<li class="indent">'+this.buildRow(this.choices.instruments[i].name+' ('+this.phrases.wavelengths[this.choices.instruments[i].wavelength].label+' '+this.phrases.designer.instruments.options.instrument[this.choices.instruments[i].type].label+')',(ok ? status.success : status.fail),'launch_instrument')+'</li>');
+							$('#launchtimeline').append('<li class="indent">'+this.buildRow(this.choices.instruments[i].name+' ('+this.phrases.wavelengths[this.choices.instruments[i].wavelength].label+' '+this.phrases.designer.instruments.options.instrument[this.choices.instruments[i].type].label+')',(ok ? this.phrases.launch.instruments.success : this.phrases.launch.instruments.fail),'launch_instrument')+'</li>');
 						}
-						$('#launchtimeline').append('<li>'+this.buildRow(this.phrases.launch.science,'')+'</li>');
+						$('#launchtimeline').append('<li>'+this.buildRow(this.phrases.launch.science.label,'')+'</li>');
 						for(var i = 0; i < this.choices.instruments.length; i++){
 							if(this.choices.instruments[i].ok){
 								var t = this.copyValue(this.data.instrument.options[this.choices.instruments[i].type]);
@@ -2519,7 +2520,8 @@ if(typeof $==="undefined") $ = {};
 								var pc = 100;
 								if(!ok) pc = Math.random()*100;
 								percent += pc;
-								$('#launchtimeline').append('<li class="indent">'+this.buildRow(this.choices.instruments[i].name+' ('+this.phrases.wavelengths[this.choices.instruments[i].wavelength].label+' '+this.phrases.designer.instruments.options.instrument[this.choices.instruments[i].type].label+')',this.makeValue(pc,'%'),'launch_science')+'</li>');
+								tmp = (ok ? this.phrases.launch.science.success : this.phrases.launch.science.fail).replace(/%PERCENT%/,this.formatValue(this.makeValue(pc,'%')));
+								$('#launchtimeline').append('<li class="indent">'+this.buildRow(this.choices.instruments[i].name+' ('+this.phrases.wavelengths[this.choices.instruments[i].wavelength].label+' '+this.phrases.designer.instruments.options.instrument[this.choices.instruments[i].type].label+')',tmp,'launch_science')+'</li>');
 							}
 						}
 						if(this.choices.instruments.length > 0) percent /= this.choices.instruments.length;
@@ -2527,7 +2529,8 @@ if(typeof $==="undefined") $ = {};
 				}
 			}
 		}
-		$('#launchtimeline').append('<li>'+this.buildRow(this.phrases.launch.overall,this.makeValue(percent,'%'),'finalresult')+'</li>');
+		tmp = (ok ? this.phrases.launch.overall.success : this.phrases.launch.overall.fail).replace(/\%PERCENT%/,this.formatValue(this.makeValue(percent,'%')));
+		$('#launchtimeline').append('<li>'+this.buildRow(this.phrases.launch.overall.label,tmp,'finalresult')+'</li>');
 
 		$('#launch').append('<div class="printable bigpadded"><a href="#" class="button fancybtn">'+this.phrases.designer.proposal.reprint+'</a></div>');
 		
