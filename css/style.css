@@ -520,6 +520,11 @@ table th a { color: #66aada; }
 .tablewrapper { max-width: 100%; overflow: hidden; overflow-x: auto; margin-bottom: 1em; }
 .tablewrapper table { margin-bottom: 0; }
 
+.moreinfo { text-align: right; font-size: 0.9em; }
+.moreinfo a { padding: 0 1em; position: relative; text-decoration: none; font-weight: normal; }
+.moreinfo a:before, .moreinfo a:after { border-right: 2px solid; content: ''; display: block; height: 0.6em; margin-top: -0.5em; position: absolute; -moz-transform: rotate(135deg); -o-transform: rotate(135deg); -webkit-transform: rotate(135deg); transform: rotate(135deg); right: 0px; top: 50%; width: 0; }
+.moreinfo a:after { margin-top: -0.2em; -moz-transform: rotate(45deg); -o-transform: rotate(45deg); -webkit-transform: rotate(45deg); transform: rotate(45deg); }
+
 
 #guide .guidetop { display: block; }
 #guide .guidetop p { margin-bottom: 0px; }
