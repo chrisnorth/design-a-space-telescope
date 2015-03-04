@@ -2,7 +2,7 @@
 	"scenarios": [
 		{
 			"name": "Star Birth and Evolution",
-			"description": "A private organization has funded your group to research into the birth and evolution of stars in the distant and nearby Universe, with full analysis of the spectra of the event. The budget of your mission is <span class=\"cost\">%COST%</span>. You will need the appropriate instruments on board your satellite in order to observe such objects.",
+			"description": "A private organization has funded your group to research into the birth and evolution of stars in the distant and nearby Universe. The budget of your mission is <span class=\"cost\">%COST%</span>. You will need the appropriate instruments on board your satellite in order to observe such objects.",
 			"funder": "Private Organization",
 			"image": {
 				"banner": "images/mission_stellar.jpg",
@@ -27,7 +27,7 @@
 			}]
 		},{
 			"name": "Multi-wavelength Sky Mapper",
-			"description": "A government research grant has come through to take images of the sky in ultraviolet, visible and near‐IR wavelengths from a satellite in space, in order to map stars, galaxies and other yet to be discovered phenomena. The budget of your mission is <span class=\"cost\">%COST%</span>.",
+			"description": "A government research grant has come through to take images of the sky in ultraviolet and optical wavelengths from a satellite in space, in order to map stars, galaxies and other yet-to-be-discovered phenomena. The budget of your mission is <span class=\"cost\">%COST%</span>.",
 			"funder": "Government",
 			"image": {
 				"banner": "images/mission_multiwavelength.jpg",
@@ -47,7 +47,7 @@
 					"label": "An optical camera",
 					"error": "You don't have an optical camera"
 				}],
-				"label": "Wavelength coverage from UV to Near IR",
+				"label": "Wavelength coverage from UV to Optical",
 				"error": "You are not able to observe the required wavelengths"
 			},{
 				"mirror": { "value": 0.5, "units": "m", "dimension": "length" },
@@ -56,17 +56,36 @@
 			}]
 		},{
 			"name": "Interstellar Dust",
-			"description": "A university has approached your group to design a mission for a satellite telescope in order to analyse the spectra of interstellar dust in nearby galaxies. The budget of your mission is <span class=\"cost\">%COST%</span>. You will need the appropriate instruments on board the telescope in order to carry out the mission.",
+			"description": "A university has approached your group to design a mission for a satellite telescope in order to analyse interstellar dust in nearby galaxies. The budget of your mission is <span class=\"cost\">%COST%</span>. You will need the appropriate instruments on board the telescope in order to carry out the mission.",
 			"funder": "University",
 			"budget": { "value": 9000, "units": "GBP", "dimension": "currency" },
 			"requires": [{
+				"instruments": [{
+					"type": "camera",
+					"wavelength": "farir",
+					"label": "A Far-IR camera",
+					"error": "You don't have a Far-IR camera"
+				},{
+					"type": "camera",
+					"wavelength": "submm",
+					"label": "A sub-mm camera",
+					"error": "You don't have a sub-mm camera"
+				},{
+					"type": "camera",
+					"wavelength": "midir",
+					"label": "A mid-IR camera",
+					"error": "You don't have a mid-IR camera"
+				}],
+				"label": "Wavelength coverage to observe dust",
+				"error": "You are not able to observe the required wavelengths"
+			},{
 				"mirror": { "value": 0.5, "units": "m", "dimension": "length" },
 				"label": "You need a mirror.",
 				"error": "You have not selected a suitable mirror."
 			}]
 		},{
 			"name": "Planet Formation",
-			"description": "A private rocket company, <em>SpaceX</em>, has approached your group to launch a telescope into space in order to study the formation of planets. The resolution must be at least four times better than previous equivalent missions, and you must use their rocket. The budget for your mission is <span class=\"cost\">%COST%</span>.",
+			"description": "A private rocket company, <em>SpaceX</em>, has approached your group to launch a telescope into space in order to study the formation of planets. The resolution must be around four times better than previous equivalent missions, and you must use their rocket. The budget for your mission is <span class=\"cost\">%COST%</span>.",
 			"funder": "SpaceX",
 			"image": {
 				"banner": "images/mission_planet.jpg",
@@ -75,12 +94,19 @@
 			},
 			"budget": { "value": 4000, "units": "GBP", "dimension": "currency" },
 			"requires": [{
+				"instruments": [{
+					"type": "camera",
+					"wavelength": "midir",
+					"label": "A Mid-IR camera",
+					"error": "You don't have a Mid-IR camera"
+				}]
+			},{
 				"vehicle": "FLC9",
 				"label": "You must use a SpaceX rocket.",
 				"error": "You have not chosen a SpaceX rocket."
 			},{
 				"mirror": { "value": 2, "units": "m", "dimension": "length" },
-				"label": "A resolution at least four times better than previous equivalent missions.",
+				"label": "A resolution around four times better than previous equivalent missions.",
 				"error": "You have not selected a suitable mirror to acheive the required resolution."
  			}]
 		},{
