@@ -241,7 +241,78 @@ if(typeof $==="undefined") $ = {};
 		$(document).on('scroll',{me:this},function(e){ e.data.me.scrollMenus(); });
 
 		$('.scriptonly').removeClass('scriptonly');
+
+		// Disable keyboard shortcuts when in input fields and textareas
+		$(document).on('focus','input,textarea',{me:this},function(e){ e.data.me.keyboard = false; }).on('blur','input,textarea',{me:this},function(e){ e.data.me.keyboard = true; });
+
+		// Build scenarios
+		$(document).on('click','#scenarios .button',{me:this},function(e){ e.data.me.chooseScenario($(this).attr('data')); });
+
+		// Close messages when clicking on a link in the message list
+		$(document).on('click','#messages a',{me:this},function(e){
+			$('#messages').hide();
+		});
 		
+		// Remove instruments
+		$(document).on('click','.remove_instrument',{me:this},function(e){
+			e.preventDefault();
+			e.data.me.removeInstrument($(this).attr('data'));
+		});
+
+		// Build cooling options
+		$(document).on('change','#designer_cooling .options input,#designer_cooling .options select',{me:this},function(e){
+			if(e.data.me.getValue('input[name=hascooling]:checked')=="yes"){
+			    $('#designer_cooling li.hascooling').show();
+			}
+			else $('#designer_cooling li.hascooling').hide();
+			e.data.me.parseChoices().showDetails('cooling');
+		});
+
+		$(document).on('click','#designer_vehicle .options .button',{me:this},function(e){
+			e.preventDefault();
+			$('#designer_vehicle .info>li.'+$(this).attr('data')).find('input').trigger('click');
+		});
+		$(document).on('change','#designer_vehicle .options .selector input',{me:this},function(e){
+			$('#designer_vehicle .info>li').removeClass('selected');
+			$('#designer_vehicle .info>li.'+$(this).attr('data')).addClass('selected').find('input').trigger('click');
+			e.data.me.parseChoices();
+		});
+		$(document).on('click','#designer_vehicle .options .info>li',{me:this},function(e){
+			if(!$(this).hasClass('withinfo')){
+				$('.withinfo').removeClass('withinfo');
+				$(this).addClass('withinfo');
+				$('#designer_vehicle .details').html($(this).find('.vehicle_details').html()).addClass('padded');
+			}
+		});
+		// Build site options
+		$(document).on('click','#designer_site .launchsite',{me:this},function(e){
+			e.preventDefault();
+			$('#designer_site #site').val($(this).attr('data'));
+			$('#designer_site #site').trigger('change');
+		});
+		// Don't submit the forms otherwise we leave the page!
+		$(document).on('submit','form',{me:this},function(e){ e.preventDefault(); });
+		// Build proposal document holder
+		$(document).on('change','.doc input,.doc textarea',{me:this},function(e){ e.data.me.updateProposal(); });
+		$(document).on('click','.printable a.button',{me:this},function(e){ e.preventDefault(); e.data.me.printProposal(); });
+		$(document).on('click','#launchnav a.button',{me:this},function(e){ e.preventDefault(); e.data.me.launch(); });
+		$(document).on('click','.toggler',{me:this},function(e){
+			//e.preventDefault();
+			var input = $(this).find('input:checked');
+			
+			if(input.attr('value')=="yes") $(this).addClass('checked');
+			else $(this).removeClass('checked');
+
+			if(input.attr('id').indexOf('mode')==0){
+				var nmode = (input.attr('value')=="yes" ? "advanced" : "normal");
+				if(e.data.me.settings.mode != nmode){
+					e.data.me.settings.mode = nmode;
+					e.data.me.q.mode = nmode;
+					e.data.me.built = false;
+					e.data.me.startup();
+				}
+			}
+		});
 		$(window).resize({me:this},function(e){ e.data.me.resize(); });
 
 		return this;
@@ -315,12 +386,9 @@ if(typeof $==="undefined") $ = {};
 		if(this.built) return this;
 		this.built = true;
 
-		// Disable keyboard shortcuts when in input fields and textareas
-		$(document).on('focus','input,textarea',{me:this},function(e){ e.data.me.keyboard = false; }).on('blur','input,textarea',{me:this},function(e){ e.data.me.keyboard = true; });
 
 		// Build scenarios
 		$('#scenarios').html('<h2></h2><p class="about"></p><ul id="scenariolist"></ul>');
-		$(document).on('click','#scenarios .button',{me:this},function(e){ e.data.me.chooseScenario($(this).attr('data')); });
 
 		// Update messages dropdown menu
 		$('#messages .warnings').html('<div class="bigpadded"><h3 class="warning"><img src="images/cleardot.gif" class="icon warning" /> <span class="title"></span> <span class="warning value">0</span></h3><ul class="summary"></ul>');
@@ -339,16 +407,9 @@ if(typeof $==="undefined") $ = {};
 		for(var i = 0; i < this.sections.length; i++) html += '<li><a href="#designer_'+this.sections[i]+'" class="toggle'+this.sections[i]+'"></a></li>';
 		$('#menubar').html('<ul>'+html+'</ul>');
 		$('.barmenu').append('<div class="baritem togglelaunch"><a href="#launch" class="">Launch</a></div>');
-		
-
-		// Close messages when clicking on a link in the message list
-		$(document).on('click','#messages a',{me:this},function(e){
-			$('#messages').hide();
-		});
 
 		// Build the objectives section
 		$('#designer_objectives .intro').after('<div class="summary"></div>');
-
 
 		// Build the satellite section
 		$('#designer_satellite .options').html('<div class="bigpadded"><form><ul><li class="option mirror_diameter"><label for="mirror_size"></label><select id="mirror_size" name="mirror_size"></select></li><li class="option mirror_deployable"><label for="mirror_deployable"></label>'+this.buildToggle("toggledeployable",{ "value": "no", "id": "mirror_deployable_no", "label": "", "checked": true },{ "value": "yes", "id": "mirror_deployable_yes", "label": "" })+'</li><li class="option mirror_uv"><label for="mirror_uv"></label>'+this.buildToggle("toggleuv",{ "value": "no", "id": "mirror_uv_no", "checked": true },{ "value": "yes", "id": "mirror_uv_yes" })+'</li></ul></form><div class="details"></div></div>');
@@ -369,11 +430,6 @@ if(typeof $==="undefined") $ = {};
 			e.preventDefault();
 			e.data.me.addInstrument();
 		});
-		$(document).on('click','.remove_instrument',{me:this},function(e){
-			e.preventDefault();
-			e.data.me.removeInstrument($(this).attr('data'));
-		});
-
 
 		// Build cooling options
 		$('#designer_cooling .options').html('<div class="bigpadded"><form><ul><li><label for="hascooling"></label>'+this.buildToggle("hascooling",{ "value": "no", "id": "cooling_no", "checked": true },{ "value": "yes", "id": "cooling_yes" })+'</li></ul></form><div class="details"></div></div>');
@@ -381,13 +437,6 @@ if(typeof $==="undefined") $ = {};
 		if(this.data.cooling.passive) $('#designer_cooling .options form ul').append('<li class="hascooling"><label for="cooling_passive"></label>'+this.buildToggle("cooling_passive",{ "value": "no", "id": "cooling_passive_no"},{ "value": "yes", "id": "cooling_passive_yes","checked": true})+'</li>');
 		if(this.data.cooling.active) $('#designer_cooling .options form ul').append('<li class="hascooling"><label for="cooling_active"></label>'+this.buildToggle("cooling_active",{ "value": "no", "id": "cooling_active_no", "checked": true },{ "value": "yes", "id": "cooling_active_yes" })+'</li>');
 		if(this.data.cooling.cryogenic) $('#designer_cooling .options form ul').append('<li class="hascooling"><label for="cooling_cryogenic"></label><select id="cooling_cryogenic" name="cooling_cryogenic"></select></li>');
-		$(document).on('change','#designer_cooling .options input,#designer_cooling .options select',{me:this},function(e){
-			if(e.data.me.getValue('input[name=hascooling]:checked')=="yes"){
-			    $('#designer_cooling li.hascooling').show();
-			}
-			else $('#designer_cooling li.hascooling').hide();
-			e.data.me.parseChoices().showDetails('cooling');
-		});
 
 		// Update the launch vehicle section
 		html = '<div class="bigpadded">';
@@ -407,31 +456,10 @@ if(typeof $==="undefined") $ = {};
 		// .details will be used to display the details for the selected vehicle
 		html += '</ul></form><div class="details"></div></div>';
 		$('#designer_vehicle .options').html(html);
-		$(document).on('click','#designer_vehicle .options .button',{me:this},function(e){
-			e.preventDefault();
-			$('#designer_vehicle .info>li.'+$(this).attr('data')).find('input').trigger('click');
-		});
-		$(document).on('change','#designer_vehicle .options .selector input',{me:this},function(e){
-			$('#designer_vehicle .info>li').removeClass('selected');
-			$('#designer_vehicle .info>li.'+$(this).attr('data')).addClass('selected').find('input').trigger('click');
-			e.data.me.parseChoices();
-		});
-		$(document).on('click','#designer_vehicle .options .info>li',{me:this},function(e){
-			if(!$(this).hasClass('withinfo')){
-				$('.withinfo').removeClass('withinfo');
-				$(this).addClass('withinfo');
-				$('#designer_vehicle .details').html($(this).find('.vehicle_details').html()).addClass('padded');
-			}
-		});
 
 
 		// Build site options
 		$('#designer_site .options').html('<div class="worldmap"><img src="images/worldmap.jpg" /></div><div class="bigpadded"><form><ul><li><label for="site"></label><select id="site" name="site"></select></li></ul></form><div class="details"></div></div>');
-		$(document).on('click','#designer_site .launchsite',{me:this},function(e){
-			e.preventDefault();
-			$('#designer_site #site').val($(this).attr('data'));
-			$('#designer_site #site').trigger('change');
-		});
 		$('#designer_site #site').on('change',{me:this},function(e){
 			var site = e.data.me.getValue('#site');
 			$('.launchsite').removeClass('selected');
@@ -448,39 +476,14 @@ if(typeof $==="undefined") $ = {};
 		});
 		$('#mission_duration').on('change',{me:this},function(e){ e.data.me.parseChoices(); });
 
-		// Don't submit the forms otherwise we leave the page!
-		$(document).on('submit','form',{me:this},function(e){ e.preventDefault(); });
 		// Add event to form submit for instruments
 		$('#designer_instruments form').on('submit',{me:this},function(e){ e.preventDefault(); $(this).find('a.add_instrument').trigger('click'); });
 
 		// Build proposal document holder
 		$('#designer_proposal .options').html('<div class="padded"><div class="doc"></div></div>');
-		$(document).on('change','.doc input,.doc textarea',{me:this},function(e){ e.data.me.updateProposal(); });
-
-
 
 		$('#sidebar').html('<div class="sidebar_inner"><div class="satellite panel"></div><div class="vehicle padded panel"></div><div class="site worldmap panel"></div><div class="orbit panel"></div></div>');
 		$('#sidebar .panel').hide();
-
-		$(document).on('click','.printable a.button',{me:this},function(e){ e.preventDefault(); e.data.me.printProposal(); });
-		$(document).on('click','#launchnav a.button',{me:this},function(e){ e.preventDefault(); e.data.me.launch(); });
-
-		$(document).on('click','.toggler',{me:this},function(e){
-			//e.preventDefault();
-			var input = $(this).find('input:checked');
-			
-			if(input.attr('value')=="yes") $(this).addClass('checked');
-			else $(this).removeClass('checked');
-
-			if(input.attr('id').indexOf('mode')==0){
-				var nmode = (input.attr('value')=="yes" ? "advanced" : "normal");
-				if(e.data.me.settings.mode != nmode){
-					e.data.me.settings.mode = nmode;
-					e.data.me.q.mode = nmode;
-					e.data.me.startup();
-				}
-			}
-		});
 
 		this.buildTable();
 
