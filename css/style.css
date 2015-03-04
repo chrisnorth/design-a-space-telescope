@@ -254,6 +254,9 @@ a.togglemass:hover { padding-bottom: 0.3em; border-bottom: 0.2em solid #e0caff; 
 a.togglescience:hover { padding-bottom: 0.3em; border-bottom: 0.2em solid #69dfff; }
 */
 
+.hidden {
+	display: none!important;
+}
 .scriptonly {
 	display: none;
 }
@@ -333,6 +336,7 @@ a.togglescience:hover { padding-bottom: 0.3em; border-bottom: 0.2em solid #69dff
 }
 .designer_inner { background-color: rgba(0,0,0,0.7); -webkit-border-radius: 0.5em; -moz-border-radius: 0.5em; border-radius: 0.5em; }
 #designer .designer_title { display:none; }
+#designer form { min-height: 1.5em; }
 #designer form li:last-child { margin-bottom: 0px; }
 #designer .intro.bigpadded, #designer .summary.bigpadded { padding-bottom: 0px; }
 #designer .details { margin-top: 1em; }
@@ -353,7 +357,7 @@ a.togglescience:hover { padding-bottom: 0.3em; border-bottom: 0.2em solid #69dff
 #designer_instruments .instrument_list { padding-top: 0em; }
 #designer_instruments table { width: 100%; }
 #designer_instruments table td img.icon { width: 1.5em; height: 1.2em; }
-#designer_instruments a.add_instrument { display: inline-block; padding: 0.2em; float: right; }
+#designer_instruments a.add_instrument { display: inline-block; padding: 0.2em; padding-right: 0.4em; float: right; }
 #designer_instruments a.add_instrument img { display: block; }
 #designer_instruments a.add_instrument { background-color: #e6e6e6; }
 #designer_cooling li.hascooling { display: none; }

@@ -338,11 +338,12 @@ if(typeof $==="undefined") $ = {};
 
 
 		// Build the instruments section
-		$('#designer_instruments .options').html('<div class="bigpadded"><form><ul><li><label for="instruments"></label><select id="wavelengths" name="wavelengths"></select><select id="instruments" name="instruments"></select> <input type="text" id="instrument_name" name="instrument_name" /><a href="#" class="add_instrument"><img src="images/cleardot.gif" class="icon add" /></a></li></ul></form><div class="details"></div></div><div class="instrument_list bigpadded"></div>');
+		$('#designer_instruments .options').html('<div class="bigpadded"><form><ul><li><label for="instruments"></label><select id="wavelengths" name="wavelengths"></select><select id="instruments" name="instruments"></select> <input type="text" id="instrument_name" name="instrument_name" /></li></ul></form><div class="details"></div><a href="#" class="add_instrument hidden"><img src="images/cleardot.gif" class="icon add" />'+this.phrases.designer.instruments.options.add+'</a></div><div class="instrument_list bigpadded"></div>');
 		$('#designer_instruments select').on('change',{me:this},function(e){
 			var i = e.data.me.getValue('#instruments');
 			var w = e.data.me.getValue('#wavelengths');
 			e.data.me.parseChoices().showDetails('instruments',{ 'wavelength': w, 'type': i});
+			$('.add_instrument.hidden').removeClass('hidden');
 		});
 		$('#designer_instruments .add_instrument').on('click',{me:this},function(e){
 			e.preventDefault();
