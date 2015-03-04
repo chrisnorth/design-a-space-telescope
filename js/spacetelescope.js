@@ -2457,7 +2457,7 @@ if(typeof $==="undefined") $ = {};
 			var devtime = this.formatValue(this.table.time_dev_total.list.time_dev_total.value);
 	
 			// Build launch progress
-			$('#launch').html('<h2>'+this.phrases.launch.title+'</h2><p>'+this.phrases.launch.intro.replace(/%DEVTIME%/,devtime).replace(/%VEHICLE%/,vehicle).replace(/%SITE%/,site).replace(/%ORBIT%/,orbit).replace(/%LAUNCHDATE%/,this.launchdate)+'</p><div id="countdown" class="padded">Countdown</div><ul id="launchtimeline"></ul><div id="launchnav"></div>');
+			$('#launch').html('<h2>'+this.phrases.launch.title+'</h2><p>'+this.phrases.launch.intro.replace(/%DEVTIME%/,devtime).replace(/%VEHICLE%/,vehicle).replace(/%SITE%/,site).replace(/%ORBIT%/,orbit).replace(/%LAUNCHDATE%/,this.launchdate)+'</p><div id="countdown" class="padded">Countdown</div><ul id="launchtimeline"></ul><div id="launchnav" class="toppadded"></div>');
 	
 			if(this.launchstep==0) this.countdown(10);
 		}
