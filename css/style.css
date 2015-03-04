@@ -286,6 +286,7 @@ a.togglescience:hover { padding-bottom: 0.3em; border-bottom: 0.2em solid #69dff
 #scenarios li h3 { font-size: 1.1em; }
 
 .padded { padding: 1em; }
+.toppadded { padding-top: 1em; }
 .bigpadded { padding: 2em; }
 .hugepadded { padding: 4em; }
 #menubar li { text-align: right; }
@@ -710,6 +711,7 @@ input.button { padding: 6px 8px; /* Bug fix for Firefox over-riding the line-hei
 	#summaryext.dropdown.fullwidth>ul>li { width: 100%; }
 	#summaryext.dropdown.fullwidth>ul>li { clear: both; float: none; }
 	.padded { padding: 0.5em; }
+	.toppadded { padding-top: 0.5em; }
 	.bigpadded { padding: 1em; }
 	.hugepadded { padding: 2em; }
 	#guide figure.four figure { width: 48%; width: -webkit-calc(50% - 0.5em); width: calc(50% - 0.5em); }

@@ -185,23 +185,17 @@ if(typeof $==="undefined") $ = {};
 		this.setVar("temperature","string");
 		this.setVar("time","string");
 		this.setVar("mode","string");
+		this.addEvents();
+		this.startup();
+		return this;
+	}
 
-		this.loadConfig(this.update);
-		this.loadLanguage(this.lang,this.update);
+	SpaceTelescope.prototype.addEvents = function(){
 
 		// Deal with back/forwards navigation. Use popstate or onhashchange (IE) if pushstate doesn't seem to exist
 		var _obj = this;
 		window[(this.pushstate) ? 'onpopstate' : 'onhashchange'] = function(e){ _obj.navigate(e); };
 
-		// Build language list
-		var list = "";
-		var n = 0;
-		for(l in this.langs){
-			list += '<li class="baritem"><a href="#" title="'+this.langs[l]+'" data="'+l+'">'+this.langs[l]+' ['+l+']</a></li>'
-			n++;
-		}
-		$('#language ul').html(list);
-		if(n < 2) $('.togglelang').closest('.baritem').hide();
 		// Redefine list variable to be the jQuery DOM object
 		list = $('#language ul li a');
 		// Add click events to each language in the list
@@ -218,6 +212,7 @@ if(typeof $==="undefined") $ = {};
 		$('.baritem .save').parent().on('click',{me:this},function(e){ e.data.me.save().toggleMenus(); });
 		$('.baritem .help').parent().on('click',{me:this},function(e){ e.data.me.toggleGuide(e).toggleMenus(); });
 		$('.baritem .options').parent().on('click',{me:this},function(e){ e.data.me.showView('options',e).toggleMenus(); });
+
 		if(fullScreenApi.supportsFullScreen){
 			// Add the fullscreen toggle to the menu
 			$('#menu ul').append('<li class="baritem" data="fullscreen"><a href="#" class="fullscreenbtn"><img src="images/cleardot.gif" class="icon fullscreen" alt="" /> <span></span></li>');
@@ -251,6 +246,29 @@ if(typeof $==="undefined") $ = {};
 		return this;
 	}
 
+	SpaceTelescope.prototype.startup = function(){
+
+		this.data = null;
+		this.phrases = null;
+		this.choices = {};
+		this.buildTable();
+		
+		this.loadConfig(this.update);
+		this.loadLanguage(this.lang,this.update);
+
+		// Build language list
+		var list = "";
+		var n = 0;
+		for(l in this.langs){
+			list += '<li class="baritem"><a href="#" title="'+this.langs[l]+'" data="'+l+'">'+this.langs[l]+' ['+l+']</a></li>'
+			n++;
+		}
+		$('#language ul').html(list);
+		if(n < 2) $('.togglelang').closest('.baritem').hide();
+
+		return this;
+	}
+
 	// Build a toggle button
 	// Inputs
 	//   a = { "value": "a", "id": "uniqueid_a", "checked": true }
@@ -260,7 +278,7 @@ if(typeof $==="undefined") $ = {};
 		if(typeof id!=="string" && typeof a != "object" && typeof b != "object") return "";
 
 		if(a.checked) html = '<div class="toggleinput toggler"><label class="toggle-label1" for="'+a.id+'"></label>';
-                else html = '<div class="toggleinput toggler checked"><label class="toggle-label1" for="'+a.id+'"></label>';
+		else html = '<div class="toggleinput toggler checked"><label class="toggle-label1" for="'+a.id+'"></label>';
 		html += '<div class="toggle-bg">';
 		html += '	<input id="'+a.id+'" type="radio" '+(a.checked ? 'checked="checked" ' : '')+'name="'+id+'" value="'+a.value+'">';
 		html += '	<input id="'+b.id+'" type="radio" '+(b.checked ? 'checked="checked" ' : '')+'name="'+id+'" value="'+b.value+'">';
@@ -364,10 +382,8 @@ if(typeof $==="undefined") $ = {};
 		$(document).on('change','#designer_cooling .options input,#designer_cooling .options select',{me:this},function(e){
 			if(e.data.me.getValue('input[name=hascooling]:checked')=="yes"){
 			    $('#designer_cooling li.hascooling').show();
-			    //if(e.data.me.getValue('input[name=cooling_passive]:checked')=="no") console.log('no cooling')
 			}
 			else $('#designer_cooling li.hascooling').hide();
-       		        //console.log(e.data.me.getValue('input[name=cooling_passive]:checked'));
 			e.data.me.parseChoices().showDetails('cooling');
 		});
 
@@ -449,11 +465,26 @@ if(typeof $==="undefined") $ = {};
 		$(document).on('click','.toggler',{me:this},function(e){
 			//e.preventDefault();
 			var input = $(this).find('input:checked');
+			
 			if(input.attr('value')=="yes") $(this).addClass('checked');
 			else $(this).removeClass('checked');
+
+			if(input.attr('id').indexOf('mode')==0){
+				var nmode = (input.attr('value')=="yes" ? "advanced" : "normal");
+				if(e.data.me.settings.mode != nmode){
+					e.data.me.settings.mode = nmode;
+					e.data.me.q.mode = nmode;
+					e.data.me.startup();
+				}
+			}
 		});
 
+		this.buildTable();
 
+		return this;
+	}
+
+	SpaceTelescope.prototype.buildTable = function(){
 		// Barebones summary table
 		this.table = {
 			'success': {
@@ -532,10 +563,8 @@ if(typeof $==="undefined") $ = {};
 				}
 			}
 		}
-
-		return this;
 	}
-	
+
 	// Called when the display area is resized
 	SpaceTelescope.prototype.resize = function(){
 
@@ -1431,6 +1460,7 @@ if(typeof $==="undefined") $ = {};
 		el = $('#'+dropdown);
 		if(el.length == 0) return this;
 		o = el.find('option');
+		this.log('updateDropdown')
 
 		if(dropdown=="mirror_size"){
 			if(this.phrases.designer.satellite.options.diameter.placeholder) options = '<option value="">'+this.phrases.designer.satellite.options.diameter.placeholder+'</option>';
@@ -1441,10 +1471,10 @@ if(typeof $==="undefined") $ = {};
 			if(this.phrases.designer.instruments.options.instrument["none"] && this.settings.mode=="advanced") options = '<option value="">'+this.phrases.designer.instruments.options.instrument["none"].label+'</option>';
 			for(var m in this.data.instrument.options){
 				v = this.phrases.designer.instruments.options.instrument[m].label;
-				if(o.length == 0) options += '<option value="'+m+'">'+v+'</option>';
-				else el.find('option[value="'+m+'"]').text(v);
+				options += '<option value="'+m+'">'+v+'</option>';
 			}
-			if(o.length == 0) el.html(options);
+			el.html(options);
+
 			// Now select default option in basic mode
 			if(this.settings.mode!="advanced") $('#instruments option:first-child').attr('selected','selected');
 			this.displayInstruments();
@@ -1452,51 +1482,45 @@ if(typeof $==="undefined") $ = {};
 			if(this.phrases.wavelengths["none"].label) options = '<option value="">'+this.phrases.wavelengths["none"].label+'</option>';
 			for(var m in this.data.wavelengths){
 				v = this.phrases.wavelengths[m].label;
-				if(o.length == 0) options += '<option value="'+m+'">'+v+'</option>';
-				else el.find('option[value="'+m+'"]').text(v);
+				options += '<option value="'+m+'">'+v+'</option>';
 			}
-			if(o.length == 0) el.html(options);
+			el.html(options);
 		}else if(dropdown=="mission_duration"){
 			if(this.phrases.designer.orbit.duration["none"]) options = '<option value="">'+this.phrases.designer.orbit.duration["none"]+'</option>';
 			for(var m in this.data.mission){
 				v = this.formatValue(this.data.mission[m].life);
-				if(o.length == 0) options += '<option value="'+m+'">'+v+'</option>';
-				else el.find('option[value="'+m+'"]').text(v);
+				options += '<option value="'+m+'">'+v+'</option>';
 			}
-			if(o.length == 0) el.html(options);
+			el.html(options);
 		}else if(dropdown=="mission_orbit"){
 			if(this.phrases.designer.orbit.orbit["none"]) options = '<option value="">'+this.phrases.designer.orbit.orbit["none"]+'</option>';
 			for(var m in this.data.orbit){
-				if(o.length == 0) options += '<option value="'+m+'">'+this.phrases.designer.orbit.options[m].label+'</option>';
-				else el.find('option[value="'+m+'"]').text(this.phrases.designer.orbit.options[m].label);
+				options += '<option value="'+m+'">'+this.phrases.designer.orbit.options[m].label+'</option>';
 			}
-			if(o.length == 0) el.html(options);
+			el.html(options);
 		}else if(dropdown=="cooling_temperature"){
 			if(this.data.cooling.temperature){
 				for(var m in this.data.cooling.temperature){
 					v = htmlDecode(this.formatValue(this.data.cooling.temperature[m].temperature));
-					if(o.length == 0) options += '<option value="'+m+'">'+v+'</option>';
-					else el.find('option[value="'+m+'"]').text(v);
+					options += '<option value="'+m+'">'+v+'</option>';
 				}
-				if(o.length == 0) el.html(options);
+				el.html(options);
 			}
 		}else if(dropdown=="site"){
 			if(this.phrases.designer.site.hint) options = '<option value="">'+this.phrases.designer.site.hint+'</option>';
 			for(var m in this.data.site){
 				if(this.phrases.designer.site.options[m]){
 					v = this.phrases.designer.site.options[m].label
-					if(o.length == 0) options += '<option value="'+m+'">'+v+'</option>';
-					else el.find('option[value="'+m+'"]').text(v);
+					options += '<option value="'+m+'">'+v+'</option>';
 				}
 			}
-			if(o.length == 0) el.html(options);
+			el.html(options);
 		}else if(dropdown=="cooling_cryogenic"){
 			for(var m in this.data.cooling.cryogenic){
 				v = (this.phrases.designer.cooling.options.cryogenic.options[m] ? this.phrases.designer.cooling.options.cryogenic.options[m] : this.formatValue(this.data.cooling.cryogenic[m].life));
-				if(o.length == 0) options += '<option value="'+m+'">'+v+'</option>';
-				else el.find('option[value="'+m+'"]').text(v);
+				options += '<option value="'+m+'">'+v+'</option>';
 			}
-			if(o.length == 0) el.html(options);
+			el.html(options);
 		}
 		return this;
 	}
@@ -1681,7 +1705,9 @@ if(typeof $==="undefined") $ = {};
 		// Update introduction text
 		$('#introduction').html(d.intro.about);
 		$('#introduction').append('<div class="centre"><a href="#scenarios" class="button fancybtn">'+d.intro.button+'</a></div>');
-
+		$('#introduction').append('<div class="centre toppadded">'+this.buildToggle("togglemode",{ "value": "no", "id": "mode_basic", "checked": (this.settings.mode!="advanced" ? true : false) },{ "value": "yes", "id": "mode_advanced", "checked": (this.settings.mode=="advanced" ? true : false) })+'</div>');
+		this.updateToggle({ "id": "mode_basic", "label": this.phrases.modes.basic }, { "id": "mode_advanced", "label": this.phrases.modes.advanced }, this.phrases.modes.label);
+		
 		var li = '';
 		for(var i = 0; i < this.scenarios.length; i++) li += '<li><div class="padded"><h3>'+this.scenarios[i].name+'</h3><p>'+this.formatScenario(this.scenarios[i])+'</p><a href="#designer_objectives" class="button" title="'+this.scenarios[i].name+'" data="'+i+'">Choose this mission<!--LANGUAGE--></a></div></li>';
 		$('#scenariolist').html(li);
@@ -2882,8 +2908,8 @@ if(typeof $==="undefined") $ = {};
 
 		this.choices.mirror = (m && this.data.mirror[m]) ? m : "";
 		d = $('input[name=toggledeployable]:checked').val();
-
 		this.choices.deployablemirror = (d && d=="yes") ? true : false;
+
 		u = $('input[name=toggleuv]:checked').val();
 		this.choices.uvmirror = (u && u=="yes") ? true : false;
 
@@ -3575,7 +3601,7 @@ if(typeof $==="undefined") $ = {};
 	// Blob() requires browser >= Chrome 20, Firefox 13, IE 10, Opera 12.10 or Safari 6
 	SpaceTelescope.prototype.log = function(){
 		var args = Array.prototype.slice.call(arguments, 0);
-		//if(console && typeof console.log==="function") console.log('LOG',args);
+		if(console && typeof console.log==="function") console.log('LOG',args);
 		return this;
 	}
 
