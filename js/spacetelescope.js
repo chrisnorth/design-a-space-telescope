@@ -224,6 +224,7 @@ if(typeof $==="undefined") $ = {};
 		// Add main menu events
 		$('.baritem .save').parent().on('click',{me:this},function(e){ e.data.me.save().toggleMenus(); });
 		$('.baritem .help').parent().on('click',{me:this},function(e){ e.data.me.toggleGuide(e).toggleMenus(); });
+		$('.baritem .restart').parent().on('click',{me:this},function(e){ e.data.me.toggleMenus(); });
 		$('.baritem .options').parent().on('click',{me:this},function(e){ e.data.me.showView('options',e).toggleMenus(); });
 
 		if(fullScreenApi.supportsFullScreen){
@@ -320,7 +321,6 @@ if(typeof $==="undefined") $ = {};
 				if(e.data.me.settings.mode != nmode){
 					e.data.me.settings.mode = nmode;
 					e.data.me.q.mode = nmode;
-					//e.data.me.built = false;
 					e.data.me.startup();
 				}
 			}
@@ -3287,6 +3287,7 @@ if(typeof $==="undefined") $ = {};
 			$('#intro').show();
 			this.updateBodyClass('showintro');
 			this.stage = "intro";
+			this.startup();
 		}else if(view=="scenarios"){
 			$('#summaryext').hide();
 			$('#scenarios').show();
