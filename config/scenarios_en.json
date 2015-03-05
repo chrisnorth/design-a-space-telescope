@@ -98,8 +98,10 @@
 					"type": "camera",
 					"wavelength": "midir",
 					"label": "A Mid-IR camera",
-					"error": "You don't have a Mid-IR camera"
-				}]
+				    "error": "You don't have a Mid-IR camera"
+				}],
+			        "label": "Wavelength coverage to observe planet formation",
+				"error": "You are not able to observe the required wavelengths"
 			},{
 				"vehicle": "FLC9",
 				"label": "You must use a SpaceX rocket.",
