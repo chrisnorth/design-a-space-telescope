@@ -1748,7 +1748,7 @@ if(typeof $==="undefined") $ = {};
 		this.updateToggle({ "id": "mode_basic", "label": this.phrases.modes.basic }, { "id": "mode_advanced", "label": this.phrases.modes.advanced }, this.phrases.modes.label);
 		
 		var li = '';
-		for(var i = 0; i < this.scenarios.length; i++) li += '<li><div class="padded"><h3>'+this.scenarios[i].name+'</h3><p>'+this.formatScenario(this.scenarios[i])+'</p><a href="#designer_objectives" class="button" title="'+this.scenarios[i].name+'" data="'+i+'">Choose this mission<!--LANGUAGE--></a></div></li>';
+		for(var i = 0; i < this.scenarios.length; i++) li += '<li><div class="padded">'+(this.scenarios[i].image && this.scenarios[i].image.banner ? '<img src="'+this.scenarios[i].image.banner+'" style="width: 100%;" />':'')+'<h3>'+this.scenarios[i].name+'</h3><p>'+this.formatScenario(this.scenarios[i])+'</p><a href="#designer_objectives" class="button" title="'+this.scenarios[i].name+'" data="'+i+'">Choose this mission<!--LANGUAGE--></a></div></li>';
 		$('#scenariolist').html(li);
 		$('#scenarios h2').html(d.scenarios.title);
 		$('#scenarios p.about').html(d.scenarios.intro);
