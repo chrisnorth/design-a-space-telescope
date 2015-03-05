@@ -1,0 +1,112 @@
+{
+	"currency": {
+		"GBP": { "conv": 1 },
+		"USD": { "conv": 1.67 },
+		"EUR": { "conv": 1.21 },
+		"JPY": { "conv": 170.7 },
+		"CAD": { "conv": 1.8461 },
+		"AUD": { "conv": 1.8642 },
+		"CHF": { "conv": 1.473 },
+		"SEK": { "conv": 10.7654 },
+		"SEK": { "conv": 10.7654 },
+		"INR": { "conv": 100.1 },
+		"CNY": { "conv": 10.327 },
+		"RUB": { "conv": 59.136 },
+		"DBL": { "conv": 0.07485 }
+	},
+	"deployablemirror": {
+		"risk": 0.9,
+		"multiplier": { "mass": 2, "cost": 4, "time": 2, "diameter": 0.5, "bus": { "mass": 2, "cost": 2, "time": 2, "diameter": 0.5 } }
+	},
+	"uvmirror": {
+		"multiplier": { "cost": 2 }
+	},
+	"mirror": {
+		"0.5m": { "diameter": { "value": 0.5, "units": "m", "dimension": "length" }, "cost": { "value": 12, "units": "GBP", "dimension": "currency" }, "mass": { "value": 3, "units": "kg", "dimension": "mass" }, "devtime": { "value": 0.5, "units": "years", "dimension": "time" }, "bus": { "diameter": { "value": 0.8, "units": "m", "dimension": "length" }, "cost": { "value": 100, "units": "GBP", "dimension": "currency" }, "mass": { "value": 50, "units": "kg", "dimension": "mass" }, "devtime": { "value": 5, "units": "years", "dimension": "time" }, "instrumentslots": 2 }, "passive": { "cost": { "value": 5, "units": "GBP", "dimension": "currency" }, "mass": { "value": 20, "units": "kg", "dimension": "mass" }, "devtime": { "value": 0.5, "units": "years", "dimension": "time" } }, "risk" : 0.99 },
+		"1.0m": { "diameter": { "value": 1, "units": "m", "dimension": "length" }, "cost": { "value": 25, "units": "GBP", "dimension": "currency" }, "mass": { "value": 10, "units": "kg", "dimension": "mass" }, "devtime": { "value": 1, "units": "years", "dimension": "time" }, "bus": { "diameter": { "value": 1.4, "units": "m", "dimension": "length" }, "cost": { "value": 200, "units": "GBP", "dimension": "currency" }, "mass": { "value": 100, "units": "kg", "dimension": "mass" }, "devtime": { "value": 5, "units": "years", "dimension": "time" }, "instrumentslots": 4 }, "passive": { "cost": { "value": 10, "units": "GBP", "dimension": "currency" }, "mass": { "value": 40, "units": "kg", "dimension": "mass" }, "devtime": { "value": 0.5, "units": "years", "dimension": "time" } }, "risk" : 0.98 },
+		"2.0m": { "diameter": { "value": 2, "units": "m", "dimension": "length" }, "cost": { "value": 50, "units": "GBP", "dimension": "currency" }, "mass": { "value": 30, "units": "kg", "dimension": "mass" }, "devtime": { "value": 1, "units": "years", "dimension": "time" }, "bus": { "diameter": { "value": 2.4, "units": "m", "dimension": "length" }, "cost": { "value": 500, "units": "GBP", "dimension": "currency" }, "mass": { "value": 200, "units": "kg", "dimension": "mass" }, "devtime": { "value": 5, "units": "years", "dimension": "time" }, "instrumentslots": 4 }, "passive": { "cost": { "value": 20, "units": "GBP", "dimension": "currency" }, "mass": { "value": 100, "units": "kg", "dimension": "mass" }, "devtime": { "value": 1, "units": "years", "dimension": "time" } }, "risk" : 0.97 },
+		"4.0m": { "diameter": { "value": 4, "units": "m", "dimension": "length" }, "cost": { "value": 200, "units": "GBP", "dimension": "currency" }, "mass": { "value": 100, "units": "kg", "dimension": "mass" }, "devtime": { "value": 2, "units": "years", "dimension": "time" }, "bus": { "diameter": { "value": 4.4, "units": "m", "dimension": "length" }, "cost": { "value": 1000, "units": "GBP", "dimension": "currency" }, "mass": { "value": 300, "units": "kg", "dimension": "mass" }, "devtime": { "value": 5, "units": "years", "dimension": "time" }, "instrumentslots": 6 }, "passive": { "cost": { "value": 40, "units": "GBP", "dimension": "currency" }, "mass": { "value": 200, "units": "kg", "dimension": "mass" }, "devtime": { "value": 1, "units": "years", "dimension": "time" } }, "risk" : 0.95 },
+		"8.0m": { "diameter": { "value": 8, "units": "m", "dimension": "length" }, "cost": { "value": 1000, "units": "GBP", "dimension": "currency" }, "mass": { "value": 300, "units": "kg", "dimension": "mass" }, "devtime": { "value": 2, "units": "years", "dimension": "time" }, "bus": { "diameter": { "value": 10, "units": "m", "dimension": "length" }, "cost": { "value": 2000, "units": "GBP", "dimension": "currency" }, "mass": { "value": 400, "units": "kg", "dimension": "mass" }, "devtime": { "value": 5, "units": "years", "dimension": "time" }, "instrumentslots": 8 }, "passive": { "cost": { "value": 80, "units": "GBP", "dimension": "currency" }, "mass": { "value": 400, "units": "kg", "dimension": "mass" }, "devtime": { "value": 2, "units": "years", "dimension": "time" } }, "risk" : 0.9 }
+	},
+	"orbit": {
+		"LEO": { "altitude": { "value": 1000, "units": "km", "dimension": "length" }, "obsfrac": 0.5, "period": { "value": 90, "units": "minutes", "dimension": "time" }, "multiplier": { "passive": { "time": 1 }, "cryo": { "time": 0.7 }, "launchcost": 1.2 }, "fuellife": { "value": 10, "units": "years", "dimension": "time" }, "temperature": { "value": 400, "units": "K", "dimension": "temperature" }, "LEO": 1, "groundcost": { "value": 20, "units": "GBP", "dimension": "currency" }, "img": "images/orbit_leo.png" },
+		"GEO": { "altitude": { "value": 40000, "units": "km", "dimension": "length" }, "obsfrac": 0.5, "period": { "value": 24, "units": "hours", "dimension": "time" }, "multiplier": { "passive": { "time": 0 }, "cryo": { "time": 0 }, "launchcost": 1 }, "fuellife": { "value": 20, "units": "years", "dimension": "time" }, "temperature": { "value": 300, "units": "K", "dimension": "temperature" }, "LEO": 0, "groundcost": { "value": 40, "units": "GBP", "dimension": "currency" }, "img": "images/orbit_geo.png" },
+		"ES2": { "altitude": { "value": 1500000, "units": "km", "dimension": "length" }, "obsfrac": 1, "period": { "value": 365, "units": "days", "dimension": "time" }, "multiplier": { "passive": { "time": 1 }, "cryo": { "time": 1 }, "launchcost": 1 }, "fuellife": { "value": 10, "units": "years", "dimension": "time" }, "temperature": { "value": 300, "units": "K", "dimension": "temperature" }, "LEO": 0, "groundcost": { "value": 50, "units": "GBP", "dimension": "currency" }, "img": "images/orbit_es2.png" }
+	},
+	"vehicle": {
+		"DLT4": { "mass": { "LEO": { "value": 23000, "units": "kg", "dimension": "mass" }, "GTO": { "value": 13000, "units": "kg", "dimension": "mass" } }, "diameter": { "value": 5, "units": "m", "dimension": "length" }, "cost": { "value": 200, "units": "GBP", "dimension": "currency" }, "operator": "nasa", "sites": ["KSC"], "video": { "url": "https://www.youtube.com/watch?v=oxMuxZWtiOU", "start": 128, "end": 181 }, "height": { "value": 72, "units": "m", "dimension": "length" }, "img": "images/rocket_deltaiv.png" }, 
+		"ARI5": { "mass": { "LEO": { "value": 20000, "units": "kg", "dimension": "mass" }, "GTO": { "value": 9000, "units": "kg", "dimension": "mass" } }, "diameter": { "value": 5.5, "units": "m", "dimension": "length" }, "cost": { "value": 100, "units": "GBP", "dimension": "currency" }, "operator": "esa", "sites": ["CSG"], "video": { "url": "https://www.youtube.com/watch?v=59599vSL7tM", "start": 33, "end": 80 }, "height": { "value": 53, "units": "m", "dimension": "length" }, "img": "images/rocket_ariane5.png" },
+		"H2B4": { "mass": { "LEO": { "value": 15000, "units": "kg", "dimension": "mass" }, "GTO": { "value": 8000, "units": "kg", "dimension": "mass" } }, "diameter": { "value": 5, "units": "m", "dimension": "length" }, "operator": "jaxa", "cost": { "value": 80, "units": "GBP", "dimension": "currency" }, "sites": ["TNG"], "video": { "url": "https://www.youtube.com/watch?v=SUQdB5U_pJ0", "start": 27, "end": 60 }, "height": { "value": 56.6, "units": "m", "dimension": "length" }, "img": "images/rocket_hiib.png" },
+		"FLC9": { "mass": { "LEO": { "value": 10000, "units": "kg", "dimension": "mass" }, "GTO": { "value": 7000, "units": "kg", "dimension": "mass" } }, "diameter": { "value": 3.5, "units": "m", "dimension": "length" }, "operator": "spacex", "cost": { "value": 40, "units": "GBP", "dimension": "currency" }, "sites": ["KSC"], "video": { "url": "https://www.youtube.com/watch?v=uFefasS6bhc", "start": 43, "end": 80 }, "height": { "value": 68.4, "units": "m", "dimension": "length" }, "img": "images/rocket_falcon9.png" },
+		"SOYZ": { "mass": { "LEO": { "value": 8000, "units": "kg", "dimension": "mass" }, "GTO": { "value": 4000, "units": "kg", "dimension": "mass" } }, "diameter": { "value": 3, "units": "m", "dimension": "length" }, "cost": { "value": 60, "units": "GBP", "dimension": "currency" }, "operator": "roscosmos", "sites": ["BKR","CSG"], "video": [{ "url": "http://www.youtube.com/watch?v=xI98Tz1WmBM", "start": 15, "end": 60 },{ "url": "https://www.youtube.com/watch?v=1YFLyHDj4jM", "start": 15, "end": 47 }], "height": { "value": 45.6, "units": "m", "dimension": "length" }, "img": "images/rocket_soyuz.png" },
+		"VEGA": { "mass": { "LEO": { "value": 2300, "units": "kg", "dimension": "mass" }, "GTO": { "value": 0, "units": "kg", "dimension": "mass" } }, "diameter": { "value": 3, "units": "m", "dimension": "length" }, "operator": "esa", "cost": { "value": 23, "units": "GBP", "dimension": "currency" }, "sites": ["CSG"], "video": { "url": "https://www.youtube.com/watch?v=y6fhQhWw2a4", "start": 8, "end": 28 }, "height": { "value": 30, "units": "m", "dimension": "length" }, "img": "images/rocket_vega.png" },
+		"PEGA": { "mass": { "LEO": { "value": 400, "units": "kg", "dimension": "mass" }, "GTO": { "value": 0, "units": "kg", "dimension": "mass" } }, "diameter": { "value": 1.2, "units": "m", "dimension": "length" }, "operator": "orbital", "cost": { "value": 15, "units": "GBP", "dimension": "currency" }, "sites": ["AIR"], "video": { "url": "https://www.youtube.com/watch?v=m7_yyvGxwrE", "start": 2, "end": 48 }, "height": { "value": 16.9, "units": "m", "dimension": "length" }, "img": "images/rocket_pegasus.png" }
+	},
+	"site": {
+		"AIR": { "orbits": { "LEO" : true, "GEO": false, "ES2": false }, "operator": "orbital" },
+		"KSC": { "orbits": { "LEO" : true, "GEO": true, "ES2": true }, "operator": "nasa", "latitude": 28.524058, "longitude": -80.65085 },
+		"CSG": { "orbits": { "LEO" : true, "GEO": true, "ES2": true }, "operator": "esa", "latitude": 5.23722, "longitude": -52.76056 },
+		"BKR": { "orbits": { "LEO" : true, "GEO": true, "ES2": true }, "operator": "roscosmos", "latitude": 45.965, "longitude": 63.305 },
+		"TNG": { "orbits": { "LEO" : true, "GEO": true, "ES2": true }, "operator": "jaxa", "latitude": 30.40000, "longitude": 130.97000 }
+	},
+	"operator": {
+		"nasa": { "img": "images/logo_nasa.png" },
+		"roscosmos": { "img": "images/logo_roscosmos.png" },
+		"esa": { "img": "images/logo_esa.png" },
+		"jaxa": { "img": "images/logo_jaxa.png" },
+		"orbital": { "img": "images/logo_orbital.png" },
+		"cnsa": { "img": "images/logo_cnsa.png" },
+		"isro": { "img": "images/logo_isro.png" },
+		"spacex": { "img": "images/logo_spacex.png" }
+	},
+	"wavelengths": {
+		"submm": { "temperature": { "value": 0.4, "units": "K", "dimension": "temperature" }, "cost": { "value": 50, "units": "GBP", "dimension": "currency" }, "mass": { "value": 100, "units": "kg", "dimension": "mass" } },
+		"farir": { "temperature": { "value": 0.4, "units": "K", "dimension": "temperature" }, "cost": { "value": 50, "units": "GBP", "dimension": "currency" }, "mass": { "value": 100, "units": "kg", "dimension": "mass" } },
+		"midir": { "temperature": { "value": 4, "units": "K", "dimension": "temperature" }, "cost": { "value": 50, "units": "GBP", "dimension": "currency" }, "mass": { "value": 100, "units": "kg", "dimension": "mass" } },
+		"nearir": { "temperature": { "value": 40, "units": "K", "dimension": "temperature" }, "cost": { "value": 50, "units": "GBP", "dimension": "currency" }, "mass": { "value": 100, "units": "kg", "dimension": "mass" } },
+		"optical": { "temperature": { "value": 300, "units": "K", "dimension": "temperature" }, "cost": { "value": 50, "units": "GBP", "dimension": "currency" }, "mass": { "value": 100, "units": "kg", "dimension": "mass" } },
+		"uv": { "temperature": { "value": 400, "units": "K", "dimension": "temperature" }, "cost": { "value": 50, "units": "GBP", "dimension": "currency" }, "mass": { "value": 100, "units": "kg", "dimension": "mass" } }
+	},
+	"instrument": {
+		"options": {
+			"camera": { "multiplier": { "cost": 1, "mass": 1 }, "devtime": { "value": 0.5, "units": "years", "dimension": "time" } }
+		},
+		"maxsize": [
+			{ "value": 2, "units": "m", "dimension": "length" },
+			{ "value": 2, "units": "m", "dimension": "length" },
+			{ "value": 2, "units": "m", "dimension": "length" },
+			{ "value": 2, "units": "m", "dimension": "length" },
+			{ "value": 3, "units": "m", "dimension": "length" },
+			{ "value": 3, "units": "m", "dimension": "length" },
+			{ "value": 4, "units": "m", "dimension": "length" },
+			{ "value": 4, "units": "m", "dimension": "length" }
+		]
+
+	},
+	"cooling": {
+		"temperature": {
+			"400K": { "temperature": { "value": 400, "units": "K", "dimension": "temperature" }, "cost": { "value": 0, "units": "GBP", "dimension": "currency" }, "mass": { "value": 0, "units": "kg", "dimension": "mass" }, "life": { "value": 99, "units": "years", "dimension": "time" } },
+			"300K": { "temperature": { "value": 300, "units": "K", "dimension": "temperature" }, "cost": { "value": 0.5, "units": "GBP", "dimension": "currency" }, "mass": { "value": 20, "units": "kg", "dimension": "mass" }, "life": { "value": 20, "units": "years", "dimension": "time" } },
+			"200K": { "temperature": { "value": 200, "units": "K", "dimension": "temperature" }, "cost": { "value": 1, "units": "GBP", "dimension": "currency" }, "mass": { "value": 40, "units": "kg", "dimension": "mass" }, "life": { "value": 19, "units": "years", "dimension": "time" } },
+			"100K": { "temperature": { "value": 100, "units": "K", "dimension": "temperature" }, "cost": { "value": 2.5, "units": "GBP", "dimension": "currency" }, "mass": { "value": 70, "units": "kg", "dimension": "mass" }, "life": { "value": 17, "units": "years", "dimension": "time" } },
+			"50K": { "temperature": { "value": 50, "units": "K", "dimension": "temperature" }, "cost": { "value": 12, "units": "GBP", "dimension": "currency" }, "mass": { "value": 150, "units": "kg", "dimension": "mass" }, "life": { "value": 14, "units": "years", "dimension": "time" } },
+			"18K": { "temperature": { "value": 18, "units": "K", "dimension": "temperature" }, "cost": { "value": 40, "units": "GBP", "dimension": "currency" }, "mass": { "value": 500, "units": "kg", "dimension": "mass" }, "life": { "value": 10, "units": "years", "dimension": "time" } },
+			"3K": { "temperature": { "value": 3, "units": "K", "dimension": "temperature" }, "cost": { "value": 70, "units": "GBP", "dimension": "currency" }, "mass": { "value": 800, "units": "kg", "dimension": "mass" }, "life": { "value": 5, "units": "years", "dimension": "time" } },
+			"0.3K": { "temperature": { "value": 0.3, "units": "K", "dimension": "temperature" }, "cost": { "value": 200, "units": "GBP", "dimension": "currency" }, "mass": { "value": 1200, "units": "kg", "dimension": "mass" }, "life": { "value": 3, "units": "years", "dimension": "time" } }
+		}
+	},
+	"mission": {
+		"1": { "life": { "value": 1, "units": "years", "dimension": "time" }, "risk": 0.99 },
+		"2": { "life": { "value": 2, "units": "years", "dimension": "time" }, "risk": 0.98 },
+		"3": { "life": { "value": 3, "units": "years", "dimension": "time" }, "risk": 0.97 },
+		"4": { "life": { "value": 4, "units": "years", "dimension": "time" }, "risk": 0.96 },
+		"5": { "life": { "value": 5, "units": "years", "dimension": "time" }, "risk": 0.95 },
+		"6": { "life": { "value": 6, "units": "years", "dimension": "time" }, "risk": 0.94 },
+		"7": { "life": { "value": 7, "units": "years", "dimension": "time" }, "risk": 0.93 },
+		"8": { "life": { "value": 8, "units": "years", "dimension": "time" }, "risk": 0.92 },
+		"9": { "life": { "value": 9, "units": "years", "dimension": "time" }, "risk": 0.91 },
+		"10": { "life": { "value": 10, "units": "years", "dimension": "time" }, "risk": 0.9 },
+		"15": { "life": { "value": 15, "units": "years", "dimension": "time" }, "risk": 0.85 },
+		"20": { "life": { "value": 20, "units": "years", "dimension": "time" }, "risk": 0.8 }
+	}
+}

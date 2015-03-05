@@ -1,0 +1,154 @@
+For other font, copyright, and license details for this font, see the "Notice:" and "Descriptions" fields in the fonts themselves (via any viewer capable of displaying those fields--and there are three variations of a font in this distribution), and also copyright.txt, fontlog.txt, and ubuntu-font-license-1.0.txt, all of which should be included with this distribution.
+
+The "Earthbound" font is heavily derived of the “Ubuntu” font, with a lot of inspiration from “Mr. Giacco.” The spacing is new, and very many of the glyphs are original (or “made from scratch.”) New glyphs were made by “expanding” curves drawn on a contour inspired somewhere between Ubuntu and Mr. Giacco. It is released under Ubuntu's free-font license (which means you may modify and redistribute it freely, under certain contidtions).
+
+In this release, there are three variants: Regular, Condensed Bold, and Condensed Bold Italic.
+
+To give good comparisons for pushing Ubuntu's vectors, all glyphs from "Mr. Giacco Regular" needed to be scaled and pushed around, as follows:
+
+Numbers and uppercase letters from Mr. Giacco Regular match the scale of Ubuntu regular glyphs when scaled proportionally from the origin at 106%.
+
+The following glyphs do NOT match when thus scaled, and need to be scaled by 113.5% (or, most of them nearly match, scaled thusly).
+quotedbl
+quotesingle
++
+,
+-
+.
+/
+:
+;
+<
+=
+>
+@
+[
+\
+]
+_
+|
+quoteleft
+quoteright
+quotedblleft
+quotedblright
+bullet
+endash
+emdash
+cent
+degree
+plusminus
+acute
+[lowercase American English letters set]
+
+These glyphs need a bit of shrinking after:
+e
+n
+
+needed yet more scaling up: degree
+
+Paragraph overscaled at even 106%; manually scaled down.
+
+These glyphs were scaled 113.5% a second time:
+,
+.
+;
+
+~ a fourth time:
+:
+single quote left
+single quote right
+quotedblleft
+quotedblright
+.
+degree
+
+These glyphs were heavily redeveloped:
+2
+s
+S
+G
+c
+cent
+
+These glyphs were remade "from scratch:"
+$
+&
+(
+)
+1
+2
+3
+5
+6
+8
+9
+?
+@
+C
+G (partly from scratch)
+O
+Q
+S
+a (partly)
+c (partly)
+k
+o
+s
+y
+section
+
+These glyphs (or parts of them) were extensively squished around to get good scaling reference (even reference to rework from scratch):
+#
+5
+?
+6
+9
+@
+- (scaled to same size)
+paragraph
+G
+K
+
+For these glyphs I just used Ubuntu, straight:
+*
+- (dash)
+emdash
+macron
+plusminus
+divide
+,
+
+What were some uneven contours doing in these glyphs?
+G
+n
+
+Expanded stroke dimension ranges:
+width 97, height 83
+width 93, height 74.8 (letters?)
+width 104, hieght 82 (numbers, etc.?)
+
+inner lowercase bottom node, outer vertex adjustment: +17 tangent -9 ~outer: +41 tangent -47
+Did not so adjust 'r.'
+Adjusted lower-right corner of 't.' vertices up 17.
+
+Kerning was achieved by pasting the glyphs onto Ubuntu in FontForge via "Paste:Special -> Outlines." Spacing and kerning tables were similarly preserved via "Paste:Special" from Ubuntu to Earthbound. The shapes of the variant forms were achived variously in the free program FontForge (the newest (at this writing) version, running on Ubuntu :) in a virtual machine (FontForge for the "Condensed" effect), and in FontLab for italics ("Actions->Slant".)
+
+Hinting was achieved via the free TTFautoHint program, with the settings which will be given in the following text of a Windows batch file. Conversion from the hinted .ttf file to .otf files was achieved with FontForge's command-line facility, via an Ubuntu batch (from Ubuntu in a virtual machine, not from Windows). (This can also achieve conversion between many formats, including FontForge's own .sfd format.
+
+====
+Text of autohintall.bat (place in same directory as ttfautohint.exe on Windows, and make sure the same is in your %PATH%, to autohint all the .ttfs in a directory simply by bringing up a command prompt and typing <autohintall> <ENTER>:
+====
+@echo off
+
+SETLOCAL ENABLEDELAYEDEXPANSION
+
+if '%1' equ '' set /p 1=If you don't intend to encode every file of that type in the directory which you're running this command from, press CTRL+C. If this is your intent, type anything else, then press ENTER.
+
+for /f "tokens=* delims= " %%F in ('DIR *.ttf /B ') do (
+ttfautohint -i -l 8 -r 50 -G 0 -x 0 -w "GD" -W -p -f "%%F" "%%~nF_TTFAutoHinted.ttf"
+)
+====
+
+====
+Text of ubuntu batch which mass-converts between many formats via FontForge. . . aw, fetch. Sorry, not documenting it yet. Look at the scripting tutorials at the FontForge web site . . .
+====

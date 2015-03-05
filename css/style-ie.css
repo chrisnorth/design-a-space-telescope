@@ -1,0 +1,27 @@
+.switch {
+	border: 1px solid #65727b;
+}
+
+#bar img.icon { background:url('../images/icons_small.png') no-repeat scroll transparent; }
+.add_instrument img.icon { background:url('../images/icons_small.png') no-repeat scroll transparent; }
+
+#bar img.menu { background-position: -3em 0; }
+#bar img.cost { background-position: -1.5em 0; }
+#bar img.mass { background-position: -1.5em -1.5em; }
+#bar img.time { background-position: -1.5em -3em; }
+#bar img.science { background-position: -1.5em -4.5em; }
+#bar img.success { background-position: -1.5em -6em; }
+#bar img.error { background-position: -1.5em -7.5em; }
+#bar img.warning { background-position: -1.5em -9em; }
+#bar img.globe { background-position: -3em -6em; }
+#bar img.add, .add_instrument img.add { background-position: -4.5em -6em; }
+#bar img.minus { background-position: -4.5em -7.5em; }
+#bar img.profile { background-position: -1.5em -10.5em; }
+#bar img.options { background-position: -3em -10.5em; }
+#bar img.save { background-position: -3em -1.5em; }
+#bar img.load { background-position: -3em -3em; }
+#bar img.back { background-position: -3em -4.5em; }
+#bar img.restart { background-position: -4.5em -1.5em; }
+#bar img.help { background-position: -4.5em -3em; }
+#bar img.fullscreen { background-position: -3em -7.5em; }
+#bar img.close { background-position: -4.5em -10.5em; }
