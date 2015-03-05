@@ -2401,6 +2401,7 @@ if(typeof $==="undefined") $ = {};
 					if(v.value < w.value) this.errors.push({ 'text': requires[r].error.replace(/%OBSERVINGTIME%/,this.formatValue(v)) });
 					else pc = 100;
 				}
+				if(!requires[r]["label"]) requires[r]["label"] = "UNKNOWN";
 				this.table.science_total.list['target'+r] = { 'label': (v ? requires[r].label.replace(/%VALUE%/,this.formatValue(w)) : requires[r].label), 'value': this.makeValue(pc,'%') };
 				av += pc;
 			}
