@@ -1748,7 +1748,7 @@ if(typeof $==="undefined") $ = {};
 		this.updateToggle({ "id": "mode_basic", "label": this.phrases.modes.basic }, { "id": "mode_advanced", "label": this.phrases.modes.advanced }, this.phrases.modes.label);
 		
 		var li = '';
-		for(var i = 0; i < this.scenarios.length; i++) li += '<li><div class="padded">'+(this.scenarios[i].image && this.scenarios[i].image.banner ? '<img src="'+this.scenarios[i].image.banner+'" style="width: 100%;" />':'')+'<h3>'+this.scenarios[i].name+'</h3><p>'+this.formatScenario(this.scenarios[i])+'</p><a href="#designer_objectives" class="button" title="'+this.scenarios[i].name+'" data="'+i+'">Choose this mission<!--LANGUAGE--></a></div></li>';
+		for(var i = 0; i < this.scenarios.length; i++) li += '<li><div class="padded">'+(this.scenarios[i].image && this.scenarios[i].image.banner ? '<img src="'+this.scenarios[i].image.banner+'"'+(this.scenarios[i].image.alt ? 'alt="'+this.scenarios[i].image.alt+'"' : '')+' style="width: 100%;" />':'')+'<h3>'+this.scenarios[i].name+'</h3><p>'+this.formatScenario(this.scenarios[i])+'</p><a href="#designer_objectives" class="button" title="'+this.scenarios[i].name+'" data="'+i+'">Choose this mission<!--LANGUAGE--></a></div></li>';
 		$('#scenariolist').html(li);
 		$('#scenarios h2').html(d.scenarios.title);
 		$('#scenarios p.about').html(d.scenarios.intro);
@@ -2568,7 +2568,7 @@ if(typeof $==="undefined") $ = {};
 					
 					// Do we have passive cooling
 					if(this.data.cooling.passive){
-						$('#launchtimeline').append('<li>'+this.buildRow(this.phrases.launch.cooling.label,'','launch_cooling')+'</li>');
+						$('#launchtimeline').append('<li>'+this.buildRow(this.phrases.launch.cooling.label.label,'','launch_cooling')+'</li>');
 						p = this.choices.cool.passive;
 						if(p=="yes"){
 							okcool = this.roll(this.data.cooling.passive[p].risk);
@@ -2863,7 +2863,6 @@ if(typeof $==="undefined") $ = {};
 			else return ''+addCommas((v.value).toFixed(p)).replace(/\.0+$/,'').replace(/(\.[1-9]+)0+$/,"$1")+''+unit;
 		
 		}else if(v.dimension=="currency"){
-
 			v = this.convertValue(v,(this.settings.currency) ? this.settings.currency : "GBP")
 			if(typeof p!=="number") p = 0;
 	
@@ -2885,7 +2884,7 @@ if(typeof $==="undefined") $ = {};
 				if(v.value < 100) p = 1;
 				if(v.value < 10) p = 2;
 			}
-			var val = (v.value).toFixed(p).replace(/\.0+$/,'').replace(/(\.[1-9]+)0+$/,"$1");
+			var val = (v.value).toFixed(p).replace(/\.0+$/,'').replace(/(\.[1-9]+)0+$/,"$1").replace(/^ /,"&thinsp;");
 			return sign+s+val+append;
 
 		}else if(v.dimension=="temperature"){
