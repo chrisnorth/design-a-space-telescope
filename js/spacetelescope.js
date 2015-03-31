@@ -1460,14 +1460,25 @@ if(typeof $==="undefined") $ = {};
 		this.log('updateProposal')
 		$('.printable').remove();
 
-		// Autocomplete fields
+		// First we will autocomplete fields
 		
+		// As we loop over instruments we find the wavelength coverage
+		var lambdamax = {};
+		var lambdamin = {};
+		var w;
 		// Complete instruments
 		if(this.choices.instruments && this.choices.instruments.length > 0){
 			var str_instruments = "";
 			for(var i = 0; i < this.choices.instruments.length; i++){
+				w = this.choices.instruments[i].wavelength;
 				v = this.getInstrument({'wavelength':this.choices.instruments[i].wavelength,'type':this.choices.instruments[i].type})
 				str_instruments += ''+this.choices.instruments[i].name+' - '+v.wavelength+' '+v.type+'\n';
+				if(this.data.wavelengths[w].min){
+					if(!lambdamin.value || this.data.wavelengths[w].min.value < lambdamin.value) lambdamin = this.copyValue(this.data.wavelengths[w].min);
+				}
+				if(this.data.wavelengths[w].max){
+					if(!lambdamax.value || this.data.wavelengths[w].max.value > lambdamax.value) lambdamax = this.copyValue(this.data.wavelengths[w].max);
+				}
 			}
 			$('#proposal_instruments').val(str_instruments)
 		}
@@ -1475,6 +1486,11 @@ if(typeof $==="undefined") $ = {};
 		// Complete mirror
 		if(this.choices.mirror){
 			$('#proposal_mirror').val(this.choices.mirror);
+			if(this.settings.mode!="advanced"){
+				var D = this.data.mirror[this.choices.mirror].diameter;
+				$('#proposal_reslow').val(htmlDecode(this.formatValue(this.makeValue(1.22*lambdamin.value/D.value,'degrees'))))
+				$('#proposal_reshigh').val(htmlDecode(this.formatValue(this.makeValue(1.22*lambdamax.value/D.value,'degrees'))))
+			}
 		}
 		
 		// Complete cooling section
@@ -1494,8 +1510,12 @@ if(typeof $==="undefined") $ = {};
 
 		// Complete orbit section
 		if(this.choices.orbit){
-			$('#proposal_orbit').val(this.phrases.designer.orbit.options[this.choices.orbit].label)
-			$('#proposal_distance').val(this.formatValue(this.data.orbit[this.choices.orbit].altitude))
+			$('#proposal_orbit').val(this.phrases.designer.orbit.options[this.choices.orbit].label);
+			$('#proposal_distance').val(this.formatValue(this.data.orbit[this.choices.orbit].altitude));
+			if(this.settings.mode!="advanced"){
+				$('#proposal_period').val(this.formatValue(this.data.orbit[this.choices.orbit].period));
+				$('#proposal_fuel').val(this.formatValue(this.data.orbit[this.choices.orbit].fuellife));
+			}
 		}
 		if(this.choices.mission){
 			$('#proposal_duration').val(this.formatValue(this.copyValue(this.data.mission[this.choices.mission].life)))
@@ -2890,6 +2910,18 @@ if(typeof $==="undefined") $ = {};
 					v.units = to;
 				}
 			}
+		}else if(v.dimension == "angle"){
+			if(to == "degrees" || to == "arcmin" || to == "arcsec"){
+				if(v.units != to){
+					// Step 1: convert to SI
+					if(v.units == "arcmin") v.value /= 60;
+					else if(v.units == "arcsec") v.value /= 3600;
+					// Step 2: convert to new unit
+					if(to == "arcmin") v.value *= 60;
+					else if(to == "arcsec") v.value *= 3600;
+					v.units = to;
+				}
+			}
 		}else if(v.dimension == "currency"){
 			if(this.data.currency[to]){
 				if(v.units != to){
@@ -3061,6 +3093,15 @@ if(typeof $==="undefined") $ = {};
 			if(typeof p!=="number") p = 1;
 			var unit = (this.phrases.ui.units[v.units]) ? this.phrases.ui.units[v.units].unit : "%";
 			return ''+addCommas(v.toFixed(p)).replace(/\.0+$/,'').replace(/(\.[1-9]+)0+$/,"$1")+unit;
+
+		}else if(v.dimension=="angle"){
+
+			if(v.units=="degrees" && v.value < 1) v = this.convertValue(v,"arcmin");
+			if(v.units=="arcmin" && v.value < 1) v = this.convertValue(v,"arcsec");
+			if(typeof p!=="number") p = (v.value >= 10) ? 0 : getPrecision(v.value);
+			var unit = (this.phrases.ui.units[v.units]) ? this.phrases.ui.units[v.units].unit : "";
+			if(typeof v.value==="string") v.value = parseInt(v.value,10);
+			return ''+addCommas((v.value).toFixed(p).replace(/\.0+$/,'').replace(/(\.[1-9])0+$/,"$1"))+''+unit;
 
 		}else return v.value;
 	}

@@ -60,12 +60,12 @@
 		"spacex": { "img": "images/logo_spacex.png" }
 	},
 	"wavelengths": {
-		"submm": { "temperature": { "value": 0.4, "units": "K", "dimension": "temperature" }, "cost": { "value": 50, "units": "GBP", "dimension": "currency" }, "mass": { "value": 100, "units": "kg", "dimension": "mass" } },
-		"farir": { "temperature": { "value": 0.4, "units": "K", "dimension": "temperature" }, "cost": { "value": 50, "units": "GBP", "dimension": "currency" }, "mass": { "value": 100, "units": "kg", "dimension": "mass" } },
-		"midir": { "temperature": { "value": 4, "units": "K", "dimension": "temperature" }, "cost": { "value": 50, "units": "GBP", "dimension": "currency" }, "mass": { "value": 100, "units": "kg", "dimension": "mass" } },
-		"nearir": { "temperature": { "value": 40, "units": "K", "dimension": "temperature" }, "cost": { "value": 50, "units": "GBP", "dimension": "currency" }, "mass": { "value": 100, "units": "kg", "dimension": "mass" } },
-		"optical": { "temperature": { "value": 300, "units": "K", "dimension": "temperature" }, "cost": { "value": 50, "units": "GBP", "dimension": "currency" }, "mass": { "value": 100, "units": "kg", "dimension": "mass" } },
-		"uv": { "temperature": { "value": 400, "units": "K", "dimension": "temperature" }, "cost": { "value": 50, "units": "GBP", "dimension": "currency" }, "mass": { "value": 100, "units": "kg", "dimension": "mass" } }
+		"submm": { "temperature": { "value": 0.4, "units": "K", "dimension": "temperature" }, "cost": { "value": 50, "units": "GBP", "dimension": "currency" }, "mass": { "value": 100, "units": "kg", "dimension": "mass" }, "min": { "value": 3e-4, "units": "m", "dimension": "length" }, "max": { "value": 1e-3, "units": "m", "dimension": "length" } },
+		"farir": { "temperature": { "value": 0.4, "units": "K", "dimension": "temperature" }, "cost": { "value": 50, "units": "GBP", "dimension": "currency" }, "mass": { "value": 100, "units": "kg", "dimension": "mass" }, "min": { "value": 3e-5, "units": "m", "dimension": "length" }, "max": { "value": 3e-4, "units": "m", "dimension": "length" } },
+		"midir": { "temperature": { "value": 4, "units": "K", "dimension": "temperature" }, "cost": { "value": 50, "units": "GBP", "dimension": "currency" }, "mass": { "value": 100, "units": "kg", "dimension": "mass" }, "min": { "value": 3e-6, "units": "m", "dimension": "length" }, "max": { "value": 3e-5, "units": "m", "dimension": "length" } },
+		"nearir": { "temperature": { "value": 40, "units": "K", "dimension": "temperature" }, "cost": { "value": 50, "units": "GBP", "dimension": "currency" }, "mass": { "value": 100, "units": "kg", "dimension": "mass" }, "min": { "value": 8e-7, "units": "m", "dimension": "length" }, "max": { "value": 3e-6, "units": "m", "dimension": "length" } },
+		"optical": { "temperature": { "value": 300, "units": "K", "dimension": "temperature" }, "cost": { "value": 50, "units": "GBP", "dimension": "currency" }, "mass": { "value": 100, "units": "kg", "dimension": "mass" }, "min": { "value": 4e-7, "units": "m", "dimension": "length" }, "max": { "value": 8e-7, "units": "m", "dimension": "length" } },
+		"uv": { "temperature": { "value": 400, "units": "K", "dimension": "temperature" }, "cost": { "value": 50, "units": "GBP", "dimension": "currency" }, "mass": { "value": 100, "units": "kg", "dimension": "mass" }, "min": { "value": 1e-7, "units": "m", "dimension": "length" }, "max": { "value": 4e-7, "units": "m", "dimension": "length" } }
 	},
 	"instrument": {
 		"options": {

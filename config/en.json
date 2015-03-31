@@ -39,7 +39,10 @@
 			"days": { "unit": " days", "label": "Days", "dimension": "time" },
 			"hours": { "unit": " hours", "label": "Hours", "dimension": "time" },
 			"minutes": { "unit": " minutes", "label": "Minutes", "dimension": "time" },
-			"%": { "unit": "%", "label": "Percent", "dimension": "percent" }
+			"%": { "unit": "%", "label": "Percent", "dimension": "percent" },
+			"degrees": { "unit": "&deg;", "label": "Degrees", "dimension": "angle" },
+			"arcmin": { "unit": "&prime;", "label": "Arcminutes", "dimension": "angle" },
+			"arcsec": { "unit": "&Prime;", "label": "Arcseconds", "dimension": "angle" }
 		},
 		"currency": {
 			"GBP": { "symbol": "&pound;", "label": "British Pounds" },
