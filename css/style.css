@@ -758,8 +758,6 @@ input.button { padding: 6px 8px; /* Bug fix for Firefox over-riding the line-hei
 	#menu { left: 0; width: 100%; border-left: 0px; }
 	#menu .baritem span { margin-left: 0.5em; }
 	.togglebtn { padding-left: 0.25em; }
-	#summaryext.dropdown.fullwidth>ul>li { width: 100%; }
-	#summaryext.dropdown.fullwidth>ul>li { clear: both; float: none; }
 	.padded { padding: 0.5em; }
 	.toppadded { padding-top: 0.5em; }
 	.bigpadded { padding: 1em; }
@@ -776,6 +774,8 @@ input.button { padding: 6px 8px; /* Bug fix for Firefox over-riding the line-hei
 	#application { background-image: url('../images/bg_small.jpg'); }
 	#bar { padding: 0; }
 	.dropdown .baritem a { padding: 0.5em 1em; height: 2.5em; }
+	#summaryext.dropdown.fullwidth>ul>li { width: 100%; }
+	#summaryext.dropdown.fullwidth>ul>li { clear: both; float: none; }
 	#summary .baritem img.icon, .baritem .togglewarning img.icon, .baritem .toggleerror img.icon { display: none; }
 	.dropdown { top: 2.5em; background-image: none; }
 	#page { padding-top: 0em; padding-bottom: 0px; margin-top: 2.5em; }
@@ -788,6 +788,7 @@ input.button { padding: 6px 8px; /* Bug fix for Firefox over-riding the line-hei
 	#guide ul.index li { margin-right: 0em; margin-left: 0px; width: 100%; }
 	#scenariolist li { margin-right: 0em; width: auto; }
 	#designer_site li select { float: none; }
+	.designer_inner.bigpadded { padding-left: 0px; padding-right: 0px; } 
 	#designer_instruments li input { width: 7em; }
 	.questions { clear: both; }
 
