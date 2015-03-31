@@ -1459,6 +1459,71 @@ if(typeof $==="undefined") $ = {};
 	SpaceTelescope.prototype.updateProposal = function(){
 		this.log('updateProposal')
 		$('.printable').remove();
+
+		// Autocomplete fields
+		
+		// Complete instruments
+		if(this.choices.instruments && this.choices.instruments.length > 0){
+			var str_instruments = "";
+			for(var i = 0; i < this.choices.instruments.length; i++){
+				v = this.getInstrument({'wavelength':this.choices.instruments[i].wavelength,'type':this.choices.instruments[i].type})
+				str_instruments += ''+this.choices.instruments[i].name+' - '+v.wavelength+' '+v.type+'\n';
+			}
+			$('#proposal_instruments').val(str_instruments)
+		}
+
+		// Complete mirror
+		if(this.choices.mirror){
+			$('#proposal_mirror').val(this.choices.mirror);
+		}
+		
+		// Complete cooling section
+		if(this.choices.temperature){
+			$('#proposal_reqtemp').val(this.formatValue(this.choices.instrument.temp));
+			$('#proposal_temp').val(this.formatValue(this.choices.temperature));
+		}
+
+		// Complete mass section
+		if(this.table.mass_total){
+			$('#proposal_mass').val(this.formatValue(this.table.mass_total.value));
+			$('#proposal_mass_satellite').val(this.formatValue(this.table.mass_total.list.mass_satellite.value));
+			$('#proposal_mass_mirror').val(this.formatValue(this.table.mass_total.list.mass_mirror.value));
+			$('#proposal_mass_cooling').val(this.formatValue(this.table.mass_total.list.mass_cooling_total.value));
+			$('#proposal_mass_instruments').val(this.formatValue(this.table.mass_total.list.mass_instruments.value));
+		}
+
+		// Complete orbit section
+		if(this.choices.orbit){
+			$('#proposal_orbit').val(this.phrases.designer.orbit.options[this.choices.orbit].label)
+			$('#proposal_distance').val(this.formatValue(this.data.orbit[this.choices.orbit].altitude))
+		}
+		if(this.choices.mission){
+			$('#proposal_duration').val(this.formatValue(this.copyValue(this.data.mission[this.choices.mission].life)))
+		}
+
+		// Complete launch vehicle section
+		if(this.choices.vehicle){
+			$('#proposal_vehicle').val(this.phrases.designer.vehicle.options[this.choices.vehicle].label);
+			$('#proposal_operator').val(this.phrases.operator[this.data.vehicle[this.choices.vehicle].operator].label);
+			$('#proposal_launchmass').val(this.formatValue((this.data.orbit[this.choices.orbit].LEO ? this.data.vehicle[this.choices.vehicle].mass.LEO : this.data.vehicle[this.choices.vehicle].mass.GTO)));
+			$('#proposal_launchsize').val(this.formatValue(this.data.vehicle[this.choices.vehicle].diameter));
+		}
+		if(this.choices.site){
+			$('#proposal_site').val(this.phrases.designer.site.options[this.choices.site].label);
+		}
+
+		if(this.table){
+			$('#proposal_cost').val(htmlDecode(this.formatValue(this.negativeValue(this.table.cost_available.list.cost_total.value))));
+			$('#proposal_cost_satellite').val(htmlDecode(this.formatValue(this.negativeValue(this.table.cost_available.list.cost_dev_total.list.cost_dev_satellite.value))));
+			$('#proposal_cost_mirror').val(htmlDecode(this.formatValue(this.negativeValue(this.table.cost_available.list.cost_dev_total.list.cost_dev_mirror.value))));
+			$('#proposal_cost_cooling').val(htmlDecode(this.formatValue(this.negativeValue(this.table.cost_available.list.cost_dev_total.list.cost_dev_cooling.value))));
+			$('#proposal_cost_instruments').val(htmlDecode(this.formatValue(this.negativeValue(this.table.cost_available.list.cost_dev_total.list.cost_dev_instruments.value))));
+			$('#proposal_cost_dev').val(htmlDecode(this.formatValue(this.negativeValue(this.table.cost_available.list.cost_dev_total.value))));
+			$('#proposal_cost_launch').val(htmlDecode(this.formatValue(this.negativeValue(this.table.cost_available.list.cost_operations_total.list.cost_operations_launch.value))));
+			$('#proposal_cost_ground').val(htmlDecode(this.formatValue(this.negativeValue(this.table.cost_available.list.cost_operations_total.list.cost_operations_ground.value))));
+			$('#proposal_cost_operations').val(htmlDecode(this.formatValue(this.negativeValue(this.table.cost_available.list.cost_operations_total.value))));
+		}
+
 		if(this.proposalCompleteness()!=0){
 			// Show print button
 			$('.doc').after('<div class="printable bigpadded"><a href="#" class="button fancybtn">'+this.phrases.designer.proposal.print+'</a></div>');
@@ -1487,7 +1552,7 @@ if(typeof $==="undefined") $ = {};
 		this.log('printProposal')
 
 		var html = $('.doc').eq(0).html();
-		html = html.replace(/<label[^\>]*>[^\<]*<\/label>/g,'').replace(/<input [^\>]*id=\"([^\"]*)\"[^\>]*>/g,function(match,p1){ var v = $('#'+p1).val(); return (v!='' ? '<span class="userinput">'+v+'</span>' : '<span class="emptyinput">BLANK</span>'); }).replace(/<textarea [^\>]*id=\"([^\"]*)\"[^\>]*>/g,function(match,p1){ var v = $('#'+p1).text(); return (v!='' ? '<span class="userinput">'+v+'</span>' : '<span class="emptyinput">BLANK</span>'); });
+		html = html.replace(/<label[^\>]*>[^\<]*<\/label>/g,'').replace(/<input [^\>]*id=\"([^\"]*)\"[^\>]*>/g,function(match,p1){ var v = $('#'+p1).val(); return (v!='' ? '<span class="userinput">'+v+'</span>' : '<span class="emptyinput">BLANK</span>'); }).replace(/<textarea [^\>]*id=\"([^\"]*)\"[^\>]*>/g,function(match,p1){ var v = $('#'+p1).val(); return (v!='' ? '<span class="userinput">'+v+'</span>' : '<span class="emptyinput">BLANK</span>'); });
 		var w = window.open('', '', 'width='+$(window).width()+',height='+$(window).height()+',resizeable,scrollbars');
 		w.document.write('<!DOCTYPE html><html><head><link type="text/css" href="css/fonts.css" media="all" rel="stylesheet"><link type="text/css" href="css/style.css" media="all" rel="stylesheet"><script>function onload(){ window.print(); }</script></head><body onload="onload()"><div id="main" class="bigpadded"><div class="doc">'+html+'</div></div></body></html>');
 		w.document.close(); // needed for chrome and safari
@@ -1750,7 +1815,7 @@ if(typeof $==="undefined") $ = {};
 			return this.replace("%"+key+"%",label+form,"g");
 		}
 		var str = d.designer.proposal.doc;
-		$('#designer_proposal .options .doc').html(str.replace(/%FUNDER%/g,'Funder').replace(/%DATE%/,(new Date()).toDateString()).formify("TO",'text','proposal_to').formify('NAME','text','proposal_name').formify('AIM','textarea','proposal_aim').formify('PREVIOUS','text','proposal_previous').formify("ADVANCE",'textarea','proposal_advance').formify("INSTRUMENTS",'textarea','proposal_instruments').formify('GOALS','textarea','proposal_goal').formify('RESLOW','text','proposal_reslow').formify('RESHIGH','text','proposal_reshigh').formify('MIRROR','text','proposal_mirror').formify('REQTEMPERATURE','text','proposal_reqtemp').formify('TEMPERATURE','text','proposal_temp').formify('MASS','text','proposal_mass').formify('MASSSATELLITE','text','proposal_mass_satellite').formify('MASSMIRROR','text','proposal_mass_mirror').formify('MASSCOOLING','text','proposal_mass_cooling').formify('MASSINSTRUMENTS','text','proposal_mass_instruments').formify('ORBIT','text','proposal_orbit').formify('DISTANCE','text','proposal_distance').formify('PERIOD','text','proposal_period').formify('FUEL','text','proposal_fuel').formify('DURATION','text','proposal_duration').formify('VEHICLE','text','proposal_vehicle').formify('OPERATOR','text','proposal_operator').formify('SITE','text','proposal_site').formify('LAUNCHMASS','text','proposal_launchmass').formify('COST','text','proposal_cost').formify('COSTSATELLITE','text','proposal_cost_satellite').formify('COSTMIRROR','text','proposal_cost_mirror').formify('COSTCOOLING','text','proposal_cost_cooling').formify('COSTINSTRUMENTS','text','proposal_cost_instruments').formify('COSTDEV','text','proposal_cost_dev').formify('COSTLAUNCH','text','proposal_cost_launch').formify('COSTGROUND','text','proposal_cost_ground').formify('COSTOPERATIONS','text','proposal_cost_operations'));
+		$('#designer_proposal .options .doc').html(str.replace(/%FUNDER%/g,'Funder').replace(/%DATE%/,(new Date()).toDateString()).formify("TO",'text','proposal_to').formify('NAME','text','proposal_name').formify('AIM','textarea','proposal_aim').formify('PREVIOUS','text','proposal_previous').formify("ADVANCE",'textarea','proposal_advance').formify("INSTRUMENTS",'textarea','proposal_instruments').formify('GOALS','textarea','proposal_goal').formify('RESLOW','text','proposal_reslow').formify('RESHIGH','text','proposal_reshigh').formify('MIRROR','text','proposal_mirror').formify('REQTEMPERATURE','text','proposal_reqtemp').formify('TEMPERATURE','text','proposal_temp').formify('MASS','text','proposal_mass').formify('MASSSATELLITE','text','proposal_mass_satellite').formify('MASSMIRROR','text','proposal_mass_mirror').formify('MASSCOOLING','text','proposal_mass_cooling').formify('MASSINSTRUMENTS','text','proposal_mass_instruments').formify('ORBIT','text','proposal_orbit').formify('DISTANCE','text','proposal_distance').formify('PERIOD','text','proposal_period').formify('FUEL','text','proposal_fuel').formify('DURATION','text','proposal_duration').formify('VEHICLE','text','proposal_vehicle').formify('OPERATOR','text','proposal_operator').formify('SITE','text','proposal_site').formify('LAUNCHMASS','text','proposal_launchmass').formify('LAUNCHSIZE','text','proposal_launchsize').formify('COST','text','proposal_cost').formify('COSTSATELLITE','text','proposal_cost_satellite').formify('COSTMIRROR','text','proposal_cost_mirror').formify('COSTCOOLING','text','proposal_cost_cooling').formify('COSTINSTRUMENTS','text','proposal_cost_instruments').formify('COSTDEV','text','proposal_cost_dev').formify('COSTLAUNCH','text','proposal_cost_launch').formify('COSTGROUND','text','proposal_cost_ground').formify('COSTOPERATIONS','text','proposal_cost_operations'));
 
 
 		// Update designer toggle buttons
@@ -2862,6 +2927,25 @@ if(typeof $==="undefined") $ = {};
 					output.value += a.value;
 				}
 			}
+			return output;
+		}
+		return {};
+	}
+
+	// Return the negative of the input value
+	// Input:
+	//   In the form {'value':100,'units':'GBP','dimension':'currency'}
+	// Output:
+	//   The negative of the input
+	// Notes:
+	//   Only values with the same dimension will be summed
+	//   Input units can differ - this will take care of unit conversions
+	SpaceTelescope.prototype.negativeValue = function(){
+		var args = Array.prototype.slice.call(arguments, 0);
+		var a,output,i;
+		if(args.length > 0){
+			output = this.copyValue(args[0]);
+			output.value *= -1;
 			return output;
 		}
 		return {};
