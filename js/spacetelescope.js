@@ -337,6 +337,7 @@ if(typeof $==="undefined") $ = {};
 		// Build proposal document holder
 		$(document).on('change','.doc input,.doc textarea',{me:this},function(e){ e.data.me.updateProposal(); });
 		$(document).on('click','.printable a.button',{me:this},function(e){ e.preventDefault(); e.data.me.printProposal(); });
+		$(document).on('click','.relaunch a.button',{me:this},function(e){ e.preventDefault(); e.data.me.relaunch(); });
 		$(document).on('click','#launchnav a.button',{me:this},function(e){ e.preventDefault(); e.data.me.launch(); });
 		$(document).on('click','.toggler',{me:this},function(e){
 			//e.preventDefault();
@@ -2525,6 +2526,7 @@ if(typeof $==="undefined") $ = {};
 			// Build launch progress
 			$('#launch').html('<h2>'+this.phrases.launch.title+'</h2><p>'+this.phrases.launch.intro.replace(/%DEVTIME%/,devtime).replace(/%VEHICLE%/,vehicle).replace(/%SITE%/,site).replace(/%ORBIT%/,orbit).replace(/%LAUNCHDATE%/,this.launchdate)+'</p><div id="launchanimation">'+('<div id="launchpadbg"><img src="images/launchpad_'+this.choices.site+'.png" /></div><div id="launchpadfg"><img src="images/launchpad_'+this.choices.site+'_fg.png" /></div><div id="launchrocket"><img src="'+this.data.vehicle[this.choices.vehicle].img+'" /></div>')+'<div id="countdown" class="padded">Countdown</div></div><ul id="launchtimeline"></ul><div id="launchnav" class="toppadded"></div>');
 	
+			this.launchstep = 0;
 			if(this.launchstep==0) this.countdown(10);
 		}
 	}
@@ -2549,13 +2551,16 @@ if(typeof $==="undefined") $ = {};
 		}
 	}
 
+	// The function to process the launch steps
 	SpaceTelescope.prototype.launch = function(){
 
+		// Move us on a step
 		this.launchstep++;
 		
 		// Build launch progress
 		$('#launchnav').html('<a href="#" class="button fancybtn">'+this.phrases.launch.next+'</a>');
 
+		// Get the probabilities for everything
 		var prob = {
 			'mirror': this.getChoice('mirror.prob'),
 			'site': this.getChoice('site.prob'),
@@ -2566,7 +2571,7 @@ if(typeof $==="undefined") $ = {};
 		}
 
 		var status = this.phrases.launch.status;
-		var ok = true;
+		var ok = true;	// We are fine to continue
 
 		if(this.ok){
 			if(this.launchstep==2){
@@ -2576,12 +2581,9 @@ if(typeof $==="undefined") $ = {};
 					// Rocket launched
 					$('#launchanimation').addClass(this.choices.vehicle).addClass('launched');
 					this.exhaust = new Exhaust();
-				}else{
-					// Rocket failed
 				}
-			}
+			}else this.exhaust.stop();
 			if(this.launchstep==3){
-				this.exhaust.stop();
 				this.ok = this.roll(prob.orbit);
 				$('#launchtimeline').append('<li>'+this.buildRow(this.phrases.launch.orbit.label,(this.ok ? this.phrases.launch.orbit.success : this.phrases.launch.orbit.fail).replace(/%ORBIT%/,this.getChoice('orbit')),'launch_orbit')+'</li>');
 			}
@@ -2678,8 +2680,34 @@ if(typeof $==="undefined") $ = {};
 				this.launchstep = 0;
 			}
 		}
+		if(!this.ok){
+			
+			// It failed so remove next button
+			$('#launchnav a.button').remove();
+
+			// Allow a one-time only restart
+			
+			if(!this.relaunched){
+				var devtime = this.table.time_dev_total.list.time_dev_total.value;
+				var relaunchtime = this.copyValue(devtime);
+				relaunchtime.value *= 0.5;
+				var cost = this.sumValues(this.getChoice('mirror.cost'),this.getChoice('satellite.cost'),this.getChoice('cooling.cost'),this.getChoice('instruments.cost'));
+				cost.value *= 0.5;
+				cost = this.sumValues(cost,this.getChoice('vehicle.cost'));
+				cost.value *= -1;
+
+				$('#launchtimeline').after('<div class="relaunch toppadded"><p>'+this.phrases.launch.relaunch.text.replace(/\%DEVTIME\%/,this.formatValue(devtime)).replace(/%RELAUNCHTIME%/,this.formatValue(relaunchtime)).replace(/%RELAUNCHCOST%/,this.formatValueSpan(cost))+'</p><a href="#" class="button fancybtn">'+this.phrases.launch.relaunch.label+'</a></div>');
+			}else{
+				$('.relaunch').remove();
+			}
+		}
 		
 		return this;
+	}
+
+	SpaceTelescope.prototype.relaunch = function(){
+		this.relaunched = true;
+		this.goForLaunch();
 	}
 
 
@@ -3716,14 +3744,18 @@ if(typeof $==="undefined") $ = {};
 		return this;
 	}
 
+	// Make an animated exhaust for a rocket.
+	// Requires:
+	//   * #launchrocket containing an <img>
+	//   * #launchpadbg containing an <img>
+	// Creates a <canvas> element (#launchexhaust) where the exhaust is drawn
 	function Exhaust(){
 
 		var rocket = $('#launchrocket img');
 		var pad = $('#launchpadbg img');
-		rocket.before('<canvas id="launchexhaust"><\/canvas>');
+		if($('#launchexhaust').length==0) rocket.before('<canvas id="launchexhaust"><\/canvas>');
 		var canvas = document.getElementById("launchexhaust");
 		var ctx = canvas.getContext("2d");
-		var active = true;
 		this.active = true;
 		
 		// Make the canvas occupy the same space 
@@ -3734,74 +3766,77 @@ if(typeof $==="undefined") $ = {};
 		var particles = [];
 		var mouse = {};
 		
-		//Lets create some particles now
+		// Create some particles
 		var particle_count = 80;
 		for(var i = 0; i < particle_count; i++) particles.push(new particle());
 			
+		// Particle class
 		function particle(){
-			//speed, life, location, life, colors
-			//speed.x range = -2.5 to 2.5 
-			//speed.y range = -15 to -5 to make it move upwards
-			//lets change the Y speed to make it look like a flame
+			// The speed in both the horizontal and vertical directions
 			this.speed = {x: -0.5+Math.random()*1, y: -5+Math.random()*3};
-	
+			// Set the source location to the bottom of the rocket
 			this.location = { x: rocket.offset().left+(rocket.width()/2)-pad.offset().left, y: rocket.offset().top + rocket.height() - pad.offset().top };
-			//radius range = 10-30
+			// Size of particle
 			this.radius = 5+Math.random()*2;
-			//life range = 20-30
+			// How long it lasts
 			this.life = 20+Math.random()*10;
 			this.remaining_life = this.life;
-			//colors
+			// Make it whitish grey
 			this.r = Math.round(Math.random()*55 + 200);
-			this.g = Math.round(Math.random()*55 + 200);
-			this.b = Math.round(Math.random()*55 + 200);
+			this.g = this.r;
+			this.b = this.r;
 		}
+		// Keep a copy of ourselves to refer to within draw()
 		var _obj = this;
 
 		function draw(){
 
+			// Set the canvas properties
 			ctx.globalCompositeOperation = "source-over";
 			ctx.fillStyle = "transparent";
 			ctx.fillRect(0, 0, w, h);
 			
+			// Draw all the particles
 			for(var i = 0; i < particles.length; i++){
 				var p = particles[i];
 				ctx.beginPath();
-				//changing opacity according to the life.
-				//opacity goes to 0 at the end of life of a particle
+				// Changing opacity according to the life
+				// i.e. opacity goes to 0 at the end of life
 				p.opacity = Math.round(p.remaining_life/p.life*100)/100
-				//a gradient instead of white fill
+				// Apply a gradient to make it darker around the edge
 				var gradient = ctx.createRadialGradient(p.location.x, p.location.y, 0, p.location.x, p.location.y, p.radius);
-				gradient.addColorStop(0, "rgba("+p.r+", "+p.r+", "+p.r+", "+p.opacity+")");
-				gradient.addColorStop(0.5, "rgba("+p.r+", "+p.r+", "+p.r+", "+p.opacity+")");
-				gradient.addColorStop(1, "rgba("+Math.round(p.r*0.9)+", "+Math.round(p.r*0.9)+", "+Math.round(p.r*0.9)+", 0)");
+				gradient.addColorStop(0, "rgba("+p.r+", "+p.g+", "+p.b+", "+p.opacity+")");
+				gradient.addColorStop(0.5, "rgba("+p.r+", "+p.g+", "+p.b+", "+p.opacity+")");
+				gradient.addColorStop(1, "rgba("+Math.round(p.r*0.9)+", "+Math.round(p.g*0.9)+", "+Math.round(p.b*0.9)+", 0)");
 				ctx.fillStyle = gradient;
+				// Draw particle
 				ctx.arc(p.location.x, p.location.y, p.radius, Math.PI*2, false);
 				ctx.fill();
 				
-				//lets move the particles
+				// Move the particles
 				p.remaining_life -= 0.5;
 				p.radius += 0.5;
 				p.location.x += p.speed.x;
 				p.location.y -= p.speed.y;
 				
-				//regenerate particles
+				// Regenerate the particles
 				if(p.remaining_life < 0 || p.radius < 0){
-					//a brand new particle replacing the dead one
+					// A new particle to replace the old one
 					particles[i] = new particle();
 				}
 			}
+			// Request a new animation frame if we are still active
 			if(_obj.active) requestAnimationFrame(draw);	
 		}
 
+		// Start the animation
 		draw();
 
 		return this;
 	}
 
-	Exhaust.prototype.stop = function(){
-		this.active = false;
-	}
+	// Function to stop the exhaust animation
+	Exhaust.prototype.stop = function(){ this.active = false; }
 
 	// Helper functions
 

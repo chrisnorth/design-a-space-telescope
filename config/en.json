@@ -457,6 +457,7 @@
 		},
 		"next": "Next",
 		"launch": { "label": "Launch:", "success": "Cleared the launch pad", "fail": "Exploded on launch pad" },
+		"relaunch": { "label": "Re-launch", "text":"After %DEVTIME% of work your mission failed. However you have spare parts from the construction process so you can have one more attempt. It will take another %RELAUNCHTIME% and cost %RELAUNCHCOST%." },
 		"orbit": { "label": "Orbit insertion:", "success": "Reached %ORBIT%", "fail": "Failed to reach orbit" },
 		"deploy": { "label": "Deploying mirror:", "success": "Success", "fail": "Failed" },
 		"cooling": {
