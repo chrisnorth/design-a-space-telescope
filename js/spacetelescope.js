@@ -117,6 +117,35 @@ if(typeof $==="undefined") $ = {};
 		element.animate(anim.repeat(repetitions)); 
 	};
 
+	// http://paulirish.com/2011/requestanimationframe-for-smart-animating/
+	// http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating
+	// requestAnimationFrame polyfill by Erik Möller
+	// fixes from Paul Irish and Tino Zijdel
+	(function() {
+		var lastTime = 0;
+		var vendors = ['ms', 'moz', 'webkit', 'o'];
+		for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
+			window.requestAnimationFrame = window[vendors[x]+'RequestAnimationFrame'];
+			window.cancelAnimationFrame = window[vendors[x]+'CancelAnimationFrame']
+									   || window[vendors[x]+'CancelRequestAnimationFrame'];
+		}
+	 
+		if (!window.requestAnimationFrame)
+			window.requestAnimationFrame = function(callback, element) {
+				var currTime = new Date().getTime();
+				var timeToCall = Math.max(0, 16 - (currTime - lastTime));
+				var id = window.setTimeout(function() { callback(currTime + timeToCall); },
+				  timeToCall);
+				lastTime = currTime + timeToCall;
+				return id;
+			};
+	 
+		if (!window.cancelAnimationFrame)
+			window.cancelAnimationFrame = function(id) {
+				clearTimeout(id);
+			};
+	}());
+
 	// Get the URL query string and parse it
 	$.query = function() {
 		var r = {length:0};
@@ -2492,9 +2521,9 @@ if(typeof $==="undefined") $ = {};
 			var vehicle = this.phrases.designer.vehicle.options[this.choices.vehicle].label;
 			var site = this.phrases.designer.site.options[this.choices.site].label;
 			var devtime = this.formatValue(this.table.time_dev_total.list.time_dev_total.value);
-	
+
 			// Build launch progress
-			$('#launch').html('<h2>'+this.phrases.launch.title+'</h2><p>'+this.phrases.launch.intro.replace(/%DEVTIME%/,devtime).replace(/%VEHICLE%/,vehicle).replace(/%SITE%/,site).replace(/%ORBIT%/,orbit).replace(/%LAUNCHDATE%/,this.launchdate)+'</p><div id="countdown" class="padded">Countdown</div><ul id="launchtimeline"></ul><div id="launchnav" class="toppadded"></div>');
+			$('#launch').html('<h2>'+this.phrases.launch.title+'</h2><p>'+this.phrases.launch.intro.replace(/%DEVTIME%/,devtime).replace(/%VEHICLE%/,vehicle).replace(/%SITE%/,site).replace(/%ORBIT%/,orbit).replace(/%LAUNCHDATE%/,this.launchdate)+'</p><div id="launchanimation">'+('<div id="launchpadbg"><img src="images/launchpad_'+this.choices.site+'.png" /></div><div id="launchpadfg"><img src="images/launchpad_'+this.choices.site+'_fg.png" /></div><div id="launchrocket"><img src="'+this.data.vehicle[this.choices.vehicle].img+'" /></div>')+'<div id="countdown" class="padded">Countdown</div></div><ul id="launchtimeline"></ul><div id="launchnav" class="toppadded"></div>');
 	
 			if(this.launchstep==0) this.countdown(10);
 		}
@@ -2543,8 +2572,16 @@ if(typeof $==="undefined") $ = {};
 			if(this.launchstep==2){
 				this.ok = this.roll(prob.site*prob.vehicle);
 				$('#launchtimeline').append('<li>'+this.buildRow(this.phrases.launch.launch.label,(this.ok ? this.phrases.launch.launch.success : this.phrases.launch.launch.fail),'launch_launch')+'</li>');
+				if(this.ok){
+					// Rocket launched
+					$('#launchanimation').addClass(this.choices.vehicle).addClass('launched');
+					this.exhaust = new Exhaust();
+				}else{
+					// Rocket failed
+				}
 			}
-			if(this.launchstep==3){	
+			if(this.launchstep==3){
+				this.exhaust.stop();
 				this.ok = this.roll(prob.orbit);
 				$('#launchtimeline').append('<li>'+this.buildRow(this.phrases.launch.orbit.label,(this.ok ? this.phrases.launch.orbit.success : this.phrases.launch.orbit.fail).replace(/%ORBIT%/,this.getChoice('orbit')),'launch_orbit')+'</li>');
 			}
@@ -3677,6 +3714,93 @@ if(typeof $==="undefined") $ = {};
 		var args = Array.prototype.slice.call(arguments, 0);
 		if(console && typeof console.log==="function") console.log('LOG',args);
 		return this;
+	}
+
+	function Exhaust(){
+
+		var rocket = $('#launchrocket img');
+		var pad = $('#launchpadbg img');
+		rocket.before('<canvas id="launchexhaust"><\/canvas>');
+		var canvas = document.getElementById("launchexhaust");
+		var ctx = canvas.getContext("2d");
+		var active = true;
+		this.active = true;
+		
+		// Make the canvas occupy the same space 
+		var w = pad.innerWidth(), h = pad.innerHeight();
+		canvas.width = w;
+		canvas.height = h;
+		
+		var particles = [];
+		var mouse = {};
+		
+		//Lets create some particles now
+		var particle_count = 80;
+		for(var i = 0; i < particle_count; i++) particles.push(new particle());
+			
+		function particle(){
+			//speed, life, location, life, colors
+			//speed.x range = -2.5 to 2.5 
+			//speed.y range = -15 to -5 to make it move upwards
+			//lets change the Y speed to make it look like a flame
+			this.speed = {x: -0.5+Math.random()*1, y: -5+Math.random()*3};
+	
+			this.location = { x: rocket.offset().left+(rocket.width()/2)-pad.offset().left, y: rocket.offset().top + rocket.height() - pad.offset().top };
+			//radius range = 10-30
+			this.radius = 5+Math.random()*2;
+			//life range = 20-30
+			this.life = 20+Math.random()*10;
+			this.remaining_life = this.life;
+			//colors
+			this.r = Math.round(Math.random()*55 + 200);
+			this.g = Math.round(Math.random()*55 + 200);
+			this.b = Math.round(Math.random()*55 + 200);
+		}
+		var _obj = this;
+
+		function draw(){
+
+			ctx.globalCompositeOperation = "source-over";
+			ctx.fillStyle = "transparent";
+			ctx.fillRect(0, 0, w, h);
+			
+			for(var i = 0; i < particles.length; i++){
+				var p = particles[i];
+				ctx.beginPath();
+				//changing opacity according to the life.
+				//opacity goes to 0 at the end of life of a particle
+				p.opacity = Math.round(p.remaining_life/p.life*100)/100
+				//a gradient instead of white fill
+				var gradient = ctx.createRadialGradient(p.location.x, p.location.y, 0, p.location.x, p.location.y, p.radius);
+				gradient.addColorStop(0, "rgba("+p.r+", "+p.r+", "+p.r+", "+p.opacity+")");
+				gradient.addColorStop(0.5, "rgba("+p.r+", "+p.r+", "+p.r+", "+p.opacity+")");
+				gradient.addColorStop(1, "rgba("+Math.round(p.r*0.9)+", "+Math.round(p.r*0.9)+", "+Math.round(p.r*0.9)+", 0)");
+				ctx.fillStyle = gradient;
+				ctx.arc(p.location.x, p.location.y, p.radius, Math.PI*2, false);
+				ctx.fill();
+				
+				//lets move the particles
+				p.remaining_life -= 0.5;
+				p.radius += 0.5;
+				p.location.x += p.speed.x;
+				p.location.y -= p.speed.y;
+				
+				//regenerate particles
+				if(p.remaining_life < 0 || p.radius < 0){
+					//a brand new particle replacing the dead one
+					particles[i] = new particle();
+				}
+			}
+			if(_obj.active) requestAnimationFrame(draw);	
+		}
+
+		draw();
+
+		return this;
+	}
+
+	Exhaust.prototype.stop = function(){
+		this.active = false;
 	}
 
 	// Helper functions

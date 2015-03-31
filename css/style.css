@@ -499,11 +499,25 @@ a.togglescience:hover { padding-bottom: 0.3em; border-bottom: 0.2em solid #69dff
 #launch li.indent { margin-left: 1em; }
 #launchvideo { text-align: center; }
 #launchvideo iframe { margin: auto; max-width: 100%; }
+#launchanimation { position: relative; height: 400px; overflow: hidden; }
+#launchpadfg,#launchpadbg,#launchexhaust,#launchrocket,#countdown { position: absolute; top: 0px; left: 0px; }
+#launchpadfg img,#launchpadbg img { width: 100%; height: auto;}
+#countdown { z-index: 5; }
+#launchpadfg { z-index: 4; }
+#launchrocket { z-index: 3; width: 100%; text-align: center; }
+#launchexhaust { z-index: 2; }
+#launchpadbg { z-index: 1; }
+#launchrocket img { height: 100px; position: absolute; top: 0px; margin-top: 172px; margin-left: -15px; -webkit-transition: 9s ease-in; -moz-transition: 9s ease-in; -o-transition: 9s ease-in; transition: 9s ease-in; }
+#launchanimation.launched #launchrocket img {
+	-webkit-transform: translate(8px,-500px) rotate(3deg); -moz-transform: translate(8px,-500px) rotate(3deg); -o-transform: translate(8px,-500px) rotate(3deg); -ms-transform: translate(8px,-500px) rotate(3deg); transform: translate(8px,-500px) rotate(3deg);
+}
 #launchnav { text-align: right; }
 #countdown {
 	text-align: center;
 	font-size: 2em;
 	opacity: 1;
+	color: white;
+	text-shadow: 2px 2px 4px black;
 }
 @keyframes pulse {
 	from { opacity: 0.0; font-size: 2em; }
@@ -736,7 +750,7 @@ input.button { padding: 6px 8px; /* Bug fix for Firefox over-riding the line-hei
 	#designer .designer_title a { border-top: 1px solid #202020; }
 	#sidebar { border-left: 2px solid white; }
 }
-@media only screen and (max-width: 700px){
+@media only screen and (max-width: 100px){
 	#bar { height: 2.5em; }
 	.baritem a { padding: 0.5em 0.25em; height: 2.5em; }
 	.baritem span { margin: 0; }
