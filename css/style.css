@@ -102,7 +102,7 @@ strong { font-weight: bold; }
 	color: #efefef;
 	padding: 0em;
 	border-bottom: 1px solid;
-	box-shadow: 0.1em 0.2em 0.25em rgba(0,0,0,0.3);
+	box-shadow: 0em 0.2em 0.2em rgba(0,0,0,0.2);
 	background-color: #000000;
 	background-image:-moz-linear-gradient(top,#000000,#101010);
 	background-image:-webkit-gradient(linear,0 0,0 100%,from(#000000),to(#101010));
@@ -772,14 +772,14 @@ input.button { padding: 6px 8px; /* Bug fix for Firefox over-riding the line-hei
 	#main .doc { padding: 2em 1em 1em 1em; }
 }
 @media only screen and (max-width: 550px){
-	#application { background-image: url('../images/bg_small.jpg'); }
+	#application { background-image: none; background: white; }
 	#bar { padding: 0; }
 	.dropdown .baritem a { padding: 0.5em 1em; height: 2.5em; }
 	#summaryext.dropdown.fullwidth>ul>li { width: 100%; }
 	#summaryext.dropdown.fullwidth>ul>li { clear: both; float: none; }
 	#summary .baritem img.icon, .baritem .togglewarning img.icon, .baritem .toggleerror img.icon { display: none; }
 	.dropdown { top: 2.5em; background-image: none; }
-	#page { padding-top: 0em; padding-bottom: 0px; margin-top: 2.5em; }
+	#page { padding-top: 0em; padding-bottom: 0px; margin-top: 3em; }
 	.view, #intro, #guide, #scenarios { padding: 1.5em; width: 100%; max-width: 100%; border-radius: 0px; }
 	#guide figure.left,#guide figure.right, #guide figure.four figure {
 		float: none;
@@ -789,13 +789,14 @@ input.button { padding: 6px 8px; /* Bug fix for Firefox over-riding the line-hei
 	#guide ul.index li { margin-right: 0em; margin-left: 0px; width: 100%; }
 	#scenariolist li { margin-right: 0em; width: auto; }
 	#designer_site li select { float: none; }
-	.designer_inner.bigpadded { padding-left: 0px; padding-right: 0px; } 
+	.designer_inner.bigpadded { padding: 0px; } 
 	#designer_instruments li input { width: 7em; }
 	.questions { clear: both; }
-
 	#designer .designer_title a { height: auto; }
-
 	#main .doc { padding: 2em 0.5em 0.5em 0.5em; }
-
 	.noscriptmsg { margin-top: -2em; margin-bottom: 0; }
+	.padded { padding: 0.5em; }
+	.toppadded { padding-top: 0.5em; }
+	.bigpadded { padding: 1em; }
+	.hugepadded { padding: 2em; }
 }
