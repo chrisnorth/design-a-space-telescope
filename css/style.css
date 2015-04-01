@@ -549,6 +549,7 @@ a.togglescience:hover { padding-bottom: 0.3em; border-bottom: 0.2em solid #69dff
 
 body.showguide #bar, body.showlaunch #bar { display: none; }
 body.showguide #page, body.showlaunch #page { margin: 0em; }
+body.showguide #bar { display: none; }
 
 .view .close { float: right; cursor: pointer; }
 .view .helper { float: right; cursor: pointer; }
