@@ -347,6 +347,11 @@ a.togglescience:hover { padding-bottom: 0.3em; border-bottom: 0.2em solid #69dff
 	font-size: 2em;
 	font-weight: bold;
 	text-shadow: 0px 0px 4px black;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	width: 100%;
+	height: 100%;
+	white-space: nowrap;
 }
 #designer .details, #designer_vehicle li.withinfo { background-color: #e6e6e6; }
 
@@ -511,6 +516,7 @@ a.togglescience:hover { padding-bottom: 0.3em; border-bottom: 0.2em solid #69dff
 #launchanimation.launched #launchrocket img {
 	-webkit-transform: translate(8px,-500px) rotate(3deg); -moz-transform: translate(8px,-500px) rotate(3deg); -o-transform: translate(8px,-500px) rotate(3deg); -ms-transform: translate(8px,-500px) rotate(3deg); transform: translate(8px,-500px) rotate(3deg);
 }
+#launchorbit { background: black; }
 #launchnav { text-align: right; }
 #countdown {
 	text-align: center;
@@ -750,6 +756,10 @@ input.button { padding: 6px 8px; /* Bug fix for Firefox over-riding the line-hei
 	#designer .designer_title { display:block; font-size: 1em; margin-bottom: 0px; }
 	#designer .designer_title a { border-top: 1px solid #202020; }
 	#sidebar { border-left: 2px solid white; }
+	.padded { padding: 0.75em; }
+	.toppadded { padding-top: 0.75em; }
+	.bigpadded { padding: 1.5em; }
+	.hugepadded { padding: 3em; }
 }
 @media only screen and (max-width: 100px){
 	#bar { height: 2.5em; }
@@ -788,6 +798,8 @@ input.button { padding: 6px 8px; /* Bug fix for Firefox over-riding the line-hei
 	}
 	#guide ul.index li { margin-right: 0em; margin-left: 0px; width: 100%; }
 	#scenariolist li { margin-right: 0em; width: auto; }
+	#designer .banner { height: 4em; line-height: 4em; }
+	#designer .banner .title { font-size: 1.5em; }
 	#designer_site li select { float: none; }
 	.designer_inner.bigpadded { padding: 0px; } 
 	#designer_instruments li input { width: 7em; }
