@@ -748,6 +748,9 @@ if(typeof $==="undefined") $ = {};
 		var url = this.dataurl.replace('%MODE%',this.getMode());
 		$.ajax({
 			url: url,
+			beforeSend: function(xhr){
+				if (xhr.overrideMimeType) xhr.overrideMimeType("application/json");
+			},
 			method: 'GET',
 			dataType: 'json',
 			context: this,
@@ -774,6 +777,9 @@ if(typeof $==="undefined") $ = {};
 		var url = this.langurl.replace('%LANG%',l).replace('%MODE%',this.getMode());
 		$.ajax({
 			url: url,
+			beforeSend: function(xhr){
+				if (xhr.overrideMimeType) xhr.overrideMimeType("application/json");
+			},
 			method: 'GET',
 			cache: false,
 			dataType: 'json',
@@ -807,6 +813,9 @@ if(typeof $==="undefined") $ = {};
 		var url = this.scenariourl.replace('%LANG%',this.langshort).replace('%MODE%',this.getMode());
 		$.ajax({
 			url: url,
+			beforeSend: function(xhr){
+				if (xhr.overrideMimeType) xhr.overrideMimeType("application/json");
+			},
 			method: 'GET',
 			dataType: 'json',
 			context: this,
