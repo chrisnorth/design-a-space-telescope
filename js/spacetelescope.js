@@ -1,6 +1,6 @@
 /*!
 	SpaceTelescope
-	(c) Stuart Lowe and Chris North 2014
+	(c) Stuart Lowe and Chris North 2014-5
 */
 /*
 	USAGE:
@@ -40,11 +40,11 @@ if(typeof $==="undefined") $ = {};
 	},
 	browserPrefixes = 'webkit moz o ms khtml'.split(' ');
 	// check for native support
-	if (typeof document.cancelFullScreen != 'undefined') {
+	if(typeof document.cancelFullScreen != 'undefined'){
 		fullScreenApi.supportsFullScreen = true;
-	} else {
+	}else{
 		// check for fullscreen support by vendor prefix
-		for (var i = 0, il = browserPrefixes.length; i < il; i++ ) {
+		for(var i = 0, il = browserPrefixes.length; i < il; i++ ){
 			fullScreenApi.prefix = browserPrefixes[i];
 			if (typeof document[fullScreenApi.prefix + 'CancelFullScreen' ] != 'undefined' ) {
 				fullScreenApi.supportsFullScreen = true;
@@ -53,9 +53,9 @@ if(typeof $==="undefined") $ = {};
 		}
 	}
 	// update methods to do something useful
-	if (fullScreenApi.supportsFullScreen) {
+	if(fullScreenApi.supportsFullScreen){
 		fullScreenApi.fullScreenEventName = fullScreenApi.prefix + 'fullscreenchange';
-		fullScreenApi.isFullScreen = function() {
+		fullScreenApi.isFullScreen = function(){
 			switch (this.prefix) {
 				case '':
 					return document.fullScreen;
@@ -65,18 +65,18 @@ if(typeof $==="undefined") $ = {};
 					return document[this.prefix + 'FullScreen'];
 			}
 		}
-		fullScreenApi.requestFullScreen = function(el) {
+		fullScreenApi.requestFullScreen = function(el){
 			return (this.prefix === '') ? el.requestFullScreen() : el[this.prefix + 'RequestFullScreen']();
 		}
-		fullScreenApi.cancelFullScreen = function(el) {
+		fullScreenApi.cancelFullScreen = function(el){
 			return (this.prefix === '') ? document.cancelFullScreen() : document[this.prefix + 'CancelFullScreen']();
 		}
 	}
 	// jQuery plugin
-	if (typeof jQuery != 'undefined') {
-		jQuery.fn.requestFullScreen = function() {
-			return this.each(function() {
-				if (fullScreenApi.supportsFullScreen) fullScreenApi.requestFullScreen(this);
+	if(typeof jQuery != 'undefined'){
+		jQuery.fn.requestFullScreen = function(){
+			return this.each(function(){
+				if(fullScreenApi.supportsFullScreen) fullScreenApi.requestFullScreen(this);
 			});
 		};
 	}
@@ -88,13 +88,13 @@ if(typeof $==="undefined") $ = {};
 	// Adapted from https://github.com/brianblakely/raphael-animate-along/blob/master/raphael-animate-along.js
 	Raphael.el.animateAlong = function(path, duration, repetitions, direction, z) {
 		var element = this;
-		element.zforward = (typeof z!=="boolean") ? false : z;
+		element.zforward = (!is(z,"boolean")) ? false : z;
 		element.atFront = false;
 		element.path = path;
 		element.direction = direction;
 		element.pathLen = element.path.getTotalLength();    
-		duration = (typeof duration === "undefined") ? 5000 : duration;
-		repetitions = (typeof repetitions === "undefined") ? 1 : repetitions;
+		duration = (is(duration,"undefined")) ? 5000 : duration;
+		repetitions = (is(repetitions,"undefined")) ? 1 : repetitions;
 		element.paper.customAttributes.along = function(v) {
 			var a = (this.direction && this.direction < 0) ? (1-v)*this.pathLen : (v * this.pathLen);
 			var point = this.path.getPointAtLength(a),
@@ -130,7 +130,7 @@ if(typeof $==="undefined") $ = {};
 									   || window[vendors[x]+'CancelRequestAnimationFrame'];
 		}
 	 
-		if (!window.requestAnimationFrame)
+		if(!window.requestAnimationFrame)
 			window.requestAnimationFrame = function(callback, element) {
 				var currTime = new Date().getTime();
 				var timeToCall = Math.max(0, 16 - (currTime - lastTime));
@@ -140,7 +140,7 @@ if(typeof $==="undefined") $ = {};
 				return id;
 			};
 	 
-		if (!window.cancelAnimationFrame)
+		if(!window.cancelAnimationFrame)
 			window.cancelAnimationFrame = function(id) {
 				clearTimeout(id);
 			};
@@ -216,7 +216,7 @@ if(typeof $==="undefined") $ = {};
 
 		// Language support
 		// Set the user's language using the browser settings. Over-ride with query string set value
-		this.lang = (typeof this.q.lang==="string") ? this.q.lang : (navigator) ? (navigator.userLanguage||navigator.systemLanguage||navigator.language||browser.language) : "";
+		this.lang = (is(this.q.lang,"string")) ? this.q.lang : (navigator) ? (navigator.userLanguage||navigator.systemLanguage||navigator.language||browser.language) : "";
 		this.langshort = (this.lang.indexOf('-') > 0 ? this.lang.substring(0,this.lang.indexOf('-')) : this.lang.substring(0,2));
 		this.langs = (inp && inp.langs) ? inp.langs : { 'en': 'English' };
 
@@ -422,16 +422,16 @@ if(typeof $==="undefined") $ = {};
 	//   b = { "value": "b", "id": "uniqueid_b", "checked": false }
 	SpaceTelescope.prototype.buildToggle = function(id,a,b){
 
-		if(typeof id!=="string" && typeof a != "object" && typeof b != "object") return "";
-
-		if(a.checked) html = '<div class="toggleinput toggler"><label class="toggle-label1" for="'+a.id+'"></label>';
-		else html = '<div class="toggleinput toggler checked"><label class="toggle-label1" for="'+a.id+'"></label>';
+		if(!is(id,"string") && !is(a,"object") && !is(b,"object")) return "";
+		var lc = '<label class="toggle-label';
+		if(a.checked) html = '<div class="toggleinput toggler">'+lc+'1" for="'+a.id+'"></label>';
+		else html = '<div class="toggleinput toggler checked">'+lc+'1" for="'+a.id+'"></label>';
 		html += '<div class="toggle-bg">';
 		html += '	<input id="'+a.id+'" type="radio" '+(a.checked ? 'checked="checked" ' : '')+'name="'+id+'" value="'+a.value+'">';
 		html += '	<input id="'+b.id+'" type="radio" '+(b.checked ? 'checked="checked" ' : '')+'name="'+id+'" value="'+b.value+'">';
 		html += '	<span class="switch"></span>';
 		html += '</div>';
-		html += '<label class="toggle-label2" for="'+b.id+'"></label></div>';
+		html += ''+lc+'2" for="'+b.id+'"></label></div>';
 
 		return html;
 	}
@@ -442,7 +442,7 @@ if(typeof $==="undefined") $ = {};
 	//   b = { "id": "ID", "value": "value", "label": "The displayed label B" }
 	//   title = A title
 	SpaceTelescope.prototype.updateToggle = function(a,b,title){
-		if(typeof a != "object" && typeof b != "object" || $('#'+a.id).length==0 || $('#'+b.id).length==0) return this;
+		if(!is(a,"object") && !is(b,"object") || $('#'+a.id).length==0 || $('#'+b.id).length==0) return this;
 		if(!title) title = "";
 		if(!a.label) a.label = "";
 		if(!b.label) b.label = "";
@@ -644,7 +644,7 @@ if(typeof $==="undefined") $ = {};
 	SpaceTelescope.prototype.navigate = function(e,a){
 		if(!a) var a = location.href.split("#")[1];
 		this.log('navigate',a,e);
-		if(typeof a!=="string") a = "";
+		if(!is(a,"string")) a = "";
 		this.showView(a,e);
 		return this;
 	}
@@ -663,8 +663,8 @@ if(typeof $==="undefined") $ = {};
 	}
 	// Register keyboard commands and associated functions
 	SpaceTelescope.prototype.registerKey = function(charCode,fn,txt){
-		if(typeof fn!="function") return this;
-		if(typeof charCode!="object") charCode = [charCode];
+		if(!is(fn,"function")) return this;
+		if(!is(charCode,"object")) charCode = [charCode];
 		var aok, ch, c, i, alt, str;
 		for(c = 0 ; c < charCode.length ; c++){
 			alt = false;
@@ -693,7 +693,7 @@ if(typeof $==="undefined") $ = {};
 
 	SpaceTelescope.prototype.toggleMenus = function(id,e){
 
-		if(e && typeof e==="object") e.preventDefault();
+		if(e && is(e,"object")) e.preventDefault();
 		var m = $('.dropdown');
 		var a = (e) ? $(e.currentTarget).attr('href') : "";
 		
@@ -722,7 +722,7 @@ if(typeof $==="undefined") $ = {};
 
 	
 	SpaceTelescope.prototype.setVar = function(v,t){
-		if(typeof v==="string"){
+		if(is(v,"string")){
 			if(this.i && typeof this.i[v]===t) this.settings[v] = this.i[v];
 			// Was it set in the query string?
 			if(typeof this.q[v]===t){
@@ -758,7 +758,7 @@ if(typeof $==="undefined") $ = {};
 			success: function(data){
 				// Store the data
 				this.data = data;
-				if(typeof fn==="function") fn.call(this);
+				if(is(fn,"function")) fn.call(this);
 			}
 		});
 		return this;
@@ -819,11 +819,11 @@ if(typeof $==="undefined") $ = {};
 			context: this,
 			error: function(){
 				this.log('Error loading '+url+' ('+m+')');
-				if(typeof fn==="function") fn.call(this);
+				if(is(fn,"function")) fn.call(this);
 			},
 			success: function(data){
 				this.scenarios = data.scenarios;
-				if(typeof fn==="function") fn.call(this);
+				if(is(fn,"function")) fn.call(this);
 			}
 		});
 		return this;
@@ -1486,7 +1486,7 @@ if(typeof $==="undefined") $ = {};
 
 	// Show the detail panel for the area/value
 	SpaceTelescope.prototype.buildRow = function(name,value,cls){
-		return (!name && !value && !cls) ? '' : '<div'+(typeof cls==="string" ? ' class="'+cls+'"' : '')+'><strong>'+name+'</strong> '+this.formatValueSpan(value)+'</div>';
+		return (!name && !value && !cls) ? '' : '<div'+(is(cls,"string") ? ' class="'+cls+'"' : '')+'><strong>'+name+'</strong> '+this.formatValueSpan(value)+'</div>';
 	}
 
 	// Show the detail panel for the area/value
@@ -1557,7 +1557,7 @@ if(typeof $==="undefined") $ = {};
 
 		}else if(area=="site"){
 
-			if(typeof this.data.site[value].latitude==="number") html += this.buildRow(d.site.location,this.data.site[value].latitude.toFixed(2)+'&deg;, '+this.data.site[value].longitude.toFixed(2)+'&deg;');
+			if(is(this.data.site[value].latitude,"number")) html += this.buildRow(d.site.location,this.data.site[value].latitude.toFixed(2)+'&deg;, '+this.data.site[value].longitude.toFixed(2)+'&deg;');
 			if(this.data.site[value].operator) html += this.buildRow(d.site.operator,this.phrases.operator[this.data.site[value].operator].label);
 			html += this.buildRow(d.site.trajectories,d.site.options[value].trajectories);
 			var sitenames = '';
@@ -1566,7 +1566,7 @@ if(typeof $==="undefined") $ = {};
 			}
 			html += this.buildRow(d.site.orbits,sitenames);
 			
-			if(typeof this.data.site[value].risk==="number") html += this.buildRow(d.site.risk,(this.data.site[value].risk*100).toFixed(0)+'%');
+			if(is(this.data.site[value].risk,"number")) html += this.buildRow(d.site.risk,(this.data.site[value].risk*100).toFixed(0)+'%');
 			
 		}else if(area=="orbit"){
 
@@ -1586,7 +1586,7 @@ if(typeof $==="undefined") $ = {};
 	}
 	
 	SpaceTelescope.prototype.formatScenario = function(s){
-		return ''+((typeof s.description==="string") ? s.description : "").replace(/%COST%/,this.formatValueSpan(s.budget))+'';
+		return ''+((is(s.description,"string")) ? s.description : "").replace(/%COST%/,this.formatValueSpan(s.budget))+'';
 	}
 
 	SpaceTelescope.prototype.updateOptions = function(){
@@ -1644,11 +1644,11 @@ if(typeof $==="undefined") $ = {};
 	//   ms - the number of milliseconds to animate the number change over
 	SpaceTelescope.prototype.updateValue = function(key,value,ms){
 		var el;
-		if(typeof key==="object") el = key;
-		else if(typeof key==="string") el = $('.'+key+'.value');
+		if(is(key,"object")) el = key;
+		else if(is(key,"string")) el = $('.'+key+'.value');
 
 		if(el.length > 0){
-			if(typeof value==="object"){
+			if(is(value,"object")){
 
 				var orig = { 'value': parseFloat(el.attr('data-value'),10), 'units':el.attr('data-units'), 'dimension':el.attr('data-dimension') };
 
@@ -1682,11 +1682,11 @@ if(typeof $==="undefined") $ = {};
 
 	SpaceTelescope.prototype.formatValueSpan = function(value,key){
 		key = (key) ? " "+key : "";
-		return (typeof value==="object" ? '<span class="value'+key+' convertable" data-value="'+value.value+'" data-units="'+value.units+'" data-dimension="'+value.dimension+'">'+this.formatValue(value)+'</span>' : '<span class="value'+key+'">'+value+'</span>');
+		return (is(value,"object") ? '<span class="value'+key+' convertable" data-value="'+value.value+'" data-units="'+value.units+'" data-dimension="'+value.dimension+'">'+this.formatValue(value)+'</span>' : '<span class="value'+key+'">'+value+'</span>');
 	}
 	
 	SpaceTelescope.prototype.copyValue = function(v){
-		if(typeof v==="object") return JSON.parse(JSON.stringify(v));
+		if(is(v,"object")) return JSON.parse(JSON.stringify(v));
 		return {};
 	}
 	
@@ -1970,7 +1970,7 @@ if(typeof $==="undefined") $ = {};
 		// Check mission targets
 		var av = 0;
 		this.table.science_total.list = {};
-		if(this.scenario && this.scenario.requires && typeof this.scenario.requires==="object"){ 
+		if(this.scenario && this.scenario.requires && is(this.scenario.requires,"object")){ 
 			var requires = this.scenario.requires;
 			var v, ok, pc, w;
 			// Build mission target list
@@ -2007,7 +2007,7 @@ if(typeof $==="undefined") $ = {};
 				}
 				if(requires[r]["vehicle"]){
 					ok = false;
-					if(typeof requires[r]["vehicle"]==="object"){
+					if(is(requires[r]["vehicle"],"object")){
 						for(var i = 0; i < requires[r]["vehicle"].length ; i++){
 							if(this.choices.vehicle==requires[r]["vehicle"][i]) ok = true;
 						}
@@ -2128,7 +2128,7 @@ if(typeof $==="undefined") $ = {};
 			$('#launchanimation').css({'height':($('#launchanimation').innerWidth()/2)+'px'});
 
 			this.launchstep = 0;
-			if(this.launchstep==0) this.countdown(2);// BLAH
+			if(this.launchstep==0) this.countdown(10);
 		}
 	}
 
@@ -2309,7 +2309,7 @@ if(typeof $==="undefined") $ = {};
 				fadeIn(l);
 				fadeIn('<li>'+this.buildRow(this.phrases.launch.overall.label,tmp,'finalresult')+'</li>');
 				$('.printable').remove();
-				$('#launchnav').html('<div class="printable"><a href="#" class="button fancybtn">'+this.phrases.designer.proposal.reprint+'</a></div>').fadeIn();
+				tline.after('<div class="printable toppadded"><a href="#" class="button fancybtn">'+this.phrases.designer.proposal.reprint+'</a></div>').fadeIn();
 				this.launchstep = 0;
 			}
 		}
@@ -2376,9 +2376,9 @@ if(typeof $==="undefined") $ = {};
 	SpaceTelescope.prototype.convertValue = function(v,to){
 
 		// If the input isn't the sort of thing we expect we just return it
-		if(typeof v != "object") return v;
+		if(!is(v,"object")) return v;
 
-		if(typeof v.value==="string" && v.value != "inf") v.value = parseFloat(v.value,10);
+		if(is(v.value,"string") && v.value != "inf") v.value = parseFloat(v.value,10);
 
 		v = this.copyValue(v);
 		
@@ -2501,7 +2501,7 @@ if(typeof $==="undefined") $ = {};
 		if(args.length > 0){
 			output = this.convertValue(args[0],args[0].units);
 			for(i = 1 ; i < args.length ; i++){
-				if(typeof args[i]==="object" && args[i].dimension && args[i].dimension===output.dimension){
+				if(is(args[i],"object") && args[i].dimension && args[i].dimension===output.dimension){
 					a = this.convertValue(args[i],args[0].units);
 					output.value += a.value;
 				}
@@ -2537,7 +2537,7 @@ if(typeof $==="undefined") $ = {};
 		if(args.length > 0){
 			min = this.convertValue(args[0],args[0].units);
 			for(i = 1 ; i < args.length ; i++){
-				if(typeof args[i]==="object" && args[i].dimension && args[i].dimension===args[0].dimension){
+				if(is(args[i],"object") && args[i].dimension && args[i].dimension===args[0].dimension){
 					a = this.convertValue(args[i],args[0].units);
 					if(a.value < min.value) min = a;
 				}
@@ -2546,16 +2546,12 @@ if(typeof $==="undefined") $ = {};
 		}
 		return {};
 	}
-	
-		
-	
 
 	function getPrecision(v){
 		if(v < 1e-9) return 1;
-		if(typeof v==="number" && v < 1) return Math.ceil(G.log10(1/v))+1;
+		if(is(v,"number") && v < 1) return Math.ceil(G.log10(1/v))+1;
 		else return 1;
 		return 1;
-	
 	}
 		
 	// Format a value differently depending on the dimension
@@ -2565,37 +2561,38 @@ if(typeof $==="undefined") $ = {};
 	//      makes an intelligent guess).
 	SpaceTelescope.prototype.formatValue = function(v,p){
 
-		if(typeof v==="string" || typeof v==="number") return v;
-		if(!(typeof v==="object" && v.dimension)) return "";
+		if(is(v,"string") || is(v,"number")) return v;
+		if(!(is(v,"object") && v.dimension)) return "";
+		ph = this.phrases;
 
 		// Make a copy of the original so that we don't overwrite it
 		v = this.copyValue(v);
 
 		// Convert precision to a number if it is a string
-		if(typeof p==="string") p = parseInt(p,10);
+		if(is(p,"string")) p = parseInt(p,10);
 
 		if(v.dimension=="length"){
 			
 			v = this.convertValue(v,(this.settings.length) ? this.settings.length : "m")
-			if(typeof p!=="number") p = (v.units=="km" ? 0 : getPrecision(v.value));
-			var unit = (this.phrases.ui.units[v.units]) ? this.phrases.ui.units[v.units].unit : "";
+			if(!is(p,"number")) p = (v.units=="km" ? 0 : getPrecision(v.value));
+			var unit = (ph.ui.units[v.units]) ? ph.ui.units[v.units].unit : "";
 			if(v.value > 1e15) return powerOfTen(v.value,unit);
 			return ''+addCommas((v.value).toFixed(p)).replace(/\.0+$/,'').replace(/(\.0?[1-9]+)0+$/,"$1")+''+unit;	
 			
 		}else if(v.dimension=="mass"){
 
 			v = this.convertValue(v,(this.settings.mass) ? this.settings.mass : "kg")
-			var unit = (this.phrases.ui.units[v.units]) ? this.phrases.ui.units[v.units].unit : "";
-			if(typeof p!=="number") p = (v.value >= 1000) ? 0 : getPrecision(v.value);
+			var unit = (ph.ui.units[v.units]) ? ph.ui.units[v.units].unit : "";
+			if(!is(p,"number")) p = (v.value >= 1000) ? 0 : getPrecision(v.value);
 			if(v.value > 1e15) return powerOfTen(v.value,unit);
 			else return ''+addCommas((v.value).toFixed(p)).replace(/\.0+$/,'').replace(/(\.[1-9]+)0+$/,"$1")+''+unit;
 		
 		}else if(v.dimension=="currency"){
 			v = this.convertValue(v,(this.settings.currency) ? this.settings.currency : "GBP")
-			if(typeof p!=="number") p = 0;
+			if(!is(p,"number")) p = 0;
 	
-			var append = (this.phrases.ui.million.compact) ? this.phrases.ui.million.compact : "";
-			var s = (this.phrases.ui.currency[v.units] && this.phrases.ui.currency[v.units].symbol) ? this.phrases.ui.currency[v.units].symbol : (this.phrases.ui.currency["GBP"].symbol ? this.phrases.ui.currency["GBP"].symbol : "");
+			var append = (ph.ui.million.compact) ? ph.ui.million.compact : "";
+			var s = (ph.ui.currency[v.units] && ph.ui.currency[v.units].symbol) ? ph.ui.currency[v.units].symbol : (ph.ui.currency["GBP"].symbol ? ph.ui.currency["GBP"].symbol : "");
 	
 			if(v.value == "inf" || v.value >= 1e15) return '&infin;';
 	
@@ -2606,7 +2603,7 @@ if(typeof $==="undefined") $ = {};
 			// Change the "million" to "billion" if the number if too big
 			if(v.value >= 1000){
 				v.value /= 1000;
-				append = (this.phrases.ui.billion.compact) ? this.phrases.ui.billion.compact : "";
+				append = (ph.ui.billion.compact) ? ph.ui.billion.compact : "";
 			}
 			if(p == 0){
 				if(v.value < 100) p = 1;
@@ -2618,36 +2615,36 @@ if(typeof $==="undefined") $ = {};
 		}else if(v.dimension=="temperature"){
 
 			v = this.convertValue(v,(this.settings.temperature) ? this.settings.temperature : "K")
-			if(typeof p==="string") p = parseInt(p,10);
-			if(typeof p!=="number") p = (v.value > 1000) ? 0 : getPrecision(v.value);
-			var unit = (this.phrases.ui.units[v.units]) ? this.phrases.ui.units[v.units].unit : "";
-			if(typeof v.value==="string") v.value = parseInt(v.value,10)
+			if(is(p,"string")) p = parseInt(p,10);
+			if(!is(p,"number")) p = (v.value > 1000) ? 0 : getPrecision(v.value);
+			var unit = (ph.ui.units[v.units]) ? ph.ui.units[v.units].unit : "";
+			if(is(v.value,"string")) v.value = parseInt(v.value,10)
 			return ''+addCommas((v.value).toFixed(p).replace(/\.0+$/,'').replace(/(\.[1-9])0+$/,"$1"))+''+unit;
 
 		}else if(v.dimension=="time"){
 
 			if(v.units=="years" && v.value < 5) v = this.convertValue(v,"months");
-			if(typeof p!=="number") p = (v.value >= 6) ? 0 : getPrecision(v.value);
-			var unit = (this.phrases.ui.units[v.units]) ? this.phrases.ui.units[v.units].unit : "";
-			if(typeof v.value==="string") v.value = parseInt(v.value,10)
+			if(!is(p,"number")) p = (v.value >= 6) ? 0 : getPrecision(v.value);
+			var unit = (ph.ui.units[v.units]) ? ph.ui.units[v.units].unit : "";
+			if(is(v.value,"string")) v.value = parseInt(v.value,10)
 			return ''+addCommas((v.value).toFixed(p).replace(/\.0+$/,'').replace(/(\.[1-9])0+$/,"$1"))+''+unit;
 
 		}else if(v.dimension=="percent"){
 
 			v = v.value;
-			if(typeof v!=="number") v = parseInt(v,10)
-			if(typeof v!=="number") return "0"+unit;
-			if(typeof p!=="number") p = 1;
-			var unit = (this.phrases.ui.units[v.units]) ? this.phrases.ui.units[v.units].unit : "%";
+			if(!is(v,"number")) v = parseInt(v,10)
+			if(!is(v,"number")) return "0"+unit;
+			if(!is(p,"number")) p = 1;
+			var unit = (ph.ui.units[v.units]) ? ph.ui.units[v.units].unit : "%";
 			return ''+addCommas(v.toFixed(p)).replace(/\.0+$/,'').replace(/(\.[1-9]+)0+$/,"$1")+unit;
 
 		}else if(v.dimension=="angle"){
 
 			if(v.units=="degrees" && v.value < 1) v = this.convertValue(v,"arcmin");
 			if(v.units=="arcmin" && v.value < 1) v = this.convertValue(v,"arcsec");
-			if(typeof p!=="number") p = (v.value >= 10) ? 0 : getPrecision(v.value);
-			var unit = (this.phrases.ui.units[v.units]) ? this.phrases.ui.units[v.units].unit : "";
-			if(typeof v.value==="string") v.value = parseInt(v.value,10);
+			if(!is(p,"number")) p = (v.value >= 10) ? 0 : getPrecision(v.value);
+			var unit = (ph.ui.units[v.units]) ? ph.ui.units[v.units].unit : "";
+			if(is(v.value,"string")) v.value = parseInt(v.value,10);
 			return ''+addCommas((v.value).toFixed(p).replace(/\.0+$/,'').replace(/(\.[1-9])0+$/,"$1"))+''+unit;
 
 		}else return v.value;
@@ -2668,18 +2665,11 @@ if(typeof $==="undefined") $ = {};
 	//  v - e.g. 0.99 (99%)
 	//  p - the number of decimal places to show in the output
 	SpaceTelescope.prototype.formatPercent = function(v,p){
-		if(typeof v!=="number") v = 0;
-		if(typeof p!=="number") p = 1;
+		if(!is(v,"number")) v = 0;
+		if(!is(p,"number")) p = 1;
 		return ''+addCommas((v*100).toFixed(p)).replace(/\.0+$/,'').replace(/(\.[1-9]+)0+$/,"$1")+'%';
 	}
 
-	// Display really large numbers as powers of ten
-	function powerOfTen(v,u){
-		var p = Math.floor(G.log10(v));
-		var a = Math.round(v/Math.pow(10,p))
-		return ''+a+'&times;10<sup>'+p+'</sup>'+u;
-	}
-	
 	SpaceTelescope.prototype.toggleFullScreen = function(){
 		// Get the container
 		this.elem = document.getElementById("application");
@@ -2959,16 +2949,16 @@ if(typeof $==="undefined") $ = {};
 
 		this.log('showView',view,e)
 
-		if(typeof view==="object"){
+		if(is(view,"object")){
 			e = view;
 			view = '';
 		}
 
-		if(typeof view!=="string") view = "";
+		if(!is(view,"string")) view = "";
 
 		// Don't do anything for certain views
 		if(view=="messages" || view=="menu" || view=="language" || view=="options" || view.indexOf("summaryext")==0){
-			if(e && typeof e==="object" && typeof e.preventDefault==="function") e.preventDefault();
+			if(e && is(e,"object") && is(e.preventDefault,"function")) e.preventDefault();
 			if(view=="options"){
 				if(e) e.preventDefault();
 				this.updateOptions();
@@ -3063,7 +3053,7 @@ if(typeof $==="undefined") $ = {};
 	SpaceTelescope.prototype.toggleGuide = function(key,e){
 
 		this.log('toggleGuide',key)
-		if(typeof key==="object"){
+		if(is(key,"object")){
 			e = key;
 			key = "";
 		}
@@ -3090,7 +3080,7 @@ if(typeof $==="undefined") $ = {};
 		var origkey = key;
 
 		// Split the input by '.'
-		if(typeof key==="string"){
+		if(is(key,"string")){
 			var a = key.split('_');
 			if(a.length > 1 && this.phrases.guide[a[1]]) key = a[1];
 		}
@@ -3112,8 +3102,8 @@ if(typeof $==="undefined") $ = {};
 			
 				html += '<h2>'+this.phrases.guide.title+'</h2><p>'+this.phrases.guide.about+'</p><ul class="index">';
 				for(k in this.phrases.guide){
-					if(k != "title" && k != "about" && typeof this.phrases.guide[k].title==="string"){
-						html += '<li><a href="#guide_'+k+'" class="guidelink">'+this.phrases.guide[k].title+'</a><br />'+(typeof this.phrases.guide[k].summary==="string" ? this.phrases.guide[k].summary : "")+'</li>';
+					if(k != "title" && k != "about" && is(this.phrases.guide[k].title,"string")){
+						html += '<li><a href="#guide_'+k+'" class="guidelink">'+this.phrases.guide[k].title+'</a><br />'+(is(this.phrases.guide[k].summary,"string") ? this.phrases.guide[k].summary : "")+'</li>';
 					}
 				}
 				html += '</ul>'
@@ -3265,13 +3255,13 @@ if(typeof $==="undefined") $ = {};
 	
 				if(key=="roles"){
 					for(k in g[key]){
-						if(k != "title" && k != "about" && typeof g[key][k].title==="string"){
+						if(k != "title" && k != "about" && is(g[key][k].title,"string")){
 							html += '<h3>'+g[key][k].title+'</h3><p>'+g[key][k].about+'</p>';
 						}
 					}
 				}else if(key=="previous"){
 					for(k in g[key]["missions"]){
-						if(typeof g[key]["missions"][k].title==="string"){
+						if(is(g[key]["missions"][k].title,"string")){
 							ul = '<ul>';
 							for(i in g[key]["missions"][k]){
 								if(i != "title" && i != "image"){
@@ -3301,7 +3291,7 @@ if(typeof $==="undefined") $ = {};
 			// Add closer
 			$('#guide').html(html);
 
-			if(html.indexOf('script')>= 0 && typeof MathJax==="object") MathJax.Hub.Queue(["Typeset",MathJax.Hub,'guide']);
+			if(html.indexOf('script')>= 0 && is(MathJax,"object")) MathJax.Hub.Queue(["Typeset",MathJax.Hub,'guide']);
 
 			// Add events to guide close
 			this.addCloser($('#guide'),{me:this},function(e){ e.preventDefault(); e.data.me.toggleGuide(); });
@@ -3348,7 +3338,7 @@ if(typeof $==="undefined") $ = {};
 	SpaceTelescope.prototype.save = function(){
 
 		// Bail out if there is no Blob function
-		if(typeof Blob!=="function") return this;
+		if(!is(Blob,"function")) return this;
 
 		var textToWrite = "blah";
 		var textFileAsBlob = new Blob([textToWrite], {type:'text/plain'});
@@ -3412,7 +3402,7 @@ if(typeof $==="undefined") $ = {};
 	// Blob() requires browser >= Chrome 20, Firefox 13, IE 10, Opera 12.10 or Safari 6
 	SpaceTelescope.prototype.log = function(){
 		var args = Array.prototype.slice.call(arguments, 0);
-		if(console && typeof console.log==="function") console.log('LOG',args);
+		if(console && is(console.log,"function")) console.log('LOG',args);
 		return this;
 	}
 
@@ -3432,18 +3422,18 @@ if(typeof $==="undefined") $ = {};
 		this.heightscale = "";	// Do we scale the height?
 		this.prop = { 'mirror': 0, 'bus': 0, 'slots': 0 };
 		
-		this.id = (typeof inp.id==="string") ? inp.id : "sidebar_satellite";
+		this.id = (is(inp.id,"string")) ? inp.id : "sidebar_satellite";
 		if(!this.el) this.el = $('#'+this.id);
 		if(this.el.find('#'+this.id+'_schematic').length==0) this.el.html('<div class="schematic" id="'+this.id+'_schematic"></div>')
-		if(typeof inp.height==="string" && inp.height.indexOf('%') > 0) this.heightscale = parseFloat(inp.height)/100;
+		if(is(inp.height,"string") && inp.height.indexOf('%') > 0) this.heightscale = parseFloat(inp.height)/100;
 
 		// Are the components working?
 		this.state = { 'cooling': { 'passive': true, 'active': true, 'cryogenic': true }, 'mirror': true, 'bus': true };
-		if(typeof inp.state==="object"){ for(var i in inp.state) this.state[i] = inp.state[i]; }
+		if(is(inp.state,"object")){ for(var i in inp.state) this.state[i] = inp.state[i]; }
 
 		// Do we add colour to the components? If we do but their state is false, they go black
 		this.colourize = { 'cooling': { 'passive': false, 'active': false, 'cryogenic': true }, 'mirror': false, 'bus': true };
-		if(typeof inp.colourize==="object"){ for(var i in inp.colourize) this.colourize[i] = inp.colourize[i]; }
+		if(is(inp.colourize,"object")){ for(var i in inp.colourize) this.colourize[i] = inp.colourize[i]; }
 
 		// Add resize function
 		$(window).on('resize',{me:this},function(e){ e.data.me.resize(); });
@@ -3602,6 +3592,8 @@ if(typeof $==="undefined") $ = {};
 			$('#'+this.id+'_schematic .label').remove();
 			var html = "";
 
+			w = this.el.innerWidth();
+			h = this.el.innerHeight()
 			// Loop over instruments
 			for(var i = 0 ; i < cols; i++){
 				x = (i-(cols-1)/2)*(instw*f*1.25);
@@ -3743,15 +3735,15 @@ if(typeof $==="undefined") $ = {};
 		this.interactive = true;
 		
 		if(!inp) inp = {};
-		if(typeof inp.id==="string") this.id = inp.id;
-		if(typeof inp.zoom==="number") this.zoom = inp.zoom;
+		if(is(inp.id,"string")) this.id = inp.id;
+		if(is(inp.zoom,"number")) this.zoom = inp.zoom;
 		this.el = $('#'+this.id);
-		if(typeof inp.phrases==="object") this.phrases = inp.phrases;
-		if(typeof inp.data==="object") this.data = inp.data;
-		if(typeof inp.callback==="function") this.callback = inp.callback;
-		if(typeof inp.interactive==="boolean") this.interactive = inp.interactive;
-		if(typeof inp.height==="string" && inp.height.indexOf('%') > 0) this.heightscale = inp.height/100;
-		if(typeof inp.height==="number") this.height = inp.height;
+		if(is(inp.phrases,"object")) this.phrases = inp.phrases;
+		if(is(inp.data,"object")) this.data = inp.data;
+		if(is(inp.callback,"function")) this.callback = inp.callback;
+		if(is(inp.interactive,"boolean")) this.interactive = inp.interactive;
+		if(is(inp.height,"string") && inp.height.indexOf('%') > 0) this.heightscale = inp.height/100;
+		if(is(inp.height,"number")) this.height = inp.height;
 		if(inp.context) this.spacetel = inp.context;
 		
 		// Properties for the orbit animation
@@ -3775,7 +3767,7 @@ if(typeof $==="undefined") $ = {};
 		if(inp.orbits.length==1) this.zoom = this.orbits[inp.orbits[0]].zoom;
 
 		// If we don't have a convertValue function we make a dummy
-		if(!this.spacetel.convertValue || typeof this.spacetel.convertValue!=="function") this.spacetel.convertValue = function(inp){ return inp; };
+		if(!this.spacetel.convertValue || !is(this.spacetel.convertValue,"function")) this.spacetel.convertValue = function(inp){ return inp; };
 		
 		// Add resize function
 		$(window).on('resize',{me:this},function(e){ e.data.me.resize(); });
@@ -3841,7 +3833,7 @@ if(typeof $==="undefined") $ = {};
 		}
 		for(var l in this.labels){
 			for(var i in this.labels[l]){
-				if(typeof this.labels[l][i].remove==="function"){
+				if(is(this.labels[l][i].remove,"function")){
 					this.labels[l][i].remove();
 					delete this.labels[l][i];
 				}
@@ -3859,13 +3851,13 @@ if(typeof $==="undefined") $ = {};
 		if(this.orbits["HEO"]) this.orbits["HEO"].r = this.E.r*3.3;
 		
 		if(key) this.zoom = this.orbits[key].zoom;
-		if(typeof zoom==="number") this.zoom = zoom;
+		if(is(zoom,"number")) this.zoom = zoom;
 
 		// r - radius
 		// e - ellipticity
 		// a - inclination angle
 		function makeOrbitPath(r,e,a){
-			if(!a || typeof a !== "number") a = 0;
+			if(!a || !is(a,"number")) a = 0;
 			var dy = r*Math.sin(a*Math.PI/180);
 			var dx = r*Math.cos(a*Math.PI/180);
 			// Big cludge as I can't work out how the ellipses are positioned when rotation is applied
@@ -3942,7 +3934,7 @@ if(typeof $==="undefined") $ = {};
 			p.solid.attr({ stroke: inp.color,'opacity':0.1,'stroke-width': 8 });
 
 			// Add mouseover events
-			if(typeof _obj.callback==="function"){
+			if(is(_obj.callback,"function")){
 				var on = function(){ $('#'+this.id).css('cursor','pointer'); this.dotted.attr({"stroke-width": (this.selected ? inp.stroke.selected : inp.stroke.on)}); };
 				var off = function(){ $('#'+this.id).css('cursor','default'); this.dotted.attr({"stroke-width": (this.selected ? inp.stroke.selected : inp.stroke.off)}); };
 				p.solid.hover(on, off, p, p);
@@ -4120,7 +4112,7 @@ if(typeof $==="undefined") $ = {};
 			// The speed in both the horizontal and vertical directions
 			this.speed = {x: -0.5+Math.random()*1, y: -5+Math.random()*3};
 			// Set the source location to the bottom of the rocket
-			this.location = { x: rocket.offset().left+(rocket.width()/2)-pad.offset().left, y: rocket.offset().top + rocket.height() - pad.offset().top };
+			this.loc = { x: rocket.offset().left+(rocket.width()/2)-pad.offset().left, y: rocket.offset().top + rocket.height() - pad.offset().top };
 			// Size of particle
 			this.radius = 5+Math.random()*2;
 			// How long it lasts
@@ -4149,20 +4141,20 @@ if(typeof $==="undefined") $ = {};
 				// i.e. opacity goes to 0 at the end of life
 				p.opacity = Math.round(p.remaining_life/p.life*100)/100
 				// Apply a gradient to make it darker around the edge
-				var gradient = ctx.createRadialGradient(p.location.x, p.location.y, 0, p.location.x, p.location.y, p.radius);
-				gradient.addColorStop(0, "rgba("+p.r+", "+p.g+", "+p.b+", "+p.opacity+")");
-				gradient.addColorStop(0.5, "rgba("+p.r+", "+p.g+", "+p.b+", "+p.opacity+")");
-				gradient.addColorStop(1, "rgba("+Math.round(p.r*0.9)+", "+Math.round(p.g*0.9)+", "+Math.round(p.b*0.9)+", 0)");
-				ctx.fillStyle = gradient;
+				var grad = ctx.createRadialGradient(p.loc.x, p.loc.y, 0, p.loc.x, p.loc.y, p.radius);
+				grad.addColorStop(0, "rgba("+p.r+", "+p.g+", "+p.b+", "+p.opacity+")");
+				grad.addColorStop(0.5, "rgba("+p.r+", "+p.g+", "+p.b+", "+p.opacity+")");
+				grad.addColorStop(1, "rgba("+Math.round(p.r*0.9)+", "+Math.round(p.g*0.9)+", "+Math.round(p.b*0.9)+", 0)");
+				ctx.fillStyle = grad;
 				// Draw particle
-				ctx.arc(p.location.x, p.location.y, p.radius, Math.PI*2, false);
+				ctx.arc(p.loc.x, p.loc.y, p.radius, Math.PI*2, false);
 				ctx.fill();
 				
 				// Move the particles
 				p.remaining_life -= 0.5;
 				p.radius += 0.5;
-				p.location.x += p.speed.x;
-				p.location.y -= p.speed.y;
+				p.loc.x += p.speed.x;
+				p.loc.y -= p.speed.y;
 				
 				// Regenerate the particles
 				if(p.remaining_life < 0 || p.radius < 0){
@@ -4198,9 +4190,17 @@ if(typeof $==="undefined") $ = {};
 		return x1 + x2;
 	}
 
-	function htmlDecode(input){
-		return $('<div />').html(input).text();
+	function is(v,t){ return (typeof v===t); }
+
+	// Display really large numbers as powers of ten
+	function powerOfTen(v,u){
+		var p = Math.floor(G.log10(v));
+		var a = Math.round(v/Math.pow(10,p))
+		return ''+a+'&times;10<sup>'+p+'</sup>'+u;
 	}
+	
+	// Escape HTML characters
+	function htmlDecode(input){ return $('<div />').html(input).text(); }
 	
 	function centre(lb){
 		var wide = $(window).width();
@@ -4220,8 +4220,8 @@ if(typeof $==="undefined") $ = {};
 	// Update the transforms on a Raphael element
 	function transformer(el,trans){
 		t = el.data('transform');
-		if(typeof t==="undefined") t = el.attr('transform');
-		if(typeof t!=="object") t = [];
+		if(is(t,"undefined")) t = el.attr('transform');
+		if(!is(t,"object")) t = [];
 		m = false;
 		for(i = 0; i < t.length ; i++){
 			for(j = 0; j < trans.length ; j++){
@@ -4238,18 +4238,6 @@ if(typeof $==="undefined") $ = {};
 		el.transform(t).data('transform',t);
 	}
 	
-
-	function makeYouTubeEmbed(video){
-		if(!video.url) return "";
-		video.url = video.url.replace(/watch\?v=/,'embed/');
-		if(video.start && typeof video.start==="number"){
-			video.url += '?start='+video.start;
-			if(video.end && typeof video.end==="number") video.url += '&end='+video.end;
-		}
-		video.url += (video.url.indexOf('?')>0 ? "&" : "?")+"rel=0&autoplay=1";	// Don't show related videos at the end
-		return '<iframe width="560" height="315" src="'+video.url+'" frameborder="0"></iframe>';
-	}
-
 	// Functions for getting, setting and deleting cookies
 	function setCookie(name,value,days){
 		if (days) {
@@ -4273,8 +4261,6 @@ if(typeof $==="undefined") $ = {};
 	}
 	
 	function deleteCookie(name){ setCookie(name,"",-1); }
-	
-
 
 	$.spacetelescope = function(placeholder,input) {
 		if(typeof input=="object") input.container = placeholder;
