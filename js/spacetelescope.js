@@ -498,7 +498,7 @@ if(typeof $==="undefined") $ = {};
 		// Build proposal document holder
 		$('#designer_proposal .options').html('<div class="padded"><div class="doc"></div></div>');
 
-		$('#sidebar').html('<div class="sidebar_inner"><div class="satellite panel"></div><div class="vehicle padded panel"></div><div class="site worldmap panel"></div><div class="orbit panel"></div></div>');
+		$('#sidebar').html('<div class="sidebar_inner"><div class="satellite panel" id="sidebar_satellite"></div><div class="vehicle padded panel"></div><div class="site worldmap panel"></div><div class="orbit panel"></div></div>');
 
 		this.buildTable();
 
@@ -635,10 +635,8 @@ if(typeof $==="undefined") $ = {};
 	SpaceTelescope.prototype.resize = function(){
 
 		if(this.modal) this.positionModal(this.modal);
+		if($('#launchanimation').length > 0) $('#launchanimation').css({'height':($('#launchanimation').innerWidth()/2)+'px'});
 
-		// Update the orbit diagram
-		if(this.space && typeof this.space.resize==="function") this.space.resize();
-		
 		return this;
 	}
 	
@@ -871,7 +869,7 @@ if(typeof $==="undefined") $ = {};
 
 		if(i && w){
 			if(!n) n = this.phrases.designer.instruments.defaultname.replace(/%d%/,(this.choices.instruments.length+1));
-			this.choices.instruments.push({'name':n,'type':i,'wavelength':w});
+			this.choices.instruments.push({'name':n,'type':i,'wavelength':w,'ok':true});
 			this.updateInstruments();
 		}
 		return this;
@@ -911,220 +909,11 @@ if(typeof $==="undefined") $ = {};
 	SpaceTelescope.prototype.makeSatellite = function(){
 
 		this.log('makeSatellite');
-		if(!this.satellite) this.satellite = {};
-		var s = this.satellite;
-		if(!s.el) s.el = $('#sidebar .satellite.panel');
-		if(s.el.find('#schematic').length==0) s.el.html('<div id="schematic"></div>')
 
-		var h = 160;
-		var w = $('#sidebar').innerWidth();
-		var d;
-		var prop = { 'mirror': 0, 'bus': 0, 'slots': 0 };
+		if(!this.satellite) this.satellite = new Satellite({'id':'sidebar_satellite','spacetel':this});
+		this.satellite.resize();
 
-		var c = Math.cos(Math.PI*30/180);
-		if(this.choices.mirror){
-			for(var m in this.data.mirror){
-				d = this.convertValue(this.data.mirror[m].diameter,'m');
-				if(m==this.choices.mirror) prop.mirror = d.value;
-			}
-			for(var m in this.data.mirror){
-				d = this.convertValue(this.data.mirror[m].bus.diameter,'m');
-				if(m==this.choices.mirror){
-					prop.bus = d.value;
-					if(this.choices.deployablemirror && this.data.deployablemirror.multiplier.bus.diameter) prop.bus *= this.data.deployablemirror.multiplier.bus.diameter;
-					prop.slots = this.data.mirror[m].bus.instrumentslots;
-				}
-			}
-		}
-
-		var padd = 16;	// padding in pixels
-
-		var f = Math.floor(w/32);	// scale factor
-		var fb = f*(prop.bus/prop.mirror);	// scale factor for bus width
-		var bodyh = 8;	// height of satellite body in units of f
-		var insth = 2;   // The height of the instruments
-		var hbus = 10*fb;
-		// Work out size of cryogenic tank based on the cryo-life
-		var tank = (this.choices.cooling.cryogenic ? this.choices.cooling.cyrogeniclife : 0);
-		// If we've not set the tank size and we're in basic mode we'll draw a tank if the set temperatue is low enough
-		if(tank==0 && this.choices.cool.temperature){
-			var t = this.convertValue(this.choices.temperature,'K');
-			// Scale the tank based on the temperature acheived
-			if(t.value < 50) tank = Math.log(50/t.value);
-		}
-		var bodytop = 4; // The height of the neck at the top of the dewar
-		var hbody = ((bodyh+bodytop+tank)*f);	// The height of the dewar
-		var hmirror = 13*f;	// The height of the mirror
-		var hvgroove = (this.choices.cooling.passive ? 2*f : 0); // The height of the vgrooves
-		if(this.choices.cool.temperature){
-			var t = this.convertValue(this.choices.temperature,'K');
-			if(t.value < 300) hvgroove = 2*f;
-		}
-		h = (this.choices.mirror) ? hbus+hbody+hmirror+hvgroove+(2*padd) : 0;
-
-		this.resizeSatellite("auto",h);
-
-		if(this.satellite.bus){
-			this.satellite.bus.remove();
-			delete this.satellite.bus;
-		}
-		if(this.satellite.body){
-			this.satellite.body.remove();
-			delete this.satellite.body;
-		}
-		if(this.satellite.vgroove){
-			this.satellite.vgroove.remove();
-			delete this.satellite.vgroove;
-		}
-		if(this.satellite.mirror){
-			this.satellite.mirror.remove();
-			delete this.satellite.mirror;
-		}
-
-		// Define some styles
-		var solid = {'stroke':'white','stroke-width':1,'fill':'white','fill-opacity':0.5};		
-		var solidlight = {'stroke':'white','stroke-width':1,'fill':'white','fill-opacity':0.15};		
-		var stroke = {'stroke':'white','stroke-width':1};
-
-		if(this.choices.mirror){
-			s.bus = s.paper.set();
-			// Solar shield
-			s.bus.push(s.paper.ellipse(0,3.5*fb,10*fb,6*fb).attr(solid));
-			// Top of bus
-			s.bus.push(s.paper.path('m '+(-8.5*fb)+', '+(-2*fb)+' l0,'+(4*fb)+' l'+(5*fb)+','+(3*fb)+' l'+(7*fb)+',0 l'+(5*fb)+','+(-3*fb)+' l0,'+(-4*fb)+' l'+(-5*fb)+','+(-3*fb)+' l'+(-7*fb)+',0 z').attr(solid));
-			// Bus sides
-			s.bus.push(s.paper.path('m '+(-8.5*fb)+', '+(2*fb)+' l0,'+(3.5*fb)+' l'+(5*fb)+','+(3*fb)+' l0,'+(-3.5*fb)+' z').attr(solid));
-			s.bus.push(s.paper.path('m '+(-3.5*fb)+', '+(5*fb)+' l'+(7*fb)+',0 l0,'+(3.5*fb)+' l'+(-7*fb)+',0 z').attr(solid));
-			s.bus.push(s.paper.path('m '+(8.5*fb)+', '+(2*fb)+' l0,'+(3.5*fb)+' l'+(-5*fb)+','+(3*fb)+' l0,'+(-3.5*fb)+' z').attr(solid));
-		}
-
-		if(hvgroove > 0){
-			s.vgroove = s.paper.set();
-			s.vgroove.push(s.paper.ellipse(0,-0.6*fb,8.5*fb,5*fb).attr(solidlight));
-			s.vgroove.push(s.paper.ellipse(0,-1.2*fb,8.25*fb,4.75*fb).attr(solidlight));
-			s.vgroove.push(s.paper.ellipse(0,-1.8*fb,8*fb,4.5*fb).attr(solidlight));
-			s.vgroove.push(s.paper.path('m 0,'+(-0.6*fb)+' l'+(-5.5*fb)+','+(2.5*fb)+' m'+(5.5*fb)+','+(-2.5*fb)+' l'+(1.5*fb)+','+(3.5*fb)+' m'+(-1.5*fb)+','+(-3.5*fb)+' l'+(8*fb)+','+(-fb)+' m'+(-8*fb)+','+(fb)+' l'+(5*fb)+','+(-5*fb)+' m'+(-5*fb)+','+(5*fb)+' l'+(-2*fb)+','+(-5.5*fb)+' m'+(2*fb)+','+(5.5*fb)+' l'+(-7*fb)+','+(-3*fb)).attr({'stroke':'white','stroke-width':1,'stroke-opacity':0.4}))
-		}
-		
-		if(this.choices.mirror){
-			s.body = s.paper.set();
-			var bw = Math.min(7,8.5*(prop.bus/prop.mirror));
-			var bt = bw*0.4;
-			var bh = (bw-bt);
-			// Base circle for body
-			s.body.push(s.paper.ellipse(0,0,bw*f,bh*f).attr(stroke));
-			// Shape of body
-			s.body.push(s.paper.path('m '+(-bw*f)+',0 a '+(bw*f)+','+(bh*f)+' 0 0,0 '+(2*bw*f)+',0 l 0,'+(-(bodyh+tank-1)*f)+' q 0,'+(-2*f)+' '+(-bh*f)+','+(-bodytop*f)+' l0,'+(-1*f)+' a'+(bt*f)+','+(bt*0.5*f)+' 0 0,0 '+(-2*bt*f)+',0 l0,'+(1*f)+' q'+(-bh*f)+','+(1*f)+' '+(-bh*f)+','+(bh*f)+' z').attr(solid));
-			if(tank > 0){
-				// Tank 
-				s.body.push(s.paper.path('m '+(-bw*f)+',0 a '+(bw*f)+','+(bh*f)+' 0 0,0 '+(2*bw*f)+',0 l 0,'+(-tank*f)+' a '+(bw*f)+','+(bh*f)+' 0 0,0 '+(-2*bw*f)+',0 z').attr({'stroke':'white','stroke-width':1,'fill':$('.mass').css('color'),'fill-opacity':0.3}));
-				s.body.push(s.paper.ellipse(0,(-tank*f),bw*f,bh*f).attr(stroke));
-			}
-			// Top circle
-			s.body.push(s.paper.ellipse(0,(-(bodyh+tank+bodytop)*f),bt*f,bt*0.5*f).attr(stroke));
-
-			// Build instrument slots
-			var cols = Math.ceil(prop.slots/2);	// How many columns of instruments do we have?
-			var x,y,xl,yl;
-			var instw = 2.2; // The width of the instrument
-			instw = bw*2/(cols+2)
-			var i2 = instw/2; // Half the width
-			var i4 = instw/4; // Quarter the width
-			// Styles for slots
-			var open = {'stroke':'white','stroke-width':1,'stroke-dasharray':'- ','fill':'white','fill-opacity':0.2};
-			var filled = {'stroke':'white','stroke-width':1,'fill':$('.science').css('color'),'fill-opacity':1}; // Use the 'science' colour
-			var n = 0;
-			var ni = 0;
-
-			if(this.choices.instruments) ni = this.choices.instruments.length;
-			$('#schematic .label').remove();
-			var html = "";
-
-			// Loop over instruments
-			for(var i = 0 ; i < cols; i++){
-				x = (i-(cols-1)/2)*(instw*f*1.25);
-				for(var j = 0; j < 2; j++){
-					y = tank + 1.5 + (j==0 ? 0 : insth*2);
-					xl = 0.5 + (x+(j==0 ? i4*f : 0))/w;
-					yl = (padd+(hbus+hvgroove+(y+(j==0 ? -insth : +insth*1.5))*f))/h;
-					s.body.push(s.paper.path('m'+(x-i2*f)+','+(-y*f)+' l'+(i2*f)+','+(i4*f)+' l'+(i2*f)+','+(-i4*f)+' l0,'+(-insth*f)+' l'+(-i2*f)+','+(-i4*f)+' l'+(-i2*f)+','+(i4*f)+' z m'+(i2*f)+','+(i4*f)+' l0,'+(-insth*f)+' l'+(-i2*f)+','+(-i4*f)+'m'+(i2*f)+','+(i4*f)+'l'+(i2*f)+','+(-i4*f)).attr((n < ni) ? filled : open));
-					// Add a label if we can apply a CSS3 transform
-					if(n < ni && this.choices.instruments[n] && this.hastransform) html += '<div class="label '+(j==0 ? 'bottom':'top')+'" style="bottom:'+(100*yl)+'%; left:'+(100*xl)+'%">'+this.choices.instruments[n].name+'</div>';
-					n++;
-				}
-			}
-			if(html) $('#schematic').prepend(html);
-		}
-
-		if(this.choices.mirror){
-			s.mirror = s.paper.set();
-			// Primary mirror
-			s.mirror.push(s.paper.ellipse(0,-2.5*f,10*f,6*f).attr(solid));
-			// Hole in primary mirror
-			s.mirror.push(s.paper.ellipse(0,0,1*f,0.6*f).attr(solid));
-			// Draw back struts
-			s.mirror.push(s.paper.path('m '+(-2*f)+','+(-11*f)+' l'+(-3*f)+','+(6*f)+' l '+(5*f)+','+(-7*f)+' l'+(5*f)+','+(7*f)+' l'+(-3*f)+','+(-6*f)).attr(stroke));
-			// Draw front struts
-			s.mirror.push(s.paper.path('m '+(-2*f)+','+(-11*f)+' l'+(2*f)+','+(-1*f)+' l 0,'+(-1*f)+' l'+(-2*f)+','+(1*f)+' z').attr(solid));
-			// Draw back secondary mirror structure
-			s.mirror.push(s.paper.path('m '+(2*f)+','+(-11*f)+' l'+(-2*f)+','+(-1*f)+' l 0,'+(-1*f)+' l'+(2*f)+','+(1*f)+' z').attr(solid));
-			s.mirror.push(s.paper.path('m '+(-2*f)+','+(-11*f)+' l'+(-4*f)+','+(12*f)+' l '+(6*f)+','+(-11*f)+' l'+(6*f)+','+(11*f)+' l'+(-4*f)+','+(-12*f)).attr(stroke));
-			// Draw secondary mirror
-			s.mirror.push(s.paper.ellipse(0,(-11*f),2*f,1*f).attr(solid));
-			// Draw front of secondary mirror structure
-			s.mirror.push(s.paper.path('m '+(-2*f)+','+(-12*f)+' l'+(2*f)+','+(1*f)+' l 0,'+(1*f)+' l'+(-2*f)+','+(-1*f)+' z').attr(solid));
-			s.mirror.push(s.paper.path('m '+(2*f)+','+(-12*f)+' l'+(-2*f)+','+(1*f)+' l 0,'+(1*f)+' l'+(2*f)+','+(-1*f)+' z').attr(solid));
-		}
-
-		// Move bus
-		if(s.bus) for(var i = 0; i < s.bus.length; i++) transformer(s.bus[i],['t',w/2,h - padd - hbus]);
-		// Move vgroove
-		if(s.vgroove) for(var i = 0; i < s.vgroove.length; i++) transformer(s.vgroove[i],['t',w/2,h - padd -hbus]);
-		// Move body
-		if(s.body) for(var i = 0; i < s.body.length; i++) transformer(s.body[i],['t',w/2,h - padd - hbus - hvgroove]);
-		// Move mirror
-		if(s.mirror) for(var i = 0; i < s.mirror.length; i++) transformer(s.mirror[i],['t',w/2,h - padd -hbus - hvgroove - hbody]);
-
-
-		this.satellite = s;
 		return this;
-	}
-	
-	SpaceTelescope.prototype.resizeSatellite = function(w,h){
-
-		this.log('resizeSatellite');
-		var s = $('#sidebar');
-		
-		// Hide the contents so we can calculate the size of the container
-		this.satellite.el.children().hide();
-
-		// Make the element fill the container's width
-		this.satellite.el.css({'width':'auto','display':'block'});
-
-		// Get the inner width of the space container (i.e. without margins)
-		if(!w || w=="auto") w = this.satellite.el.innerWidth();
-		if(w < s.width()/2) w = s.width()-(parseInt(this.satellite.el.css('margin-left'),10) + parseInt(this.satellite.el.css('margin-right'),10));
-		if(!h) h = w/2;
-
-		// Check if the HTML element has changed size due to responsive CSS
-		if(w != this.satellite.width || h != this.satellite.height || this.satellite.width==0){
-			this.satellite.width = w;
-			if(this.satellite.width == 0) this.satellite.width = s.width()-(parseInt(this.satellite.el.css('margin-left'),10) + parseInt(this.satellite.el.css('margin-right'),10));
-			this.satellite.height = h;
-
-			// Create the Raphael object to hold the vector graphics
-			if(!this.satellite.paper){
-				this.satellite.paper = Raphael('schematic', this.satellite.width, this.satellite.height);
-			}else{
-				this.satellite.paper.setSize(this.satellite.width,this.satellite.height);
-				this.satellite.rebuild = true;
-			}
-		}
-
-		// Show the contents again
-		this.satellite.el.children().show();
-
-		return this;	
 	}
 	
 	// Create an animation area for the orbit animations
@@ -2334,10 +2123,12 @@ if(typeof $==="undefined") $ = {};
 			var devtime = this.formatValue(this.table.time_dev_total.list.time_dev_total.value);
 
 			// Build launch progress
-			$('#launch').html('<h2>'+this.phrases.launch.title+'</h2><p>'+this.phrases.launch.intro.replace(/%DEVTIME%/,devtime).replace(/%VEHICLE%/,vehicle).replace(/%SITE%/,site).replace(/%ORBIT%/,orbit).replace(/%LAUNCHDATE%/,this.launchdate)+'</p><div id="launchanimation">'+('<div id="launchpadbg"><img src="images/launchpad_'+this.choices.site+'.png" /></div><div id="launchpadfg"><img src="images/launchpad_'+this.choices.site+'_fg.png" /></div><div id="launchrocket"><img src="'+this.data.vehicle[this.choices.vehicle].img+'" /></div>')+'<div id="countdown" class="padded">Countdown</div></div><ul id="launchtimeline"></ul><div id="launchnav" class="toppadded"></div>');
+			$('#launch').html('<h2>'+this.phrases.launch.title+'</h2><p>'+this.phrases.launch.intro.replace(/%DEVTIME%/,devtime).replace(/%VEHICLE%/,vehicle).replace(/%SITE%/,site).replace(/%ORBIT%/,orbit).replace(/%LAUNCHDATE%/,this.launchdate)+'</p><div id="launchanimation">'+('<div id="launchpadbg"><img src="images/launchpad_'+this.choices.site+'.png" /></div><div id="launchpadfg"><img src="images/launchpad_'+this.choices.site+'_fg.png" /></div><div id="launchrocket"><img src="'+this.data.vehicle[this.choices.vehicle].img+'" /></div>')+'<div id="countdown" class="padded">Countdown</div></div><div id="launchnav" class="toppadded"></div><ul id="launchtimeline" class="toppadded"></ul>');
 	
+			$('#launchanimation').css({'height':($('#launchanimation').innerWidth()/2)+'px'});
+
 			this.launchstep = 0;
-			if(this.launchstep==0) this.countdown(10);
+			if(this.launchstep==0) this.countdown(2);// BLAH
 		}
 	}
 
@@ -2382,32 +2173,42 @@ if(typeof $==="undefined") $ = {};
 
 		var status = this.phrases.launch.status;
 		var ok = true;	// We are fine to continue
+		var tline = $('#launchtimeline');
+		var lanim = $('#launchanimation');
 
+		function fadeIn(html){
+			tline.prepend($(html).hide().fadeIn(1000));
+		}
 		if(this.ok){
 			if(this.launchstep==2){
 				this.ok = this.roll(prob.site*prob.vehicle);
-				$('#launchtimeline').append('<li>'+this.buildRow(this.phrases.launch.launch.label,(this.ok ? this.phrases.launch.launch.success : this.phrases.launch.launch.fail),'launch_launch')+'</li>');
+				fadeIn('<li>'+this.buildRow(this.phrases.launch.launch.label,(this.ok ? this.phrases.launch.launch.success : this.phrases.launch.launch.fail),'launch_launch')+'</li>');
 				if(this.ok){
 					// Rocket launched
-					$('#launchanimation').addClass(this.choices.vehicle).addClass('launched');
+					lanim.addClass(this.choices.vehicle).addClass('launched');
 					this.exhaust = new Exhaust();
 				}
 			}else this.exhaust.stop();
 			if(this.launchstep==3){
 				this.ok = this.roll(prob.orbit);
-				$('#launchtimeline').append('<li><div id="launchorbit"></div>'+this.buildRow(this.phrases.launch.orbit.label,(this.ok ? this.phrases.launch.orbit.success : this.phrases.launch.orbit.fail).replace(/%ORBIT%/,this.getChoice('orbit')),'launch_orbit')+'</li>');
+				fadeIn('<li>'+this.buildRow(this.phrases.launch.orbit.label,(this.ok ? this.phrases.launch.orbit.success : this.phrases.launch.orbit.fail).replace(/%ORBIT%/,this.getChoice('orbit')),'launch_orbit')+'<div id="launchorbit"></div></li>');
 				if(this.ok){
-					this.launchorbitanim = new OrbitAnimation({'id':'launchorbit','height':'50%','orbits':[this.choices.orbit],'phrases':this.phrases.designer.orbit,'data':this.data.orbit,'interactive':false});
-					this.launchorbitanim.resize();
+					lanim.html('');
+					this.launchanim = new OrbitAnimation({'id':'launchanimation','height':'50%','orbits':[this.choices.orbit],'phrases':this.phrases.designer.orbit,'data':this.data.orbit,'interactive':false});
+					this.launchanim.resize();
 				}
 			}
 			if(this.launchstep==4){	
 				this.ok = this.roll(prob.mirror);
-				$('#launchtimeline').append('<li>'+this.buildRow(this.phrases.launch.deploy.label,(this.ok ? this.phrases.launch.deploy.success : this.phrases.launch.deploy.fail),'launch_mirror')+'</li>');
+				fadeIn('<li>'+this.buildRow(this.phrases.launch.deploy.label,(this.ok ? this.phrases.launch.deploy.success : this.phrases.launch.deploy.fail),'launch_mirror')+'</li>');
+				lanim.html('');
+				this.launchanim = new Satellite({'id':'launchanimation','spacetel':this,'height':'50%','state':{'mirror':this.ok},'colourize':{'mirror':true,'bus':false,'cooling':{'passive':false,'cryogenic':false,'active':false}}});
+				this.launchanim.resize();
 			}
 			if(this.launchstep==5){
 				var okcool = true;
 				var okpassive = true;
+				var l = "";
 				// Has the user requested cooling?
 				if(this.choices.hascooling){
 					// Do we have temperature-based cooling (normal mode)
@@ -2416,18 +2217,24 @@ if(typeof $==="undefined") $ = {};
 						if(t.temperature) this.temperature = this.copyValue(t.temperature);
 						if(!t.risk) t.risk = 1;
 						okcool = this.roll(t.risk);
-						$('#launchtimeline').append('<li>'+this.buildRow(this.phrases.launch.cooling.label.label,(okcool ? this.phrases.launch.cooling.label.success : this.phrases.launch.cooling.label.fail),'launch_temperature')+'</li>');
+						l += '<li>'+this.buildRow(this.phrases.launch.cooling.label.label,(okcool ? this.phrases.launch.cooling.label.success : this.phrases.launch.cooling.label.fail),'launch_temperature')+'</li>';
+						this.launchanim.state.cooling = { 'passive': okcool, 'active': okcool, 'cryogenic': okcool };
+						this.launchanim.colourize.cooling = { 'passive': true, 'active': true, 'cryogenic': true };
+						this.launchanim.build();
 					}
 					
 					// Do we have passive cooling
 					if(this.data.cooling.passive){
-						$('#launchtimeline').append('<li>'+this.buildRow(this.phrases.launch.cooling.label.label,'','launch_cooling')+'</li>');
+						l += '<li>'+this.buildRow(this.phrases.launch.cooling.label.label,'','launch_cooling')+'</li>';
 						p = this.choices.cool.passive;
 						if(p=="yes"){
 							okcool = this.roll(this.data.cooling.passive[p].risk);
 							okpassive = okcool;
 							if(okcool) this.temperature.value *= this.data.cooling.passive[p].multiplier.temperature;
-							$('#launchtimeline').append('<li class="indent">'+this.buildRow(this.phrases.launch.cooling.passive.label,(okcool ? this.phrases.launch.cooling.passive.success : this.phrases.launch.cooling.passive.fail),'launch_passive')+'</li>');
+							l += '<li class="indent">'+this.buildRow(this.phrases.launch.cooling.passive.label,(okcool ? this.phrases.launch.cooling.passive.success : this.phrases.launch.cooling.passive.fail),'launch_passive')+'</li>';
+							this.launchanim.state.cooling.passive = okcool;
+							this.launchanim.colourize.cooling.passive = true;
+							this.launchanim.build();
 
 							// Do we have active cooling (requires passive cooling)?
 							if(this.data.cooling.active && okpassive){
@@ -2435,7 +2242,10 @@ if(typeof $==="undefined") $ = {};
 								if(p=="yes"){
 									okcool = this.roll(this.data.cooling.active[p].risk);
 									if(okcool) this.temperature.value *= this.data.cooling.active[p].multiplier.temperature;
-									$('#launchtimeline').append('<li class="indent">'+this.buildRow(this.phrases.launch.cooling.active.label,(okcool ? this.phrases.launch.cooling.active.success : this.phrases.launch.cooling.active.fail),'launch_active')+'</li>');
+									l += '<li class="indent">'+this.buildRow(this.phrases.launch.cooling.active.label,(okcool ? this.phrases.launch.cooling.active.success : this.phrases.launch.cooling.active.fail),'launch_active')+'</li>';
+									this.launchanim.state.cooling.active = okcool;
+									this.launchanim.colourize.cooling.active = true;
+									this.launchanim.build();
 								}
 							}
 							// Do we have cryogenic cooling (requires passive cooling)?
@@ -2444,30 +2254,39 @@ if(typeof $==="undefined") $ = {};
 								if(p && p!="none"){
 									okcool = this.roll(this.data.cooling.cryogenic[p].risk);
 									if(okcool) this.temperature.value *= this.data.cooling.cryogenic[p].multiplier.temperature;
-									$('#launchtimeline').append('<li class="indent">'+this.buildRow(this.phrases.launch.cooling.cryogenic.label,(okcool ? this.phrases.launch.cooling.cryogenic.success : this.phrases.launch.cooling.cryogenic.fail),'launch_cryogenic')+'</li>');
+									l += '<li class="indent">'+this.buildRow(this.phrases.launch.cooling.cryogenic.label,(okcool ? this.phrases.launch.cooling.cryogenic.success : this.phrases.launch.cooling.cryogenic.fail),'launch_cryogenic')+'</li>';
+									this.launchanim.state.cooling.cryogenic = okcool;
+									this.launchanim.colourize.cooling.cryogenic = true;
+									this.launchanim.build();
 								}
 							}
 						}
 					}
 				}
-				$('#launchtimeline').append('<li class="indent">'+this.buildRow(this.phrases.launch.cooling.achieved.label,(okcool ? this.phrases.launch.cooling.achieved.success : this.phrases.launch.cooling.achieved.fail).replace(/\%TEMPERATURE%/,this.formatValue(this.temperature)))+'</li>');
+				l += '<li class="indent">'+this.buildRow(this.phrases.launch.cooling.achieved.label,(okcool ? this.phrases.launch.cooling.achieved.success : this.phrases.launch.cooling.achieved.fail).replace(/\%TEMPERATURE%/,this.formatValue(this.temperature)))+'</li>';
+				fadeIn(l);
 			}
 			if(this.launchstep==6){
 				var percent = 0;
+				var l = "";
 				if(this.choices.instruments){
-					$('#launchtimeline').append('<li>'+this.buildRow(this.phrases.launch.instruments.label,'')+'</li>');
+					l += '<li>'+this.buildRow(this.phrases.launch.instruments.label,'')+'</li>';
 					for(var i = 0; i < this.choices.instruments.length; i++){
 						var therm = this.convertValue(this.data.wavelengths[this.choices.instruments[i].wavelength].temperature,this.temperature.units);
 						ok = (therm.value >= this.temperature.value) ? true : false;
 						this.choices.instruments[i].ok = ok;
-						$('#launchtimeline').append('<li class="indent">'+this.buildRow(this.choices.instruments[i].name+' ('+this.phrases.wavelengths[this.choices.instruments[i].wavelength].label+' '+this.phrases.designer.instruments.options.instrument[this.choices.instruments[i].type].label+')',(ok ? this.phrases.launch.instruments.success : this.phrases.launch.instruments.fail),'launch_instrument')+'</li>');
+						l += '<li class="indent">'+this.buildRow(this.choices.instruments[i].name+' ('+this.phrases.wavelengths[this.choices.instruments[i].wavelength].label+' '+this.phrases.designer.instruments.options.instrument[this.choices.instruments[i].type].label+')',(ok ? this.phrases.launch.instruments.success : this.phrases.launch.instruments.fail),'launch_instrument')+'</li>';
 					}
+					this.launchanim.colourize.bus = true;
+					this.launchanim.build();
 				}
+				fadeIn(l);
 			}
 			if(this.launchstep==7){
 				var percent = 0;
+				var l = "";
 				if(this.choices.instruments){
-					$('#launchtimeline').append('<li>'+this.buildRow(this.phrases.launch.science.label,'')+'</li>');
+					l += '<li>'+this.buildRow(this.phrases.launch.science.label,'')+'</li>';
 
 					for(var i = 0; i < this.choices.instruments.length; i++){
 						if(this.choices.instruments[i].ok){
@@ -2480,17 +2299,17 @@ if(typeof $==="undefined") $ = {};
 							if(!ok) pc = Math.random()*100;
 							percent += pc;
 							tmp = (ok ? this.phrases.launch.science.success : this.phrases.launch.science.fail).replace(/%PERCENT%/,this.formatValue(this.makeValue(pc,'%')));
-							$('#launchtimeline').append('<li class="indent">'+this.buildRow(this.choices.instruments[i].name+' ('+this.phrases.wavelengths[this.choices.instruments[i].wavelength].label+' '+this.phrases.designer.instruments.options.instrument[this.choices.instruments[i].type].label+')',tmp,'launch_science')+'</li>');
+							l += '<li class="indent">'+this.buildRow(this.choices.instruments[i].name+' ('+this.phrases.wavelengths[this.choices.instruments[i].wavelength].label+' '+this.phrases.designer.instruments.options.instrument[this.choices.instruments[i].type].label+')',tmp,'launch_science')+'</li>';
 						}
 					}
 					if(this.choices.instruments.length > 0) percent /= this.choices.instruments.length;
 				}
 	
 				tmp = (this.ok ? this.phrases.launch.overall.success : this.phrases.launch.overall.fail).replace(/\%PERCENT%/,this.formatValue(this.makeValue(percent,'%')));
-				$('#launchtimeline').append('<li>'+this.buildRow(this.phrases.launch.overall.label,tmp,'finalresult')+'</li>');
+				fadeIn(l);
+				fadeIn('<li>'+this.buildRow(this.phrases.launch.overall.label,tmp,'finalresult')+'</li>');
 				$('.printable').remove();
-				$('#launchtimeline').after('<div class="printable toppadded"><a href="#" class="button fancybtn">'+this.phrases.designer.proposal.reprint+'</a></div>');
-				$('#launchnav').html("");
+				$('#launchnav').html('<div class="printable"><a href="#" class="button fancybtn">'+this.phrases.designer.proposal.reprint+'</a></div>').fadeIn();
 				this.launchstep = 0;
 			}
 		}
@@ -2500,7 +2319,6 @@ if(typeof $==="undefined") $ = {};
 			$('#launchnav a.button').remove();
 
 			// Allow a one-time only restart
-			
 			if(!this.relaunched){
 				var devtime = this.table.time_dev_total.list.time_dev_total.value;
 				var relaunchtime = this.copyValue(devtime);
@@ -2510,7 +2328,7 @@ if(typeof $==="undefined") $ = {};
 				cost = this.sumValues(cost,this.getChoice('vehicle.cost'));
 				cost.value *= -1;
 
-				$('#launchtimeline').after('<div class="relaunch toppadded"><p>'+this.phrases.launch.relaunch.text.replace(/\%DEVTIME\%/,this.formatValue(devtime)).replace(/%RELAUNCHTIME%/,this.formatValue(relaunchtime)).replace(/%RELAUNCHCOST%/,this.formatValueSpan(cost))+'</p><a href="#" class="button fancybtn">'+this.phrases.launch.relaunch.label+'</a></div>');
+				$('#launchnav').html('<div class="relaunch toppadded"><p>'+this.phrases.launch.relaunch.text.replace(/\%DEVTIME\%/,this.formatValue(devtime)).replace(/%RELAUNCHTIME%/,this.formatValue(relaunchtime)).replace(/%RELAUNCHCOST%/,this.formatValueSpan(cost))+'</p><a href="#" class="button fancybtn">'+this.phrases.launch.relaunch.label+'</a></div>');
 			}else{
 				$('.relaunch').remove();
 			}
@@ -3598,6 +3416,303 @@ if(typeof $==="undefined") $ = {};
 		return this;
 	}
 
+	// Class for drawing the satellite
+	// Inputs:
+	//   inp.id        = (string) ID of an HTML element to attach the animation to
+	//   inp.height    = (string) e.g. 50%
+	//   inp.spacetel  = (object) The context for the SpaceTelescope class
+	//   inp.colourize = (object) Do we add colour to the different components?
+	//   inp.state     = (object) Are the components working?
+	function Satellite(inp){
+
+		if(!inp) inp = {};
+		if(inp.spacetel) this.s = inp.spacetel;
+		else return this;
+		
+		this.heightscale = "";	// Do we scale the height?
+		this.prop = { 'mirror': 0, 'bus': 0, 'slots': 0 };
+		
+		this.id = (typeof inp.id==="string") ? inp.id : "sidebar_satellite";
+		if(!this.el) this.el = $('#'+this.id);
+		if(this.el.find('#'+this.id+'_schematic').length==0) this.el.html('<div class="schematic" id="'+this.id+'_schematic"></div>')
+		if(typeof inp.height==="string" && inp.height.indexOf('%') > 0) this.heightscale = parseFloat(inp.height)/100;
+
+		// Are the components working?
+		this.state = { 'cooling': { 'passive': true, 'active': true, 'cryogenic': true }, 'mirror': true, 'bus': true };
+		if(typeof inp.state==="object"){ for(var i in inp.state) this.state[i] = inp.state[i]; }
+
+		// Do we add colour to the components? If we do but their state is false, they go black
+		this.colourize = { 'cooling': { 'passive': false, 'active': false, 'cryogenic': true }, 'mirror': false, 'bus': true };
+		if(typeof inp.colourize==="object"){ for(var i in inp.colourize) this.colourize[i] = inp.colourize[i]; }
+
+		// Add resize function
+		$(window).on('resize',{me:this},function(e){ e.data.me.resize(); });
+
+		return this;
+	}
+
+	Satellite.prototype.getScales = function(px,padd){
+		var f = Math.floor(px/32);	// scale factor
+		var fb = f*(this.prop.bus/this.prop.mirror);	// scale factor for bus width
+		var bodyh = 8;	// height of satellite body in units of f
+		var insth = 2;   // The height of the instruments
+		var hbus = 10*fb;
+		// Work out size of cryogenic tank based on the cryo-life
+		var tank = (this.s.choices.cooling.cryogenic ? this.s.choices.cooling.cyrogeniclife : 0);
+		// If we've not set the tank size and we're in basic mode we'll draw a tank if the set temperatue is low enough
+		if(tank==0 && this.s.choices.cool.temperature){
+			var t = this.s.convertValue(this.s.choices.temperature,'K');
+			// Scale the tank based on the temperature acheived
+			if(t.value < 50) tank = Math.log(50/t.value);
+		}
+		var bodytop = 4; // The height of the neck at the top of the dewar
+		var hbody = ((bodyh+bodytop+tank)*f);	// The height of the dewar
+		var hmirror = 13*f;	// The height of the mirror
+		var hvgroove = (this.s.choices.cooling.passive ? 2*f : 0); // The height of the vgrooves
+		if(this.s.choices.cool.temperature){
+			var t = this.s.convertValue(this.s.choices.temperature,'K');
+			if(t.value < 300) hvgroove = 2*f;
+		}
+		h = (this.s.choices.mirror) ? hbus+hbody+hmirror+hvgroove+(2*padd) : 0;
+		return {'body':hbody,'vgroove':hvgroove,'bus':hbus,'mirror':hmirror,'h':h,'fb':fb,'f':f,'top':bodytop,'bodyh':bodyh,'tank':tank,'instrument':insth};
+	}
+
+	Satellite.prototype.build = function(){
+
+		var h = 160;
+		var w = this.el.parent().innerWidth();
+		var d;
+
+		var c = Math.cos(Math.PI*30/180);
+		if(this.s.choices.mirror){
+			for(var m in this.s.data.mirror){
+				d = this.s.convertValue(this.s.data.mirror[m].diameter,'m');
+				if(m==this.s.choices.mirror) this.prop.mirror = d.value;
+			}
+			for(var m in this.s.data.mirror){
+				d = this.s.convertValue(this.s.data.mirror[m].bus.diameter,'m');
+				if(m==this.s.choices.mirror){
+					this.prop.bus = d.value;
+					if(this.s.choices.deployablemirror && this.s.data.deployablemirror.multiplier.bus.diameter) this.prop.bus *= this.s.data.deployablemirror.multiplier.bus.diameter;
+					this.prop.slots = this.s.data.mirror[m].bus.instrumentslots;
+				}
+			}
+		}
+
+		var padd = 16;	// padding in pixels
+		var ht;
+		if(this.heightscale){
+			ht = this.getScales(200,padd); // If we had a 100px wide box we find out how big the satellite would be
+			w = (w*this.heightscale)*200/ht.h;	// Update the width
+		}
+		ht = this.getScales(w,padd);
+		var fb = ht.fb;
+		var f = ht.f;
+		var bodyh = ht.bodyh;
+		var tank = ht.tank;
+		var bodytop = ht.top;
+		var insth = ht.instrument;
+
+		h = (this.s.choices.mirror) ? ht.bus+ht.body+ht.mirror+ht.vgroove+(2*padd) : 0;
+
+		// Create the canvas for this
+		if(this.heightscale) this.create(w,w*this.heightscale);
+		else this.create("auto",h)
+
+		if(this.bus){
+			this.bus.remove();
+			delete this.bus;
+		}
+		if(this.body){
+			this.body.remove();
+			delete this.body;
+		}
+		if(this.vgroove){
+			this.vgroove.remove();
+			delete this.vgroove;
+		}
+		if(this.mirror){
+			this.mirror.remove();
+			delete this.mirror;
+		}
+
+		// Define some styles
+		var solid = {'stroke':'white','stroke-width':1,'fill':'white','fill-opacity':0.5};		
+		var solidlight = {'stroke':'white','stroke-width':1,'fill':'white','fill-opacity':0.15};		
+		var stroke = {'stroke':'white','stroke-width':1};
+		var colour,style;
+		var p = this.paper;
+
+		if(this.s.choices.mirror){
+			this.bus = p.set();
+			// Solar shield
+			this.bus.push(p.ellipse(0,3.5*fb,10*fb,6*fb).attr(solid));
+			// Top of bus
+			this.bus.push(p.path('m '+(-8.5*fb)+', '+(-2*fb)+' l0,'+(4*fb)+' l'+(5*fb)+','+(3*fb)+' l'+(7*fb)+',0 l'+(5*fb)+','+(-3*fb)+' l0,'+(-4*fb)+' l'+(-5*fb)+','+(-3*fb)+' l'+(-7*fb)+',0 z').attr(solid));
+			// Bus sides
+			this.bus.push(p.path('m '+(-8.5*fb)+', '+(2*fb)+' l0,'+(3.5*fb)+' l'+(5*fb)+','+(3*fb)+' l0,'+(-3.5*fb)+' z').attr(solid));
+			this.bus.push(p.path('m '+(-3.5*fb)+', '+(5*fb)+' l'+(7*fb)+',0 l0,'+(3.5*fb)+' l'+(-7*fb)+',0 z').attr(solid));
+			this.bus.push(p.path('m '+(8.5*fb)+', '+(2*fb)+' l0,'+(3.5*fb)+' l'+(-5*fb)+','+(3*fb)+' l0,'+(-3.5*fb)+' z').attr(solid));
+		}
+
+		if(ht.vgroove > 0){
+			style = {'stroke':'white','stroke-width':1,'fill':'white','fill-opacity':0.15};
+			// If we are in-flight and the the cooling state has been explicitly set to false we change the colour
+			if(this.colourize.cooling.passive){ style.fill = (this.state.cooling.passive) ? $('.mass').css('color') : "black"; style['fill-opacity'] = 0.5; }
+			this.vgroove = p.set();
+			this.vgroove.push(p.ellipse(0,-0.6*fb,8.5*fb,5*fb).attr(style));
+			this.vgroove.push(p.ellipse(0,-1.2*fb,8.25*fb,4.75*fb).attr(style));
+			this.vgroove.push(p.ellipse(0,-1.8*fb,8*fb,4.5*fb).attr(style));
+			this.vgroove.push(p.path('m 0,'+(-0.6*fb)+' l'+(-5.5*fb)+','+(2.5*fb)+' m'+(5.5*fb)+','+(-2.5*fb)+' l'+(1.5*fb)+','+(3.5*fb)+' m'+(-1.5*fb)+','+(-3.5*fb)+' l'+(8*fb)+','+(-fb)+' m'+(-8*fb)+','+(fb)+' l'+(5*fb)+','+(-5*fb)+' m'+(-5*fb)+','+(5*fb)+' l'+(-2*fb)+','+(-5.5*fb)+' m'+(2*fb)+','+(5.5*fb)+' l'+(-7*fb)+','+(-3*fb)).attr({'stroke':'white','stroke-width':1,'stroke-opacity':0.4}))
+		}
+		
+		if(this.s.choices.mirror){
+			this.body = p.set();
+			var bw = Math.min(7,8.5*(this.prop.bus/this.prop.mirror));
+			var bt = bw*0.4;
+			var bh = (bw-bt);
+			// Base circle for body
+			this.body.push(p.ellipse(0,0,bw*f,bh*f).attr(stroke));
+			// Shape of body
+			this.body.push(p.path('m '+(-bw*f)+',0 a '+(bw*f)+','+(bh*f)+' 0 0,0 '+(2*bw*f)+',0 l 0,'+(-(bodyh+tank-1)*f)+' q 0,'+(-2*f)+' '+(-bh*f)+','+(-bodytop*f)+' l0,'+(-1*f)+' a'+(bt*f)+','+(bt*0.5*f)+' 0 0,0 '+(-2*bt*f)+',0 l0,'+(1*f)+' q'+(-bh*f)+','+(1*f)+' '+(-bh*f)+','+(bh*f)+' z').attr(solid));
+			if(tank > 0){
+				// Tank 
+				style = {'stroke':'white','stroke-width':1,'fill':'white','fill-opacity':0.3};
+				// If we are in-flight and the the cooling state has been explicitly set to false we change the colour
+				if(this.colourize.cooling.cryogenic){ style.fill = (this.state.cooling.cryogenic) ? $('.mass').css('color') : "black"; style['fill-opacity'] = 0.8; }
+				this.body.push(p.path('m '+(-bw*f)+',0 a '+(bw*f)+','+(bh*f)+' 0 0,0 '+(2*bw*f)+',0 l 0,'+(-tank*f)+' a '+(bw*f)+','+(bh*f)+' 0 0,0 '+(-2*bw*f)+',0 z').attr(style));
+				this.body.push(p.ellipse(0,(-tank*f),bw*f,bh*f).attr(stroke));
+			}
+			// Top circle
+			this.body.push(p.ellipse(0,(-(bodyh+tank+bodytop)*f),bt*f,bt*0.5*f).attr(stroke));
+
+			// Build instrument slots
+			var cols = Math.ceil(this.prop.slots/2);	// How many columns of instruments do we have?
+			var x,y,xl,yl;
+			var instw = 2.2; // The width of the instrument
+			instw = bw*2/(cols+2)
+			var i2 = instw/2; // Half the width
+			var i4 = instw/4; // Quarter the width
+
+			// Get the number of instruments
+			var n = 0;
+			var ni = (this.s.choices.instruments) ? this.s.choices.instruments.length : 0;
+			
+			// Remove existing labels
+			$('#'+this.id+'_schematic .label').remove();
+			var html = "";
+
+			// Loop over instruments
+			for(var i = 0 ; i < cols; i++){
+				x = (i-(cols-1)/2)*(instw*f*1.25);
+				for(var j = 0; j < 2; j++){
+					y = tank + 1.5 + (j==0 ? 0 : insth*2);
+					xl = 0.5 + (x+(j==0 ? i4*f : 0))/w;
+					yl = (padd+(ht.bus+ht.vgroove+(y+(j==0 ? -insth : +insth*1.5))*f))/h;
+					if(n < ni){
+						// Use the 'science' colour
+						style = {'stroke':'white','stroke-width':1,'fill':'white','fill-opacity': 0.3 };
+						if(this.colourize.bus){
+							style['fill-opacity'] = 1;
+							if(this.state.bus) style['fill'] = $('.science').css('color');
+							if(!this.s.choices.instruments[n].ok) style.fill = 'black';
+						}
+					}else{
+						style = {'stroke':'white','stroke-width':1,'stroke-dasharray':'- ','fill':'white','fill-opacity':0.2};
+					}
+					this.body.push(p.path('m'+(x-i2*f)+','+(-y*f)+' l'+(i2*f)+','+(i4*f)+' l'+(i2*f)+','+(-i4*f)+' l0,'+(-insth*f)+' l'+(-i2*f)+','+(-i4*f)+' l'+(-i2*f)+','+(i4*f)+' z m'+(i2*f)+','+(i4*f)+' l0,'+(-insth*f)+' l'+(-i2*f)+','+(-i4*f)+'m'+(i2*f)+','+(i4*f)+'l'+(i2*f)+','+(-i4*f)).attr(style));
+					// Add a label if we can apply a CSS3 transform BLAH
+					if(n < ni && this.s.choices.instruments[n] && this.s.hastransform) html += '<div class="label '+(j==0 ? 'bottom':'top')+'" style="bottom:'+(100*yl)+'%; left:'+(100*xl)+'%">'+this.s.choices.instruments[n].name+'</div>';
+					n++;
+				}
+			}
+			if(html) $('#'+this.id+'_schematic').prepend(html);
+		}
+
+		if(this.s.choices.mirror){
+			style = {'stroke':'white','stroke-width':1,'fill':'white','fill-opacity':0.5};
+			// If the mirror state is true we use colour
+			if(this.colourize.mirror){
+				style.fill = $('.time').css('color');
+				if(!this.state.mirror){
+					style.fill = 'black';
+					style['stroke'] = '#ff0000';
+				}
+			}
+
+			this.mirror = p.set();
+			// Primary mirror
+			this.mirror.push(p.ellipse(0,-2.5*f,10*f,6*f).attr(style));
+			// Hole in primary mirror
+			this.mirror.push(p.ellipse(0,0,1*f,0.6*f).attr(solid));
+			// Draw back struts
+			this.mirror.push(p.path('m '+(-2*f)+','+(-11*f)+' l'+(-3*f)+','+(6*f)+' l '+(5*f)+','+(-7*f)+' l'+(5*f)+','+(7*f)+' l'+(-3*f)+','+(-6*f)).attr(stroke));
+			// Draw front struts
+			this.mirror.push(p.path('m '+(-2*f)+','+(-11*f)+' l'+(2*f)+','+(-1*f)+' l 0,'+(-1*f)+' l'+(-2*f)+','+(1*f)+' z').attr(solid));
+			// Draw back secondary mirror structure
+			this.mirror.push(p.path('m '+(2*f)+','+(-11*f)+' l'+(-2*f)+','+(-1*f)+' l 0,'+(-1*f)+' l'+(2*f)+','+(1*f)+' z').attr(solid));
+			this.mirror.push(p.path('m '+(-2*f)+','+(-11*f)+' l'+(-4*f)+','+(12*f)+' l '+(6*f)+','+(-11*f)+' l'+(6*f)+','+(11*f)+' l'+(-4*f)+','+(-12*f)).attr(stroke));
+			// Draw secondary mirror
+			this.mirror.push(p.ellipse(0,(-11*f),2*f,1*f).attr(style));
+			// Draw front of secondary mirror structure
+			this.mirror.push(p.path('m '+(-2*f)+','+(-12*f)+' l'+(2*f)+','+(1*f)+' l 0,'+(1*f)+' l'+(-2*f)+','+(-1*f)+' z').attr(solid));
+			this.mirror.push(p.path('m '+(2*f)+','+(-12*f)+' l'+(-2*f)+','+(1*f)+' l 0,'+(1*f)+' l'+(2*f)+','+(-1*f)+' z').attr(solid));
+		}
+
+		// Move bus
+		if(this.bus) for(var i = 0; i < this.bus.length; i++) transformer(this.bus[i],['t',this.width/2,h - padd - ht.bus]);
+		// Move vgroove
+		if(this.vgroove) for(var i = 0; i < this.vgroove.length; i++) transformer(this.vgroove[i],['t',this.width/2,h - padd -ht.bus]);
+		// Move body
+		if(this.body) for(var i = 0; i < this.body.length; i++) transformer(this.body[i],['t',this.width/2,h - padd - ht.bus - ht.vgroove]);
+		// Move mirror
+		if(this.mirror) for(var i = 0; i < this.mirror.length; i++) transformer(this.mirror[i],['t',this.width/2,h - padd -ht.bus - ht.vgroove - ht.body]);
+
+		return this;
+
+	}
+
+	Satellite.prototype.resize = function(w,h){
+		this.build();
+		return this;
+	}
+
+	Satellite.prototype.create = function(w,h){
+
+		// Hide the contents so we can calculate the size of the container
+		$('#'+this.id+'_schematic').hide();
+
+		// Make the element fill the container's width
+		this.el.css({'width':'auto','display':'block'});
+
+		// Get the inner width of the space container (i.e. without margins)
+		if(!w || w=="auto") w = this.el.innerWidth();
+		var s = this.el.parent();
+		if(w < s.width()/2) w = s.width()-(parseInt(this.el.css('margin-left'),10) + parseInt(this.el.css('margin-right'),10));
+		if(!h) h = w/2;
+		if(this.heightscale) h = w*this.heightscale;
+
+		// Check if the HTML element has changed size due to responsive CSS
+		if(w != this.width || h != this.height || this.width==0){
+			this.width = w;
+			if(this.width == 0) this.width = s.width()-(parseInt(this.el.css('margin-left'),10) + parseInt(this.el.css('margin-right'),10));
+			this.height = h;
+
+			// Create the Raphael object to hold the vector graphics
+			if(!this.paper){
+				this.paper = Raphael(this.id+'_schematic', this.width, this.height);
+			}else{
+				this.paper.setSize(this.width,this.height);
+				this.rebuild = true;
+			}
+		}
+
+		// Show the contents again
+		$('#'+this.id+'_schematic').show();
+
+		return this;	
+	}
+
 
 	// Class for creating an orbit animation
 	// Inputs:
@@ -3662,6 +3777,9 @@ if(typeof $==="undefined") $ = {};
 		// If we don't have a convertValue function we make a dummy
 		if(!this.spacetel.convertValue || typeof this.spacetel.convertValue!=="function") this.spacetel.convertValue = function(inp){ return inp; };
 		
+		// Add resize function
+		$(window).on('resize',{me:this},function(e){ e.data.me.resize(); });
+
 		return this;
 	}
 
