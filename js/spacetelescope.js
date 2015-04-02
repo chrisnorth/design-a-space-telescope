@@ -227,6 +227,7 @@ if(typeof $==="undefined") $ = {};
 		this.setVar("temperature","string");
 		this.setVar("time","string");
 		this.setVar("mode","string");
+
 		this.addEvents();
 		this.startup();
 		return this;
@@ -249,19 +250,52 @@ if(typeof $==="undefined") $ = {};
 		$('a.togglemenu').on('click',{me:this},function(e){ e.preventDefault(); e.data.me.toggleMenus('menu'); });
 		$('a.togglelang').on('click',{me:this},function(e){ e.preventDefault(); e.data.me.toggleMenus('language'); });
 
+		// Deal with drag and dropping of files
+		$(document).on('dragenter','#application',function(e){ e.preventDefault(); });	
+		$(document).on('dragover','#application',function(e){ e.preventDefault(); $(this).css('opacity',0.75); });
+		$(document).on('drop',function(e){ e.preventDefault(); });
 
-		// Add main menu events
-		$('.baritem .save').parent().on('click',{me:this},function(e){ e.data.me.save().toggleMenus(); });
-		$('.baritem .help').parent().on('click',{me:this},function(e){ e.data.me.toggleGuide(e).toggleMenus(); });
-		$('.baritem .restart').parent().on('click',{me:this},function(e){ e.data.me.toggleMenus(); });
-		$('.baritem .options').parent().on('click',{me:this},function(e){ e.data.me.showView('options',e).toggleMenus(); });
-
+		function readFile(files,_obj){
+			// Only process one file
+			if(files[0].type=="text/plain"){
+				var reader = new FileReader();
+				// Closure to capture the file information.
+				reader.onload = (function(theFile){ return function(e) { _obj.processFile(e.target.result).toggleMenus(); }; })(files[0]);
+				// Read in the text file
+				reader.readAsText(files[0]);
+			}
+		}
+		$(document).on('drop','#application',{me:this},function(e){
+			e.preventDefault();
+			$(this).css({'opacity':1});	// Set the opacity back
+			var files = e.originalEvent.dataTransfer.files;
+			readFile(files,e.data.me);
+			return false;     
+		});
+		if(is(Blob,"function")){
+			// Add load to menu
+			$('#menu ul').append('<li class="baritem" data="load"><a href="#"><img src="images/cleardot.gif" class="icon load" alt="" /><span>Load</span></a><input type="file" id="files" name="files[]" multiple /></li>');
+			$(document).on('change','#files',{me:this},function(e){
+				console.log(e,e.target.files)
+				readFile(e.target.files,e.data.me);
+			})
+			// Add save to menu
+			$('#menu ul').append('<li class="baritem" data="save"><a href="#"><img src="images/cleardot.gif" class="icon save" alt="" /><span>Save</span></a></li>');
+		}
+		// Add fullscreen to menu
 		if(fullScreenApi.supportsFullScreen){
 			// Add the fullscreen toggle to the menu
 			$('#menu ul').append('<li class="baritem" data="fullscreen"><a href="#" class="fullscreenbtn"><img src="images/cleardot.gif" class="icon fullscreen" alt="" /> <span></span></li>');
 			// Bind the fullscreen function to the double-click event if the browser supports fullscreen
 			$('.baritem .fullscreenbtn').parent().on('click', {me:this}, function(e){ e.data.me.toggleFullScreen().toggleMenus(); });
 		}
+		// Add main menu events
+		$('.baritem .load').parent().on('click',{me:this},function(e){ $('#files').trigger('click');console.log('click') });
+		$('.baritem .save').parent().on('click',{me:this},function(e){ e.data.me.save().toggleMenus(); });
+		$('.baritem .help').parent().on('click',{me:this},function(e){ e.data.me.toggleGuide(e).toggleMenus(); });
+		$('.baritem .restart').parent().on('click',{me:this},function(e){ e.data.me.toggleMenus(); });
+		$('.baritem .options').parent().on('click',{me:this},function(e){ e.data.me.showView('options',e).toggleMenus(); });
+
 
 		// Add events to guide links
 		$('body').on('click','a.guidelink',{me:this},function(e){
@@ -348,11 +382,7 @@ if(typeof $==="undefined") $ = {};
 
 			if(input.attr('id').indexOf('mode')==0){
 				var nmode = (input.attr('value')=="yes" ? "advanced" : "normal");
-				if(e.data.me.settings.mode != nmode){
-					e.data.me.settings.mode = nmode;
-					e.data.me.q.mode = nmode;
-					e.data.me.startup();
-				}
+				if(e.data.me.settings.mode != nmode) e.data.me.setMode(nmode);
 			}
 		});
 
@@ -392,16 +422,18 @@ if(typeof $==="undefined") $ = {};
 		return this;
 	}
 
-	SpaceTelescope.prototype.startup = function(){
+	SpaceTelescope.prototype.startup = function(fn){
 
 		this.data = null;
 		this.phrases = null;
 		this.choices = {};
 		this.scenarios = null;
 		this.buildTable();
+		if(is(fn,"function")) fn = [this.update,fn];
+		else fn = [this.update];
 		
-		this.loadConfig(this.update);
-		this.loadLanguage(this.lang,this.update);
+		this.loadConfig();
+		this.loadLanguage(this.lang,fn);
 
 		// Build language list
 		var list = "";
@@ -412,7 +444,21 @@ if(typeof $==="undefined") $ = {};
 		}
 		$('#language ul').html(list);
 		if(n < 2) $('.togglelang').closest('.baritem').hide();
+		
 
+		return this;
+	}
+
+
+	SpaceTelescope.prototype.setMode = function(m,fn){
+		this.settings.mode = m;
+		this.q.mode = m;
+		this.startup(fn);
+	}
+
+	SpaceTelescope.prototype.changeMode = function(m){
+		if(m=="advanced" && this.settings.mode!="advanced") $('#mode_advanced').trigger('click').closest('.toggler').trigger('click');
+		if(m!="advanced" && this.settings.mode=="advanced") $('#mode_basic').trigger('click').closest('.toggler').trigger('click');
 		return this;
 	}
 
@@ -423,6 +469,8 @@ if(typeof $==="undefined") $ = {};
 	SpaceTelescope.prototype.buildToggle = function(id,a,b){
 
 		if(!is(id,"string") && !is(a,"object") && !is(b,"object")) return "";
+		if(!this.toggles) this.toggles = {};
+		this.toggles[id] = {'a':a,'b':b};
 		var lc = '<label class="toggle-label';
 		if(a.checked) html = '<div class="toggleinput toggler">'+lc+'1" for="'+a.id+'"></label>';
 		else html = '<div class="toggleinput toggler checked">'+lc+'1" for="'+a.id+'"></label>';
@@ -759,6 +807,9 @@ if(typeof $==="undefined") $ = {};
 				// Store the data
 				this.data = data;
 				if(is(fn,"function")) fn.call(this);
+				if(is(fn,"object") && fn.length > 0){
+					for(var f = 0; f < fn.length; f++) fn[f].call(this);
+				}
 			}
 		});
 		return this;
@@ -766,7 +817,7 @@ if(typeof $==="undefined") $ = {};
 
 	// Return the URL string for the mode
 	SpaceTelescope.prototype.getMode = function(){ return (this.settings.mode=="advanced") ? '_advanced' : ''; }
-	
+
 	// Load the specified language
 	// If it fails and this was the long variation of the language (e.g. "en-gb" or "zh-yue"), try the short version (e.g. "en" or "zh")
 	SpaceTelescope.prototype.loadLanguage = function(l,fn){
@@ -799,6 +850,7 @@ if(typeof $==="undefined") $ = {};
 				this.lang = l;
 				// Store the data
 				this.phrases = data;
+				this.log('Loaded '+l)
 				this.loadScenarios(fn);
 			}
 		});
@@ -820,10 +872,17 @@ if(typeof $==="undefined") $ = {};
 			error: function(){
 				this.log('Error loading '+url+' ('+m+')');
 				if(is(fn,"function")) fn.call(this);
+				if(is(fn,"object") && fn.length > 0){
+					for(var f = 0; f < fn.length; f++) fn[f].call(this);
+				}
 			},
 			success: function(data){
 				this.scenarios = data.scenarios;
+				this.log('Loaded Scenario')
 				if(is(fn,"function")) fn.call(this);
+				if(is(fn,"object") && fn.length > 0){
+					for(var f = 0; f < fn.length; f++) fn[f].call(this);
+				}
 			}
 		});
 		return this;
@@ -1388,11 +1447,8 @@ if(typeof $==="undefined") $ = {};
 		$('#messages h3.warning .title').text(this.phrases.ui.warning.title);
 		$('#messages h3.error .title').text(this.phrases.ui.error.title);
 
-
 		// Update launch section
 		$('.togglelaunch a').text(this.phrases.launch.label).attr('title',(this.phrases.launch.hint ? this.phrases.launch.hint : ''));
-
-
 
 		// Update summary table labels
 		var s = d.ui.summary;
@@ -2072,33 +2128,116 @@ if(typeof $==="undefined") $ = {};
 		$('.togglelaunch').hide();
 		return this;
 	}
-	SpaceTelescope.prototype.test = function(){
 
-		$('#introduction .fancybtn').trigger('click');
-		this.chooseScenario(this.scenarios.length-1)
-		
-		$('#mirror_size').val('1.0m');
-		$('#wavelengths').val('submm');
-		$('#instruments').val((this.settings.mode=="advanced" ? 'both' : 'camera'));
-		$('#instrument_name').val('SPIRE');
-		$('.add_instrument').trigger('click');
-		$('#wavelengths').val('farir');
-		$('#instruments').val((this.settings.mode=="advanced" ? 'spectrometer' : 'camera'));
-		$('#instrument_name').val('HIFI');
-		$('.add_instrument').trigger('click');
-		$('#wavelengths').val('farir');
-		$('#instruments').val((this.settings.mode=="advanced" ? 'both' : 'camera'));
-		$('#instrument_name').val('PACS');
-		$('.add_instrument').trigger('click');
-		$('input[name=hascooling]').trigger('click');
-		$('input[name=cooling_active]').trigger('click');
-		$('#cooling_cryogenic').val('2yr');
-		$('#cooling_temperature').val('0.3K');
-		$('#vehicle_rocket_ARI5').trigger('click');
-		$('#site').val('CSG');
-		$('#mission_duration').val('7')
-		$('#mission_orbit').val('ES2').trigger('change');
-		
+	SpaceTelescope.prototype.test = function(){
+		return this.processFile("---\nMODE	advanced\nSCENARIO	Star Birth & Evolution\nMIRROR	1.0m\nINSTRUMENT	submm;both;SPIRE\nINSTRUMENT	farir;spectrometer;HIFI\nINSTRUMENT	farir;both;PACS\nCOOLING	true\nCOOLINGACTIVE	true\nCOOLINGCRYO	2yr\nVEHICLE	ARI5\nSITE	CSG\nDURATION	7\nORBIT	ES2\n---");
+	}
+
+	SpaceTelescope.prototype.processFile = function(str){
+
+		if(is(str,"string")) str = str.split(/[\n\r]/);
+		var yaml = false;
+		var p,l;
+		var mode = "";
+		var my = [];
+		for(var i = 0; i < str.length; i++){
+			p = str[i].indexOf('---');
+			if(yaml && p==0) yaml = false;
+			if(yaml){
+				// parse
+				l = str[i].split(/\t/);
+				if(l[0]=="MODE") mode = l[1];
+				else my.push({'key':l[0],'value':l[1]});
+			}
+			if(!yaml && p==0) yaml = true;
+		}
+		// We need to build callback functions here to deal with asynchonicity
+		if(mode) this.setMode(mode,function(){
+			function processScenario(){
+				var scenario = '';
+				for(var i = 0; i < my.length;i++){
+					if(my[i].key=="SCENARIO"){
+						for(var s = 0; s < this.scenarios.length; s++){
+							if(this.scenarios[s].name==my[i].value) scenario = s;
+						}
+					}
+				}
+				this.chooseScenario(scenario);
+				function processValues(){
+					for(var i = 0; i < my.length;i++){
+						if(my[i].key=="MIRROR") $('#mirror_size').val(my[i].value);
+						if(my[i].key=="VEHICLE") $('#vehicle_rocket_'+my[i].value).trigger('click');
+						if(my[i].key=="SITE") $('#site').val(my[i].value);
+						if(my[i].key=="COOLING" && my[i].value=="true") $('input[name=hascooling]').trigger('click');
+						if(my[i].key=="COOLINGACTIVE" && my[i].value=="true") $('input[name=cooling_active]').trigger('click');
+						if(my[i].key=="COOLINGCRYO") $('#cooling_cryogenic').val(my[i].value);
+						if(my[i].key=="COOLINGTEMP") $('#cooling_temperature').val(my[i].value);
+						if(my[i].key=="DURATION") $('#mission_duration').val(my[i].value);
+						if(my[i].key=="ORBIT") $('#mission_orbit').val(my[i].value).trigger('change');
+						if(my[i].key=="INSTRUMENT"){
+							var inst = my[i].value.split(/\;/);
+							$('#wavelengths').val(inst[0]);
+							$('#instruments').val(inst[1]);
+							$('#instrument_name').val(inst[2]);
+							$('.add_instrument').trigger('click');
+						}
+					}
+				}
+				this.showView('designer_objectives','',processValues);
+			}
+			this.showView('scenarios','',processScenario);
+		});
+
+		return this;
+	}
+
+
+
+
+
+
+	// Attempt to save a file
+	// Blob() requires browser >= Chrome 20, Firefox 13, IE 10, Opera 12.10 or Safari 6
+	SpaceTelescope.prototype.save = function(){
+
+		// Bail out if there is no Blob function
+		if(!is(Blob,"function")) return this;
+
+		var txt = "---\n";
+		if(this.settings.mode) txt += "MODE	"+this.settings.mode+"\n";
+		if(this.scenario.name) txt += "SCENARIO	"+this.scenario.name+"\n";
+		if(this.choices.mirror) txt += "MIRROR	"+this.choices.mirror+"\n";
+		for(var i=0; i<this.choices.instruments.length;i++) txt += "INSTRUMENT	"+this.choices.instruments[i].wavelength+";"+this.choices.instruments[i].type+";"+this.choices.instruments[i].name+"\n";
+		if(this.choices.cool.passive) txt += "COOLING	"+(this.choices.cool.passive=="yes" ? "true" : "false")+"\n";
+		if(this.choices.cool.active=="yes") txt += "COOLINGACTIVE	"+(this.choices.cool.active=="yes" ? "true" : "false")+"\n";
+		if(this.choices.cool.cryogenic) txt += "COOLINGCRYO	"+this.choices.cool.cryogenic+"\n";
+		if(this.choices.vehicle) txt += "VEHICLE	"+this.choices.vehicle+"\n";
+		if(this.choices.site) txt += "SITE	"+this.choices.site+"\n";
+		if(this.choices.mission) txt += "DURATION	"+this.choices.mission+"\n";
+		if(this.choices.orbit) txt += "ORBIT	"+this.choices.orbit+"\n";
+		txt += "---\n";
+		var textFileAsBlob = new Blob([txt], {type:'text/plain'});
+		var fileNameToSaveAs = "spacetelescope.txt";
+	
+		function destroyClickedElement(event){ document.body.removeChild(event.target); }
+
+		var downloadLink = document.createElement("a");
+		downloadLink.download = fileNameToSaveAs;
+		downloadLink.innerHTML = "Download File";
+		if(window.webkitURL != null){
+			// Chrome allows the link to be clicked
+			// without actually adding it to the DOM.
+			downloadLink.href = window.webkitURL.createObjectURL(textFileAsBlob);
+		}else{
+			// Firefox requires the link to be added to the DOM
+			// before it can be clicked.
+			downloadLink.href = window.URL.createObjectURL(textFileAsBlob);
+			downloadLink.onclick = destroyClickedElement;
+			downloadLink.style.display = "none";
+			document.body.appendChild(downloadLink);
+		}
+		downloadLink.click();
+
 		return this;
 	}
 
@@ -2945,7 +3084,7 @@ if(typeof $==="undefined") $ = {};
 		return this;
 	}
 
-	SpaceTelescope.prototype.showView = function(view,e){
+	SpaceTelescope.prototype.showView = function(view,e,fn){
 
 		this.log('showView',view,e)
 
@@ -3033,6 +3172,7 @@ if(typeof $==="undefined") $ = {};
 
 		if(this.pushstate && !e) history.pushState({},"Guide","#"+view);
 
+		if(is(fn,"function")) fn.call(this);
 		return this;
 	}
 
@@ -3332,39 +3472,6 @@ if(typeof $==="undefined") $ = {};
 
 		return this;
 	}
-	
-	// Attempt to save a file
-	// Blob() requires browser >= Chrome 20, Firefox 13, IE 10, Opera 12.10 or Safari 6
-	SpaceTelescope.prototype.save = function(){
-
-		// Bail out if there is no Blob function
-		if(!is(Blob,"function")) return this;
-
-		var textToWrite = "blah";
-		var textFileAsBlob = new Blob([textToWrite], {type:'text/plain'});
-		var fileNameToSaveAs = "spacetelescope.txt";
-	
-		function destroyClickedElement(event){ document.body.removeChild(event.target); }
-
-		var downloadLink = document.createElement("a");
-		downloadLink.download = fileNameToSaveAs;
-		downloadLink.innerHTML = "Download File";
-		if(window.webkitURL != null){
-			// Chrome allows the link to be clicked
-			// without actually adding it to the DOM.
-			downloadLink.href = window.webkitURL.createObjectURL(textFileAsBlob);
-		}else{
-			// Firefox requires the link to be added to the DOM
-			// before it can be clicked.
-			downloadLink.href = window.URL.createObjectURL(textFileAsBlob);
-			downloadLink.onclick = destroyClickedElement;
-			downloadLink.style.display = "none";
-			document.body.appendChild(downloadLink);
-		}
-		downloadLink.click();
-
-		return this;
-	}
 
 	SpaceTelescope.prototype.showModal = function(lb){
 		var wide = $(window).width();
@@ -3398,8 +3505,7 @@ if(typeof $==="undefined") $ = {};
 		return this;
 	}
 
-	// Attempt to save a file
-	// Blob() requires browser >= Chrome 20, Firefox 13, IE 10, Opera 12.10 or Safari 6
+	// Log messages
 	SpaceTelescope.prototype.log = function(){
 		var args = Array.prototype.slice.call(arguments, 0);
 		if(console && is(console.log,"function")) console.log('LOG',args);

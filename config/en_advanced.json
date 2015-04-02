@@ -68,8 +68,8 @@
 		},
 		"menu": {
 			"title": "Toggle menu",
-			"load": { "label": "Load file", "title": "Load a previously saved file" },
-			"save": { "label": "Save file", "title": "Save your progress" },
+			"load": { "label": "Load from file", "title": "Load a previously saved file" },
+			"save": { "label": "Save to file", "title": "Save your progress" },
 			"help": { "label": "Guide", "title": "View the student guide" },
 			"restart": { "label": "Restart", "title": "Start again" },
 			"options": { "label": "Options", "title": "Change units etc" },
