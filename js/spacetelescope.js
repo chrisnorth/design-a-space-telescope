@@ -2448,6 +2448,7 @@ if(typeof $==="undefined") $ = {};
 				fadeIn('<li>'+this.buildRow(this.phrases.launch.overall.label,tmp,'finalresult')+'</li>');
 				$('.printable').remove();
 				tline.after('<div class="printable toppadded"><a href="#" class="button fancybtn">'+this.phrases.designer.proposal.reprint+'</a></div>').fadeIn();
+				$('#launchnav').html('');
 				this.launchstep = 0;
 			}
 		}
