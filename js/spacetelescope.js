@@ -2154,7 +2154,7 @@ if(typeof $==="undefined") $ = {};
 			if(yaml && p==0) yaml = false;
 			if(yaml){
 				// parse
-				l = str[i].split(/\t/);
+				l = str[i].split(/\:\t/);
 				if(l[0]=="MODE") mode = l[1];
 				else my.push({'key':l[0],'value':l[1]});
 			}
@@ -2200,11 +2200,6 @@ if(typeof $==="undefined") $ = {};
 		return this;
 	}
 
-
-
-
-
-
 	// Attempt to save a file
 	// Blob() requires browser >= Chrome 20, Firefox 13, IE 10, Opera 12.10 or Safari 6
 	SpaceTelescope.prototype.save = function(){
@@ -2213,17 +2208,17 @@ if(typeof $==="undefined") $ = {};
 		if(!is(Blob,"function")) return this;
 
 		var txt = "---\n";
-		if(this.settings.mode) txt += "MODE	"+this.settings.mode+"\n";
-		if(this.scenario.name) txt += "SCENARIO	"+this.scenario.name+"\n";
-		if(this.choices.mirror) txt += "MIRROR	"+this.choices.mirror+"\n";
-		for(var i=0; i<this.choices.instruments.length;i++) txt += "INSTRUMENT	"+this.choices.instruments[i].wavelength+";"+this.choices.instruments[i].type+";"+this.choices.instruments[i].name+"\n";
-		if(this.choices.cool.passive) txt += "COOLING	"+(this.choices.cool.passive=="yes" ? "true" : "false")+"\n";
-		if(this.choices.cool.active=="yes") txt += "COOLINGACTIVE	"+(this.choices.cool.active=="yes" ? "true" : "false")+"\n";
-		if(this.choices.cool.cryogenic) txt += "COOLINGCRYO	"+this.choices.cool.cryogenic+"\n";
-		if(this.choices.vehicle) txt += "VEHICLE	"+this.choices.vehicle+"\n";
-		if(this.choices.site) txt += "SITE	"+this.choices.site+"\n";
-		if(this.choices.mission) txt += "DURATION	"+this.choices.mission+"\n";
-		if(this.choices.orbit) txt += "ORBIT	"+this.choices.orbit+"\n";
+		if(this.settings.mode) txt += "MODE:	"+this.settings.mode+"\n";
+		if(this.scenario.name) txt += "SCENARIO:	"+this.scenario.name+"\n";
+		if(this.choices.mirror) txt += "MIRROR:	"+this.choices.mirror+"\n";
+		for(var i=0; i<this.choices.instruments.length;i++) txt += "INSTRUMENT:	"+this.choices.instruments[i].wavelength+";"+this.choices.instruments[i].type+";"+this.choices.instruments[i].name+"\n";
+		if(this.choices.cool.passive) txt += "COOLING:	"+(this.choices.cool.passive=="yes" ? "true" : "false")+"\n";
+		if(this.choices.cool.active=="yes") txt += "COOLINGACTIVE:	"+(this.choices.cool.active=="yes" ? "true" : "false")+"\n";
+		if(this.choices.cool.cryogenic) txt += "COOLINGCRYO:	"+this.choices.cool.cryogenic+"\n";
+		if(this.choices.vehicle) txt += "VEHICLE:	"+this.choices.vehicle+"\n";
+		if(this.choices.site) txt += "SITE:	"+this.choices.site+"\n";
+		if(this.choices.mission) txt += "DURATION:	"+this.choices.mission+"\n";
+		if(this.choices.orbit) txt += "ORBIT:	"+this.choices.orbit+"\n";
 		txt += "---\n";
 		var textFileAsBlob = new Blob([txt], {type:'text/plain'});
 		var fileNameToSaveAs = "spacetelescope.txt";
