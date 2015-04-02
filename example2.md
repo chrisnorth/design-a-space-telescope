@@ -2,10 +2,11 @@
 MODE:	advanced
 SCENARIO:	Nearby Galaxy Explorer
 MIRROR:	8.0m
-INSTRUMENT:	uv;both;COS2
-INSTRUMENT:	optical;both;STIS
-INSTRUMENT:	optical;camera;WFC3
-INSTRUMENT:	nearir;both;NICMOS
+INSTRUMENT-1:	uv;both;COS2
+INSTRUMENT-2:	optical;both;STIS
+INSTRUMENT-3:	optical;camera;WFC3
+INSTRUMENT-4:	nearir;both;NICMOS
+INSTRUMENT-5:	optical;camera;ACS
 COOLING:	true
 COOLINGACTIVE:	true
 COOLINGCRYO:	none
