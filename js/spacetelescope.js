@@ -2275,7 +2275,7 @@ if(typeof $==="undefined") $ = {};
 			$('#launchanimation').css({'height':($('#launchanimation').innerWidth()/2)+'px'});
 
 			this.launchstep = 0;
-			if(this.launchstep==0) this.countdown(1);
+			if(this.launchstep==0) this.countdown(10);
 		}
 	}
 
