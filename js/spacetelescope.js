@@ -2275,7 +2275,7 @@ if(typeof $==="undefined") $ = {};
 			$('#launchanimation').css({'height':($('#launchanimation').innerWidth()/2)+'px'});
 
 			this.launchstep = 0;
-			if(this.launchstep==0) this.countdown(10);
+			if(this.launchstep==0) this.countdown(1);
 		}
 	}
 
@@ -2356,6 +2356,8 @@ if(typeof $==="undefined") $ = {};
 				var okcool = true;
 				var okpassive = true;
 				var l = "";
+				var req = this.convertValue(this.choices.instrument.temp,'K');
+				this.launchtherm = new Thermometer({'canvas':this.launchanim.paper,'required':req.value,'phrasebook':{'req':this.phrases.designer.instruments.temperature,'y':this.phrases.ui.summary.profile.temperature},'context':this,'x':0,'y':0,'width':this.launchanim.paper.width*0.3,'format':this.formatValue});
 				// Has the user requested cooling?
 				if(this.choices.hascooling){
 					// Do we have temperature-based cooling (normal mode)
@@ -2409,6 +2411,7 @@ if(typeof $==="undefined") $ = {};
 							}
 						}
 					}
+					this.launchtherm.value(this.temperature.value);
 				}
 				l += '<li class="indent">'+this.buildRow(this.phrases.launch.cooling.achieved.label,(okcool ? this.phrases.launch.cooling.achieved.success : this.phrases.launch.cooling.achieved.fail).replace(/\%TEMPERATURE%/,this.formatValue(this.temperature)))+'</li>';
 				fadeIn(l);
@@ -2418,7 +2421,10 @@ if(typeof $==="undefined") $ = {};
 				var l = "";
 				if(this.choices.instruments){
 					l += '<li>'+this.buildRow(this.phrases.launch.instruments.label,'')+'</li>';
+					this.beakers = [];
+					var dy = (this.launchanim.paper.height/(this.choices.instruments.length+1));
 					for(var i = 0; i < this.choices.instruments.length; i++){
+						this.beakers.push(new Flask({'canvas':this.launchanim.paper,'x':this.launchanim.paper.width*0.8,'y':(dy*(i+1) - this.launchanim.paper.width*0.04),'width':this.launchanim.paper.width*0.08,'height':this.launchanim.paper.width*0.08,'label':this.choices.instruments[i].name}));
 						var therm = this.convertValue(this.data.wavelengths[this.choices.instruments[i].wavelength].temperature,this.temperature.units);
 						ok = (therm.value >= this.temperature.value) ? true : false;
 						this.choices.instruments[i].ok = ok;
@@ -2445,6 +2451,7 @@ if(typeof $==="undefined") $ = {};
 							var pc = 100;
 							if(!ok) pc = Math.random()*100;
 							percent += pc;
+							this.beakers[i].value(pc/100)
 							tmp = (ok ? this.phrases.launch.science.success : this.phrases.launch.science.fail).replace(/%PERCENT%/,this.formatValue(this.makeValue(pc,'%')));
 							l += '<li class="indent">'+this.buildRow(this.choices.instruments[i].name+' ('+this.phrases.wavelengths[this.choices.instruments[i].wavelength].label+' '+this.phrases.designer.instruments.options.instrument[this.choices.instruments[i].type].label+')',tmp,'launch_science')+'</li>';
 						}
@@ -4193,8 +4200,118 @@ if(typeof $==="undefined") $ = {};
 
 		return this;
 	}
-	
 
+	// Create a Thermometer
+	function Thermometer(inp){
+		if(!inp) inp = {};
+		this.id = (typeof inp.id==="string") ? inp.id : 'thermometer';
+		this.pb = (inp.phrasebook) ? inp.phrasebook : { 'y' :'' };
+		this.txt = (inp.txt) ? inp.txt : {'font':'12px','fill':'#ffffff','text-anchor':'start'};
+		this.labeltxt = (inp.labeltxt) ? inp.labeltxt : {'font':'10px','text-anchor':'start','fill':'#ffffff'};
+		this.format = (typeof inp.format==="function") ? inp.format : function(v){ return addCommas(v.value)+' K'; };
+		this.ctx = (typeof inp.context==="object") ? inp.context : this;
+		this.colour = (typeof inp.color==="string") ? inp.color : '#df0000';
+		this.wide = (typeof inp.width==="number") ? inp.width : (typeof inp.canvas==="object") ? inp.canvas.width : 200;
+		this.tall = (typeof inp.height==="number") ? inp.height : (typeof inp.canvas==="object") ? inp.canvas.height : 200;
+		this.req = (typeof inp.required==="number") ? inp.required : 300;
+		this.xoff = (typeof inp.x==="number") ? inp.x : 0;
+		this.yoff = (typeof inp.y==="number") ? inp.y : 0;
+		this.p = 7;	// The padding in pixels
+		this.tickmarks = [0.1,0.3,1,3,10,30,100,300];
+
+		// Scale
+		this.bulb = 4*this.p;
+		this.bottom = this.tall-this.p*9.5;
+		this.top = this.p*6;
+
+		// Create a canvas to draw on
+		this.thermo = (typeof inp.canvas==="object") ? inp.canvas : Raphael(this.id, this.wide, this.tall);
+
+		this.mercurybase = this.thermo.rect((this.xoff + this.wide/2 - this.p*2.5), this.yoff+this.bottom+this.p, this.p*5, this.bulb).attr({"fill": this.colour,"stroke":0});
+		this.mercuryzero = this.thermo.rect((this.xoff + this.wide/2 - this.p*1.5), this.yoff+this.bottom-0.5, this.p*3, Math.abs(this.p+1)).attr({"fill": this.colour,"stroke":0});
+		this.mercury = this.thermo.rect(this.xoff+(this.wide/2 - this.p*1.5), this.yoff+this.top, this.p*3, Math.abs(this.top-this.bottom)).attr({"fill": this.colour,"stroke":0});
+		this.thermometer = this.thermo.path('M '+(this.xoff+this.wide/2 - this.p)+','+(this.yoff+this.bottom+this.p)+' l 0,'+(this.top-this.bottom-this.p)+' c 0,-'+(this.p)+' '+(this.p*2)+',-'+(this.p)+' '+(this.p*2)+',0 l 0,'+(this.bottom-this.top+this.p)+' c '+(this.p*2)+','+(this.p*0.5)+' '+(this.p*2)+','+this.bulb+' '+(-this.p)+','+this.bulb+' c -'+(this.p*3)+',0 -'+(this.p*3)+',-'+(this.bulb-this.p*0.5)+' '+(-this.p)+',-'+this.bulb+' m -'+(this.p)+',-'+(this.p)+' c -'+(this.p*2.5)+','+(this.p)+' '+(-this.p*3)+','+(this.p*2+this.bulb)+' '+(this.p*2)+','+(this.p*2+this.bulb)+' c '+(this.p*5)+',0 '+(this.p*4.5)+',-'+(this.p+this.bulb)+' '+(this.p*2)+',-'+(this.p*2+this.bulb)+' l 0,-'+(this.bottom-this.top)+' c 0,-'+(this.p*2.5)+' -'+(this.p*4)+', -'+(this.p*2.5)+' -'+(this.p*4)+',0 l0,'+(this.bottom-this.top)).attr({'fill':'#e4f6fe','fill-opacity':1,'stroke':'#000000','stroke-width':1,'stroke-opacity':0.3});
+		this.highlight = this.thermo.path('M '+(this.xoff+this.wide/2 - this.p*0.35)+','+(this.yoff+this.bottom+this.p)+' l 0,-'+(this.bottom-this.top+this.p)+' l -'+(this.p*0.3)+',0 l 0,'+(this.bottom-this.top+this.p)+' l 0,'+(this.p*0.25)+' c -'+(this.p*0.5)+','+(this.p*0.25)+' -'+(this.p*1.75)+','+(this.p*0.75)+' -'+(this.p*0.75)+','+(this.p*2)+' c 0,-'+(this.p*0.5)+' '+(this.p*0.1)+',-'+(this.p*1.5)+' '+(this.p)+',-'+(this.p*2)+' z').attr({'opacity':0.5,'fill':'#f7fcfe','fill-opacity':1,'stroke':0});
+		this.shade = this.thermo.path('M '+(this.xoff+this.wide/2 + this.p*0.5)+','+(this.yoff+this.bottom+this.p)+' l 0,-'+(this.bottom-this.top+this.p)+' l '+(this.p*0.9)+',0 l 0,'+(this.bottom-this.top+this.p)+' c '+this.p+','+this.p+' '+(this.p*1.25)+','+(this.bulb)+' -'+(this.p*2.5)+','+(this.bulb-this.p*0.75)+' q '+(this.p*3.25)+',-'+(this.bulb*0.1)+' '+(this.p*1.75)+',-'+(this.bulb-this.p)+' z').attr({'opacity':0.2,'fill':'#000000','fill-opacity':1,'stroke':'#000000','stroke-width':1});
+
+		// Thermometer labels and tick marks
+		this.labels = this.thermo.set();
+		this.ticks = this.thermo.set();
+		var x,y;
+		for(var i = 0 ; i < this.tickmarks.length ; i++){
+			y =  Math.round(this.bottom + (this.top-this.bottom)*this.getYFrac(this.tickmarks[i]))-0.5;
+			this.ticks.push(this.thermo.path("M "+(this.xoff + this.wide/2 + 2)+","+(this.yoff + y)+" l "+(this.p*3)+",0").attr({'stroke':'white','stroke-width':1}));
+		}
+		// Required line
+		y =  Math.round(this.bottom + (this.top-this.bottom)*this.getYFrac(this.req))-0.5;
+		this.ticks.push(this.thermo.path("M "+(this.xoff + this.wide/2 - this.p*5)+","+(this.yoff + y)+" l "+(this.p*6)+",0").attr({'stroke':'#ffffff','stroke-width':1,'stroke-dasharray':['-']}));
+		this.updateLanguage(this.pb);
+		return this;	
+	}
+	Thermometer.prototype.updateLanguage = function(lang){
+		this.pb = lang;
+
+		if(this.rl){ this.rl.remove(); }
+		y =  Math.round(this.bottom + (this.top-this.bottom)*this.getYFrac(this.req))-0.5;
+		this.rl = this.thermo.text(this.xoff + this.wide/2 - this.p*6, this.yoff + y, this.pb.req).attr(this.txt);
+		this.rl.attr({'text-anchor':'middle'}).transform("r-90");
+
+		if(this.labels){ this.labels.remove(); }
+		for(var i = 0 ; i < this.tickmarks.length ; i++){
+			y =  Math.round(this.bottom + (this.top-this.bottom)*this.getYFrac(this.tickmarks[i]))-0.5;
+			this.labels.push(this.thermo.text((this.xoff + this.wide/2 + this.p*3.5), (this.yoff + y), htmlDecode(this.format.call(this.ctx,{'value':this.tickmarks[i],'units':'K','dimension':'temperature'}))).attr(this.labeltxt));
+		}
+
+		return this;
+	}
+	Thermometer.prototype.getYFrac = function(temp){
+		return (Math.log10(temp)-Math.log10(this.tickmarks[0]))/(Math.log10(this.tickmarks[this.tickmarks.length-1])-Math.log10(this.tickmarks[0]));
+	}
+	Thermometer.prototype.value = function(temp){
+		var s = this.getYFrac(temp)
+		// Max out the thermometer
+		if((s-1)*(this.bottom-this.top) > this.p) s = 1+(this.p/(this.bottom-this.top));
+		if(temp < this.tickmarks[0]) s = 0;
+		this.mercury.transform("s1,"+s+',0,'+this.bottom);
+		var t = {'value':temp,'units':'K','dimension':'temperature'}
+		if(temp <= this.tickmarks[this.tickmarks.length-1]) t.value = this.tickmarks[this.tickmarks.length-1];
+		this.labels[this.labels.length-1].attr('text',htmlDecode(this.format.call(this.ctx,t)));
+		return this;
+	}
+
+	// Create a Flask
+	function Flask(inp){
+		if(!inp) inp = {};
+		this.label = (typeof inp.label==="string") ? inp.label : "";
+		this.colour = (typeof inp.color==="string") ? inp.color : $('.science').css('color');
+		this.wide = (typeof inp.width==="number") ? inp.width : 50;
+		this.tall = (typeof inp.height==="number") ? inp.height : 75;
+		this.xoff = (typeof inp.x==="number") ? inp.x : 0;
+		this.yoff = (typeof inp.y==="number") ? inp.y : 0;
+		this.p = 0.1;
+		
+		// Create a canvas to draw on
+		if(typeof inp.canvas==="object") this.canvas = inp.canvas;
+		else return this;
+		
+		p = this.wide*this.p;
+		q = this.tall*this.p;
+		console.log(this)
+
+		this.liquid = this.canvas.rect(this.xoff+p, this.yoff+this.p*this.tall, this.wide-2*p, (1 - 2*this.p)*this.tall).attr({"fill": this.colour,"stroke":0});
+		this.flask = this.canvas.path('M'+(this.xoff+p*3.75)+','+(this.yoff+q)+' l '+(p*0.25)+','+(q*0.25)+' l 0,'+(q*3)+' l -'+(p*2.5)+','+(q*3.75)+' q -'+(p*0.5)+','+(q*0.75)+' 0,'+(q)+' l '+(p*7)+',0 q '+(p*0.5)+',-'+(q*0.25)+' 0,-'+q+' l -'+(p*2.5)+',-'+(q*3.75)+' l 0,'+(-q*3)+' l '+(p*0.25)+',-'+(q*0.25)+' l -'+(p*2.5)+',0 m 0,-'+q+' l '+(p*6.25)+',0 l 0,'+(q*10)+' l-'+(p*10)+',0 l 0,-'+(q*10)+' z').attr({'fill':'black','stroke':0})
+		this.outline = this.canvas.path('M'+(this.xoff+p*3.75)+','+(this.yoff+q)+' l '+(p*0.25)+','+(q*0.25)+' l 0,'+(q*3)+' l -'+(p*2.5)+','+(q*3.75)+' q -'+(p*0.5)+','+(q*0.75)+' 0,'+(q)+' l '+(p*7)+',0 q '+(p*0.5)+',-'+(q*0.25)+' 0,-'+q+' l -'+(p*2.5)+',-'+(q*3.75)+' l 0,'+(-q*3)+' l '+(p*0.25)+',-'+(q*0.25)+'').attr({'stroke':'white','stroke-width':2});
+		this.label = this.canvas.text(this.xoff,this.yoff+this.tall/2,this.label).attr({'font':'10px','text-anchor':'end','fill':'#ffffff'})
+		this.value(0);
+		return this;
+	}
+	Flask.prototype.value = function(s){
+		// Normalise
+		if(s > 1) s = 1;
+		if(s < 0) s = 0;
+		this.liquid.transform("s1,"+s+',0,'+(this.yoff+this.tall-this.p*this.tall));
+		return this;
+	}
 
 	// Make an animated exhaust for a rocket.
 	// Requires:
