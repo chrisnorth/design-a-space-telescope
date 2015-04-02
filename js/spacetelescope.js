@@ -2183,7 +2183,7 @@ if(typeof $==="undefined") $ = {};
 						if(my[i].key=="COOLINGTEMP") $('#cooling_temperature').val(my[i].value);
 						if(my[i].key=="DURATION") $('#mission_duration').val(my[i].value);
 						if(my[i].key=="ORBIT") $('#mission_orbit').val(my[i].value).trigger('change');
-						if(my[i].key=="INSTRUMENT"){
+						if(my[i].key.indexOf("INSTRUMENT")==0){
 							var inst = my[i].value.split(/\;/);
 							$('#wavelengths').val(inst[0]);
 							$('#instruments').val(inst[1]);
@@ -2211,7 +2211,7 @@ if(typeof $==="undefined") $ = {};
 		if(this.settings.mode) txt += "MODE:	"+this.settings.mode+"\n";
 		if(this.scenario.name) txt += "SCENARIO:	"+this.scenario.name+"\n";
 		if(this.choices.mirror) txt += "MIRROR:	"+this.choices.mirror+"\n";
-		for(var i=0; i<this.choices.instruments.length;i++) txt += "INSTRUMENT:	"+this.choices.instruments[i].wavelength+";"+this.choices.instruments[i].type+";"+this.choices.instruments[i].name+"\n";
+		for(var i=0; i<this.choices.instruments.length;i++) txt += "INSTRUMENT-"+(i+1)+":	"+this.choices.instruments[i].wavelength+";"+this.choices.instruments[i].type+";"+this.choices.instruments[i].name+"\n";
 		if(this.choices.cool.passive) txt += "COOLING:	"+(this.choices.cool.passive=="yes" ? "true" : "false")+"\n";
 		if(this.choices.cool.active=="yes") txt += "COOLINGACTIVE:	"+(this.choices.cool.active=="yes" ? "true" : "false")+"\n";
 		if(this.choices.cool.cryogenic) txt += "COOLINGCRYO:	"+this.choices.cool.cryogenic+"\n";
