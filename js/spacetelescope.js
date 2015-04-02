@@ -2447,11 +2447,10 @@ if(typeof $==="undefined") $ = {};
 							if(!t.risk) t.risk = 1;
 							t.risk *= prob.mission;
 							ok = this.roll(t.risk);
-							this.log(i,t.risk,ok)
 							var pc = 100;
 							if(!ok) pc = Math.random()*100;
 							percent += pc;
-							this.beakers[i].value(pc/100)
+							this.beakers[i].value(pc/100);
 							tmp = (ok ? this.phrases.launch.science.success : this.phrases.launch.science.fail).replace(/%PERCENT%/,this.formatValue(this.makeValue(pc,'%')));
 							l += '<li class="indent">'+this.buildRow(this.choices.instruments[i].name+' ('+this.phrases.wavelengths[this.choices.instruments[i].wavelength].label+' '+this.phrases.designer.instruments.options.instrument[this.choices.instruments[i].type].label+')',tmp,'launch_science')+'</li>';
 						}
