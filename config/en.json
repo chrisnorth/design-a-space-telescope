@@ -471,7 +471,7 @@
 			"achieved": { "label": "Achieved temperature:", "success": "%TEMPERATURE%", "fail": "Failed" }
 		},
 		"instruments": { "label": "Turning on instruments:", "success": "Operational", "fail": "Failed" },
-		"science": { "label": "Scientific results:", "success": "%PERCENT% of results", "fail": "Failed (%PERCENT% of results)" },
+		"science": { "label": "Scientific results:", "success": "%PERCENT% of results", "fail": "%PERCENT% of results" },
 		"overall": { "label": "Overall mission success:", "success": "%PERCENT%", "fail": "Failed" }
 	},
 	"guide": {
