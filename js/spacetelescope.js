@@ -257,7 +257,8 @@ if(typeof $==="undefined") $ = {};
 
 		function readFile(files,_obj){
 			// Only process one file
-			if(files[0].type=="text/plain"){
+				console.log(files[0])
+			if(files[0].type=="text/plain" || files[0].type==""){
 				var reader = new FileReader();
 				// Closure to capture the file information.
 				reader.onload = (function(theFile){ return function(e) { _obj.processFile(e.target.result).toggleMenus(); }; })(files[0]);
