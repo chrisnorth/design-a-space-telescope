@@ -7,7 +7,7 @@
 			"image": {
 				"banner": "images/mission_stellar.jpg",
 				"alt": "The Orion Nebula",
-				"credit": "HST/NASA/ESA"
+				"credit": "HST / NASA / ESA"
 			},
 			"budget": { "value": 2000, "units": "GBP", "dimension": "currency" },
 			"requires": [{
@@ -64,6 +64,11 @@
 			"name": "Interstellar Dust",
 			"description": "A university has approached your group to design a mission for a satellite telescope in order to analyse the spectra of interstellar dust in nearby galaxies. The budget of your mission is <span class=\"cost\">%COST%</span>. You will need the appropriate instruments on board the telescope in order to carry out the mission.",
 			"funder": "University",
+			"image": {
+				"banner": "images/mission_interstellar.jpg",
+				"alt": "The Rosette Nebula",
+				"credit": "ESA / SPIRE / PACS/ HOBYS"
+			},
 			"budget": { "value": 9000, "units": "GBP", "dimension": "currency" },
 			"requires": [{
 				"mirror": { "value": 0.5, "units": "m", "dimension": "length" },
@@ -93,6 +98,11 @@
 			"name": "Infrared All-sky",
 			"description": "A funding agency is providing funding to perform an all-sky survey from near infrared to far infrared. The budget of your mission is <span class=\"cost\">%COST%</span>.",
 			"funder": "Funding Agency",
+			"image": {
+				"banner": "images/mission_irallsky.jpg",
+				"alt": "The Infrared Sky",
+				"credit": "IRAS / NASA"
+			},
 			"budget": { "value": 1200, "units": "GBP", "dimension": "currency" },
 			"requires": [{
 				"instruments": [{
@@ -116,6 +126,11 @@
 			"name": "Nearby Galaxy Explorer",
 			"description": "Your group has received funding to send a telescope on board a satellite into space with the main objective of analysing stars in a nearby galaxy at very high resolution. The budget of your mission is <span class=\"cost\">%COST%</span>. Your group will need to use the appropriate instruments in order to collect data if it is to be analysed.",
 			"funder": "",
+			"image": {
+				"banner": "images/mission_nearbygalaxy.jpg",
+				"alt": "Panchromatic Hubble Andromeda Treasury",
+				"credit": "NASA / ESA / J. Dalcanton / B.F. Williams / L.C. Johnson / PHAT team / R. Gendler"
+			},
 			"budget": { "value": 13000, "units": "GBP", "dimension": "currency" },
 			"requires": [{
 				"instruments": [{
@@ -139,6 +154,11 @@
 			"name": "Near-Earth Asteroid Study",
 			"description": "The government has asked you to design a satellite to take images of near-Earth asteroids. The mission should last for as long as possible. The European Space Agency will provide the launch and operations cost, also up to a total of <span class=\"cost\">%COST%</span>, but you have to use their launch site.",
 			"funder": "Government",
+			"image": {
+				"banner": "images/mission_nea.jpg",
+				"alt": "Asteroid (4179) Toutatis",
+				"credit": "VLT / ESO"
+			},
 			"budget": { "value": 900, "units": "GBP", "dimension": "currency" },
 			"requires": [{
 				"mirror": { "value": 0.5, "units": "m", "dimension": "length" },
