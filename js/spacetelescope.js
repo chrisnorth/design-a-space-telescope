@@ -276,7 +276,6 @@ if(typeof $==="undefined") $ = {};
 			// Add load to menu
 			$('#menu ul').append('<li class="baritem" data="load"><a href="#"><img src="images/cleardot.gif" class="icon load" alt="" /><span>Load</span></a><input type="file" id="files" name="files[]" multiple /></li>');
 			$(document).on('change','#files',{me:this},function(e){
-				console.log(e,e.target.files)
 				readFile(e.target.files,e.data.me);
 			})
 			// Add save to menu
@@ -290,7 +289,7 @@ if(typeof $==="undefined") $ = {};
 			$('.baritem .fullscreenbtn').parent().on('click', {me:this}, function(e){ e.data.me.toggleFullScreen().toggleMenus(); });
 		}
 		// Add main menu events
-		$('.baritem .load').parent().on('click',{me:this},function(e){ $('#files').trigger('click');console.log('click') });
+		$('.baritem .load').parent().on('click',{me:this},function(e){ $('#files').trigger('click'); });
 		$('.baritem .save').parent().on('click',{me:this},function(e){ e.data.me.save().toggleMenus(); });
 		$('.baritem .help').parent().on('click',{me:this},function(e){ e.data.me.toggleGuide(e).toggleMenus(); });
 		$('.baritem .restart').parent().on('click',{me:this},function(e){ e.data.me.toggleMenus(); });
