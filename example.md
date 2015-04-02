@@ -14,3 +14,4 @@ DURATION	8
 ORBIT	ES2
 ---
 
+This is an example based on ESA's Herschel spacecraft.
