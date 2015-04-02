@@ -791,7 +791,7 @@ input.button { padding: 6px 8px; /* Bug fix for Firefox over-riding the line-hei
 	#summaryext.dropdown.fullwidth>ul>li { width: 100%; }
 	#summaryext.dropdown.fullwidth>ul>li { clear: both; float: none; }
 	#summary .baritem img.icon, .baritem .togglewarning img.icon, .baritem .toggleerror img.icon { display: none; }
-	.dropdown { top: 2.5em; background-image: none; }
+	.dropdown { top: 3em; background-image: none; }
 	#page { padding-top: 0em; padding-bottom: 0px; margin-top: 3em; }
 	.view, #intro, #guide, #scenarios { padding: 1.5em; width: 100%; max-width: 100%; border-radius: 0px; }
 	#guide figure.left,#guide figure.right, #guide figure.four figure {
