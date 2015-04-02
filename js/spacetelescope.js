@@ -374,7 +374,6 @@ if(typeof $==="undefined") $ = {};
 		$(document).on('click','.relaunch a.button',{me:this},function(e){ e.preventDefault(); e.data.me.relaunch(); });
 		$(document).on('click','#launchnav a.button',{me:this},function(e){ e.preventDefault(); e.data.me.launch(); });
 		$(document).on('click','.toggler',{me:this},function(e){
-			//e.preventDefault();
 			var input = $(this).find('input:checked');
 			
 			if(input.attr('value')=="yes") $(this).addClass('checked');
@@ -457,8 +456,18 @@ if(typeof $==="undefined") $ = {};
 	}
 
 	SpaceTelescope.prototype.changeMode = function(m){
-		if(m=="advanced" && this.settings.mode!="advanced") $('#mode_advanced').trigger('click').closest('.toggler').trigger('click');
-		if(m!="advanced" && this.settings.mode=="advanced") $('#mode_basic').trigger('click').closest('.toggler').trigger('click');
+		this.changeToggle('togglemode','mode_'+m);
+		return this;
+	}
+	
+	// Change a toggle
+	// Inputs:
+	//   id = (string) The toggle ID
+	//   v  = (string) The option to set to
+	SpaceTelescope.prototype.changeToggle = function(id,v){
+		var t = this.toggles[id];
+		if(v==t.a.id) $('#'+t.a.id).trigger('click').closest('.toggler').trigger('click');
+		if(v==t.b.id) $('#'+t.b.id).trigger('click').closest('.toggler').trigger('click');
 		return this;
 	}
 
@@ -2167,9 +2176,9 @@ if(typeof $==="undefined") $ = {};
 					for(var i = 0; i < my.length;i++){
 						if(my[i].key=="MIRROR") $('#mirror_size').val(my[i].value);
 						if(my[i].key=="VEHICLE") $('#vehicle_rocket_'+my[i].value).trigger('click');
-						if(my[i].key=="SITE") $('#site').val(my[i].value);
-						if(my[i].key=="COOLING" && my[i].value=="true") $('input[name=hascooling]').trigger('click');
-						if(my[i].key=="COOLINGACTIVE" && my[i].value=="true") $('input[name=cooling_active]').trigger('click');
+						if(my[i].key=="SITE") $('a.'+my[i].value).trigger('click');
+						if(my[i].key=="COOLING" && my[i].value=="true") this.changeToggle('hascooling','cooling_yes');
+						if(my[i].key=="COOLINGACTIVE" && my[i].value=="true") this.changeToggle('cooling_active','cooling_active_yes');
 						if(my[i].key=="COOLINGCRYO") $('#cooling_cryogenic').val(my[i].value);
 						if(my[i].key=="COOLINGTEMP") $('#cooling_temperature').val(my[i].value);
 						if(my[i].key=="DURATION") $('#mission_duration').val(my[i].value);
