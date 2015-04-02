@@ -257,7 +257,6 @@ if(typeof $==="undefined") $ = {};
 
 		function readFile(files,_obj){
 			// Only process one file
-				console.log(files[0])
 			if(files[0].type=="text/plain" || files[0].type==""){
 				var reader = new FileReader();
 				// Closure to capture the file information.
@@ -466,8 +465,9 @@ if(typeof $==="undefined") $ = {};
 	//   v  = (string) The option to set to
 	SpaceTelescope.prototype.changeToggle = function(id,v){
 		var t = this.toggles[id];
-		if(v==t.a.id) $('#'+t.a.id).trigger('click').closest('.toggler').trigger('click');
-		if(v==t.b.id) $('#'+t.b.id).trigger('click').closest('.toggler').trigger('click');
+		if(!t) return this;
+		if(v==t.a.id && $('#'+t.a.id).length>0) $('#'+t.a.id).trigger('click').closest('.toggler').trigger('click');
+		if(v==t.b.id && $('#'+t.a.id).length>0) $('#'+t.b.id).trigger('click').closest('.toggler').trigger('click');
 		return this;
 	}
 
@@ -2175,6 +2175,8 @@ if(typeof $==="undefined") $ = {};
 				function processValues(){
 					for(var i = 0; i < my.length;i++){
 						if(my[i].key=="MIRROR") $('#mirror_size').val(my[i].value);
+						if(my[i].key=="DEPLOYABLE" && my[i].value=="true") this.changeToggle('toggledeployable','mirror_deployable_yes');
+						if(my[i].key=="UVQUALITY" && my[i].value=="true") this.changeToggle('toggleuv','mirror_uv_yes');
 						if(my[i].key=="VEHICLE") $('#vehicle_rocket_'+my[i].value).trigger('click');
 						if(my[i].key=="SITE") $('a.'+my[i].value).trigger('click');
 						if(my[i].key=="COOLING" && my[i].value=="true") this.changeToggle('hascooling','cooling_yes');
@@ -2211,6 +2213,8 @@ if(typeof $==="undefined") $ = {};
 		if(this.settings.mode) txt += "MODE:	"+this.settings.mode+"\n";
 		if(this.scenario.name) txt += "SCENARIO:	"+this.scenario.name+"\n";
 		if(this.choices.mirror) txt += "MIRROR:	"+this.choices.mirror+"\n";
+		if(this.choices.deployablemirror) txt += "DEPLOYABLE:	"+(this.choices.deployablemirror ? "true" : "false")+"\n";
+		if(this.choices.uvmirror) txt += "UVQUALITY:	"+(this.choices.uvmirror ? "true" : "false")+"\n";
 		for(var i=0; i<this.choices.instruments.length;i++) txt += "INSTRUMENT-"+(i+1)+":	"+this.choices.instruments[i].wavelength+";"+this.choices.instruments[i].type+";"+this.choices.instruments[i].name+"\n";
 		if(this.choices.cool.passive) txt += "COOLING:	"+(this.choices.cool.passive=="yes" ? "true" : "false")+"\n";
 		if(this.choices.cool.active=="yes") txt += "COOLINGACTIVE:	"+(this.choices.cool.active=="yes" ? "true" : "false")+"\n";
@@ -3724,7 +3728,7 @@ if(typeof $==="undefined") $ = {};
 						style = {'stroke':'white','stroke-width':1,'stroke-dasharray':'- ','fill':'white','fill-opacity':0.2};
 					}
 					this.body.push(p.path('m'+(x-i2*f)+','+(-y*f)+' l'+(i2*f)+','+(i4*f)+' l'+(i2*f)+','+(-i4*f)+' l0,'+(-insth*f)+' l'+(-i2*f)+','+(-i4*f)+' l'+(-i2*f)+','+(i4*f)+' z m'+(i2*f)+','+(i4*f)+' l0,'+(-insth*f)+' l'+(-i2*f)+','+(-i4*f)+'m'+(i2*f)+','+(i4*f)+'l'+(i2*f)+','+(-i4*f)).attr(style));
-					// Add a label if we can apply a CSS3 transform BLAH
+					// Add a label if we can apply a CSS3 transform
 					if(n < ni && this.s.choices.instruments[n] && this.s.hastransform) html += '<div class="label '+(j==0 ? 'bottom':'top')+'" style="bottom:'+(100*yl)+'%; left:'+(100*xl)+'%">'+this.s.choices.instruments[n].name+'</div>';
 					n++;
 				}
