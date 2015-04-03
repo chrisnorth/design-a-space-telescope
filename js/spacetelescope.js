@@ -5,14 +5,12 @@
 /*
 	USAGE:
 		<script src="js/jquery-1.10.0.min.js" type="text/javascript"></script>
-		<script src="js/spacetelescopedesigner.js" type="text/javascript"></script>
-		<script type="text/javascript">
-		<!--
-			$(document).ready(function(){
-				spacetel = $.spacetelescopedesigner({});
-			});
-		// -->
-		</script>
+		<script src="js/spacetelescope.min.js" type="text/javascript"></script>
+		<script type="text/javascript"><!--
+		$(document).ready(function(){
+			spacetel = $.spacetelescopedesigner({});
+		});
+		// --></script>
 */
 
 if(typeof $==="undefined") $ = {};
