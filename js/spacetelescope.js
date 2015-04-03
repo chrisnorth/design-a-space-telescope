@@ -3959,7 +3959,7 @@ if(typeof $==="undefined") $ = {};
 				if(oo.dotted) oo.dotted.stop().remove();
 				if(oo.solid) oo.solid.stop().remove();
 				if(oo.satellite) oo.satellite.stop().remove();
-				delete oo;
+				delete this.svg.orbits[o];
 			}
 		}
 		var a = ['Moon','Moonorbit','Moonlagrangian','Earthorbit'];
