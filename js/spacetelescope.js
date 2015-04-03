@@ -17,9 +17,8 @@ if(typeof $==="undefined") $ = {};
 
 (function($) {
 
-	// Make replacement for Math.log10 function (which is considered "experimental"!)
-	var G = {};
-	G.log10 = function(v) { return Math.log(v)/2.302585092994046; };
+	// Add Math.log10 function if it doesn't exist
+	if(!is(Math.log10,"function")) Math.log10 = function(v) { return Math.log(v)/2.302585092994046; };
 
 
 	// shim layer with setTimeout fallback
@@ -2711,7 +2710,7 @@ if(typeof $==="undefined") $ = {};
 
 	function getPrecision(v){
 		if(v < 1e-9) return 1;
-		if(is(v,"number") && v < 1) return Math.ceil(G.log10(1/v))+1;
+		if(is(v,"number") && v < 1) return Math.ceil(Math.log10(1/v))+1;
 		else return 1;
 		return 1;
 	}
@@ -4444,7 +4443,7 @@ if(typeof $==="undefined") $ = {};
 
 	// Display really large numbers as powers of ten
 	function powerOfTen(v,u){
-		var p = Math.floor(G.log10(v));
+		var p = Math.floor(Math.log10(v));
 		var a = Math.round(v/Math.pow(10,p))
 		return ''+a+'&times;10<sup>'+p+'</sup>'+u;
 	}
