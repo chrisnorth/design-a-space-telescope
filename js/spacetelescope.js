@@ -183,6 +183,7 @@ if(typeof $==="undefined") $ = {};
 		this.errors = [];      // Holder for errors
 		this.warnings = [];    // Holder for warnings
 		this.launchstep = 0;
+		this.languages = {'en':'en'};	// To avoid 404 errors trying to load languages we don't have
 
 		// Set some URLs
 		this.langurl = "config/%LANG%%MODE%.json";
@@ -725,7 +726,7 @@ if(typeof $==="undefined") $ = {};
 		var aok, ch, c, i, alt, str;
 		for(c = 0 ; c < charCode.length ; c++){
 			alt = false;
-			if(typeof charCode[c]=="string"){
+			if(is(charCode[c],"string")){
 				if(charCode[c].indexOf('alt')==0){
 					str = charCode[c];
 					alt = true;
@@ -832,6 +833,11 @@ if(typeof $==="undefined") $ = {};
 	SpaceTelescope.prototype.loadLanguage = function(l,fn){
 		if(!l) l = this.langshort;
 		var m = this.settings.mode;
+		// Limit ourselves to languages we know we have
+		if(!this.languages[l]){
+			l = this.langshort;
+			if(this.languages[this.langshort]) l = "en";
+		}
 		var url = this.langurl.replace('%LANG%',l).replace('%MODE%',this.getMode());
 		$.ajax({
 			url: url,
@@ -842,18 +848,7 @@ if(typeof $==="undefined") $ = {};
 			cache: false,
 			dataType: 'json',
 			context: this,
-			error: function(){
-				this.log('Error loading '+l+' ('+m+')');
-				if(this.lang.length == 2){
-					this.log('Attempting to load default (en) instead');
-					this.loadLanguage('en',fn);
-				}else{
-					if(url.indexOf(this.lang) > 0){
-						this.log('Attempting to load '+this.langshort+' instead');
-						this.loadLanguage(this.langshort,fn);
-					}
-				}
-			},
+			error: function(){ this.log('Error loading '+l+' ('+m+')'); },
 			success: function(data){
 				this.langshort = l;
 				this.lang = l;
@@ -1560,13 +1555,16 @@ if(typeof $==="undefined") $ = {};
 		this.log('showDetails')
 		var html = '';
 		if(!area || area == "") return this;
+		var d,dt,m,mu,s,i,c,ch,o;
 		
-		var d = this.phrases.designer;
+		d = this.phrases.designer;
+		dt = this.data;
+		ch = this.choices;
 
 		if(area=="satellite"){
 
-			if(this.choices.mirror && this.data.mirror[this.choices.mirror]){
-				var m = this.data.mirror[this.choices.mirror];
+			if(ch.mirror && dt.mirror[ch.mirror]){
+				m = dt.mirror[ch.mirror];
 				var cost = this.copyValue(m.cost);
 				var mass = this.copyValue(m.mass);
 				var time = this.copyValue(m.devtime);
@@ -1576,8 +1574,8 @@ if(typeof $==="undefined") $ = {};
 				var busdiam = this.copyValue(m.bus.diameter);
 				
 				// Applies to both mirror and bus
-				if(this.choices.deployablemirror){
-					var mu = this.data.deployablemirror.multiplier;
+				if(ch.deployablemirror){
+					mu = dt.deployablemirror.multiplier;
 					if(mu.cost) cost.value *= mu.cost;
 					if(mu.mass) mass.value *= mu.mass;
 					if(mu.time) time.value *= mu.time;
@@ -1587,61 +1585,65 @@ if(typeof $==="undefined") $ = {};
 					if(mu.bus.diameter) busdiam.value *= mu.bus.diameter;
 				}
 				// If we have a UV mirror we apply the cost/mass/time multipliers
-				if(this.choices.uvmirror){
-					var mu = this.data.uvmirror.multiplier;
+				if(ch.uvmirror){
+					mu = dt.uvmirror.multiplier;
 					if(mu.cost) cost.value *= mu.cost;
 					if(mu.mass) mass.value *= mu.mass;
 					if(mu.time) time.value *= mu.time;
 				}
-				html += this.buildRow(d.satellite.cost,cost);
-				html += this.buildRow(d.satellite.mass,mass);
-				html += this.buildRow(d.satellite.devtime,time);
-				html += this.buildRow(d.satellite.bus.cost,buscost);
-				html += this.buildRow(d.satellite.bus.mass,busmass);
-				html += this.buildRow(d.satellite.bus.devtime,bustime);
-				html += this.buildRow(d.satellite.bus.diameter,busdiam);
-				html += this.buildRow(d.satellite.bus.slots,m.bus.instrumentslots);
+				s = d.satellite;
+				html += this.buildRow(s.cost,cost);
+				html += this.buildRow(s.mass,mass);
+				html += this.buildRow(s.devtime,time);
+				html += this.buildRow(s.bus.cost,buscost);
+				html += this.buildRow(s.bus.mass,busmass);
+				html += this.buildRow(s.bus.devtime,bustime);
+				html += this.buildRow(s.bus.diameter,busdiam);
+				html += this.buildRow(s.bus.slots,m.bus.instrumentslots);
 			}
 
 		}else if(area=="instruments"){
 
 			value = this.getInstrument(value);
-			html += this.buildRow(d.instruments.cost,value.cost)
-			html += this.buildRow(d.instruments.mass,value.mass)
-			html += this.buildRow(d.instruments.temperature,value.temp)
-			html += this.buildRow(d.instruments.devtime,value.time)
+			i = d.instruments;
+			html += this.buildRow(i.cost,value.cost)
+			html += this.buildRow(i.mass,value.mass)
+			html += this.buildRow(i.temperature,value.temp)
+			html += this.buildRow(i.devtime,value.time)
 
 		}else if(area=="cooling"){
 
-			html += this.buildRow(d.cooling.temperature,this.choices.temperature);
-			html += this.buildRow(d.cooling.cost,this.choices.cooling.cost);
-			html += this.buildRow(d.cooling.mass,this.choices.cooling.mass);
-			if(this.choices.cooling.time.value > 0) html += this.buildRow(d.cooling.devtime,this.choices.cooling.time);
-			html += this.buildRow(d.cooling.life,this.choices.cooling.life);
-			html += this.buildRow(d.cooling.risk,this.makeValue(this.choices.cooling.risk*100,'%'));
+			var c = d.cooling;
+			html += this.buildRow(c.temperature,ch.temperature);
+			html += this.buildRow(c.cost,ch.cooling.cost);
+			html += this.buildRow(c.mass,ch.cooling.mass);
+			if(ch.cooling.time.value > 0) html += this.buildRow(d.cooling.devtime,ch.cooling.time);
+			html += this.buildRow(c.life,ch.cooling.life);
+			html += this.buildRow(c.risk,this.makeValue(ch.cooling.risk*100,'%'));
 
 		}else if(area=="site"){
 
-			if(is(this.data.site[value].latitude,"number")) html += this.buildRow(d.site.location,this.data.site[value].latitude.toFixed(2)+'&deg;, '+this.data.site[value].longitude.toFixed(2)+'&deg;');
-			if(this.data.site[value].operator) html += this.buildRow(d.site.operator,this.phrases.operator[this.data.site[value].operator].label);
+			if(is(dt.site[value].latitude,"number")) html += this.buildRow(d.site.location,dt.site[value].latitude.toFixed(2)+'&deg;, '+dt.site[value].longitude.toFixed(2)+'&deg;');
+			if(dt.site[value].operator) html += this.buildRow(d.site.operator,this.phrases.operator[dt.site[value].operator].label);
 			html += this.buildRow(d.site.trajectories,d.site.options[value].trajectories);
 			var sitenames = '';
-			for(var o in this.data.site[value].orbits){
-				if(this.data.site[value].orbits[o]) sitenames += ''+d.orbit.options[o].label+'<br />';
+			for(var o in dt.site[value].orbits){
+				if(dt.site[value].orbits[o]) sitenames += ''+d.orbit.options[o].label+'<br />';
 			}
 			html += this.buildRow(d.site.orbits,sitenames);
 			
-			if(is(this.data.site[value].risk,"number")) html += this.buildRow(d.site.risk,(this.data.site[value].risk*100).toFixed(0)+'%');
+			if(is(dt.site[value].risk,"number")) html += this.buildRow(d.site.risk,(dt.site[value].risk*100).toFixed(0)+'%');
 			
 		}else if(area=="orbit"){
 
-			if(this.data.orbit[value].altitude) html += this.buildRow(d.orbit.altitude,this.data.orbit[value].altitude);
-			if(this.data.orbit[value].period) html += this.buildRow(d.orbit.period,this.data.orbit[value].period);
-			if(this.data.orbit[value].obsfrac) html += this.buildRow(d.orbit.obsfrac,{'value':this.data.orbit[value].obsfrac*100,'units':'%','dimension':'percent'});
-			if(this.data.orbit[value].fuellife) html += this.buildRow(d.orbit.fuellife,this.data.orbit[value].fuellife);
-			if(this.data.orbit[value].temperature) html += this.buildRow(d.orbit.temperature,this.data.orbit[value].temperature);
-			if(this.data.orbit[value].groundcost) html += this.buildRow(d.orbit.groundcost,this.data.orbit[value].groundcost);
-			if(this.data.orbit[value].risk) html += this.buildRow(d.orbit.risk,{'value':this.data.orbit[value].risk*100,'units':'%','dimension':'percent'});
+			o = dt.orbit[value];
+			if(o.altitude) html += this.buildRow(d.orbit.altitude,o.altitude);
+			if(o.period) html += this.buildRow(d.orbit.period,o.period);
+			if(o.obsfrac) html += this.buildRow(d.orbit.obsfrac,{'value':o.obsfrac*100,'units':'%','dimension':'percent'});
+			if(o.fuellife) html += this.buildRow(d.orbit.fuellife,o.fuellife);
+			if(o.temperature) html += this.buildRow(d.orbit.temperature,o.temperature);
+			if(o.groundcost) html += this.buildRow(d.orbit.groundcost,o.groundcost);
+			if(o.risk) html += this.buildRow(d.orbit.risk,{'value':o.risk*100,'units':'%','dimension':'percent'});
 
 		}
 
@@ -1655,20 +1657,21 @@ if(typeof $==="undefined") $ = {};
 	}
 
 	SpaceTelescope.prototype.updateOptions = function(){
+		var ph = this.phrases;
 
-		$('#options').html('<h3>'+this.phrases.ui.menu.options.label+'</h3><form id="optionform"><ul></ul>');
+		$('#options').html('<h3>'+ph.ui.menu.options.label+'</h3><form id="optionform"><ul></ul>');
 
 		// Loop over options
-		for(var o in this.phrases.ui.options){
+		for(var o in ph.ui.options){
 		
-			html = '<li><label for="change'+o+'">'+this.phrases.ui.options[o]+'</label> <select id="change'+o+'" name="change'+o+'">';
+			html = '<li><label for="change'+o+'">'+ph.ui.options[o]+'</label> <select id="change'+o+'" name="change'+o+'">';
 			if(o=="currency"){
-				for(var c in this.phrases.ui[o]){
-					html += '<option value="'+c+'"'+(c==this.settings.currency ? ' selected="selected"' : '')+'>'+this.phrases.ui.currency[c].label+' '+this.phrases.ui.currency[c].symbol+'</option>';
+				for(var c in ph.ui[o]){
+					html += '<option value="'+c+'"'+(c==this.settings.currency ? ' selected="selected"' : '')+'>'+ph.ui.currency[c].label+' '+ph.ui.currency[c].symbol+'</option>';
 				}
 			}else{
-				for(var c in this.phrases.ui.units){
-					if(this.phrases.ui.units[c].dimension==o && this.phrases.ui.units[c].selectable) html += '<option value="'+c+'"'+(c==this.settings[o] ? ' selected="selected"' : '')+'>'+this.phrases.ui.units[c].label+'</option>';
+				for(var c in ph.ui.units){
+					if(ph.ui.units[c].dimension==o && ph.ui.units[c].selectable) html += '<option value="'+c+'"'+(c==this.settings[o] ? ' selected="selected"' : '')+'>'+ph.ui.units[c].label+'</option>';
 				}			
 			}
 			html += '</select></li>'
@@ -1766,106 +1769,107 @@ if(typeof $==="undefined") $ = {};
 	}
 	
 	SpaceTelescope.prototype.getChoice = function(choice){
+		var ch = this.choices;
 		if(choice=="mirror.cost"){
-			v = (this.choices.mirror ? this.copyValue(this.data.mirror[this.choices.mirror].cost) : this.makeValue(0,'GBP'));
+			v = (ch.mirror ? this.copyValue(this.data.mirror[ch.mirror].cost) : this.makeValue(0,'GBP'));
 			v.value = -v.value;
-			if(this.choices.deployablemirror && this.data.deployablemirror.multiplier.cost) v.value *= this.data.deployablemirror.multiplier.cost;
-			if(this.choices.uvmirror && this.data.uvmirror.multiplier.cost) v.value *= this.data.uvmirror.multiplier.cost;
+			if(ch.deployablemirror && this.data.deployablemirror.multiplier.cost) v.value *= this.data.deployablemirror.multiplier.cost;
+			if(ch.uvmirror && this.data.uvmirror.multiplier.cost) v.value *= this.data.uvmirror.multiplier.cost;
 		}else if(choice=="mirror.mass"){
-			v = (this.choices.mirror ? this.copyValue(this.data.mirror[this.choices.mirror].mass) : this.makeValue(0,'kg'));
-			if(this.choices.deployablemirror && this.data.deployablemirror.multiplier.mass) v.value *= this.data.deployablemirror.multiplier.mass;
-			if(this.choices.uvmirror && this.data.uvmirror.multiplier.mass) v.value *= this.data.uvmirror.multiplier.mass;
+			v = (ch.mirror ? this.copyValue(this.data.mirror[ch.mirror].mass) : this.makeValue(0,'kg'));
+			if(ch.deployablemirror && this.data.deployablemirror.multiplier.mass) v.value *= this.data.deployablemirror.multiplier.mass;
+			if(ch.uvmirror && this.data.uvmirror.multiplier.mass) v.value *= this.data.uvmirror.multiplier.mass;
 		}else if(choice=="mirror.time"){
-			v = (this.choices.mirror ? this.copyValue(this.data.mirror[this.choices.mirror].devtime) : this.makeValue(0,'months'));
-			if(this.choices.deployablemirror && this.data.deployablemirror.multiplier.time) v.value *= this.data.deployablemirror.multiplier.time;
-			if(this.choices.uvmirror && this.data.uvmirror.multiplier.time) v.value *= this.data.uvmirror.multiplier.time;
+			v = (ch.mirror ? this.copyValue(this.data.mirror[ch.mirror].devtime) : this.makeValue(0,'months'));
+			if(ch.deployablemirror && this.data.deployablemirror.multiplier.time) v.value *= this.data.deployablemirror.multiplier.time;
+			if(ch.uvmirror && this.data.uvmirror.multiplier.time) v.value *= this.data.uvmirror.multiplier.time;
 		}else if(choice=="mirror.prob"){
-			v = (this.choices.mirror ? this.data.mirror[this.choices.mirror].risk : 1);
-			if(this.choices.deployablemirror && this.data.deployablemirror.risk) v *= this.data.deployablemirror.risk;
-			if(this.choices.uvmirror && this.data.uvmirror.risk) v *= this.data.uvmirror.risk;
+			v = (ch.mirror ? this.data.mirror[ch.mirror].risk : 1);
+			if(ch.deployablemirror && this.data.deployablemirror.risk) v *= this.data.deployablemirror.risk;
+			if(ch.uvmirror && this.data.uvmirror.risk) v *= this.data.uvmirror.risk;
 		}else if(choice=="mirror"){
-			v = (this.choices.mirror) ? this.data.mirror[this.choices.mirror].diameter : this.makeValue(0,'m');
+			v = (ch.mirror) ? this.data.mirror[ch.mirror].diameter : this.makeValue(0,'m');
 		}else if(choice=="cooling.cost"){
-			v = (this.choices.cooling ? this.copyValue(this.choices.cooling.cost) : this.makeValue(0,'GBP'));
+			v = (ch.cooling ? this.copyValue(ch.cooling.cost) : this.makeValue(0,'GBP'));
 			v.value = -v.value;
 		}else if(choice=="cooling.mass"){
-			v = (this.choices.cooling && this.choices.cooling.mass ? this.copyValue(this.choices.cooling.mass) : this.makeValue(0,'kg'));
+			v = (ch.cooling && ch.cooling.mass ? this.copyValue(ch.cooling.mass) : this.makeValue(0,'kg'));
 		}else if(choice=="cooling.passive.mass"){
-			v = (this.choices.cooling && this.choices.cooling.passive ? this.copyValue(this.choices.cooling.passive) : this.makeValue(0,'kg'));
+			v = (ch.cooling && ch.cooling.passive ? this.copyValue(ch.cooling.passive) : this.makeValue(0,'kg'));
 		}else if(choice=="cooling.active.mass"){
-			v = (this.choices.cooling && this.choices.cooling.active ? this.copyValue(this.choices.cooling.active) : this.makeValue(0,'kg'));
+			v = (ch.cooling && ch.cooling.active ? this.copyValue(ch.cooling.active) : this.makeValue(0,'kg'));
 		}else if(choice=="cooling.cryogenic.mass"){
-			v = (this.choices.cooling && this.choices.cooling.cryogenic ? this.copyValue(this.choices.cooling.cryogenic) : this.makeValue(0,'kg'));
+			v = (ch.cooling && ch.cooling.cryogenic ? this.copyValue(ch.cooling.cryogenic) : this.makeValue(0,'kg'));
 		}else if(choice=="cooling.time"){
-			v = (this.choices.cooling ? this.copyValue(this.choices.cooling.time) : this.makeValue(0,'months'));
+			v = (ch.cooling ? this.copyValue(ch.cooling.time) : this.makeValue(0,'months'));
 		}else if(choice=="cooling.life"){
-			v = (this.choices.cooling && this.choices.cooling.life ? this.copyValue(this.choices.cooling.life) : this.makeValue(99,'years'));
+			v = (ch.cooling && ch.cooling.life ? this.copyValue(ch.cooling.life) : this.makeValue(99,'years'));
 		}else if(choice=="cooling.prob"){
 			v = 1;
-			if(this.choices.cooling && this.choices.cooling.risk) v = this.choices.cooling.risk;
+			if(ch.cooling && ch.cooling.risk) v = ch.cooling.risk;
 		}else if(choice=="satellite.cost"){
-			v = (this.choices.mirror ? this.copyValue(this.data.mirror[this.choices.mirror].bus.cost) : this.makeValue(0,'GBP'));
-			if(this.choices.deployablemirror && this.data.deployablemirror.multiplier.bus.cost) v.value *= this.data.deployablemirror.multiplier.bus.cost;
+			v = (ch.mirror ? this.copyValue(this.data.mirror[ch.mirror].bus.cost) : this.makeValue(0,'GBP'));
+			if(ch.deployablemirror && this.data.deployablemirror.multiplier.bus.cost) v.value *= this.data.deployablemirror.multiplier.bus.cost;
 			v.value = -v.value;
 		}else if(choice=="satellite.mass"){
-			v = (this.choices.mirror ? this.copyValue(this.data.mirror[this.choices.mirror].bus.mass) : this.makeValue(0,'kg'));
-			if(this.choices.deployablemirror && this.data.deployablemirror.multiplier.bus.mass) v.value *= this.data.deployablemirror.multiplier.bus.mass;
+			v = (ch.mirror ? this.copyValue(this.data.mirror[ch.mirror].bus.mass) : this.makeValue(0,'kg'));
+			if(ch.deployablemirror && this.data.deployablemirror.multiplier.bus.mass) v.value *= this.data.deployablemirror.multiplier.bus.mass;
 		}else if(choice=="satellite.time"){
-			v = (this.choices.mirror ? this.copyValue(this.data.mirror[this.choices.mirror].bus.devtime) : this.makeValue(0,'months'));
-			if(this.choices.deployablemirror && this.data.deployablemirror.multiplier.bus.time) v.value *= this.data.deployablemirror.multiplier.bus.time;
+			v = (ch.mirror ? this.copyValue(this.data.mirror[ch.mirror].bus.devtime) : this.makeValue(0,'months'));
+			if(ch.deployablemirror && this.data.deployablemirror.multiplier.bus.time) v.value *= this.data.deployablemirror.multiplier.bus.time;
 		}else if(choice=="instruments.time"){
-			v = (this.choices.instrument && this.choices.instrument.time) ? this.choices.instrument.time : this.makeValue(0,'months');
+			v = (ch.instrument && ch.instrument.time) ? ch.instrument.time : this.makeValue(0,'months');
 		}else if(choice=="instruments.cost"){
-			v = (this.choices.instrument && this.choices.instrument.cost) ? this.choices.instrument.cost : this.makeValue(0,'GBP');
+			v = (ch.instrument && ch.instrument.cost) ? ch.instrument.cost : this.makeValue(0,'GBP');
 			v.value = -v.value;
 		}else if(choice=="instruments.mass"){
-			v = (this.choices.instrument && this.choices.instrument.mass) ? this.choices.instrument.mass : this.makeValue(0,'kg');
+			v = (ch.instrument && ch.instrument.mass) ? ch.instrument.mass : this.makeValue(0,'kg');
 		}else if(choice=="instruments.prob"){
-			v = (this.choices.instrument && this.choices.instrument.risk) ? this.choices.instrument.risk : 1;
+			v = (ch.instrument && ch.instrument.risk) ? ch.instrument.risk : 1;
 		}else if(choice=="site"){
-			v = (this.choices.site ? this.phrases.designer.site.options[this.choices.site].label : '');
+			v = (ch.site ? this.phrases.designer.site.options[ch.site].label : '');
 		}else if(choice=="site.prob"){
 			v = 0;
-			if(this.choices.site){
-				v = (this.data.site[this.choices.site].risk ? this.data.site[this.choices.site].risk : 1);
+			if(ch.site){
+				v = (this.data.site[ch.site].risk ? this.data.site[ch.site].risk : 1);
 			}
 		}else if(choice=="vehicle"){
-			v = (this.choices.vehicle ? this.phrases.designer.vehicle.options[this.choices.vehicle].label : '');
+			v = (ch.vehicle ? this.phrases.designer.vehicle.options[ch.vehicle].label : '');
 		}else if(choice=="vehicle.cost"){
-			v = (this.choices.vehicle ? this.copyValue(this.data.vehicle[this.choices.vehicle].cost) : this.makeValue(0,'GBP'));
+			v = (ch.vehicle ? this.copyValue(this.data.vehicle[ch.vehicle].cost) : this.makeValue(0,'GBP'));
 			v.value = -v.value;		
 		}else if(choice=="vehicle.prob"){
 			v = 0;
-			if(this.choices.vehicle){
-				v = (this.data.vehicle[this.choices.vehicle].risk ? this.data.vehicle[this.choices.vehicle].risk : 1);
+			if(ch.vehicle){
+				v = (this.data.vehicle[ch.vehicle].risk ? this.data.vehicle[ch.vehicle].risk : 1);
 			}
 		}else if(choice=="ground.cost"){
-			var m = this.choices.mission ? this.copyValue(this.data.mission[this.choices.mission].life) : this.makeValue(0,'months');
-			if(this.choices.orbit){
-				v = this.copyValue(this.data.orbit[this.choices.orbit].groundcost);
+			var m = ch.mission ? this.copyValue(this.data.mission[ch.mission].life) : this.makeValue(0,'months');
+			if(ch.orbit){
+				v = this.copyValue(this.data.orbit[ch.orbit].groundcost);
 				v.value *= -this.convertValue(m,'years').value;	
 			}else{
 				v = this.makeValue(0,'GBP');
 			}
 		}else if(choice=="temperature"){
-			v = (this.choices.temperature) ? this.choices.temperature : this.makeValue(400,'K');
-			if(this.choices.orbit) v = this.data.orbit[this.choices.orbit].temperature;
+			v = (ch.temperature) ? ch.temperature : this.makeValue(400,'K');
+			if(ch.orbit) v = this.data.orbit[ch.orbit].temperature;
 		}else if(choice=="launch.cost"){
-			v = (this.choices.vehicle ? this.copyValue(this.data.vehicle[this.choices.vehicle].cost) : this.makeValue(0,'GBP'));
-			v.value *= -(this.choices.orbit ? this.data.orbit[this.choices.orbit].multiplier.launchcost : 1);
+			v = (ch.vehicle ? this.copyValue(this.data.vehicle[ch.vehicle].cost) : this.makeValue(0,'GBP'));
+			v.value *= -(ch.orbit ? this.data.orbit[ch.orbit].multiplier.launchcost : 1);
 		}else if(choice=="orbit"){
-			v = (this.choices.orbit) ? this.phrases.designer.orbit.options[this.choices.orbit].label : '';
+			v = (ch.orbit) ? this.phrases.designer.orbit.options[ch.orbit].label : '';
 		}else if(choice=="orbit.prob"){
 			v = 0;
-			if(this.choices.orbit){
-				v = (this.data.orbit[this.choices.orbit].risk) ? this.data.orbit[this.choices.orbit].risk : 1;
+			if(ch.orbit){
+				v = (this.data.orbit[ch.orbit].risk) ? this.data.orbit[ch.orbit].risk : 1;
 			}
 		}else if(choice=="mission.time"){
-			v = (this.choices.mission ? this.copyValue(this.data.mission[this.choices.mission].life) : this.makeValue(0,'months'));
+			v = (ch.mission ? this.copyValue(this.data.mission[ch.mission].life) : this.makeValue(0,'months'));
 		}else if(choice=="mission.prob"){
-			v = (this.choices.mission && this.data.mission[this.choices.mission].risk ? this.data.mission[this.choices.mission].risk : 1);
+			v = (ch.mission && this.data.mission[ch.mission].risk ? this.data.mission[ch.mission].risk : 1);
 		}else if(choice=="fuel.time"){
-			v = (this.choices.orbit ? this.copyValue(this.data.orbit[this.choices.orbit].fuellife) : this.makeValue(0,'months'));
+			v = (ch.orbit ? this.copyValue(this.data.orbit[ch.orbit].fuellife) : this.makeValue(0,'months'));
 		}
 		return v;
 	}
@@ -1877,11 +1881,12 @@ if(typeof $==="undefined") $ = {};
 		depth++;
 		var html = '<ul class="summary">';
 		for(var i in list){
+			var l = list[i];
 
-			if(list[i].value || list[i].list){
+			if(l.value || l.list){
 				html += '<li>';
-				if(i && list[i].value) html += '<span class="label '+i+'">'+list[i].label+'</span>'+this.formatValueSpan(list[i].value,key+' '+i);
-				if(list[i].list) html += this.processSummaryList(list[i].list,(depth==1 ? key : ''));
+				if(i && l.value) html += '<span class="label '+i+'">'+l.label+'</span>'+this.formatValueSpan(l.value,key+' '+i);
+				if(l.list) html += this.processSummaryList(l.list,(depth==1 ? key : ''));
 				html += '</li>';
 			}
 		}
@@ -1891,18 +1896,18 @@ if(typeof $==="undefined") $ = {};
 	
 
 	SpaceTelescope.prototype.updateSummaryList = function(){
-		for(var key in this.table){
+		for(var k in this.table){
 			var html = '';
-			var base = key;
-			if(base.indexOf('_') > 0) base = base.substr(0,base.indexOf('_'));
-			var keys = base;
-			if(base!=key) keys += ' '+key;
+			var b = k;
+			if(b.indexOf('_') > 0) b = b.substr(0,b.indexOf('_'));
+			var keys = b;
+			if(b!=k) keys += ' '+k;
 			var depth = 0;
 			// Update summary bar items
-			if(this.table[key].value) this.updateValue('baritem .'+key,this.table[key].value);
-			var output = '<h3><img src="images/cleardot.gif" class="icon '+keys+'" /> <span class="label '+keys+'">'+this.table[key].label+'</span> '+(this.table[key].value ? this.formatValueSpan(this.table[key].value,keys) : '')+'</h3>';
-			if(this.table[key].list) output += this.processSummaryList(this.table[key].list,base,depth);
-			$('#summaryext_'+base).addClass('padded').html(output);
+			if(this.table[k].value) this.updateValue('baritem .'+k,this.table[k].value);
+			var output = '<h3><img src="images/cleardot.gif" class="icon '+keys+'" /> <span class="label '+keys+'">'+this.table[k].label+'</span> '+(this.table[k].value ? this.formatValueSpan(this.table[k].value,keys) : '')+'</h3>';
+			if(this.table[k].list) output += this.processSummaryList(this.table[k].list,b,depth);
+			$('#summaryext_'+b).addClass('padded').html(output);
 		}
 		return this;
 	}
@@ -1912,8 +1917,10 @@ if(typeof $==="undefined") $ = {};
 
 		this.log('updateSummary')
 
+		var v,fuel,cool,m,av,ok,pc,w,r,i,j,d,t,s,ph;
 		var html = '';
-		var s = this.phrases.ui.summary;
+		ph = this.phrases;
+		s = ph.ui.summary;
 
 		var prob = {};
 		var cost = {};
@@ -1931,8 +1938,8 @@ if(typeof $==="undefined") $ = {};
 		prob.total = prob.orbit*prob.site*prob.vehicle*prob.mirror*prob.cooling*prob.instruments*prob.mission;
 
 		// Warning about risk
-		if(prob.total < 0.5 && prob.total > 0) this.warnings.push({ 'text': this.phrases.warnings.risky });
-		if(prob.total == 0) this.errors.push({ 'text': this.phrases.errors.impossible });
+		if(prob.total < 0.5 && prob.total > 0) this.warnings.push({ 'text': ph.warnings.risky });
+		if(prob.total == 0) this.errors.push({ 'text': ph.errors.impossible });
 
 
 		// Format costs
@@ -1950,7 +1957,7 @@ if(typeof $==="undefined") $ = {};
 		cost.free = this.sumValues(this.scenario.budget,cost.total);
 
 		// Warning about funds
-		if(cost.free.value < 0) this.errors.push({ 'text': this.phrases.errors.bankrupt });
+		if(cost.free.value < 0) this.errors.push({ 'text': ph.errors.bankrupt });
 
 		// Format times
 		time.mirror = this.getChoice('mirror.time');
@@ -1962,17 +1969,17 @@ if(typeof $==="undefined") $ = {};
 		time.lifecooling = this.getChoice('cooling.life');
 		time.fuel = this.getChoice('fuel.time');
 
-		var v = this.minValue(time.mission,time.lifecooling,time.fuel);
+		v = this.minValue(time.mission,time.lifecooling,time.fuel);
 		v.value *= (this.choices.orbit) ? this.data.orbit[this.choices.orbit].obsfrac : 0;
 		time.observing = v;
 
-		var fuel = this.convertValue(time.fuel,time.mission.units);
-		if(time.mission.value > fuel.value) this.warnings.push({ 'text': this.phrases.warnings.fuellifetime.replace(/%LIFE%/,this.formatValue(fuel)).replace(/%DURATION%/,this.formatValue(time.mission)), 'link':'#designer_orbit' });
-		var cool = this.convertValue(time.lifecooling,time.mission.units);
-		if(time.mission.value > cool.value) this.warnings.push({ 'text': this.phrases.warnings.coolinglifetime.replace(/%LIFE%/,this.formatValue(cool)).replace(/%DURATION%/,this.formatValue(time.mission)), 'link':'#designer_orbit' });
+		fuel = this.convertValue(time.fuel,time.mission.units);
+		if(time.mission.value > fuel.value) this.warnings.push({ 'text': ph.warnings.fuellifetime.replace(/%LIFE%/,this.formatValue(fuel)).replace(/%DURATION%/,this.formatValue(time.mission)), 'link':'#designer_orbit' });
+		cool = this.convertValue(time.lifecooling,time.mission.units);
+		if(time.mission.value > cool.value) this.warnings.push({ 'text': ph.warnings.coolinglifetime.replace(/%LIFE%/,this.formatValue(cool)).replace(/%DURATION%/,this.formatValue(time.mission)), 'link':'#designer_orbit' });
 		
 		// Warning about mission time
-		if(prob.total > 0 && time.mission.value == 0) this.warnings.push({ 'text': this.phrases.warnings.missionlife,'link':'#designer_orbit'});
+		if(prob.total > 0 && time.mission.value == 0) this.warnings.push({ 'text': ph.warnings.missionlife,'link':'#designer_orbit'});
 	    
 		// Format masses
 		mass.mirror = this.getChoice('mirror.mass');
@@ -1983,11 +1990,10 @@ if(typeof $==="undefined") $ = {};
 
 		// Error about mass
 		if(this.choices.orbit && this.choices.vehicle){
-			var m = this.convertValue((this.data.orbit[this.choices.orbit].LEO ? this.data.vehicle[this.choices.vehicle].mass.LEO : this.data.vehicle[this.choices.vehicle].mass.GTO),mass.total.units);
-			if(mass.total.value > m.value) this.errors.push({ 'text': this.phrases.errors.heavy });
-			if(mass.total.value <= m.value && mass.total.value > 0.8*m.value) this.warnings.push({ 'text': this.phrases.warnings.heavy });
+			m = this.convertValue((this.data.orbit[this.choices.orbit].LEO ? this.data.vehicle[this.choices.vehicle].mass.LEO : this.data.vehicle[this.choices.vehicle].mass.GTO),mass.total.units);
+			if(mass.total.value > m.value) this.errors.push({ 'text': ph.errors.heavy });
+			if(mass.total.value <= m.value && mass.total.value > 0.8*m.value) this.warnings.push({ 'text': ph.warnings.heavy });
 		}
-
 
 		this.table.success.value = this.formatPercent(prob.total);
 		this.table.success.list.success_orbit.value = this.formatPercent(prob.orbit);
@@ -2031,25 +2037,25 @@ if(typeof $==="undefined") $ = {};
 			this.table.mass_total.list.mass_cooling_total.list.mass_cooling_active.value = this.getChoice('cooling.active.mass');
 		}
 		this.table.mass_total.list.mass_instruments.value = mass.instruments;
-		
+
 		// Check mission targets
-		var av = 0;
+		av = 0;
 		this.table.science_total.list = {};
 		if(this.scenario && this.scenario.requires && is(this.scenario.requires,"object")){ 
 			var requires = this.scenario.requires;
-			var v, ok, pc, w;
+		
 			// Build mission target list
 			this.table.science_total.list = {};
-			for(var r = 0; r < requires.length; r++){
+			for(r = 0; r < requires.length; r++){
 				pc = 0;
 				if(requires[r]["instruments"]){
 					ok = false;
 					//"instrument": "camera",
 					//"wavelength": "farir"
 					if(this.choices.instruments){
-						for(var i = 0; i < requires[r]["instruments"].length ; i++){
+						for(i = 0; i < requires[r]["instruments"].length ; i++){
 							ok = false;
-							for(var j = 0; j < this.choices.instruments.length ; j++){
+							for(j = 0; j < this.choices.instruments.length ; j++){
 								if((this.choices.instruments[j].type==requires[r]["instruments"][i].type || this.choices.instruments[j].type=="both") && this.choices.instruments[j].wavelength==requires[r]["instruments"][i].wavelength) ok = true;
 							}
 							if(ok) pc += 100;
@@ -2073,7 +2079,7 @@ if(typeof $==="undefined") $ = {};
 				if(requires[r]["vehicle"]){
 					ok = false;
 					if(is(requires[r]["vehicle"],"object")){
-						for(var i = 0; i < requires[r]["vehicle"].length ; i++){
+						for(i = 0; i < requires[r]["vehicle"].length ; i++){
 							if(this.choices.vehicle==requires[r]["vehicle"][i]) ok = true;
 						}
 					}else{
@@ -2083,7 +2089,7 @@ if(typeof $==="undefined") $ = {};
 					else pc = 100;
 				}
 				if(requires[r]["site"]){
-					w = (this.choices.vehicle) ? this.phrases.designer.vehicle.options[this.choices.vehicle].label : '';
+					w = (this.choices.vehicle) ? ph.designer.vehicle.options[this.choices.vehicle].label : '';
 					if(this.choices.vehicle == requires[r]["vehicle"]) this.errors.push({ 'text': requires[r].error });
 					else pc = 100;
 				}
@@ -2102,15 +2108,14 @@ if(typeof $==="undefined") $ = {};
 		}
 		this.table.science_total.value = this.makeValue(av,'%');
 
-
 		this.table.profile_total.list.profile_site.value = this.getChoice('site');
 		this.table.profile_total.list.profile_vehicle.value = this.getChoice('vehicle');
 		this.table.profile_total.list.profile_instruments.value = (this.choices.instruments) ? this.choices.instruments.length : 0;
 		this.table.profile_total.list.profile_mirror.value = this.getChoice('mirror');
 		this.table.profile_total.list.profile_temperature.value = this.getChoice('temperature');
 		this.table.profile_total.list.profile_orbit.value = this.getChoice('orbit');
-		var d = new Date();
-		var t = this.convertValue(time.total,'months');
+		d = new Date();
+		t = this.convertValue(time.total,'months');
 		d.setUTCMonth(d.getUTCMonth()+t.value);
 		this.launchdate = d.toDateString();
 		this.table.profile_total.list.profile_launch.value = d.toDateString();
@@ -2138,17 +2143,13 @@ if(typeof $==="undefined") $ = {};
 		return this;
 	}
 
-	SpaceTelescope.prototype.test = function(){
-		return this.processFile("---\nMODE	advanced\nSCENARIO	Star Birth & Evolution\nMIRROR	1.0m\nINSTRUMENT	submm;both;SPIRE\nINSTRUMENT	farir;spectrometer;HIFI\nINSTRUMENT	farir;both;PACS\nCOOLING	true\nCOOLINGACTIVE	true\nCOOLINGCRYO	2yr\nVEHICLE	ARI5\nSITE	CSG\nDURATION	7\nORBIT	ES2\n---");
-	}
-
 	SpaceTelescope.prototype.processFile = function(str){
 
 		if(is(str,"string")) str = str.split(/[\n\r]/);
-		var yaml = false;
-		var p,l;
-		var mode = "";
-		var my = [];
+		var yaml,p,l,mode,my,i,s,k,v;
+		yaml = false;
+		mode = "";
+		my = [];
 		for(var i = 0; i < str.length; i++){
 			p = str[i].indexOf('---');
 			if(yaml && p==0) yaml = false;
@@ -2164,29 +2165,31 @@ if(typeof $==="undefined") $ = {};
 		if(mode) this.setMode(mode,function(){
 			function processScenario(){
 				var scenario = '';
-				for(var i = 0; i < my.length;i++){
+				for(i = 0; i < my.length;i++){
 					if(my[i].key=="SCENARIO"){
-						for(var s = 0; s < this.scenarios.length; s++){
+						for(s = 0; s < this.scenarios.length; s++){
 							if(this.scenarios[s].name==my[i].value) scenario = s;
 						}
 					}
 				}
 				this.chooseScenario(scenario);
 				function processValues(){
-					for(var i = 0; i < my.length;i++){
-						if(my[i].key=="MIRROR") $('#mirror_size').val(my[i].value);
-						if(my[i].key=="DEPLOYABLE" && my[i].value=="true") this.changeToggle('toggledeployable','mirror_deployable_yes');
-						if(my[i].key=="UVQUALITY" && my[i].value=="true") this.changeToggle('toggleuv','mirror_uv_yes');
-						if(my[i].key=="VEHICLE") $('#vehicle_rocket_'+my[i].value).trigger('click');
-						if(my[i].key=="SITE") $('a.'+my[i].value).trigger('click');
-						if(my[i].key=="COOLING" && my[i].value=="true") this.changeToggle('hascooling','cooling_yes');
-						if(my[i].key=="COOLINGACTIVE" && my[i].value=="true") this.changeToggle('cooling_active','cooling_active_yes');
-						if(my[i].key=="COOLINGCRYO") $('#cooling_cryogenic').val(my[i].value);
-						if(my[i].key=="COOLINGTEMP") $('#cooling_temperature').val(my[i].value);
-						if(my[i].key=="DURATION") $('#mission_duration').val(my[i].value);
-						if(my[i].key=="ORBIT") $('#mission_orbit').val(my[i].value).trigger('change');
-						if(my[i].key.indexOf("INSTRUMENT")==0){
-							var inst = my[i].value.split(/\;/);
+					for(i = 0; i < my.length;i++){
+						k = my[i].key;
+						v = my[i].value;
+						if(k=="MIRROR") $('#mirror_size').val(v);
+						if(k=="DEPLOYABLE" && v=="true") this.changeToggle('toggledeployable','mirror_deployable_yes');
+						if(k=="UVQUALITY" && v=="true") this.changeToggle('toggleuv','mirror_uv_yes');
+						if(k=="VEHICLE") $('#vehicle_rocket_'+v).trigger('click');
+						if(k=="SITE") $('a.'+v).trigger('click');
+						if(k=="COOLING" && v=="true") this.changeToggle('hascooling','cooling_yes');
+						if(k=="COOLINGACTIVE" && v=="true") this.changeToggle('cooling_active','cooling_active_yes');
+						if(k=="COOLINGCRYO") $('#cooling_cryogenic').val(v);
+						if(k=="COOLINGTEMP") $('#cooling_temperature').val(v);
+						if(k=="DURATION") $('#mission_duration').val(v);
+						if(k=="ORBIT") $('#mission_orbit').val(v).trigger('change');
+						if(k.indexOf("INSTRUMENT")==0){
+							var inst = v.split(/\;/);
 							$('#wavelengths').val(inst[0]);
 							$('#instruments').val(inst[1]);
 							$('#instrument_name').val(inst[2]);
@@ -2208,43 +2211,50 @@ if(typeof $==="undefined") $ = {};
 
 		// Bail out if there is no Blob function
 		if(!is(Blob,"function")) return this;
+		var txt,ch,t,f;
 
-		var txt = "---\n";
-		if(this.settings.mode) txt += "MODE:	"+this.settings.mode+"\n";
-		if(this.scenario.name) txt += "SCENARIO:	"+this.scenario.name+"\n";
-		if(this.choices.mirror) txt += "MIRROR:	"+this.choices.mirror+"\n";
-		if(this.choices.deployablemirror) txt += "DEPLOYABLE:	"+(this.choices.deployablemirror ? "true" : "false")+"\n";
-		if(this.choices.uvmirror) txt += "UVQUALITY:	"+(this.choices.uvmirror ? "true" : "false")+"\n";
-		for(var i=0; i<this.choices.instruments.length;i++) txt += "INSTRUMENT-"+(i+1)+":	"+this.choices.instruments[i].wavelength+";"+this.choices.instruments[i].type+";"+this.choices.instruments[i].name+"\n";
-		if(this.choices.cool.passive) txt += "COOLING:	"+(this.choices.cool.passive=="yes" ? "true" : "false")+"\n";
-		if(this.choices.cool.active=="yes") txt += "COOLINGACTIVE:	"+(this.choices.cool.active=="yes" ? "true" : "false")+"\n";
-		if(this.choices.cool.cryogenic) txt += "COOLINGCRYO:	"+this.choices.cool.cryogenic+"\n";
-		if(this.choices.vehicle) txt += "VEHICLE:	"+this.choices.vehicle+"\n";
-		if(this.choices.site) txt += "SITE:	"+this.choices.site+"\n";
-		if(this.choices.mission) txt += "DURATION:	"+this.choices.mission+"\n";
-		if(this.choices.orbit) txt += "ORBIT:	"+this.choices.orbit+"\n";
+		ch = this.choices;
+		t = "true";
+		f = "false";
+
+		function a(k,v){ return k+":	"+v+"\n"; }
+
+		txt = "---\n";
+		if(this.settings.mode) txt += a("MODE",this.settings.mode);
+		if(this.scenario.name) txt += a("SCENARIO",this.scenario.name);
+		if(ch.mirror) txt += a("MIRROR",ch.mirror);
+		if(ch.deployablemirror) txt += a("DEPLOYABLE",(ch.deployablemirror ? t : f));
+		if(ch.uvmirror) txt += a("UVQUALITY",(ch.uvmirror ? t : f));
+		for(var i=0; i < ch.instruments.length;i++) txt += a("INSTRUMENT-"+(i+1),ch.instruments[i].wavelength+";"+ch.instruments[i].type+";"+ch.instruments[i].name);
+		if(ch.cool.passive) txt += a("COOLING",(ch.cool.passive=="yes" ? t : f));
+		if(ch.cool.active=="yes") txt += a("COOLINGACTIVE",(ch.cool.active=="yes" ? t : f));
+		if(ch.cool.cryogenic) txt += a("COOLINGCRYO",ch.cool.cryogenic);
+		if(ch.vehicle) txt += a("VEHICLE",ch.vehicle);
+		if(ch.site) txt += a("SITE",ch.site);
+		if(ch.mission) txt += a("DURATION",ch.mission);
+		if(ch.orbit) txt += a("ORBIT",ch.orbit);
 		txt += "---\n";
 		var textFileAsBlob = new Blob([txt], {type:'text/plain'});
 		var fileNameToSaveAs = "spacetelescope.txt";
 	
 		function destroyClickedElement(event){ document.body.removeChild(event.target); }
 
-		var downloadLink = document.createElement("a");
-		downloadLink.download = fileNameToSaveAs;
-		downloadLink.innerHTML = "Download File";
+		var dl = document.createElement("a");
+		dl.download = fileNameToSaveAs;
+		dl.innerHTML = "Download File";
 		if(window.webkitURL != null){
 			// Chrome allows the link to be clicked
 			// without actually adding it to the DOM.
-			downloadLink.href = window.webkitURL.createObjectURL(textFileAsBlob);
+			dl.href = window.webkitURL.createObjectURL(textFileAsBlob);
 		}else{
 			// Firefox requires the link to be added to the DOM
 			// before it can be clicked.
-			downloadLink.href = window.URL.createObjectURL(textFileAsBlob);
-			downloadLink.onclick = destroyClickedElement;
-			downloadLink.style.display = "none";
-			document.body.appendChild(downloadLink);
+			dl.href = window.URL.createObjectURL(textFileAsBlob);
+			dl.onclick = destroyClickedElement;
+			dl.style.display = "none";
+			document.body.appendChild(dl);
 		}
-		downloadLink.click();
+		dl.click();
 
 		return this;
 	}
@@ -2322,32 +2332,34 @@ if(typeof $==="undefined") $ = {};
 		var ok = true;	// We are fine to continue
 		var tline = $('#launchtimeline');
 		var lanim = $('#launchanimation');
+		var ph = this.phrases;
+		var d = this.data;
+		var ch = this.choices;
 
-		function fadeIn(html){
-			tline.prepend($(html).hide().fadeIn(1000));
-		}
+		function fadeIn(html){ tline.prepend($(html).hide().fadeIn(1000)); }
+
 		if(this.ok){
 			if(this.launchstep==2){
 				this.ok = this.roll(prob.site*prob.vehicle);
-				fadeIn('<li>'+this.buildRow(this.phrases.launch.launch.label,(this.ok ? this.phrases.launch.launch.success : this.phrases.launch.launch.fail),'launch_launch')+'</li>');
+				fadeIn('<li>'+this.buildRow(ph.launch.launch.label,(this.ok ? ph.launch.launch.success : ph.launch.launch.fail),'launch_launch')+'</li>');
 				if(this.ok){
 					// Rocket launched
-					lanim.addClass(this.choices.vehicle).addClass('launched');
+					lanim.addClass(ch.vehicle).addClass('launched');
 					this.exhaust = new Exhaust();
 				}
 			}else this.exhaust.stop();
 			if(this.launchstep==3){
 				this.ok = this.roll(prob.orbit);
-				fadeIn('<li>'+this.buildRow(this.phrases.launch.orbit.label,(this.ok ? this.phrases.launch.orbit.success : this.phrases.launch.orbit.fail).replace(/%ORBIT%/,this.getChoice('orbit')),'launch_orbit')+'<div id="launchorbit"></div></li>');
+				fadeIn('<li>'+this.buildRow(ph.launch.orbit.label,(this.ok ? ph.launch.orbit.success : ph.launch.orbit.fail).replace(/%ORBIT%/,this.getChoice('orbit')),'launch_orbit')+'<div id="launchorbit"></div></li>');
 				if(this.ok){
 					lanim.html('');
-					this.launchanim = new OrbitAnimation({'id':'launchanimation','height':'50%','orbits':[this.choices.orbit],'phrases':this.phrases.designer.orbit,'data':this.data.orbit,'interactive':false});
+					this.launchanim = new OrbitAnimation({'id':'launchanimation','height':'50%','orbits':[ch.orbit],'phrases':ph.designer.orbit,'data':this.data.orbit,'interactive':false});
 					this.launchanim.resize();
 				}
 			}
 			if(this.launchstep==4){	
 				this.ok = this.roll(prob.mirror);
-				fadeIn('<li>'+this.buildRow(this.phrases.launch.deploy.label,(this.ok ? this.phrases.launch.deploy.success : this.phrases.launch.deploy.fail),'launch_mirror')+'</li>');
+				fadeIn('<li>'+this.buildRow(ph.launch.deploy.label,(this.ok ? ph.launch.deploy.success : ph.launch.deploy.fail),'launch_mirror')+'</li>');
 				lanim.html('');
 				this.launchanim = new Satellite({'id':'launchanimation','spacetel':this,'height':'50%','state':{'mirror':this.ok},'colourize':{'mirror':true,'bus':false,'cooling':{'passive':false,'cryogenic':false,'active':false}}});
 				this.launchanim.resize();
@@ -2356,17 +2368,17 @@ if(typeof $==="undefined") $ = {};
 				var okcool = true;
 				var okpassive = true;
 				var l = "";
-				var req = this.convertValue(this.choices.instrument.temp,'K');
-				this.launchtherm = new Thermometer({'canvas':this.launchanim.paper,'required':req.value,'phrasebook':{'req':this.phrases.designer.instruments.temperature,'y':this.phrases.ui.summary.profile.temperature},'context':this,'x':0,'y':0,'width':this.launchanim.paper.width*0.3,'format':this.formatValue});
+				var req = this.convertValue(ch.instrument.temp,'K');
+				this.launchtherm = new Thermometer({'canvas':this.launchanim.paper,'required':req.value,'phrasebook':{'req':ph.designer.instruments.temperature,'y':ph.ui.summary.profile.temperature},'context':this,'x':0,'y':0,'width':this.launchanim.paper.width*0.3,'format':this.formatValue});
 				// Has the user requested cooling?
-				if(this.choices.hascooling){
+				if(ch.hascooling){
 					// Do we have temperature-based cooling (normal mode)
-					if(this.choices.cool.temperature){
+					if(ch.cool.temperature){
 						var t = this.data.cooling.temperature[$('#cooling_temperature').val()];
 						if(t.temperature) this.temperature = this.copyValue(t.temperature);
 						if(!t.risk) t.risk = 1;
 						okcool = this.roll(t.risk);
-						l += '<li>'+this.buildRow(this.phrases.launch.cooling.label.label,(okcool ? this.phrases.launch.cooling.label.success : this.phrases.launch.cooling.label.fail),'launch_temperature')+'</li>';
+						l += '<li>'+this.buildRow(ph.launch.cooling.label.label,(okcool ? ph.launch.cooling.label.success : ph.launch.cooling.label.fail),'launch_temperature')+'</li>';
 						this.launchanim.state.cooling = { 'passive': okcool, 'active': okcool, 'cryogenic': okcool };
 						this.launchanim.colourize.cooling = { 'passive': true, 'active': true, 'cryogenic': true };
 						this.launchanim.build();
@@ -2374,24 +2386,24 @@ if(typeof $==="undefined") $ = {};
 					
 					// Do we have passive cooling
 					if(this.data.cooling.passive){
-						l += '<li>'+this.buildRow(this.phrases.launch.cooling.label.label,'','launch_cooling')+'</li>';
-						p = this.choices.cool.passive;
+						l += '<li>'+this.buildRow(ph.launch.cooling.label.label,'','launch_cooling')+'</li>';
+						p = ch.cool.passive;
 						if(p=="yes"){
 							okcool = this.roll(this.data.cooling.passive[p].risk);
 							okpassive = okcool;
 							if(okcool) this.temperature.value *= this.data.cooling.passive[p].multiplier.temperature;
-							l += '<li class="indent">'+this.buildRow(this.phrases.launch.cooling.passive.label,(okcool ? this.phrases.launch.cooling.passive.success : this.phrases.launch.cooling.passive.fail),'launch_passive')+'</li>';
+							l += '<li class="indent">'+this.buildRow(ph.launch.cooling.passive.label,(okcool ? ph.launch.cooling.passive.success : ph.launch.cooling.passive.fail),'launch_passive')+'</li>';
 							this.launchanim.state.cooling.passive = okcool;
 							this.launchanim.colourize.cooling.passive = true;
 							this.launchanim.build();
 
 							// Do we have active cooling (requires passive cooling)?
 							if(this.data.cooling.active && okpassive){
-								p = this.choices.cool.active;
+								p = ch.cool.active;
 								if(p=="yes"){
 									okcool = this.roll(this.data.cooling.active[p].risk);
 									if(okcool) this.temperature.value *= this.data.cooling.active[p].multiplier.temperature;
-									l += '<li class="indent">'+this.buildRow(this.phrases.launch.cooling.active.label,(okcool ? this.phrases.launch.cooling.active.success : this.phrases.launch.cooling.active.fail),'launch_active')+'</li>';
+									l += '<li class="indent">'+this.buildRow(ph.launch.cooling.active.label,(okcool ? ph.launch.cooling.active.success : ph.launch.cooling.active.fail),'launch_active')+'</li>';
 									this.launchanim.state.cooling.active = okcool;
 									this.launchanim.colourize.cooling.active = true;
 									this.launchanim.build();
@@ -2399,11 +2411,11 @@ if(typeof $==="undefined") $ = {};
 							}
 							// Do we have cryogenic cooling (requires passive cooling)?
 							if(this.data.cooling.cryogenic && okpassive){
-								p = this.choices.cool.cryogenic;
+								p = ch.cool.cryogenic;
 								if(p && p!="none"){
 									okcool = this.roll(this.data.cooling.cryogenic[p].risk);
 									if(okcool) this.temperature.value *= this.data.cooling.cryogenic[p].multiplier.temperature;
-									l += '<li class="indent">'+this.buildRow(this.phrases.launch.cooling.cryogenic.label,(okcool ? this.phrases.launch.cooling.cryogenic.success : this.phrases.launch.cooling.cryogenic.fail),'launch_cryogenic')+'</li>';
+									l += '<li class="indent">'+this.buildRow(ph.launch.cooling.cryogenic.label,(okcool ? ph.launch.cooling.cryogenic.success : ph.launch.cooling.cryogenic.fail),'launch_cryogenic')+'</li>';
 									this.launchanim.state.cooling.cryogenic = okcool;
 									this.launchanim.colourize.cooling.cryogenic = true;
 									this.launchanim.build();
@@ -2413,22 +2425,22 @@ if(typeof $==="undefined") $ = {};
 					}
 					this.launchtherm.value(this.temperature.value);
 				}
-				l += '<li class="indent">'+this.buildRow(this.phrases.launch.cooling.achieved.label,(okcool ? this.phrases.launch.cooling.achieved.success : this.phrases.launch.cooling.achieved.fail).replace(/\%TEMPERATURE%/,this.formatValue(this.temperature)))+'</li>';
+				l += '<li class="indent">'+this.buildRow(ph.launch.cooling.achieved.label,(okcool ? ph.launch.cooling.achieved.success : ph.launch.cooling.achieved.fail).replace(/\%TEMPERATURE%/,this.formatValue(this.temperature)))+'</li>';
 				fadeIn(l);
 			}
 			if(this.launchstep==6){
 				var percent = 0;
 				var l = "";
-				if(this.choices.instruments){
-					l += '<li>'+this.buildRow(this.phrases.launch.instruments.label,'')+'</li>';
+				if(ch.instruments){
+					l += '<li>'+this.buildRow(ph.launch.instruments.label,'')+'</li>';
 					this.beakers = [];
-					var dy = (this.launchanim.paper.height/(this.choices.instruments.length+1));
-					for(var i = 0; i < this.choices.instruments.length; i++){
-						this.beakers.push(new Flask({'canvas':this.launchanim.paper,'x':this.launchanim.paper.width*0.8,'y':(dy*(i+1) - this.launchanim.paper.width*0.04),'width':this.launchanim.paper.width*0.08,'height':this.launchanim.paper.width*0.08,'label':this.choices.instruments[i].name}));
-						var therm = this.convertValue(this.data.wavelengths[this.choices.instruments[i].wavelength].temperature,this.temperature.units);
+					var dy = (this.launchanim.paper.height/(ch.instruments.length+1));
+					for(var i = 0; i < ch.instruments.length; i++){
+						this.beakers.push(new Flask({'canvas':this.launchanim.paper,'x':this.launchanim.paper.width*0.8,'y':(dy*(i+1) - this.launchanim.paper.width*0.04),'width':this.launchanim.paper.width*0.08,'height':this.launchanim.paper.width*0.08,'label':ch.instruments[i].name}));
+						var therm = this.convertValue(this.data.wavelengths[ch.instruments[i].wavelength].temperature,this.temperature.units);
 						ok = (therm.value >= this.temperature.value) ? true : false;
-						this.choices.instruments[i].ok = ok;
-						l += '<li class="indent">'+this.buildRow(this.choices.instruments[i].name+' ('+this.phrases.wavelengths[this.choices.instruments[i].wavelength].label+' '+this.phrases.designer.instruments.options.instrument[this.choices.instruments[i].type].label+')',(ok ? this.phrases.launch.instruments.success : this.phrases.launch.instruments.fail),'launch_instrument')+'</li>';
+						ch.instruments[i].ok = ok;
+						l += '<li class="indent">'+this.buildRow(ch.instruments[i].name+' ('+ph.wavelengths[ch.instruments[i].wavelength].label+' '+ph.designer.instruments.options.instrument[ch.instruments[i].type].label+')',(ok ? ph.launch.instruments.success : ph.launch.instruments.fail),'launch_instrument')+'</li>';
 					}
 					this.launchanim.colourize.bus = true;
 					this.launchanim.build();
@@ -2438,12 +2450,12 @@ if(typeof $==="undefined") $ = {};
 			if(this.launchstep==7){
 				var percent = 0;
 				var l = "";
-				if(this.choices.instruments){
-					l += '<li>'+this.buildRow(this.phrases.launch.science.label,'')+'</li>';
+				if(ch.instruments){
+					l += '<li>'+this.buildRow(ph.launch.science.label,'')+'</li>';
 
-					for(var i = 0; i < this.choices.instruments.length; i++){
-						if(this.choices.instruments[i].ok){
-							var t = this.copyValue(this.data.instrument.options[this.choices.instruments[i].type]);
+					for(var i = 0; i < ch.instruments.length; i++){
+						if(ch.instruments[i].ok){
+							var t = this.copyValue(this.data.instrument.options[ch.instruments[i].type]);
 							if(!t.risk) t.risk = 1;
 							t.risk *= prob.mission;
 							ok = this.roll(t.risk);
@@ -2451,18 +2463,18 @@ if(typeof $==="undefined") $ = {};
 							if(!ok) pc = Math.random()*100;
 							percent += pc;
 							this.beakers[i].value(pc/100);
-							tmp = (ok ? this.phrases.launch.science.success : this.phrases.launch.science.fail).replace(/%PERCENT%/,this.formatValue(this.makeValue(pc,'%')));
-							l += '<li class="indent">'+this.buildRow(this.choices.instruments[i].name+' ('+this.phrases.wavelengths[this.choices.instruments[i].wavelength].label+' '+this.phrases.designer.instruments.options.instrument[this.choices.instruments[i].type].label+')',tmp,'launch_science')+'</li>';
+							tmp = (ok ? ph.launch.science.success : ph.launch.science.fail).replace(/%PERCENT%/,this.formatValue(this.makeValue(pc,'%')));
+							l += '<li class="indent">'+this.buildRow(ch.instruments[i].name+' ('+ph.wavelengths[ch.instruments[i].wavelength].label+' '+ph.designer.instruments.options.instrument[ch.instruments[i].type].label+')',tmp,'launch_science')+'</li>';
 						}
 					}
-					if(this.choices.instruments.length > 0) percent /= this.choices.instruments.length;
+					if(ch.instruments.length > 0) percent /= ch.instruments.length;
 				}
 	
-				tmp = (this.ok ? this.phrases.launch.overall.success : this.phrases.launch.overall.fail).replace(/\%PERCENT%/,this.formatValue(this.makeValue(percent,'%')));
+				tmp = (this.ok ? ph.launch.overall.success : ph.launch.overall.fail).replace(/\%PERCENT%/,this.formatValue(this.makeValue(percent,'%')));
 				fadeIn(l);
-				fadeIn('<li>'+this.buildRow(this.phrases.launch.overall.label,tmp,'finalresult')+'</li>');
+				fadeIn('<li>'+this.buildRow(ph.launch.overall.label,tmp,'finalresult')+'</li>');
 				$('.printable').remove();
-				tline.after('<div class="printable toppadded"><a href="#" class="button fancybtn">'+this.phrases.designer.proposal.reprint+'</a></div>').fadeIn();
+				tline.after('<div class="printable toppadded"><a href="#" class="button fancybtn">'+ph.designer.proposal.reprint+'</a></div>').fadeIn();
 				$('#launchnav').html('');
 				this.launchstep = 0;
 			}
@@ -2482,7 +2494,7 @@ if(typeof $==="undefined") $ = {};
 				cost = this.sumValues(cost,this.getChoice('vehicle.cost'));
 				cost.value *= -1;
 
-				$('#launchnav').html('<div class="relaunch toppadded"><p>'+this.phrases.launch.relaunch.text.replace(/\%DEVTIME\%/,this.formatValue(devtime)).replace(/%RELAUNCHTIME%/,this.formatValue(relaunchtime)).replace(/%RELAUNCHCOST%/,this.formatValueSpan(cost))+'</p><a href="#" class="button fancybtn">'+this.phrases.launch.relaunch.label+'</a></div>');
+				$('#launchnav').html('<div class="relaunch toppadded"><p>'+ph.launch.relaunch.text.replace(/\%DEVTIME\%/,this.formatValue(devtime)).replace(/%RELAUNCHTIME%/,this.formatValue(relaunchtime)).replace(/%RELAUNCHCOST%/,this.formatValueSpan(cost))+'</p><a href="#" class="button fancybtn">'+ph.launch.relaunch.label+'</a></div>');
 			}else{
 				$('.relaunch').remove();
 			}
@@ -2508,9 +2520,7 @@ if(typeof $==="undefined") $ = {};
 				t[i][typ] = value;
 				return t;
 			}else{
-				if(t[i].list){
-					t[i].list = this.setKey(t[i].list,key,typ,value);
-				}
+				if(t[i].list) t[i].list = this.setKey(t[i].list,key,typ,value);
 			}
 		}
 		return t;
@@ -2724,24 +2734,26 @@ if(typeof $==="undefined") $ = {};
 
 		// Convert precision to a number if it is a string
 		if(is(p,"string")) p = parseInt(p,10);
+		var unit;
+		var dim = v.dimension;
 
-		if(v.dimension=="length"){
+		if(dim=="length"){
 			
 			v = this.convertValue(v,(this.settings.length) ? this.settings.length : "m")
 			if(!is(p,"number")) p = (v.units=="km" ? 0 : getPrecision(v.value));
-			var unit = (ph.ui.units[v.units]) ? ph.ui.units[v.units].unit : "";
+			unit = (ph.ui.units[v.units]) ? ph.ui.units[v.units].unit : "";
 			if(v.value > 1e15) return powerOfTen(v.value,unit);
 			return ''+addCommas((v.value).toFixed(p)).replace(/\.0+$/,'').replace(/(\.0?[1-9]+)0+$/,"$1")+''+unit;	
 			
-		}else if(v.dimension=="mass"){
+		}else if(dim=="mass"){
 
 			v = this.convertValue(v,(this.settings.mass) ? this.settings.mass : "kg")
-			var unit = (ph.ui.units[v.units]) ? ph.ui.units[v.units].unit : "";
+			unit = (ph.ui.units[v.units]) ? ph.ui.units[v.units].unit : "";
 			if(!is(p,"number")) p = (v.value >= 1000) ? 0 : getPrecision(v.value);
 			if(v.value > 1e15) return powerOfTen(v.value,unit);
 			else return ''+addCommas((v.value).toFixed(p)).replace(/\.0+$/,'').replace(/(\.[1-9]+)0+$/,"$1")+''+unit;
 		
-		}else if(v.dimension=="currency"){
+		}else if(dim=="currency"){
 			v = this.convertValue(v,(this.settings.currency) ? this.settings.currency : "GBP")
 			if(!is(p,"number")) p = 0;
 	
@@ -2766,38 +2778,38 @@ if(typeof $==="undefined") $ = {};
 			var val = (v.value).toFixed(p).replace(/\.0+$/,'').replace(/(\.[1-9]+)0+$/,"$1").replace(/^ /,"&thinsp;");
 			return sign+s+val+append;
 
-		}else if(v.dimension=="temperature"){
+		}else if(dim=="temperature"){
 
 			v = this.convertValue(v,(this.settings.temperature) ? this.settings.temperature : "K")
 			if(is(p,"string")) p = parseInt(p,10);
 			if(!is(p,"number")) p = (v.value > 1000) ? 0 : getPrecision(v.value);
-			var unit = (ph.ui.units[v.units]) ? ph.ui.units[v.units].unit : "";
+			unit = (ph.ui.units[v.units]) ? ph.ui.units[v.units].unit : "";
 			if(is(v.value,"string")) v.value = parseInt(v.value,10)
 			return ''+addCommas((v.value).toFixed(p).replace(/\.0+$/,'').replace(/(\.[1-9])0+$/,"$1"))+''+unit;
 
-		}else if(v.dimension=="time"){
+		}else if(dim=="time"){
 
 			if(v.units=="years" && v.value < 5) v = this.convertValue(v,"months");
 			if(!is(p,"number")) p = (v.value >= 6) ? 0 : getPrecision(v.value);
-			var unit = (ph.ui.units[v.units]) ? ph.ui.units[v.units].unit : "";
+			unit = (ph.ui.units[v.units]) ? ph.ui.units[v.units].unit : "";
 			if(is(v.value,"string")) v.value = parseInt(v.value,10)
 			return ''+addCommas((v.value).toFixed(p).replace(/\.0+$/,'').replace(/(\.[1-9])0+$/,"$1"))+''+unit;
 
-		}else if(v.dimension=="percent"){
+		}else if(dim=="percent"){
 
 			v = v.value;
 			if(!is(v,"number")) v = parseInt(v,10)
 			if(!is(v,"number")) return "0"+unit;
 			if(!is(p,"number")) p = 1;
-			var unit = (ph.ui.units[v.units]) ? ph.ui.units[v.units].unit : "%";
+			unit = (ph.ui.units[v.units]) ? ph.ui.units[v.units].unit : "%";
 			return ''+addCommas(v.toFixed(p)).replace(/\.0+$/,'').replace(/(\.[1-9]+)0+$/,"$1")+unit;
 
-		}else if(v.dimension=="angle"){
+		}else if(dim=="angle"){
 
 			if(v.units=="degrees" && v.value < 1) v = this.convertValue(v,"arcmin");
 			if(v.units=="arcmin" && v.value < 1) v = this.convertValue(v,"arcsec");
 			if(!is(p,"number")) p = (v.value >= 10) ? 0 : getPrecision(v.value);
-			var unit = (ph.ui.units[v.units]) ? ph.ui.units[v.units].unit : "";
+			unit = (ph.ui.units[v.units]) ? ph.ui.units[v.units].unit : "";
 			if(is(v.value,"string")) v.value = parseInt(v.value,10);
 			return ''+addCommas((v.value).toFixed(p).replace(/\.0+$/,'').replace(/(\.[1-9])0+$/,"$1"))+''+unit;
 
@@ -2848,90 +2860,93 @@ if(typeof $==="undefined") $ = {};
 
 		this.log('parseChoices',view)
 
-		var l,m,d,u,c,t,v,s,p;
-		var cost,mass,temp,time,risk;
+		var l,m,u,c,t,v,s,p,o,ok,cost,mass,temp,time,risk,deploy;
+
 		this.errors = [];
 		this.warnings = [];
 		
+		var ch = this.choices;
+		var d = this.data;
+		
 		// Get mission
 		l = $('#mission_duration').val();
-		this.choices.mission = (l && this.data.mission[l]) ? l : "";
+		ch.mission = (l && d.mission[l]) ? l : "";
 
 		// Get satellite
 		m = $('#mirror_size').val();
 
-		this.choices.mirror = (m && this.data.mirror[m]) ? m : "";
-		d = $('input[name=toggledeployable]:checked').val();
-		this.choices.deployablemirror = (d && d=="yes") ? true : false;
+		ch.mirror = (m && d.mirror[m]) ? m : "";
+		deploy = $('input[name=toggledeployable]:checked').val();
+		ch.deployablemirror = (deploy && deploy=="yes") ? true : false;
 
 		u = $('input[name=toggleuv]:checked').val();
-		this.choices.uvmirror = (u && u=="yes") ? true : false;
+		ch.uvmirror = (u && u=="yes") ? true : false;
 
 		// Get vehicle
 		v = $('#designer_vehicle input[name=vehicle_rocket]:checked').val();
-		this.choices.vehicle = (v && this.data.vehicle[v]) ? v : "";
+		ch.vehicle = (v && d.vehicle[v]) ? v : "";
 
 		// Get site
 		s = $('#site').val();
-		var ok = false;
-		this.choices.site = (s && this.data.site[s]) ? s : "";
+		ok = false;
+		ch.site = (s && d.site[s]) ? s : "";
 
 		// Get orbit
-		var o = $('#mission_orbit').val();
-		if(o && this.data.orbit[o]) this.choices.orbit = o;
-		else this.choices.orbit = "";
+		o = $('#mission_orbit').val();
+		if(o && d.orbit[o]) ch.orbit = o;
+		else ch.orbit = "";
 
 		// Get cooling
 		c = $('input[name=hascooling]:checked').val();
-		this.choices.hascooling = (c && c=="yes") ? true : false;
-		this.choices.cool = {};
+		ch.hascooling = (c && c=="yes") ? true : false;
+		ch.cool = {};
 		t = $('#cooling_temperature').val();
-		this.choices.cool.temperature = (t) ? t : "";
-		this.choices.cool.passive = this.getValue('input[name=cooling_passive]:checked');
-		this.choices.cool.active = this.getValue('input[name=cooling_active]:checked');
-		this.choices.cool.cryogenic = $('#cooling_cryogenic').val();
+		ch.cool.temperature = (t) ? t : "";
+		ch.cool.passive = this.getValue('input[name=cooling_passive]:checked');
+		ch.cool.active = this.getValue('input[name=cooling_active]:checked');
+		ch.cool.cryogenic = $('#cooling_cryogenic').val();
 		// Set a maximum temperature
-		this.choices.temperature = this.makeValue(400,'K');
+		ch.temperature = this.makeValue(400,'K');
 
 		// Process instruments
-		this.choices.instrument = {
+		ch.instrument = {
 			"cost": this.makeValue(0,'GBP'),
 			"mass": this.makeValue(0,'kg'),
 			"temp": this.makeValue(400,'K'),
 			"time": this.makeValue(0,'months'),
 			"risk": 1
 		}
-		if(this.choices.instruments){
+		if(ch.instruments){
 			var uv = false;
-			for(var i = 0; i < this.choices.instruments.length; i++){
-				var t = this.copyValue(this.data.instrument.options[this.choices.instruments[i].type]);
+			for(var i = 0; i < ch.instruments.length; i++){
+				var t = this.copyValue(d.instrument.options[ch.instruments[i].type]);
 				if(!t.multiplier) t.multiplier = { };
 				if(!t.multiplier.cost) t.multiplier.cost = 1;
 				if(!t.multiplier.mass) t.multiplier.mass = 1;
 
-				var w = this.copyValue(this.data.wavelengths[this.choices.instruments[i].wavelength]);
+				var w = this.copyValue(d.wavelengths[ch.instruments[i].wavelength]);
 				if(w.cost) w.cost.value *= t.multiplier.cost;
-				this.choices.instrument.cost = this.sumValues(this.choices.instrument.cost,w.cost);
-				if(w.mass) this.choices.instrument.mass = this.sumValues(this.choices.instrument.mass,w.mass);
-				this.choices.instrument.mass.value *= t.multiplier.mass;
-				this.choices.instrument.temp = this.minValue(this.choices.instrument.temp,w.temperature);
-				if(t.devtime) this.choices.instrument.time = this.sumValues(this.choices.instrument.time,t.devtime);
-				if(t.risk) this.choices.instrument.risk *= t.risk;
-				if(this.choices.instruments[i].wavelength=="uv") uv = true;
+				ch.instrument.cost = this.sumValues(ch.instrument.cost,w.cost);
+				if(w.mass) ch.instrument.mass = this.sumValues(ch.instrument.mass,w.mass);
+				ch.instrument.mass.value *= t.multiplier.mass;
+				ch.instrument.temp = this.minValue(ch.instrument.temp,w.temperature);
+				if(t.devtime) ch.instrument.time = this.sumValues(ch.instrument.time,t.devtime);
+				if(t.risk) ch.instrument.risk *= t.risk;
+				if(ch.instruments[i].wavelength=="uv") uv = true;
 			}
 
-			var slots = (this.choices.mirror) ? this.data.mirror[this.choices.mirror].bus.instrumentslots : 0;
-			if(this.choices.instruments.length > slots) this.errors.push({ 'text': this.phrases.errors.slots, 'link': '#designer_instruments' });
-			if(!this.choices.uvmirror && uv)  this.errors.push({ 'text': this.phrases.errors.uv, 'link': '#designer_satellite' });
+			var slots = (ch.mirror) ? d.mirror[ch.mirror].bus.instrumentslots : 0;
+			if(ch.instruments.length > slots) this.errors.push({ 'text': this.phrases.errors.slots, 'link': '#designer_instruments' });
+			if(!ch.uvmirror && uv)  this.errors.push({ 'text': this.phrases.errors.uv, 'link': '#designer_satellite' });
 
 		}
 
 		// Process site
-		if(this.choices.site){
-			if(this.choices.vehicle){
+		if(ch.site){
+			if(ch.vehicle){
 				// See if the chosen vehicle can launch from this site
-				for(var i = 0; i < this.data.vehicle[this.choices.vehicle].sites.length; i++){
-					if(this.data.vehicle[this.choices.vehicle].sites[i] == s) ok = true;
+				for(var i = 0; i < d.vehicle[ch.vehicle].sites.length; i++){
+					if(d.vehicle[ch.vehicle].sites[i] == s) ok = true;
 				}
 			}else{
 				// No vehicle chosen so the site is actually OK
@@ -2941,18 +2956,18 @@ if(typeof $==="undefined") $ = {};
 		}
 
 		// If we have a vehicle and a mirror we work out if the satellite can fit
-		if(this.choices.vehicle && this.choices.mirror){
-			var fairing = this.copyValue(this.data.vehicle[this.choices.vehicle].diameter);
-			var sylda = this.copyValue(this.data.mirror[this.choices.mirror].bus.diameter);
-			if(this.choices.deployablemirror && this.data.deployablemirror.multiplier.bus.diameter) sylda.value *= this.data.deployablemirror.multiplier.bus.diameter;
+		if(ch.vehicle && ch.mirror){
+			var fairing = this.copyValue(d.vehicle[ch.vehicle].diameter);
+			var sylda = this.copyValue(d.mirror[ch.mirror].bus.diameter);
+			if(ch.deployablemirror && d.deployablemirror.multiplier.bus.diameter) sylda.value *= d.deployablemirror.multiplier.bus.diameter;
 			if(sylda.value > fairing.value) this.errors.push({ 'text': this.phrases.errors.size, 'link': '#designer_satellite' });
 		}
 
 		// Process orbit
-		if(this.choices.orbit){
+		if(ch.orbit){
 			ok = false;
-			if(this.choices.site){
-				ok = this.data.site[this.choices.site].orbits[o];
+			if(ch.site){
+				ok = d.site[ch.site].orbits[o];
 			}else{
 				// No site chosen so the site is actually OK
 				ok = true;
@@ -2960,11 +2975,11 @@ if(typeof $==="undefined") $ = {};
 			if(!ok) this.errors.push({ 'text': this.phrases.errors.orbit.replace(/%SITE%/g,this.phrases.designer.site.options[s].label).replace(/%ORBIT%/,this.phrases.designer.orbit.options[o].label), 'link': '#designer_orbit' });
 
 			// Set temperature from orbit
-			this.choices.temperature = this.copyValue(this.data.orbit[this.choices.orbit].temperature);
+			ch.temperature = this.copyValue(d.orbit[ch.orbit].temperature);
 		}
 
 		// Process cooling
-		this.choices.cooling = {
+		ch.cooling = {
 			"cost": this.makeValue(0,'GBP'),
 			"mass": this.makeValue(0,'kg'),
 			"life": this.makeValue(99,'years'),
@@ -2972,74 +2987,74 @@ if(typeof $==="undefined") $ = {};
 			"risk": 1
 		}
 		// Has the user requested cooling?
-		if(this.choices.hascooling){
+		if(ch.hascooling){
 			// Do we have temperature-based cooling (normal mode)
-			if(this.choices.cool.temperature){
-				t = this.data.cooling.temperature[$('#cooling_temperature').val()];
-				if(t.temperature) this.choices.temperature = this.copyValue(t.temperature);
-				if(t.mass) this.choices.cooling.mass = this.sumValues(this.choices.cooling.mass,t.mass);
-				if(t.cost) this.choices.cooling.cost = this.sumValues(this.choices.cooling.cost,t.cost);
-				if(t.devtime) this.choices.cooling.time = this.sumValues(this.choices.cooling.time,t.devtime);
-				if(t.life) this.choices.cooling.life = this.minValue(this.choices.cooling.life,t.life);
-				if(t.risk) this.choices.cooling.risk *= t.risk;
-				if(this.choices.mirror && this.data.mirror[m]['passive']){
-					this.choices.cooling.mass = this.sumValues(this.choices.cooling.mass,this.data.mirror[m]['passive'].mass);
-					this.choices.cooling.cost = this.sumValues(this.choices.cooling.cost,this.data.mirror[m]['passive'].cost);
-					this.choices.cooling.time = this.sumValues(this.choices.cooling.time,this.data.mirror[m]['passive'].devtime);
+			if(ch.cool.temperature){
+				t = d.cooling.temperature[$('#cooling_temperature').val()];
+				if(t.temperature) ch.temperature = this.copyValue(t.temperature);
+				if(t.mass) ch.cooling.mass = this.sumValues(ch.cooling.mass,t.mass);
+				if(t.cost) ch.cooling.cost = this.sumValues(ch.cooling.cost,t.cost);
+				if(t.devtime) ch.cooling.time = this.sumValues(ch.cooling.time,t.devtime);
+				if(t.life) ch.cooling.life = this.minValue(ch.cooling.life,t.life);
+				if(t.risk) ch.cooling.risk *= t.risk;
+				if(ch.mirror && d.mirror[m]['passive']){
+					ch.cooling.mass = this.sumValues(ch.cooling.mass,d.mirror[m]['passive'].mass);
+					ch.cooling.cost = this.sumValues(ch.cooling.cost,d.mirror[m]['passive'].cost);
+					ch.cooling.time = this.sumValues(ch.cooling.time,d.mirror[m]['passive'].devtime);
 				}
 			}
 
 			// Do we have passive cooling
-			if(this.data.cooling.passive){
-				p = this.choices.cool.passive;
+			if(d.cooling.passive){
+				p = ch.cool.passive;
 				if(p=="yes"){
-					this.choices.cooling.time = this.sumValues(this.choices.cooling.time,this.data.cooling.passive[p].devtime);
-					if(this.choices.mirror && this.data.mirror[this.choices.mirror].passive){
-						this.choices.cooling.mass = this.sumValues(this.choices.cooling.mass,this.data.mirror[this.choices.mirror].passive.mass);
-						this.choices.cooling.passive = this.data.mirror[this.choices.mirror].passive.mass;
-						this.choices.cooling.cost = this.sumValues(this.choices.cooling.cost,this.data.mirror[this.choices.mirror].passive.cost);
+					ch.cooling.time = this.sumValues(ch.cooling.time,d.cooling.passive[p].devtime);
+					if(ch.mirror && d.mirror[ch.mirror].passive){
+						ch.cooling.mass = this.sumValues(ch.cooling.mass,d.mirror[ch.mirror].passive.mass);
+						ch.cooling.passive = d.mirror[ch.mirror].passive.mass;
+						ch.cooling.cost = this.sumValues(ch.cooling.cost,d.mirror[ch.mirror].passive.cost);
 					}
-					this.choices.cooling.mass.value *= this.data.cooling.passive[p].multiplier.mass;
-					this.choices.cooling.cost.value *= this.data.cooling.passive[p].multiplier.cost;
-					this.choices.cooling.risk *= this.data.cooling.passive[p].risk;
-					this.choices.temperature.value *= this.data.cooling.passive[p].multiplier.temperature;
-					if(this.data.cooling.passive[p].life) this.choices.cooling.life = this.minValue(this.choices.cooling.life,this.data.cooling.passive[p].life);
-					if(this.choices.orbit){
-						this.choices.cooling.life.value *= this.data.orbit[this.choices.orbit].multiplier.passive.time;
-						if(this.data.orbit[this.choices.orbit].multiplier.cryo.time==0) this.errors.push({ 'text': this.phrases.errors.hotorbitpassive, 'link': '#designer_orbit' });
+					ch.cooling.mass.value *= d.cooling.passive[p].multiplier.mass;
+					ch.cooling.cost.value *= d.cooling.passive[p].multiplier.cost;
+					ch.cooling.risk *= d.cooling.passive[p].risk;
+					ch.temperature.value *= d.cooling.passive[p].multiplier.temperature;
+					if(d.cooling.passive[p].life) ch.cooling.life = this.minValue(ch.cooling.life,d.cooling.passive[p].life);
+					if(ch.orbit){
+						ch.cooling.life.value *= d.orbit[ch.orbit].multiplier.passive.time;
+						if(d.orbit[ch.orbit].multiplier.cryo.time==0) this.errors.push({ 'text': this.phrases.errors.hotorbitpassive, 'link': '#designer_orbit' });
 					}
 					// Do we have active cooling (requires passive cooling)?
-					if(this.data.cooling.active){
-						p = this.choices.cool.active;
+					if(d.cooling.active){
+						p = ch.cool.active;
 						if(p=="yes"){
-							this.choices.cooling.time = this.sumValues(this.choices.cooling.time,this.data.cooling.active[p].devtime);
-							this.choices.cooling.cost = this.sumValues(this.choices.cooling.cost,this.data.cooling.active[p].cost);
-							this.choices.cooling.mass = this.sumValues(this.choices.cooling.mass,this.data.cooling.active[p].mass);
-							this.choices.cooling.active = this.data.cooling.active[p].mass;
-							this.choices.cooling.risk *= this.data.cooling.active[p].risk;
-							this.choices.temperature.value *= this.data.cooling.active[p].multiplier.temperature;
-							if(this.data.cooling.active[p].life) this.choices.cooling.life = this.minValue(this.choices.cooling.life,this.data.cooling.active[p].life);
+							ch.cooling.time = this.sumValues(ch.cooling.time,d.cooling.active[p].devtime);
+							ch.cooling.cost = this.sumValues(ch.cooling.cost,d.cooling.active[p].cost);
+							ch.cooling.mass = this.sumValues(ch.cooling.mass,d.cooling.active[p].mass);
+							ch.cooling.active = d.cooling.active[p].mass;
+							ch.cooling.risk *= d.cooling.active[p].risk;
+							ch.temperature.value *= d.cooling.active[p].multiplier.temperature;
+							if(d.cooling.active[p].life) ch.cooling.life = this.minValue(ch.cooling.life,d.cooling.active[p].life);
 						}
 					}
-					this.choices.cooling.cryogeniclife = 0;
+					ch.cooling.cryogeniclife = 0;
 					// Do we have cryogenic cooling (requires passive cooling)?
-					if(this.data.cooling.cryogenic){
-						p = this.choices.cool.cryogenic;
+					if(d.cooling.cryogenic){
+						p = ch.cool.cryogenic;
 						if(p && p!="none"){
-							this.choices.cooling.time = this.sumValues(this.choices.cooling.time,this.data.cooling.cryogenic[p].devtime);
-							this.choices.cooling.cost = this.sumValues(this.choices.cooling.cost,this.data.cooling.cryogenic[p].cost);
-							this.choices.cooling.mass = this.sumValues(this.choices.cooling.mass,this.data.cooling.cryogenic[p].mass);
-							this.choices.cooling.cryogenic = this.data.cooling.cryogenic[p].mass;
-							this.choices.cooling.risk *= this.data.cooling.cryogenic[p].risk;
-							this.choices.temperature.value *= this.data.cooling.cryogenic[p].multiplier.temperature;
-							if(this.data.cooling.cryogenic[p].life){
-								this.choices.cooling.life = this.minValue(this.choices.cooling.life,this.data.cooling.cryogenic[p].life);
-								this.choices.cooling.cyrogeniclife = this.convertValue(this.data.cooling.cryogenic[p].life,"years");
-								this.choices.cooling.cyrogeniclife = this.choices.cooling.cyrogeniclife.value;
+							ch.cooling.time = this.sumValues(ch.cooling.time,d.cooling.cryogenic[p].devtime);
+							ch.cooling.cost = this.sumValues(ch.cooling.cost,d.cooling.cryogenic[p].cost);
+							ch.cooling.mass = this.sumValues(ch.cooling.mass,d.cooling.cryogenic[p].mass);
+							ch.cooling.cryogenic = d.cooling.cryogenic[p].mass;
+							ch.cooling.risk *= d.cooling.cryogenic[p].risk;
+							ch.temperature.value *= d.cooling.cryogenic[p].multiplier.temperature;
+							if(d.cooling.cryogenic[p].life){
+								ch.cooling.life = this.minValue(ch.cooling.life,d.cooling.cryogenic[p].life);
+								ch.cooling.cyrogeniclife = this.convertValue(d.cooling.cryogenic[p].life,"years");
+								ch.cooling.cyrogeniclife = ch.cooling.cyrogeniclife.value;
 							}
-							if(this.choices.orbit){
-								this.choices.cooling.life.value *= this.data.orbit[this.choices.orbit].multiplier.cryo.time;
-								var mt = this.data.orbit[this.choices.orbit].multiplier.cryo.time;
+							if(ch.orbit){
+								ch.cooling.life.value *= d.orbit[ch.orbit].multiplier.cryo.time;
+								var mt = d.orbit[ch.orbit].multiplier.cryo.time;
 								if(mt==0) this.errors.push({ 'text': this.phrases.errors.hotorbitcryo, 'link': '#designer_orbit' });
 								if(mt < 1 && mt > 0) this.warnings.push({ 'text': this.phrases.warnings.warmorbitcryo, 'link': '#designer_orbit' });
 							}
@@ -3047,18 +3062,20 @@ if(typeof $==="undefined") $ = {};
 					}
 				}else{
 					// Warnings if the user has requested active or cryogenic cooling but no passive cooling selected
-					if(this.data.cooling.active && this.getValue('input[name=cooling_active]:checked')=="yes" && p=="no") this.warnings.push({ 'text': this.phrases.warnings.activenopassive, 'link': '#designer_cooling' });
-					if(this.data.cooling.cryogenic && this.getValue('#cooling_cryogenic')!="none" && p=="no") this.warnings.push({ 'text': this.phrases.warnings.cryonopassive, 'link': '#designer_cooling' });
+					if(d.cooling.active && this.getValue('input[name=cooling_active]:checked')=="yes" && p=="no") this.warnings.push({ 'text': this.phrases.warnings.activenopassive, 'link': '#designer_cooling' });
+					if(d.cooling.cryogenic && this.getValue('#cooling_cryogenic')!="none" && p=="no") this.warnings.push({ 'text': this.phrases.warnings.cryonopassive, 'link': '#designer_cooling' });
 				}
 			}
 		}
 
 		// Error if the temperature achieved is not suitable for the instruments 
-		var a = this.convertValue(this.choices.instrument.temp,'K');
-		var b = this.convertValue(this.choices.temperature,'K');
+		var a = this.convertValue(ch.instrument.temp,'K');
+		var b = this.convertValue(ch.temperature,'K');
 		if(b.value > a.value) this.errors.push({ 'text': this.phrases.errors.temperature.replace(/%TEMPERATURE%/,'<strong>'+this.formatValue(b)+'</strong>').replace(/%REQUIREMENT%/,'<strong>'+this.formatValue(a)+'</strong>'), 'link': '#designer_cooling' });
 
 		if(this.proposalCompleteness() < 1) this.warnings.push({ 'text': this.phrases.warnings.proposal, 'link': '#designer_proposal' })
+
+		this.choices = ch;	// Update the choices
 
 		this.updateSummary().updateSidePanels().updateMessages("error",this.errors).updateMessages("warning",this.warnings);
 
@@ -3268,50 +3285,52 @@ if(typeof $==="undefined") $ = {};
 				html += '<div class="guidetop"><span class="breadcrumb"><a href="#guide" class="guidelink">'+g.title+'</a> &raquo; '+g[key].title+'</span></div>'
 	
 				txt = g[key].about;
+				var m = this.data.mirror;
 				if(key=="mirror"){
 					table = '';
-					for(i in this.data.mirror){
+					for(i in m){
 						table += '<tr>';
-						table += '<td>'+this.formatValue(this.data.mirror[i].diameter)+'</td>';
-						table += '<td>'+this.formatValue(this.data.mirror[i].mass)+'</td>';
-						table += '<td>'+this.formatValue(this.data.mirror[i].cost)+'</td>';
-						if(this.settings.mode=="advanced") table += '<td>'+this.formatValue(this.data.mirror[i].devtime)+'</td>';
+						table += '<td>'+this.formatValue(m[i].diameter)+'</td>';
+						table += '<td>'+this.formatValue(m[i].mass)+'</td>';
+						table += '<td>'+this.formatValue(m[i].cost)+'</td>';
+						if(this.settings.mode=="advanced") table += '<td>'+this.formatValue(m[i].devtime)+'</td>';
 						table += '</tr>';
 					}
 					txt = txt.replace(/\%MIRRORTABLE\%/,table);
 				}else if(key=="structure"){
 					table = '';
-					for(i in this.data.mirror){
+					for(i in m){
 						table += '<tr>';
-						table += '<td>'+this.formatValue(this.data.mirror[i].diameter)+'</td>';
-						table += '<td>'+this.formatValue(this.data.mirror[i].bus.diameter)+'</td>';
-						table += '<td>'+this.formatValue(this.data.mirror[i].bus.cost)+'</td>';
-						table += '<td>'+this.formatValue(this.data.mirror[i].bus.mass)+'</td>';
+						table += '<td>'+this.formatValue(m[i].diameter)+'</td>';
+						table += '<td>'+this.formatValue(m[i].bus.diameter)+'</td>';
+						table += '<td>'+this.formatValue(m[i].bus.cost)+'</td>';
+						table += '<td>'+this.formatValue(m[i].bus.mass)+'</td>';
 						table += '</tr>';
 					}
 					txt = txt.replace(/\%STRUCTURETABLE\%/,table);
 				}else if(key=="cooling"){
 					table = '';
+					var c = this.data.cooling;
 					if(this.settings.mode=="advanced"){
-						for(i in this.data.cooling.cryogenic){
+						for(i in c.cryogenic){
 							if(i != "none"){
 								table += '<tr>';
-								table += '<td>'+this.formatValue(this.data.cooling.cryogenic[i].life)+'</td>';
-								table += '<td>'+this.formatValue(this.data.cooling.cryogenic[i].cost)+'</td>';
-								table += '<td>'+this.formatValue(this.data.cooling.cryogenic[i].mass)+'</td>';
+								table += '<td>'+this.formatValue(c.cryogenic[i].life)+'</td>';
+								table += '<td>'+this.formatValue(c.cryogenic[i].cost)+'</td>';
+								table += '<td>'+this.formatValue(c.cryogenic[i].mass)+'</td>';
 								table += '</tr>';
 							}
 						}
-						txt = txt.replace(/\%ACTIVELIFE\%/,this.formatValue(this.data.cooling.active.yes.life));
-						txt = txt.replace(/\%ACTIVEMASS\%/,this.formatValue(this.data.cooling.active.yes.mass));
-						txt = txt.replace(/\%ACTIVECOST\%/,this.formatValue(this.data.cooling.active.yes.cost));
+						txt = txt.replace(/\%ACTIVELIFE\%/,this.formatValue(c.active.yes.life));
+						txt = txt.replace(/\%ACTIVEMASS\%/,this.formatValue(c.active.yes.mass));
+						txt = txt.replace(/\%ACTIVECOST\%/,this.formatValue(c.active.yes.cost));
 	
 					}else{
-						for(i in this.data.cooling.temperature){
+						for(i in c.temperature){
 							table += '<tr>';
-							table += '<td>'+this.formatValue(this.data.cooling.temperature[i].temperature)+'</td>';
-							table += '<td>'+this.formatValue(this.data.cooling.temperature[i].cost)+'</td>';
-							table += '<td>'+this.formatValue(this.data.cooling.temperature[i].mass)+'</td>';
+							table += '<td>'+this.formatValue(c.temperature[i].temperature)+'</td>';
+							table += '<td>'+this.formatValue(c.temperature[i].cost)+'</td>';
+							table += '<td>'+this.formatValue(c.temperature[i].mass)+'</td>';
 							table += '</tr>';
 						}
 					}
@@ -3869,13 +3888,13 @@ if(typeof $==="undefined") $ = {};
 		
 		// Properties for the orbit animation
 		this.orbits = {
-			"GEO": { "inclination": 0, "color": "#048b9f", "ellipticity": 0.3, "zoom": 0, "z": false, "ok": false },
-			"SNS": { "inclination": -90, "color": "#7ac36a", "ellipticity": 0.4, "zoom": 0, "z": true, "ok": false },
-			"HEO": { "inclination": 30, "color": "#de1f2a", "ellipticity": 0.4, "zoom": 0, "z": false, "ok": false },
-			"LEO": { "inclination": -30, "color": "#cccccc", "ellipticity": 0.4, "zoom": 0, "z": true, "ok": false },
-			"EM2": { "inclination": 0, "color": "#cccccc", "ellipticity": 1, "zoom": 1, "z": false, "ok": false },
-			"ES2": { "inclination": 0, "color": "#9467bd", "ellipticity": 1, "zoom": 1, "z": false, "ok": false },
-			"ETR": { "inclination": 0, "color": "#fac900", "ellipticity": 1, "zoom": 1, "z": false, "ok": false }
+			"GEO": { "i": 0, "color": "#048b9f", "e": 0.3, "zoom": 0, "z": false, "ok": false },
+			"SNS": { "i": -90, "color": "#7ac36a", "e": 0.4, "zoom": 0, "z": true, "ok": false },
+			"HEO": { "i": 30, "color": "#de1f2a", "e": 0.4, "zoom": 0, "z": false, "ok": false },
+			"LEO": { "i": -30, "color": "#cccccc", "e": 0.4, "zoom": 0, "z": true, "ok": false },
+			"EM2": { "i": 0, "color": "#cccccc", "e": 1, "zoom": 1, "z": false, "ok": false },
+			"ES2": { "i": 0, "color": "#9467bd", "e": 1, "zoom": 1, "z": false, "ok": false },
+			"ETR": { "i": 0, "color": "#fac900", "e": 1, "zoom": 1, "z": false, "ok": false }
 		}
 		
 		
@@ -3938,11 +3957,12 @@ if(typeof $==="undefined") $ = {};
 
 	OrbitAnimation.prototype.removeOrbits = function(){
 		for(var o in this.orbits){
-			if(this.svg.orbits[o]){
-				if(this.svg.orbits[o].dotted) this.svg.orbits[o].dotted.stop().remove();
-				if(this.svg.orbits[o].solid) this.svg.orbits[o].solid.stop().remove();
-				if(this.svg.orbits[o].satellite) this.svg.orbits[o].satellite.stop().remove();
-				delete this.svg.orbits[o];
+			var oo = this.svg.orbits[o];
+			if(oo){
+				if(oo.dotted) oo.dotted.stop().remove();
+				if(oo.solid) oo.solid.stop().remove();
+				if(oo.satellite) oo.satellite.stop().remove();
+				delete oo;
 			}
 		}
 		var a = ['Moon','Moonorbit','Moonlagrangian','Earthorbit'];
@@ -3953,10 +3973,11 @@ if(typeof $==="undefined") $ = {};
 			}
 		}
 		for(var l in this.labels){
-			for(var i in this.labels[l]){
-				if(is(this.labels[l][i].remove,"function")){
-					this.labels[l][i].remove();
-					delete this.labels[l][i];
+			var ll = this.labels[l];
+			for(var i in ll){
+				if(is(ll[i].remove,"function")){
+					ll[i].remove();
+					delete ll[i];
 				}
 			}
 			delete this.labels[l];
@@ -4009,8 +4030,8 @@ if(typeof $==="undefined") $ = {};
 		}
 
 		if(this.Earth) this.Earth.remove();
-		if(this.zoom == 0) this.Earth = this.paper.path('M '+(this.E.x)+' '+(this.E.y)+' m -6.927379,42.861897 c -10.79338,-1.89118 -21.17473,-8.25868 -27.52258,-16.87977 -15.02038,-20.3975403 -9.63593,-48.89125 11.79388,-62.41291 16.94554,-10.68989 39.20392,-8.16663 53.44137,6.06404 5.87268,5.86844 9.54913,12.35889 11.55616,20.4047297 1.16835,4.68267 1.47335,12.35457 0.67442,16.96248 -3.048,17.5816003 -15.4426,30.9321203 -32.72769,35.2509203 -4.33566,1.08222 -12.80575,1.3828 -17.21554,0.61124 z m 11.33951,-4.82289 c 6.979,-0.79891 13.53188,-3.42643 19.13933,-7.67694 1.15933,-0.87801 1.54372,-1.39287 1.55148,-2.07816 0.0111,-1.02039 1.44195,-5.01704 2.21985,-6.20209 0.27849,-0.42427 1.14761,-1.04771 1.93147,-1.3828 1.16726,-0.50337 1.55149,-0.90389 2.12308,-2.23204 0.96595,-2.24427 1.24242,-3.45664 0.78812,-3.45664 -0.20378,0 -0.37027,-0.35953 -0.37027,-0.78883 0,-0.79173 1.79473,-2.69441 4.39774,-4.66182 0.67305,-0.50337 1.30726,-1.14263 1.40925,-1.40725 0.839,-2.1845903 0.99945,-12.8320603 0.19322,-12.8320603 -0.51768,0 -0.70521,2.11843004 -0.37077,4.19083 0.41376,2.56281 0.0979,4.2843 -0.80975,4.4166 -1.268,0.18698 -2.13725,-1.28571 -2.84295,-4.81066 -1.04641,-5.22558 -1.1243,-5.32626 -4.56601,-5.9267 -1.02684,-0.17978 -1.08581,-0.13664 -1.08581,0.81689 0,2.22772 -2.80355,5.66709 -5.01389,6.15248 -1.66562,0.36674 -2.62557,-0.58246 -4.17367,-4.1182 -0.735,-1.67907 -1.59947,-3.31138 -1.92103,-3.62778 -0.55377,-0.5465 -0.58461,-0.53932 -0.58461,0.12942 0,1.72221 2.25458,7.61438 3.13524,8.1954 0.20501,0.13663 1.09432,0.2445 1.97628,0.25168 2.19326,0.006 3.57706,0.7572 3.56758,1.9329 -0.013,1.61147 -1.23802,3.68026 -3.44872,5.8238503 -2.98531,2.89432 -3.55713,3.9449 -3.55867,6.5372 -0.001,2.03428 0.0252,2.10116 0.75047,1.87393 0.41348,-0.12941 1.04826,-0.43864 1.4107,-0.68312 0.98159,-0.67594 2.09973,-0.56808 2.35382,0.2373 0.2447,0.77084 -1.60253,3.96287 -3.39818,5.87203 -0.87967,0.93553 -1.18294,1.07144 -1.83751,0.82552 -0.6725,-0.25169 -0.7809,-0.51776 -0.76252,-1.84374 0.013,-0.95351 -0.11516,-1.50505 -0.33409,-1.43314 -0.34616,0.10794 -0.65537,0.55369 -2.65289,3.74859 -1.17673,1.884 -3.79425,3.67597 -6.07803,4.16206 -1.86971,0.3955 -3.48492,0 -3.48492,-0.7953 0,-0.26607 -0.43326,-1.29723 -0.96281,-2.30323 -1.69574,-3.22007 -1.84288,-3.99595 -1.37585,-7.24909 0.47848,-3.33582 0.19975,-4.72582 -1.21076997,-6.04247 -1.23809,-1.15484 -1.87063003,-2.53763 -1.64033003,-3.58606 0.18366003,-0.8355803 0.0857,-0.9340903 -1.34377,-1.3540303 -1.63056,-0.4818 -5.15549,-0.33078 -7.61198,0.33796 -1.09992,0.30202 -1.50461,0.23729 -2.83756,-0.42426 -2.86801,-1.42451 -4.32003,-4.81858 -3.89918,-9.11581996 0.39299,-4.01250004 0.54491,-4.51441004 1.80953,-5.97273004 0.68343,-0.78955 1.4365,-1.90268 1.67352,-2.47365 0.39117,-0.94344 1.89274,-1.9479897 3.70135,-2.4779597 0.29382,-0.0863 0.93542,-0.95925 0.19912,-1.19654 -2.63115,0.61121 -3.4916,-1.84374 -1.69974,-3.63426 0.98587,-0.98515 1.35751,-1.14982 2.33866,-1.03549 1.08194,0.12941 1.16649,0.0791 1.16649,-0.77733 0,-0.49616 0.15034,-1.00814 0.33409,-1.12032 0.18367,-0.11497 1.44636,-0.95208 1.44636,-1.06713 0,-0.36673 -4.64238,1.86027 -2.8525,-0.67594 -0.26146,0.41707 -0.65956,0.19416 -1.1224,-0.26605 -0.87213,-0.87083 0.29445,-1.80204 1.00761,-1.97534 0.45202,-0.006 0.96756,1.28718 1.31068,0.58247 -0.82013,-1.1455 -0.62158,-2.63904 -0.28282,-2.70519 1.2859,-0.53932 1.49537,0.78523 1.49537,1.81137 0,0.39548 0.2255,0.91683 0.50112,1.14478 0.27563,0.2373 0.50113,0.79099 0.50113,1.25048 0,0.76151 0.0941,0.81689 1.06974,0.62562 1.49278,-0.30203 2.53575,-1.36699 2.47682,-2.53838 2.67534003,-1.78908 -0.15886,-1.06713 -0.29398,-1.20302 -0.63709,-0.63281 -0.13885,-1.83798 1.40482003,-3.38761 2.14169997,-2.15005 3.38975997,-2.7095 6.99786997,-3.13593 2.72694,-0.32359 3.09543,-0.29482 4.55125,0.35235 1.4815,0.64719 1.57109,0.76511 1.3838,1.70136 l -0.20026,0.99953 1.80809,-0.9643 c 0.99444,-0.53212 2.56916,-1.15844 3.49938,-1.39646 0.93019,-0.2373 1.69128,-0.56808 1.69128,-0.72556 0,-0.3811 -4.20122,-2.31041 -6.97024,-3.21358 -5.23627,-1.70998 -13.51182,-2.25217 -18.83832,-1.23323 -4.60384,0.87944 -12.69228,4.14912 -13.13855,5.31187 -0.0896,0.2373 0.0676,0.97293 0.34883,1.64671 0.63899,1.52734 0.65767,3.66589 0.0424,4.84878 -0.61531,1.18145 -5.09802,5.49956 -6.37985,6.14601 -0.55124,0.27325 -2.28017,0.92043 -3.84205,1.42882 -4.30776,1.40509 -4.48483,1.5338 -5.46145,3.96935 -1.64357,4.1023697 -2.26852,7.1311597 -2.45187,11.88357974 l -0.17385,4.50720996 2.56104,2.13282 c 1.40855,1.17211 3.47725,3.15461 4.59709,4.4043803 1.51998,1.6956 2.48972,2.45639 3.82568,2.99714 1.96471,0.79675 3.45111,2.28165 3.45111,3.4473 0,0.40987 -0.24263,1.46045 -0.53917,2.3291 -0.49906,1.46407 -0.49746,1.69129 0.0209,3.04604 0.6264,1.6388 0.35646,2.62899 -0.81789,3.00146 -0.81891,0.26607 -0.85988,1.23396 -0.10053,2.39168 0.31237,0.4746 0.65063,1.48204 0.7517,2.23635 0.17385,1.29723 0.34977,1.48131 3.26152,3.42284 7.40928,4.93795 16.4231,7.13547 25.16577,6.13379 z m 8.48287,-49.9181103 c 0.68449,-0.6759197 0.66479,-1.1239097 -0.0596,-1.3360497 -0.3215,-0.10072 -2.2514,-1.55826 -2.92906,-1.89694 -1.01081,-0.49617 6.7196,-1.01966 1.45075,-3.16972 -5.26885,-2.15079 -2.56176,4.83655 -3.32655,3.88017 -0.65552,-0.8327 -2.0022,-1.01104 -2.5835,-0.48178 -1.15634,-1.28069 -2.98745,-3.84351 -3.70189,-3.89241 -1.03907997,-0.0718 1.16978,2.32983 -0.27577,2.81665 -1.44553997,0.48898 -2.20706997,-2.826 -4.09265,-2.61817 -2.10817,0.2373 -4.38327,-0.72484 -5.18683,3.39191 -0.004,0.52493 3.06135,0.16533 4.50771,0 2.32603003,-0.3092 3.10989003,0 5.24841,1.91132 l 1.88004,1.7013597 3.25884,-0.2373 c 2.19723,-0.1583 3.33099,-0.11497 3.48033,0.1222 0.3297,0.53212 1.72994,0.42425 2.32983,-0.16534 z M 4.909541,-24.277303 c 0.94202,-0.43865 1.16153,-0.7191 1.01819,-1.2505 -0.10053,-0.38112 -0.18477,-0.86794 -0.18732,-1.09733 0.15107,-1.64957 -0.72375,-1.29793 -1.57539,-0.0718 -0.77094,1.13326 -4.82187997,5.26872 -0.61209,2.96477 0.0752,-0.0718 0.69614,-0.25886 1.35664,-0.56807 z m 20.69451,-1.74667 c 0.2363,-0.38111 -1.04497,-1.12824 -1.47795,-0.86075 -0.16792,0.10072 -0.95404,-0.15107 -1.74709,-0.56808 -1.95859,-1.02828 -6.42112,-0.95134 -5.77085,0.10072 0.10572,0.17256 1.42366,0.3164 2.92877,0.3164 2.03716,8.3e-4 3.03539,0.16533 3.90586,0.6328 1.36846,0.73274 1.8913,0.82694 2.16126,0.3883 z');
-		else this.Earth = this.paper.path('M '+(this.E.x)+' '+(this.E.y)+' m 0 -43.6 c,-19.195,-0.359,-37.44,13.34,-41.865,32.015 c,-4.561096,17.1667748,2.72917,37.246587,17.656538,46.977656 c,13.373687,9.285707,32.0526208,9.996435,45.992018,1.508414 c,5.957424,-3.319826,11.075156,-8.039317,14.543607,-13.935126 c,10.546018,-15.6499112,8.720274,-38.18332,-4.018314,-52.068038 c,-8.07768,-9.096389,-20.115729,-14.609639,-32.30837958,-14.498209 z m,0.09375,5.375 c,12.57022058,-0.128555,24.94591858,6.5994,31.74999958,17.15625 c,-0.94917,5.002919,-6.086293,1.530374,-3.041063,-1.619594 c,-1.457671,-0.526126,-4.932858,2.878261,-6.847657,-0.603915 c,-3.184453,-1.308637,-6.3599,1.691261,-5.15979,4.188482 c,-3.782846,2.664376,-6.163477,-4.184848,-10.1526402,-1.250482 c,0.930713,-0.712397,6.3522672,-6.132291,1.9485113,-5.743768 c,-2.1471153,3.268504,-5.9001547,5.6116,-9.7549386,6.742359 c,-3.0333281,1.666497,3.4871809,3.919715,5.0848899,3.874212 c,4.4525294,2.286084,8.5800896,7.1007845,6.1927696,12.1877615 c,1.90772,3.21337796,3.996962,6.758283,2.957496,10.7455353 c,-1.088944,1.5975017,-1.993627,6.6457482,-3.8098779,5.9629142 c,0.09411,-5.5523502,-5.8551147,1.424572,-5.9032977,3.921686 c,-0.233555,1.607328,-2.089538,4.666463,0.316221,3.452139 c,1.5791784,3.031545,4.0433554,1.23024,2.5706854,-1.432668 c,-0.755832,-2.214988,1.071785,-4.450478,1.431817,-0.910521 c,3.4227102,1.986574,-2.079278,8.026424,-3.441317,4.221977 c,-0.05038,3.190668,-5.9116094,4.835384,-6.2547064,5.746188 c,2.90918203,2.904457,-1.551746,2.079951,-3.228894,2.254064 c,-1.300676,5.220523,5.49423002,3.315504,6.569102,-0.06951 c,2.572843,-3.120142,7.9417807,2.476723,8.2176023,0.158591 c,-5.1570029,-2.906592,4.3679773,1.498193,3.7328613,-0.172704 c,0.355589,-3.393695,5.711734,0.663429,6.832822,-2.635732 c,2.782198,1.056601,-3.254675,4.26505,-4.941003,4.473991 c,-2.714088,0.573027,-2.35272,4.236763,-5.7564619,2.583428 c,-3.9108453,-2.119881,-7.9960437,-0.807618,-12.0653907,-0.15703 c,-4.931145,2.236895,-10.2173174,1.74978,-14.8366384,-1.385684 c,-10.813803,-5.566552,-18.524599,-16.654538,-20.004852,-28.7192222 c,2.732778,2.989211,6.598056,4.7293091,8.998081,8.3559682 c,1.599527,0.730324,3.945675,3.523961,4.82994,3.171984 c,1.833841,-2.480098,4.151057,-5.772095,2.790203,-8.5464922 c,3.363681,-2.474446,-0.289772,-5.5676083,-3.153322,-3.525176 c,-4.391341,0.818177,-0.191169,-4.9463963,1.391046,-6.2324653 c,2.857681,-0.460706,3.513174,2.41500097,3.980956,3.732494 c,3.316523,-0.0353,0.834669,-3.882306,4.374542,-4.092336 c,0.130908,-1.411563,-3.481833,-2.709873,-0.211945,-1.771103 c,4.26026,-1.249006,1.634257,-4.365219,-0.493731,-3.1780419 c,2.763194,-2.1547021,4.181646,-7.6700956,8.5041634,-6.4331296 c,2.24906,-0.416067,2.612667,-2.860803,1.014942,-3.538046 c,2.719085,-1.835258,-1.409228,-1.787455,-0.10076,-4.29649 c,-1.830306,-0.309672,-4.304873,-0.973664,-2.132519,-3.101562 c,-3.3845944,2.57314,-3.5487544,7.860395,-8.9615664,7.398945 c,-4.539774,1.777416,-8.333796,-1.761858,-12.015717,-2.70409 c,-1.477835,0.696073,-6.487149,4.76626,-4.024621,0.665479 c,6.584664,-11.488859,19.533888,-19.038283,32.80405842,-18.874686 z m,-33.65625042,21.59375 c,-0.631472,0.607654,-1.285523,0.774007,0,0 z m,25.0312504,13.8749985 c,-1.378264,1.634778,-4.7210584,3.734578,-0.438841,3.849626 c,2.052676,0.491366,5.022044,2.343429,3.253406,-0.95631404 c,-0.419504,-1.86979296,-2.20923,-1.09186896,-2.814565,-2.89331196 z m,-4.0625014,1.78125 c,-4.153103,-0.46570203,-2.208863,6.0465023,-6.129842,6.4757613 c,-0.605185,2.103009,2.300217,1.325155,3.030352,1.204245 c,1.416321,-2.463228,3.738442,-4.4874303,3.09949,-7.6800063 z m,3.5312514,3.03125 c,0.05302,4.2453083,-2.3776964,7.126859,-5.9261904,8.5371375 c,-2.819523,3.208873,0.326358,5.688926,2.91859,2.404436 c,3.6624634,0.820099,7.4597394,0.468648,8.5987314,-3.8347225 c,3.98761402,-4.1394317,-1.837631,-7.108603,-5.591131,-7.106851 z m,2.65625,13.8750015 c,-4.0821284,2.583778,5.79884807,0.948002,0,0 z m,29.9999996,1 c,-0.310613,2.698258,7.000211,1.533177,2.616976,4.524626 c,-1.843124,0.0678,-6.305665,-2.59259,-2.616976,-4.524626 z m,-25.0937496,4.625 c,-2.608331,0.710104,1.04075402,4.160157,-0.444775,4.552104 c,-1.433649,1.942609,4.729631,-0.163724,1.34758302,-1.892931 c,-0.672,-1.046,-1.062,-1.697,-0.903,-2.659 z m,32.4999996,0.34375 c,-0.01479,2.705677,-5.791353,2.714607,-1.548038,0.956689 l,0.803335,-0.425532 z m,-12.78125,0.375 c,0.523617,1.617196,4.358842,0.626771,1.387,2.500788 c,-1.249506,2.929193,-6.666484,3.760447,-3.932662,-0.407517 c,1.533416,0.532153,2.258563,-0.753125,2.545662,-2.093271 z m,-21.9374996,1.15625 c,-3.15159,1.823608,0.365256,3.975785,0.815462,0.936364 c,-0.0466,-0.434703,-0.359015,-0.867276,-0.815462,-0.936364 z m,26.4374996,6.90625 c,-1.920358,1.510414,-1.942756,0.166742,0,0 z');
+		if(this.zoom == 0) this.Earth = this.paper.path('M '+(this.E.x)+' '+(this.E.y)+' m -6.92,42.86 c -10.79,-1.89 -21.17,-8.25 -27.52,-16.87 -15.02,-20.39 -9.63,-48.89 11.79,-62.41 16.94,-10.68 39.20,-8.16 53.44,6.06 5.87,5.86 9.54,12.35 11.55,20.40 1.16,4.68 1.47,12.35 0.67,16.96 -3.04,17.58 -15.44,30.93 -32.72,35.25 -4.33,1.08 -12.80,1.38 -17.21,0.61 z m 11.33,-4.82 c 6.97,-0.79 13.53,-3.42 19.13,-7.67 1.15,-0.87 1.54,-1.39 1.55,-2.07 0.01,-1.02 1.44,-5.01 2.21,-6.20 0.27,-0.42 1.14,-1.04 1.93,-1.38 1.16,-0.50 1.55,-0.90 2.12,-2.23 0.96,-2.24 1.24,-3.45 0.78,-3.45 -0.20,0 -0.37,-0.35 -0.37,-0.78 0,-0.79 1.79,-2.69 4.39,-4.66 0.67,-0.50 1.30,-1.14 1.40,-1.40 0.83,-2.18 0.99,-12.83 0.19,-12.83 -0.51,0 -0.70,2.11 -0.37,4.19 0.41,2.56 0.09,4.28 -0.80,4.41 -1.26,0.18 -2.13,-1.28 -2.84,-4.81 -1.04,-5.22 -1.12,-5.32 -4.56,-5.92 -1.02,-0.17 -1.08,-0.13 -1.08,0.81 0,2.22 -2.80,5.66 -5.01,6.15 -1.66,0.36 -2.62,-0.58 -4.17,-4.11 -0.73,-1.67 -1.59,-3.31 -1.92,-3.62 -0.55,-0.54 -0.58,-0.53 -0.58,0.12 0,1.72 2.25,7.61 3.13,8.19 0.20,0.13 1.09,0.24 1.97,0.25 2.19,0.00 3.57,0.75 3.56,1.93 -0.01,1.61 -1.23,3.68 -3.44,5.82 -2.98,2.89 -3.55,3.94 -3.55,6.53 -0.00,2.03 0.02,2.10 0.75,1.87 0.41,-0.12 1.04,-0.43 1.41,-0.68 0.98,-0.67 2.09,-0.56 2.35,0.23 0.24,0.77 -1.60,3.96 -3.39,5.87 -0.87,0.93 -1.18,1.07 -1.83,0.82 -0.67,-0.25 -0.78,-0.51 -0.76,-1.84 0.01,-0.95 -0.11,-1.50 -0.33,-1.43 -0.34,0.10 -0.65,0.55 -2.65,3.74 -1.17,1.88 -3.79,3.67 -6.07,4.16 -1.86,0.39 -3.48,0 -3.48,-0.79 0,-0.26 -0.43,-1.29 -0.96,-2.30 -1.69,-3.22 -1.84,-3.99 -1.37,-7.24 0.47,-3.33 0.19,-4.72 -1.21,-6.04 -1.23,-1.15 -1.87,-2.53 -1.64,-3.58 0.18,-0.83 0.08,-0.93 -1.34,-1.35 -1.63,-0.48 -5.15,-0.33 -7.61,0.33 -1.09,0.30 -1.50,0.23 -2.83,-0.42 -2.86,-1.42 -4.32,-4.81 -3.89,-9.11 0.39,-4.01 0.54,-4.51 1.80,-5.97 0.68,-0.78 1.43,-1.90 1.67,-2.47 0.39,-0.94 1.89,-1.94 3.70,-2.47 0.29,-0.08 0.93,-0.95 0.19,-1.19 -2.63,0.61 -3.49,-1.84 -1.69,-3.63 0.98,-0.98 1.35,-1.14 2.33,-1.03 1.08,0.12 1.16,0.07 1.16,-0.77 0,-0.49 0.15,-1.00 0.33,-1.12 0.18,-0.11 1.44,-0.95 1.44,-1.06 0,-0.36 -4.64,1.86 -2.85,-0.67 -0.26,0.41 -0.65,0.19 -1.12,-0.26 -0.87,-0.87 0.29,-1.80 1.00,-1.97 0.45,-0.00 0.96,1.28 1.31,0.58 -0.82,-1.14 -0.62,-2.63 -0.28,-2.70 1.28,-0.53 1.49,0.78 1.49,1.81 0,0.39 0.22,0.91 0.50,1.14 0.27,0.23 0.50,0.79 0.50,1.25 0,0.76 0.09,0.81 1.06,0.62 1.49,-0.30 2.53,-1.36 2.47,-2.53 2.67,-1.78 -0.15,-1.06 -0.29,-1.20 -0.63,-0.63 -0.13,-1.83 1.40,-3.38 2.14,-2.15 3.38,-2.70 6.99,-3.13 2.72,-0.32 3.09,-0.29 4.55,0.35 1.48,0.64 1.57,0.76 1.38,1.70 l -0.20,0.99 1.80,-0.96 c 0.99,-0.53 2.56,-1.15 3.49,-1.39 0.93,-0.23 1.69,-0.56 1.69,-0.72 0,-0.38 -4.20,-2.31 -6.97,-3.21 -5.23,-1.70 -13.51,-2.25 -18.83,-1.23 -4.60,0.87 -12.69,4.14 -13.13,5.31 -0.08,0.23 0.06,0.97 0.34,1.64 0.63,1.52 0.65,3.66 0.04,4.84 -0.61,1.18 -5.09,5.49 -6.37,6.14 -0.55,0.27 -2.28,0.92 -3.84,1.42 -4.30,1.40 -4.48,1.53 -5.46,3.96 -1.64,4.10 -2.26,7.13 -2.45,11.88 l -0.17,4.50 2.56,2.13 c 1.40,1.17 3.47,3.15 4.59,4.40 1.51,1.69 2.48,2.45 3.82,2.99 1.96,0.79 3.45,2.28 3.45,3.44 0,0.40 -0.24,1.46 -0.53,2.32 -0.49,1.46 -0.49,1.69 0.02,3.04 0.62,1.63 0.35,2.62 -0.81,3.00 -0.81,0.26 -0.85,1.23 -0.10,2.39 0.31,0.47 0.65,1.48 0.75,2.23 0.17,1.29 0.34,1.48 3.26,3.42 7.40,4.93 16.42,7.13 25.16,6.13 z m 8.48,-49.91 c 0.68,-0.67 0.66,-1.12 -0.05,-1.33 -0.32,-0.10 -2.25,-1.55 -2.92,-1.89 -1.01,-0.49 6.71,-1.01 1.45,-3.16 -5.26,-2.15 -2.56,4.83 -3.32,3.88 -0.65,-0.83 -2.00,-1.01 -2.58,-0.48 -1.15,-1.28 -2.98,-3.84 -3.70,-3.89 -1.03,-0.07 1.16,2.32 -0.27,2.81 -1.44,0.48 -2.20,-2.82 -4.09,-2.61 -2.10,0.23 -4.38,-0.72 -5.18,3.39 -0.00,0.52 3.06,0.16 4.50,0 2.32,-0.30 3.10,0 5.24,1.91 l 1.88,1.70 3.25,-0.23 c 2.19,-0.15 3.33,-0.11 3.48,0.12 0.32,0.53 1.72,0.42 2.32,-0.16 z M 4.90,-24.27 c 0.94,-0.43 1.16,-0.71 1.01,-1.25 -0.10,-0.38 -0.18,-0.86 -0.18,-1.09 0.15,-1.64 -0.72,-1.29 -1.57,-0.07 -0.77,1.13 -4.82,5.26 -0.61,2.96 0.07,-0.07 0.69,-0.25 1.35,-0.56 z m 20.69,-1.74 c 0.23,-0.38 -1.04,-1.12 -1.47,-0.86 -0.16,0.10 -0.95,-0.15 -1.74,-0.56 -1.95,-1.02 -6.42,-0.95 -5.77,0.10 0.10,0.17 1.42,0.31 2.92,0.31 2.03,8.3e-4 3.03,0.16 3.90,0.63 1.36,0.73 1.89,0.82 2.16,0.38 z');
+		else this.Earth = this.paper.path('M '+(this.E.x)+' '+(this.E.y)+' m 0 -43.6 c,-19.19,-0.35,-37.44,13.34,-41.86,32.01 c,-4.56,17.16,2.72,37.24,17.65,46.97 c,13.37,9.28,32.05,9.99,45.99,1.50 c,5.95,-3.31,11.07,-8.03,14.54,-13.93 c,10.54,-15.64,8.72,-38.18,-4.01,-52.06 c,-8.07,-9.09,-20.11,-14.60,-32.30,-14.49 z m,0.09,5.37 c,12.57,-0.12,24.94,6.59,31.74,17.15 c,-0.94,5.00,-6.08,1.53,-3.04,-1.61 c,-1.45,-0.52,-4.93,2.87,-6.84,-0.60 c,-3.18,-1.30,-6.35,1.69,-5.15,4.18 c,-3.78,2.66,-6.16,-4.18,-10.15,-1.25 c,0.93,-0.71,6.35,-6.13,1.94,-5.74 c,-2.14,3.26,-5.90,5.61,-9.75,6.74 c,-3.03,1.66,3.48,3.91,5.08,3.87 c,4.45,2.28,8.58,7.10,6.19,12.18 c,1.90,3.21,3.99,6.75,2.95,10.74 c,-1.08,1.59,-1.99,6.64,-3.80,5.96 c,0.09,-5.55,-5.85,1.42,-5.90,3.92 c,-0.23,1.60,-2.08,4.66,0.31,3.45 c,1.57,3.03,4.04,1.23,2.57,-1.43 c,-0.75,-2.21,1.07,-4.45,1.43,-0.91 c,3.42,1.98,-2.07,8.02,-3.44,4.22 c,-0.05,3.19,-5.91,4.83,-6.25,5.74 c,2.90,2.90,-1.55,2.07,-3.22,2.25 c,-1.30,5.22,5.49,3.31,6.56,-0.06 c,2.57,-3.12,7.94,2.47,8.21,0.15 c,-5.15,-2.90,4.36,1.49,3.73,-0.17 c,0.35,-3.39,5.71,0.66,6.83,-2.63 c,2.78,1.05,-3.25,4.26,-4.94,4.47 c,-2.71,0.57,-2.35,4.23,-5.75,2.58 c,-3.91,-2.11,-7.99,-0.80,-12.06,-0.15 c,-4.93,2.23,-10.21,1.74,-14.83,-1.38 c,-10.81,-5.56,-18.52,-16.65,-20.00,-28.71 c,2.73,2.98,6.59,4.72,8.99,8.35 c,1.59,0.73,3.94,3.52,4.82,3.17 c,1.83,-2.48,4.15,-5.77,2.79,-8.54 c,3.36,-2.47,-0.28,-5.56,-3.15,-3.52 c,-4.39,0.81,-0.19,-4.94,1.39,-6.23 c,2.85,-0.46,3.51,2.41,3.98,3.73 c,3.31,-0.03,0.83,-3.88,4.37,-4.09 c,0.13,-1.41,-3.48,-2.70,-0.21,-1.77 c,4.26,-1.24,1.63,-4.36,-0.49,-3.17 c,2.76,-2.15,4.18,-7.67,8.50,-6.43 c,2.24,-0.41,2.61,-2.86,1.01,-3.53 c,2.71,-1.83,-1.40,-1.78,-0.10,-4.29 c,-1.83,-0.30,-4.30,-0.97,-2.13,-3.10 c,-3.38,2.57,-3.54,7.86,-8.96,7.39 c,-4.53,1.77,-8.33,-1.76,-12.01,-2.70 c,-1.47,0.69,-6.48,4.76,-4.02,0.66 c,6.58,-11.48,19.53,-19.03,32.80,-18.87 z m,-33.65,21.59 c,-0.63,0.60,-1.28,0.77,0,0 z m,25.03,13.87 c,-1.37,1.63,-4.72,3.73,-0.43,3.84 c,2.05,0.49,5.02,2.34,3.25,-0.95 c,-0.41,-1.86,-2.20,-1.09,-2.81,-2.89 z m,-4.06,1.78 c,-4.15,-0.46,-2.20,6.04,-6.12,6.47 c,-0.60,2.10,2.30,1.32,3.03,1.20 c,1.41,-2.46,3.73,-4.48,3.09,-7.68 z m,3.53,3.03 c,0.05,4.24,-2.37,7.12,-5.92,8.53 c,-2.81,3.20,0.32,5.68,2.91,2.40 c,3.66,0.82,7.45,0.46,8.59,-3.83 c,3.98,-4.13,-1.83,-7.10,-5.59,-7.10 z m,2.65,13.87 c,-4.08,2.58,5.79,0.94,0,0 z m,29.99,1 c,-0.31,2.69,7.00,1.53,2.61,4.52 c,-1.84,0.06,-6.30,-2.59,-2.61,-4.52 z m,-25.09,4.62 c,-2.60,0.71,1.04,4.16,-0.44,4.55 c,-1.43,1.94,4.72,-0.16,1.34,-1.89 c,-0.67,-1.04,-1.06,-1.69,-0.90,-2.65 z m,32.49,0.34 c,-0.01,2.70,-5.79,2.71,-1.54,0.95 l,0.80,-0.42 z m,-12.78,0.37 c,0.52,1.61,4.35,0.62,1.38,2.50 c,-1.24,2.92,-6.66,3.76,-3.93,-0.40 c,1.53,0.53,2.25,-0.75,2.54,-2.09 z m,-21.93,1.15 c,-3.15,1.82,0.36,3.97,0.81,0.93 c,-0.04,-0.43,-0.35,-0.86,-0.81,-0.93 z m,26.43,6.90 c,-1.92,1.51,-1.94,0.16,0,0 z');
 		this.Earth.attr({ stroke: 0, fill: '#69DFFF', opacity:0.8 });
 
 		var dx,dy,r,e,i,period;
@@ -4094,30 +4115,31 @@ if(typeof $==="undefined") $ = {};
 					}
 					if(!this.orbits[o].r) this.orbits[o].r = this.E.r*(1+this.data[o].altitude.value/this.E.radius);
 					period = this.spacetel.convertValue(this.data[o].period,'hours');
-					this.svg.orbits[o] = makeOrbit({key:o,period:period.value*3*1000,r:this.orbits[o].r,cx:(this.E.x+dx),cy:(this.E.y+dy),color:this.orbits[o].color,e:this.orbits[o].ellipticity,i:this.orbits[o].inclination,z:this.orbits[o].z});
+					this.svg.orbits[o] = makeOrbit({key:o,period:period.value*3*1000,r:this.orbits[o].r,cx:(this.E.x+dx),cy:(this.E.y+dy),color:this.orbits[o].color,e:this.orbits[o].e,i:this.orbits[o].i,z:this.orbits[o].z});
 				}
 			}
 		}else if(this.zoom == 1){
 			if(!this.Moonorbit){
+				var o = this.svg.orbits;
 				this.Moonorbit = this.paper.path("M "+this.E.x+","+this.E.y+" "+makeOrbitPath(this.M.o*this.scale[1],1)).attr({ stroke:'#606060','stroke-dasharray': '-','stroke-width':1.5 });
 				this.Moon = this.paper.circle(this.E.x - this.M.o*this.scale[1]*Math.cos(Math.PI/6),this.E.y - this.M.o*this.scale[1]*Math.sin(Math.PI/6),this.M.r).attr({ 'fill': '#606060', 'stroke': 0 });
 				var r = 9;
-				if(!this.svg.orbits["ETR"] && this.data["ETR"] && this.orbits["ETR"].ok){
+				if(!o["ETR"] && this.data["ETR"] && this.orbits["ETR"].ok){
 					period = this.spacetel.convertValue(this.data["ETR"].period,'days');
 					this.Earthorbit = this.paper.path("M "+(this.E.x-r)+",0 q "+(r*2)+","+(this.height/2)+" 0,"+(this.height)).attr({ stroke:'#606060','stroke-dasharray': '-','stroke-width':1.5 });
-					this.svg.orbits["ETR"] = makeOrbit({key:"ETR",period:period.value*1000,r:1,cx:(this.E.x-r*0.78),cy:(this.E.y+2.1*this.M.o*this.scale[1]),color:this.orbits["ETR"].color});
+					o["ETR"] = makeOrbit({key:"ETR",period:period.value*1000,r:1,cx:(this.E.x-r*0.78),cy:(this.E.y+2.1*this.M.o*this.scale[1]),color:this.orbits["ETR"].color});
 				}
-				if(!this.svg.orbits["EM2"] && this.data["EM2"] && this.orbits["EM2"].ok){
+				if(!o["EM2"] && this.data["EM2"] && this.orbits["EM2"].ok){
 					this.Moonlagrangian = this.paper.path("M "+this.E.x+","+this.E.y+" "+makeOrbitPath(this.M.o*this.scale[1]*440000/380000,1)).attr({ stroke:'#000000','stroke-dasharray': '-','stroke-width':0.5,'opacity':0.01 });
 					period = this.spacetel.convertValue(this.data["EM2"].period,'days');
 					this.Moon.animateAlong(this.Moonorbit, period.value*1000, Infinity,-1);
-					this.svg.orbits["EM2"] = makeOrbit({key:"EM2",period:period.value*1000,orbit:this.Moonlagrangian,orbitdir:-1,r:this.M.o*((440000/380000)-1)*this.scale[1],cx:(this.E.x - this.M.o*this.scale[1]*Math.cos(Math.PI/6)),cy:(this.M.o*this.scale[1]*Math.sin(Math.PI/6)),color:this.orbits["EM2"].color,e:1,i:0});
-					this.svg.orbits["EM2"].dotted.animateAlong(this.Moonorbit, period.value*1000, Infinity,-1);
-					this.svg.orbits["EM2"].solid.animateAlong(this.Moonorbit, period.value*1000, Infinity,-1);
+					o["EM2"] = makeOrbit({key:"EM2",period:period.value*1000,orbit:this.Moonlagrangian,orbitdir:-1,r:this.M.o*((440000/380000)-1)*this.scale[1],cx:(this.E.x - this.M.o*this.scale[1]*Math.cos(Math.PI/6)),cy:(this.M.o*this.scale[1]*Math.sin(Math.PI/6)),color:this.orbits["EM2"].color,e:1,i:0});
+					o["EM2"].dotted.animateAlong(this.Moonorbit, period.value*1000, Infinity,-1);
+					o["EM2"].solid.animateAlong(this.Moonorbit, period.value*1000, Infinity,-1);
 				}
-				if(!this.svg.orbits["ES2"] && this.data["ES2"] && this.orbits["ES2"].ok){
+				if(!o["ES2"] && this.data["ES2"] && this.orbits["ES2"].ok){
 					period = this.spacetel.convertValue(this.data["ES2"].period,'days');
-					this.svg.orbits["ES2"] = makeOrbit({key:"ES2",period:period.value*1000,r:9,cx:(this.E.x + 4*this.M.o*this.scale[1]),cy:this.E.y,color:this.orbits["ES2"].color});
+					o["ES2"] = makeOrbit({key:"ES2",period:period.value*1000,r:9,cx:(this.E.x + 4*this.M.o*this.scale[1]),cy:this.E.y,color:this.orbits["ES2"].color});
 				}
 				var m = this.M.o*this.scale[1];
 				var s = 0.3;
@@ -4161,12 +4183,13 @@ if(typeof $==="undefined") $ = {};
 			}
 		}
 		for(var l in this.labels){
-			if(this.labels[l].zoom!=this.zoom){
-				hide(this.labels[l].arrow);
-				hide(this.labels[l].label);
+			var ll = this.labels[l];
+			if(ll.zoom!=this.zoom){
+				hide(ll.arrow);
+				hide(ll.label);
 			}else{
-				show(this.labels[l].arrow);
-				show(this.labels[l].label);
+				show(ll.arrow);
+				show(ll.label);
 			}
 		}
 
@@ -4203,20 +4226,20 @@ if(typeof $==="undefined") $ = {};
 	// Create a Thermometer
 	function Thermometer(inp){
 		if(!inp) inp = {};
-		this.id = (typeof inp.id==="string") ? inp.id : 'thermometer';
+		this.id = (is(inp.id,"string")) ? inp.id : 'thermometer';
 		this.pb = (inp.phrasebook) ? inp.phrasebook : { 'y' :'' };
 		this.txt = (inp.txt) ? inp.txt : {'font':'12px','fill':'#ffffff','text-anchor':'start'};
 		this.labeltxt = (inp.labeltxt) ? inp.labeltxt : {'font':'10px','text-anchor':'start','fill':'#ffffff'};
-		this.format = (typeof inp.format==="function") ? inp.format : function(v){ return addCommas(v.value)+' K'; };
-		this.ctx = (typeof inp.context==="object") ? inp.context : this;
-		this.colour = (typeof inp.color==="string") ? inp.color : '#df0000';
-		this.wide = (typeof inp.width==="number") ? inp.width : (typeof inp.canvas==="object") ? inp.canvas.width : 200;
-		this.tall = (typeof inp.height==="number") ? inp.height : (typeof inp.canvas==="object") ? inp.canvas.height : 200;
-		this.req = (typeof inp.required==="number") ? inp.required : 300;
-		this.xoff = (typeof inp.x==="number") ? inp.x : 0;
-		this.yoff = (typeof inp.y==="number") ? inp.y : 0;
+		this.format = (is(inp.format,"function")) ? inp.format : function(v){ return addCommas(v.value)+' K'; };
+		this.ctx = (is(inp.context,"object")) ? inp.context : this;
+		this.colour = (is(inp.color,"string")) ? inp.color : '#df0000';
+		this.wide = (is(inp.width,"number")) ? inp.width : (is(inp.canvas,"object")) ? inp.canvas.width : 200;
+		this.tall = (is(inp.height,"number")) ? inp.height : (is(inp.canvas,"object")) ? inp.canvas.height : 200;
+		this.req = (is(inp.required,"number")) ? inp.required : 300;
+		this.xoff = (is(inp.x,"number")) ? inp.x : 0;
+		this.yoff = (is(inp.y,"number")) ? inp.y : 0;
 		this.p = 7;	// The padding in pixels
-		this.tickmarks = [0.1,0.3,1,3,10,30,100,300];
+		this.tm = [0.1,0.3,1,3,10,30,100,300];	// The tick marks
 
 		// Scale
 		this.bulb = 4*this.p;
@@ -4224,7 +4247,7 @@ if(typeof $==="undefined") $ = {};
 		this.top = this.p*6;
 
 		// Create a canvas to draw on
-		this.thermo = (typeof inp.canvas==="object") ? inp.canvas : Raphael(this.id, this.wide, this.tall);
+		this.thermo = (is(inp.canvas,"object")) ? inp.canvas : Raphael(this.id, this.wide, this.tall);
 
 		this.mercurybase = this.thermo.rect((this.xoff + this.wide/2 - this.p*2.5), this.yoff+this.bottom+this.p, this.p*5, this.bulb).attr({"fill": this.colour,"stroke":0});
 		this.mercuryzero = this.thermo.rect((this.xoff + this.wide/2 - this.p*1.5), this.yoff+this.bottom-0.5, this.p*3, Math.abs(this.p+1)).attr({"fill": this.colour,"stroke":0});
@@ -4237,8 +4260,8 @@ if(typeof $==="undefined") $ = {};
 		this.labels = this.thermo.set();
 		this.ticks = this.thermo.set();
 		var x,y;
-		for(var i = 0 ; i < this.tickmarks.length ; i++){
-			y =  Math.round(this.bottom + (this.top-this.bottom)*this.getYFrac(this.tickmarks[i]))-0.5;
+		for(var i = 0 ; i < this.tm.length ; i++){
+			y =  Math.round(this.bottom + (this.top-this.bottom)*this.getYFrac(this.tm[i]))-0.5;
 			this.ticks.push(this.thermo.path("M "+(this.xoff + this.wide/2 + 2)+","+(this.yoff + y)+" l "+(this.p*3)+",0").attr({'stroke':'white','stroke-width':1}));
 		}
 		// Required line
@@ -4256,24 +4279,24 @@ if(typeof $==="undefined") $ = {};
 		this.rl.attr({'text-anchor':'middle'}).transform("r-90");
 
 		if(this.labels){ this.labels.remove(); }
-		for(var i = 0 ; i < this.tickmarks.length ; i++){
-			y =  Math.round(this.bottom + (this.top-this.bottom)*this.getYFrac(this.tickmarks[i]))-0.5;
-			this.labels.push(this.thermo.text((this.xoff + this.wide/2 + this.p*3.5), (this.yoff + y), htmlDecode(this.format.call(this.ctx,{'value':this.tickmarks[i],'units':'K','dimension':'temperature'}))).attr(this.labeltxt));
+		for(var i = 0 ; i < this.tm.length ; i++){
+			y =  Math.round(this.bottom + (this.top-this.bottom)*this.getYFrac(this.tm[i]))-0.5;
+			this.labels.push(this.thermo.text((this.xoff + this.wide/2 + this.p*3.5), (this.yoff + y), htmlDecode(this.format.call(this.ctx,{'value':this.tm[i],'units':'K','dimension':'temperature'}))).attr(this.labeltxt));
 		}
 
 		return this;
 	}
 	Thermometer.prototype.getYFrac = function(temp){
-		return (Math.log10(temp)-Math.log10(this.tickmarks[0]))/(Math.log10(this.tickmarks[this.tickmarks.length-1])-Math.log10(this.tickmarks[0]));
+		return (Math.log10(temp)-Math.log10(this.tm[0]))/(Math.log10(this.tm[this.tm.length-1])-Math.log10(this.tm[0]));
 	}
 	Thermometer.prototype.value = function(temp){
 		var s = this.getYFrac(temp)
 		// Max out the thermometer
 		if((s-1)*(this.bottom-this.top) > this.p) s = 1+(this.p/(this.bottom-this.top));
-		if(temp < this.tickmarks[0]) s = 0;
+		if(temp < this.tm[0]) s = 0;
 		this.mercury.transform("s1,"+s+',0,'+this.bottom);
 		var t = {'value':temp,'units':'K','dimension':'temperature'}
-		if(temp <= this.tickmarks[this.tickmarks.length-1]) t.value = this.tickmarks[this.tickmarks.length-1];
+		if(temp <= this.tm[this.tm.length-1]) t.value = this.tm[this.tm.length-1];
 		this.labels[this.labels.length-1].attr('text',htmlDecode(this.format.call(this.ctx,t)));
 		return this;
 	}
@@ -4281,27 +4304,26 @@ if(typeof $==="undefined") $ = {};
 	// Create a Flask
 	function Flask(inp){
 		if(!inp) inp = {};
-		this.label = (typeof inp.label==="string") ? inp.label : "";
-		this.colour = (typeof inp.color==="string") ? inp.color : $('.science').css('color');
-		this.wide = (typeof inp.width==="number") ? inp.width : 50;
-		this.tall = (typeof inp.height==="number") ? inp.height : 75;
-		this.xoff = (typeof inp.x==="number") ? inp.x : 0;
-		this.yoff = (typeof inp.y==="number") ? inp.y : 0;
+		this.label = (is(inp.label,"string")) ? inp.label : "";
+		this.colour = (is(inp.color,"string")) ? inp.color : $('.science').css('color');
+		this.wide = (is(inp.width,"number")) ? inp.width : 50;
+		this.tall = (is(inp.height,"number")) ? inp.height : 75;
+		this.xoff = (is(inp.x,"number")) ? inp.x : 0;
+		this.yoff = (is(inp.y,"number")) ? inp.y : 0;
 		this.p = 0.1;
 		
 		// Create a canvas to draw on
-		if(typeof inp.canvas==="object") this.canvas = inp.canvas;
+		if(is(inp.canvas,"object")) this.canvas = inp.canvas;
 		else return this;
 		
 		p = this.wide*this.p;
 		q = this.tall*this.p;
-		console.log(this)
 
 		this.liquid = this.canvas.rect(this.xoff+p, this.yoff+this.p*this.tall, this.wide-2*p, (1 - 2*this.p)*this.tall).attr({"fill": this.colour,"stroke":0});
 		this.flask = this.canvas.path('M'+(this.xoff+p*3.75)+','+(this.yoff+q)+' l '+(p*0.25)+','+(q*0.25)+' l 0,'+(q*3)+' l -'+(p*2.5)+','+(q*3.75)+' q -'+(p*0.5)+','+(q*0.75)+' 0,'+(q)+' l '+(p*7)+',0 q '+(p*0.5)+',-'+(q*0.25)+' 0,-'+q+' l -'+(p*2.5)+',-'+(q*3.75)+' l 0,'+(-q*3)+' l '+(p*0.25)+',-'+(q*0.25)+' l -'+(p*2.5)+',0 m 0,-'+q+' l '+(p*6.25)+',0 l 0,'+(q*10)+' l-'+(p*10)+',0 l 0,-'+(q*10)+' z').attr({'fill':'black','stroke':0})
 		this.outline = this.canvas.path('M'+(this.xoff+p*3.75)+','+(this.yoff+q)+' l '+(p*0.25)+','+(q*0.25)+' l 0,'+(q*3)+' l -'+(p*2.5)+','+(q*3.75)+' q -'+(p*0.5)+','+(q*0.75)+' 0,'+(q)+' l '+(p*7)+',0 q '+(p*0.5)+',-'+(q*0.25)+' 0,-'+q+' l -'+(p*2.5)+',-'+(q*3.75)+' l 0,'+(-q*3)+' l '+(p*0.25)+',-'+(q*0.25)+'').attr({'stroke':'white','stroke-width':2});
 		this.label = this.canvas.text(this.xoff,this.yoff+this.tall/2,this.label).attr({'font':'10px','text-anchor':'end','fill':'#ffffff'})
-		this.value(0);
+		this.value(0); // Set to zero
 		return this;
 	}
 	Flask.prototype.value = function(s){
@@ -4325,6 +4347,7 @@ if(typeof $==="undefined") $ = {};
 		var canvas = document.getElementById("launchexhaust");
 		var ctx = canvas.getContext("2d");
 		this.active = true;
+		var c;
 		
 		// Make the canvas occupy the same space 
 		var w = pad.innerWidth(), h = pad.innerHeight();
@@ -4373,8 +4396,9 @@ if(typeof $==="undefined") $ = {};
 				p.opacity = Math.round(p.remaining_life/p.life*100)/100
 				// Apply a gradient to make it darker around the edge
 				var grad = ctx.createRadialGradient(p.loc.x, p.loc.y, 0, p.loc.x, p.loc.y, p.radius);
-				grad.addColorStop(0, "rgba("+p.r+", "+p.g+", "+p.b+", "+p.opacity+")");
-				grad.addColorStop(0.5, "rgba("+p.r+", "+p.g+", "+p.b+", "+p.opacity+")");
+				c = "rgba("+p.r+", "+p.g+", "+p.b+", "+p.opacity+")";
+				grad.addColorStop(0, c);
+				grad.addColorStop(0.5, c);
 				grad.addColorStop(1, "rgba("+Math.round(p.r*0.9)+", "+Math.round(p.g*0.9)+", "+Math.round(p.b*0.9)+", 0)");
 				ctx.fillStyle = grad;
 				// Draw particle
@@ -4388,10 +4412,7 @@ if(typeof $==="undefined") $ = {};
 				p.loc.y -= p.speed.y;
 				
 				// Regenerate the particles
-				if(p.remaining_life < 0 || p.radius < 0){
-					// A new particle to replace the old one
-					particles[i] = new particle();
-				}
+				if(p.remaining_life < 0 || p.radius < 0) particles[i] = new particle();
 			}
 			// Request a new animation frame if we are still active
 			if(_obj.active) requestAnimationFrame(draw);	
@@ -4409,9 +4430,9 @@ if(typeof $==="undefined") $ = {};
 	// Helper functions
 
 	// Add commas every 10^3
-	function addCommas(nStr) {
-		nStr += '';
-		var x = nStr.split('.');
+	function addCommas(s) {
+		s += '';
+		var x = s.split('.');
 		var x1 = x[0];
 		var x2 = x.length > 1 ? '.' + x[1] : '';
 		var rgx = /(\d+)(\d{3})/;
@@ -4441,7 +4462,6 @@ if(typeof $==="undefined") $ = {};
 		l = ((wide-lb.outerWidth())/2);
 		lb.css({left:((wide-lb.outerWidth())/2)+'px'});
 		if($(window).height() > lb.height()){
-			//t = (window.scrollY+(tall-lb.outerHeight())/2);
 			t = ((tall-lb.outerHeight())/2 + $(window).scrollTop());
 			$('body').css('overflow-y','hidden');
 		}
