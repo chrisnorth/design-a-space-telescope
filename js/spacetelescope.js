@@ -2433,7 +2433,7 @@ if(typeof $==="undefined") $ = {};
 					this.beakers = [];
 					var dy = (this.launchanim.paper.height/(ch.instruments.length+1));
 					for(var i = 0; i < ch.instruments.length; i++){
-						this.beakers.push(new Flask({'canvas':this.launchanim.paper,'x':this.launchanim.paper.width*0.8,'y':(dy*(i+1) - this.launchanim.paper.width*0.04),'width':this.launchanim.paper.width*0.08,'height':this.launchanim.paper.width*0.08,'label':ch.instruments[i].name}));
+						this.beakers.push(new Flask({'canvas':this.launchanim.paper,'x':this.launchanim.paper.width*0.8,'y':(dy*(i+1) - this.launchanim.paper.width*0.04),'width':this.launchanim.paper.width*0.06,'height':this.launchanim.paper.width*0.06,'label':ch.instruments[i].name}));
 						var therm = this.convertValue(this.data.wavelengths[ch.instruments[i].wavelength].temperature,this.temperature.units);
 						ok = (therm.value >= this.temperature.value) ? true : false;
 						ch.instruments[i].ok = ok;
