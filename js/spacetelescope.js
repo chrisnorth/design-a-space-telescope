@@ -269,6 +269,7 @@ if(typeof $==="undefined") $ = {};
 			e.preventDefault();
 			$(this).css({'opacity':1});	// Set the opacity back
 			var files = e.originalEvent.dataTransfer.files;
+			e.data.me.log("Attempting to call readFile function")
 			readFile(files,e.data.me);
 			return false;     
 		});
