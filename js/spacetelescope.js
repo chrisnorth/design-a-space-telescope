@@ -276,7 +276,9 @@ if(typeof $==="undefined") $ = {};
 		if(is(Blob,"function")){
 			// Add load to menu
 			$('#menu ul').append('<li class="baritem" data="load"><a href="#"><img src="images/cleardot.gif" class="icon load" alt="" /><span>Load</span></a><input type="file" id="files" name="files[]" multiple /></li>');
+			e.data.me.log("Blog exists")
 			$(document).on('change','#files',{me:this},function(e){
+				e.data.me.log("List of files has changed. Trying to call readFile()")
 				readFile(e.target.files,e.data.me);
 			})
 			// Add save to menu
