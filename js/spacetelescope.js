@@ -275,18 +275,17 @@ if(typeof $==="undefined") $ = {};
 			readFile(files,e.data.me);
 			return false;     
 		});
-		this.log('TEST: Adding Events')
 		if(is(Blob,"function")){
 			// Add load to menu
 			$('#menu ul').append('<li class="baritem" data="load"><a href="#"><img src="images/cleardot.gif" class="icon load" alt="" /><span>Load</span></a><input type="file" id="files" name="files[]" multiple /></li>');
-			this.log("Blog exists")
+			this.log("Blog exists. :)")
 			$(document).on('change','#files',{me:this},function(e){
 				e.data.me.log("List of files has changed. Trying to call readFile()")
 				readFile(e.target.files,e.data.me);
 			})
 			// Add save to menu
 			$('#menu ul').append('<li class="baritem" data="save"><a href="#"><img src="images/cleardot.gif" class="icon save" alt="" /><span>Save</span></a></li>');
-		}
+		}else this.log('Blob does not exist. No loading or saving files for you. :(')
 		// Add fullscreen to menu
 		if(fullScreenApi.supportsFullScreen){
 			// Add the fullscreen toggle to the menu
