@@ -12,7 +12,7 @@
 		"advanced": "Advanced"
 	},
 	"intro": {
-		"about": "<p>Designing a space telescope is an incredibly complex job, with many requirements that must be met. Some of these are because of the scientific discoveries that astronomers would like to make, while others are due to limits that engineers put on the spacecraft.</p><p>In the early 1990s, astronomers and engineers around the world started designing the <a href=\"#guide_previous_herschel\" class=\"guidelink\">Herschel Space Observatory</a>. After years of building and testing, Herschel launched in 2009. This project will help you explore the kinds of decisions the astronomers and engineers had to make as you design your own space telescope. Can <em>you</em> launch a telescope that will push back the frontiers of knowledge?</p>",
+		"about": "<p>Designing a space telescope is an incredibly complex job, with many requirements that must be met. Some of these are because of the scientific discoveries that astronomers would like to make, while others are due to limits that engineers put on the spacecraft.</p><p>This project will help you explore the kinds of decisions the astronomers and engineers had to make as you design your own space telescope. Can <em>you</em> launch a telescope that will push back the frontiers of knowledge?</p>",
 		"button": "Choose a mission"
 	},
 	"ui": {
