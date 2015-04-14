@@ -1038,6 +1038,8 @@ if(typeof $==="undefined") $ = {};
 	SpaceTelescope.prototype.updateProposal = function(){
 		this.log('updateProposal')
 		$('.printable').remove();
+		
+		this.parseChoices();
 
 		// First we will autocomplete fields
 		
