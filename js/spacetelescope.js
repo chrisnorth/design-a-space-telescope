@@ -1091,9 +1091,9 @@ if(typeof $==="undefined") $ = {};
 		if(this.choices.orbit){
 			$('#proposal_orbit').val(this.phrases.designer.orbit.options[this.choices.orbit].label);
 			$('#proposal_distance').val(this.formatValue(this.data.orbit[this.choices.orbit].altitude));
+			$('#proposal_fuel').val(this.formatValue(this.data.orbit[this.choices.orbit].fuellife));
 			if(this.settings.mode!="advanced"){
 				$('#proposal_period').val(this.formatValue(this.data.orbit[this.choices.orbit].period));
-				$('#proposal_fuel').val(this.formatValue(this.data.orbit[this.choices.orbit].fuellife));
 			}
 		}
 		if(this.choices.mission){
