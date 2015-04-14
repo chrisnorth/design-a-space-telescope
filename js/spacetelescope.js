@@ -2142,6 +2142,8 @@ if(typeof $==="undefined") $ = {};
 
 	SpaceTelescope.prototype.processFile = function(str){
 
+		this.log('processFile',str)
+
 		if(is(str,"string")) str = str.split(/[\n\r]/);
 		var yaml,p,l,mode,my,i,s,k,v;
 		yaml = false;
