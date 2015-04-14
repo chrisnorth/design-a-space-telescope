@@ -257,12 +257,14 @@ if(typeof $==="undefined") $ = {};
 			// Only process one file
 			_obj.log("Trying to open a FileReader",files[0].type,files[0])
 			if(files[0].type=="text/plain" || files[0].type=="text/x-markdown" || files[0].type==""){
-				_obj.log("File has a type")
+				_obj.log("File has an acceptable type")
 				var reader = new FileReader();
 				// Closure to capture the file information.
 				reader.onload = (function(theFile){ return function(e) { _obj.processFile(e.target.result).toggleMenus(); }; })(files[0]);
 				// Read in the text file
 				reader.readAsText(files[0]);
+			}else{
+				_obj.log("File type is unacceptable! What are you trying to make me load?")
 			}
 		}
 		$(document).on('drop','#application',{me:this},function(e){
