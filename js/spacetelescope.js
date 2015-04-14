@@ -255,7 +255,7 @@ if(typeof $==="undefined") $ = {};
 
 		function readFile(files,_obj){
 			// Only process one file
-			_obj.log("Trying to open a FileReader",files[0].type)
+			_obj.log("Trying to open a FileReader",files[0].type,files[0])
 			if(files[0].type=="text/plain" || files[0].type==""){
 				_obj.log("File has a type")
 				var reader = new FileReader();
