@@ -837,7 +837,7 @@ if(typeof $==="undefined") $ = {};
 	SpaceTelescope.prototype.loadLanguage = function(l,fn){
 		if(!l) l = this.langshort;
 		var m = this.settings.mode;
-		// Limit ourselves to languages we know we have
+		// Limit ourselves to languages we know we have.
 		if(!this.languages[l]){
 			l = this.langshort;
 			if(!this.languages[l]) l = "en";
