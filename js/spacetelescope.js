@@ -840,7 +840,7 @@ if(typeof $==="undefined") $ = {};
 		// Limit ourselves to languages we know we have
 		if(!this.languages[l]){
 			l = this.langshort;
-			if(this.languages[this.langshort]) l = "en";
+			if(!this.languages[l]) l = "en";
 		}
 		var url = this.langurl.replace('%LANG%',l).replace('%MODE%',this.getMode());
 		$.ajax({
