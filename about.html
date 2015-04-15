@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+	<title>Space Telescope Designer</title>
+	<script type="text/javascript" src="js/jquery-1.11.0.min.js"></script>
+	<script>
+	$(document).ready(function(){
+		//spacetel = $.spacetelescope({id:"image",width:455,height:333,langs:{'en':'English'}});
+		$('.noscriptmsg').remove();
+	});
+	</script>
+	<link rel="stylesheet" media="all" href="css/fonts.css" type="text/css"/>
+	<link rel="stylesheet" media="all" href="css/style.css" type="text/css"/>
+	<!--[if IE lt 9]><link rel="stylesheet" href="css/style-ie.css" type="text/css" /><![endif]-->
+</head>
+<body>
+	<div id="application">
+		<div id="modalbg"></div>
+		<div id="bar" class="scriptonly">
+			<div class="barmenu">
+				<div class="baritem">
+					<a href="#menu" class="togglebtn togglemenu" title="Menu"><!--LANGUAGE--><img src="images/cleardot.gif" class="icon menu" alt="" /></a>
+					<div id="menu" class="dropdown">
+						<ul>
+							<li class="baritem" data="restart"><a href="#intro"><img src="images/cleardot.gif" class="icon restart" alt="" /><span>Restart</span></a></li>
+							<li class="baritem" data="help"><a href="#guide"><img src="images/cleardot.gif" class="icon help" alt="" /><span>Help</span></a></li>
+							<li class="baritem" data="options"><a href="#options"><img src="images/cleardot.gif" class="icon options" alt="" /><span>Setup</span></a></li>
+						</ul>
+					</div>
+				</div>
+				<div class="baritem">
+					<a href="#language" class="togglebtn togglelang" title="Change Language"><!--LANGUAGE--><img src="images/cleardot.gif" class="icon globe" alt="Language" /></a>
+					<div id="language" class="dropdown"><ul></ul></div>
+				</div>
+				<div class="baritem errors"><a href="#messages" class="toggleerror" title="View errors"><!--LANGUAGE--><img src="images/cleardot.gif" class="icon error" title="Errors" /><span class="error value">0</span></a></div>
+				<div class="baritem warnings"><a href="#messages" class="togglewarning" title="View warnings"><img src="images/cleardot.gif" class="icon warning" alt="Warnings" /><!--LANGUAGE--><span class="warning value">0</span></a></div>
+			</div>
+			<ul id="summary"><li class="baritem"><a href="#summaryext_success" class="togglesuccess"><img src="images/cleardot.gif" class="icon success" /><span class="success success_total value">0%</span></a></li><li class="baritem"><a href="#summaryext_cost" class="togglecost"><img src="images/cleardot.gif" class="icon cost" /><span class="cost cost_available value convertable" data-value="0" data-units="GBP" data-dimension="currency">&pound;0 m</span></a></li><li class="baritem"><a href="#summaryext_mass" class="togglemass"><img src="images/cleardot.gif" class="icon mass" /><span class="mass mass_total value convertable" data-value="0" data-units="kg" data-dimension="mass">0 kg</span></a></li><li class="baritem"><a href="#summaryext_science" class="togglescience"><img src="images/cleardot.gif" class="icon science" /><span class="science science_total value">0%</span></a></li><li class="baritem"><a href="#summaryext_time" class="toggletime"><img src="images/cleardot.gif" class="icon time" /><span class="time time_dev_total value">0 months</span></a></li></ul>
+		</div>
+
+		<div id="messages" class="dropdown fullwidth">
+			<ul><li class="errors"></li><li class="warnings"></li></ul>
+		</div>
+
+		<div id="summaryext" class="dropdown fullwidth">
+			<ul><li id="summaryext_success"></li><li id="summaryext_cost"></li><li id="summaryext_mass"></li><li id="summaryext_time"></li><li id="summaryext_science"></li><li id="summaryext_profile"></li></ul>
+		</div>
+		
+		<div id="page">
+			<div class="noscriptmsg">The interactive web version of this activity will require Javascript to work. Sorry about that.</strong></div>
+			<div id="options" class="view"></div>
+			<div id="intro" class="view">
+				<h1>About: Space Telescope Designer</h1>
+				<div id="introduction">
+					<p><a href="index.html">Space Telescope Designer</a> is a web-based application that aims to give students a chance to experience the issues involved in creating their own space telescope. Several mission scenarios are provided and each comes with its own set of requirements including cost, scientific goals, and even demands on specific launch vehicles. Building a mission means balancing these requirements.</p>
+					<ul class="files">
+						<li><a href="#roles">Roles</a></li>
+						<li><a href="#overview">Keeping track of your mission</a></li>
+						<li><a href="#modes">Difficulty settings</a></li>
+						<li><a href="#onlineguide">Student guide</a></li>
+						<li><a href="#devices">Devices</a></li>
+						<li><a href="#units">Units</a></li>
+						<li><a href="#feedback">Feedback</a></li>
+						<li><a href="#code">Code</a></li>
+					</ul>
+					<p><img src="screenshots/scenarios.png" class="screenshot" alt="Scenarios" /></p>
+					<p><img src="screenshots/mission.png" class="screenshot" alt="Starting your mission" /></p>
+
+					<h3 id="roles">Roles</h3>
+					<p>Students can choose to work alone or as part of a group. In groups they could use a number of roles and work together for a final solution. Our suggested roles are:</p>
+					<ul class="files">
+						<li><strong>Rocket Engineer</strong>: The role of the engineer is to ensure that the mass and size of the structure does not surpass the limits of the launcher. The engineer must also select the appropriate launch site, and the orbit from which the satellite will observe.</li>
+						<li><strong>Project Manager</strong>: The role of the project manager is to ensure that the mission does not go over budget, and to ensure that the risk of overrunning in terms of budget is as low as possible.</li>
+						<li><strong>Instrument Scientist</strong>: The instrument scientist is in charge of making sure the instruments on-board are appropriate for meeting the science goals, and to ensure that they will be able to meet the scientific requirements.</li>
+						<li><strong>Mission Scientist</strong>: The mission scientist will ensure that the satellite's mirror and cooling system are suitable for the mission to succeed.</li>
+					</ul>
+
+					<h3 id="overview">Keeping track of your mission</h3>
+					<p>During the design process the top bar shows a basic summary of your mission from the perspectives of <span class="risk">risk</span>, <span class="cost">budget remaining</span>, <span class="mass">launch mass</span>, <span class="science">science goals</span>, and <span class="time">development time</span>. Clicking on the bar will open up the overview screen which gives a more detailed breakdown of each category as well as the overall mission profile.</p>
+					<p><img src="screenshots/overview.png" class="screenshot" alt="Overview" /></p>
+
+					<h3 id="modes">Different difficulty settings</h3>
+					<p>There are two levels of difficulty - normal and advanced. In <a href="index.html?mode=normal">normal mode</a> there are fewer options and, assuming you are given the go to launch, your mission is far more likely to be a success. In the <a href="index.html?mode=advanced">advanced mode</a> there are more options available and more realistic ideas about risk so, just like in real life, risky parts of your mission could fail after all the hard work!</p>
+
+					<h3 id="onlineguide">Student guide</h3>
+					<p>To help explain some of the concepts there is an online guide that can be accessed from the menu. The Student Guide can also be downloaded for <a href="old_version/Student_guides/SpaceTelescopeDesigner_StudentGuide_KS4.docx">Key Stage 4</a> and <a href="old_version/Student_guides/SpaceTelescopeDesigner_StudentGuide_KS5.docx">Key Stage 5</a> in Microsoft Word format (5 MB).</p>
+					<p><img src="screenshots/guide.png" class="screenshot" alt="Student guide" /></p>
+
+					<h3 id="devices">Different devices</h3>
+					<p><a href="index.html">Space Telescope Designer</a> tries its best to adapt to the screen size of the device you are using. That means that if you are using it with a modern smart phone everything should still be usable.</p> 
+					<p><img src="screenshots/compact.png" class="screenshot" alt="Smart phone view" /></p>
+
+					<h3 id="units">Different units</h3>
+					<p>The default units are SI and, being developed in Britain, the default currency is British pounds. We realise that those aren't to everyone's preference. So, you have the option to change the units. If you'd like <a href="index.html?currency=USD&length=ft&mass=lb&temperature=F&">US dollars, feet, lbs, and Farenheit</a> you can have those. If you'd like <a href="index.html?currency=EUR">the currency in Euros</a> you can have that too. You can even have <a href="index.html?currency=DBL&mass=elephant&length=bluewhale">doubloons, mass in elephants, and length in blue whales</a> if those take your fancy.</p>
+
+					<h3 id="feedback">Feedback</h3>
+					<p>We'd love to hear your feedback about Space Telescope Designer. Please <a href="https://docs.google.com/forms/d/1EcIvrwQspo3xpdtY7IICe9cc0kv3159OQDlF1_1FH0w/viewform?usp=send_form">let us know about your thoughts via a simple form</a> or, if you have a Github account, you can <a href="https://github.com/chrisnorth/design-a-space-telescope/issues/new?title=Hello&labels=question">open an issue</a> directly.</p>
+					<h3 id="code">The code</h3>
+					<p>The <a href="https://github.com/chrisnorth/design-a-space-telescope">code is open</a> so you can download and modify it yourself if you want to.</p>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
