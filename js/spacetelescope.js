@@ -2272,7 +2272,7 @@ if(typeof $==="undefined") $ = {};
 	// Function to launch
 	SpaceTelescope.prototype.goForLaunch = function(){
 
-		this.log('function:goForLaunch')
+		this.log('function:goForLaunch');
 
 		if(!this.launchable){
 			this.showView('designer');
