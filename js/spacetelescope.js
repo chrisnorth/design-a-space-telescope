@@ -2281,6 +2281,7 @@ if(typeof $==="undefined") $ = {};
 	        this.log('is launchable');
 		
 		if(this.stage=="launch"){
+		        this.log('stage:',this.stage);
 			$('.togglelaunch').hide();
 			$('body').addClass('showlaunch');
 			$('#launch').show();
@@ -2327,7 +2328,7 @@ if(typeof $==="undefined") $ = {};
 
 		// Move us on a step
 		this.launchstep++;
-	        this.log('next launch step');
+	        this.log('next launch step',this.launchstep);
 		// Build launch progress
 		$('#launchnav').html('<a href="#" class="button fancybtn">'+this.phrases.launch.next+'</a>');
 
