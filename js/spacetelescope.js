@@ -2279,9 +2279,9 @@ if(typeof $==="undefined") $ = {};
 			return this;
 		}
 	        this.log('is launchable');
-		
+		this.log('stage:',this.stage);
 		if(this.stage=="launch"){
-		        this.log('stage:',this.stage);
+		        this.log('launch stage:',this.stage);
 			$('.togglelaunch').hide();
 			$('body').addClass('showlaunch');
 			$('#launch').show();
