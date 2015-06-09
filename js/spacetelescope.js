@@ -2272,10 +2272,11 @@ if(typeof $==="undefined") $ = {};
 	// Function to launch
 	SpaceTelescope.prototype.goForLaunch = function(){
 
-		this.log('goForLaunch')
+		this.log('function:goForLaunch')
 
 		if(!this.launchable){
 			this.showView('designer');
+		        this.log('not launchable');
 			return this;
 		}
 	        this.log('is launchable');
@@ -3209,8 +3210,11 @@ if(typeof $==="undefined") $ = {};
 			$('#summaryext').hide();
 			this.updateMessages("error",{}).updateMessages("warning",{});
 			this.updateBodyClass('showlaunch');
+		        this.log('going for launch (view=launch)');
+		        this.log('stage (pre):',this.stage);
 			this.goForLaunch();
 			this.stage = "launch";
+		        this.log('stage (post):',this.stage);
 		}else{
 			$('#'+this.stage).show();
 			this.updateBodyClass('show'+this.stage);
