@@ -2279,10 +2279,10 @@ if(typeof $==="undefined") $ = {};
 		        this.log('not launchable');
 			return this;
 		}
-	        this.log('is launchable');
-		this.log('stage:',this.stage);
+	        //this.log('is launchable');
+		//this.log('stage:',this.stage);
 		if(this.stage=="launch"){
-		        this.log('launch stage:',this.stage);
+		        //this.log('launch stage:',this.stage);
 			$('.togglelaunch').hide();
 			$('body').addClass('showlaunch');
 			$('#launch').show();
@@ -2293,7 +2293,7 @@ if(typeof $==="undefined") $ = {};
 			var devtime = this.formatValue(this.table.time_dev_total.list.time_dev_total.value);
 
 			// Build launch progress
-		        this.log('making animation');
+		        //this.log('making animation');
 			$('#launch').html('<h2>'+this.phrases.launch.title+'</h2><p>'+this.phrases.launch.intro.replace(/%DEVTIME%/,devtime).replace(/%VEHICLE%/,vehicle).replace(/%SITE%/,site).replace(/%ORBIT%/,orbit).replace(/%LAUNCHDATE%/,this.launchdate)+'</p><div id="launchanimation">'+('<div id="launchpadbg"><img src="images/launchpad_'+this.choices.site+'.png" /></div><div id="launchpadfg"><img src="images/launchpad_'+this.choices.site+'_fg.png" /></div><div id="launchrocket"><img src="'+this.data.vehicle[this.choices.vehicle].img+'" /></div>')+'<div id="countdown" class="padded">Countdown</div></div><div id="launchnav" class="toppadded"></div><ul id="launchtimeline" class="toppadded"></ul>');
 	
 			$('#launchanimation').css({'height':($('#launchanimation').innerWidth()/2)+'px'});
@@ -2305,7 +2305,7 @@ if(typeof $==="undefined") $ = {};
 
 	SpaceTelescope.prototype.countdown = function(i){
 
-	        this.log('countdown');
+	        //this.log('countdown');
 		this.launchstep = 1;
 
 		var _obj = this;
@@ -2329,7 +2329,7 @@ if(typeof $==="undefined") $ = {};
 
 		// Move us on a step
 		this.launchstep++;
-	        this.log('next launch step',this.launchstep);
+	        //this.log('next launch step',this.launchstep);
 		// Build launch progress
 		$('#launchnav').html('<a href="#" class="button fancybtn">'+this.phrases.launch.next+'</a>');
 
@@ -3210,11 +3210,11 @@ if(typeof $==="undefined") $ = {};
 			$('#summaryext').hide();
 			this.updateMessages("error",{}).updateMessages("warning",{});
 			this.updateBodyClass('showlaunch');
-		        this.log('going for launch (view=launch)');
-		        this.log('stage (pre):',this.stage);
+		        //this.log('going for launch (view=launch)');
+		        //this.log('stage (pre):',this.stage);
 			this.goForLaunch();
 			this.stage = "launch";
-		        this.log('stage (post):',this.stage);
+		        //this.log('stage (post):',this.stage);
 		}else{
 			$('#'+this.stage).show();
 			this.updateBodyClass('show'+this.stage);
