@@ -2275,10 +2275,10 @@ if(typeof $==="undefined") $ = {};
 		this.log('goForLaunch')
 
 		if(!this.launchable){
-		        this.log('is launchable');
 			this.showView('designer');
 			return this;
 		}
+	        this.log('is launchable');
 		
 		if(this.stage=="launch"){
 			$('.togglelaunch').hide();
