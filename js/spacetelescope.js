@@ -2275,6 +2275,7 @@ if(typeof $==="undefined") $ = {};
 		this.log('goForLaunch')
 
 		if(!this.launchable){
+		        this.log('is launchable');
 			this.showView('designer');
 			return this;
 		}
@@ -2290,6 +2291,7 @@ if(typeof $==="undefined") $ = {};
 			var devtime = this.formatValue(this.table.time_dev_total.list.time_dev_total.value);
 
 			// Build launch progress
+		        this.log('making animation');
 			$('#launch').html('<h2>'+this.phrases.launch.title+'</h2><p>'+this.phrases.launch.intro.replace(/%DEVTIME%/,devtime).replace(/%VEHICLE%/,vehicle).replace(/%SITE%/,site).replace(/%ORBIT%/,orbit).replace(/%LAUNCHDATE%/,this.launchdate)+'</p><div id="launchanimation">'+('<div id="launchpadbg"><img src="images/launchpad_'+this.choices.site+'.png" /></div><div id="launchpadfg"><img src="images/launchpad_'+this.choices.site+'_fg.png" /></div><div id="launchrocket"><img src="'+this.data.vehicle[this.choices.vehicle].img+'" /></div>')+'<div id="countdown" class="padded">Countdown</div></div><div id="launchnav" class="toppadded"></div><ul id="launchtimeline" class="toppadded"></ul>');
 	
 			$('#launchanimation').css({'height':($('#launchanimation').innerWidth()/2)+'px'});
@@ -2301,6 +2303,7 @@ if(typeof $==="undefined") $ = {};
 
 	SpaceTelescope.prototype.countdown = function(i){
 
+	        this.log('countdown');
 		this.launchstep = 1;
 
 		var _obj = this;
@@ -2324,7 +2327,7 @@ if(typeof $==="undefined") $ = {};
 
 		// Move us on a step
 		this.launchstep++;
-		
+	        this.log('next launch step');
 		// Build launch progress
 		$('#launchnav').html('<a href="#" class="button fancybtn">'+this.phrases.launch.next+'</a>');
 
