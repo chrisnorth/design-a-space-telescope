@@ -543,7 +543,7 @@ if(typeof $==="undefined") $ = {};
 		$('#designer_objectives .intro').after('<div class="summary"></div>');
 
 		// Build the satellite section
-		$('#designer_satellite .options').html('<div class="bigpadded"><form>BLAH<ul><li class="option mirror_diameter"><label for="mirror_size"></label><select id="mirror_size" name="mirror_size"></select></li><li class="option mirror_deployable"><label for="mirror_deployable"></label>'+this.buildToggle("toggledeployable",{ "value": "no", "id": "mirror_deployable_no", "label": "", "checked": true },{ "value": "yes", "id": "mirror_deployable_yes", "label": "" })+'</li><li class="option mirror_uv"><label for="mirror_uv"></label>'+this.buildToggle("toggleuv",{ "value": "no", "id": "mirror_uv_no", "checked": true },{ "value": "yes", "id": "mirror_uv_yes" })+'</li></ul></form><div class="details"></div></div>');
+		$('#designer_satellite .options').html('<div class="bigpadded"><form><ul><li class="option mirror_diameter"><label for="mirror_size"></label><select id="mirror_size" name="mirror_size"></select></li><li class="option mirror_deployable"><label for="mirror_deployable"></label>'+this.buildToggle("toggledeployable",{ "value": "no", "id": "mirror_deployable_no", "label": "", "checked": true },{ "value": "yes", "id": "mirror_deployable_yes", "label": "" })+'</li><li class="option mirror_uv"><label for="mirror_uv"></label>'+this.buildToggle("toggleuv",{ "value": "no", "id": "mirror_uv_no", "checked": true },{ "value": "yes", "id": "mirror_uv_yes" })+'</li></ul></form><div class="details"></div></div>');
 
 		// Build the instruments section
 		$('#designer_instruments .options').html('<div class="bigpadded"><form><ul><li><label for="instruments"></label><select id="wavelengths" name="wavelengths"></select><select id="instruments" name="instruments"></select> <input type="text" id="instrument_name" name="instrument_name" /></li></ul></form><div class="details"></div><a href="#" class="add_instrument hidden"><img src="images/cleardot.gif" class="icon add" /><span>'+this.phrases.designer.instruments.options.add+'</span></a></div><div class="instrument_list bigpadded"></div>');
@@ -1285,7 +1285,7 @@ if(typeof $==="undefined") $ = {};
 			if($('#designer_objectives .banner').length==0) $('#designer_objectives .intro').before('<div class="banner"></div>');
 			$('#designer_objectives .banner').html('<div class="title">'+this.scenario.name+'</div>');
 			if(this.scenario.image && this.scenario.image.banner) $('#designer_objectives .banner').css('background-image','url('+this.scenario.image.banner+')');
-			if(d.designer.objectives.intro) $('#designer_objectives .intro').html('<p><strong>'+d.scenarios.mission+'</strong> &quot;'+this.formatScenario(this.scenario)+'&quot;</p>'+(this.scenario.funder ? d.designer.objectives.intro : d.designer.objectives.intronofunder).replace(/%TITLE%/,this.scenario.name).replace(/%FUNDER%/,this.scenario.funder)).addClass('bigpadded');
+			if(d.designer.objectives.intro) $('#designer_objectives .intro').html('<p><strong>'+d.scenarios.mission+'BLAH</strong> &quot;'+this.formatScenario(this.scenario)+'&quot;</p>'+(this.scenario.funder ? d.designer.objectives.intro : d.designer.objectives.intronofunder).replace(/%TITLE%/,this.scenario.name).replace(/%FUNDER%/,this.scenario.funder)).addClass('bigpadded');
 		}
 
 		// Update the satellite section
