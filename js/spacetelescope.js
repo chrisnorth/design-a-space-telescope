@@ -3223,7 +3223,7 @@ if(typeof $==="undefined") $ = {};
 			$('#summaryext').hide();
 			this.updateMessages("error",{}).updateMessages("warning",{});
 			this.updateBodyClass('showlaunch');
-		        //this.log('going for launch (view=launch)');
+		        this.log('going for launch (view=launch)');
 		        //this.log('stage (pre):',this.stage);
 		        //this.log('launchstep (pre):',this.launchstep);
 		        //this.log('status (pre)',this);
