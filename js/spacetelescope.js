@@ -2275,7 +2275,7 @@ if(typeof $==="undefined") $ = {};
 		    navigator.appVersion.indexOf("Firefox")==-1 &&
 		    navigator.appVersion.indexOf("Chrome")==-1 &&
 		    navigator.appVersion.indexOf("Opera")==-1);
-
+	        this.log("Browser",goodBrowser,navigator.appVersion);
 
 		if (goodBrowser){
 		    // Function to launch (non-IE)
