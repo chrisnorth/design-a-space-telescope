@@ -2271,10 +2271,12 @@ if(typeof $==="undefined") $ = {};
 
 	SpaceTelescope.prototype.goForLaunch = function(){
 
-	        var goodBrowser=(
-		    navigator.appVersion.indexOf("Firefox")==-1 &&
+	        var goodBrowser=false;
+	        if( navigator.appVersion.indexOf("Firefox")==-1 &&
 		    navigator.appVersion.indexOf("Chrome")==-1 &&
-		    navigator.appVersion.indexOf("Opera")==-1);
+		    navigator.appVersion.indexOf("Opera")==-1){
+		    goodBrowser=true;
+		}
 	        this.log("Browser",goodBrowser,navigator.appVersion);
 
 		if (goodBrowser){
