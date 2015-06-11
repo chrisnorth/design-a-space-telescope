@@ -3366,12 +3366,12 @@ if(typeof $==="undefined") $ = {};
 		}else if(view=="launch"){
 			$('#summaryext').hide();
 			this.updateMessages("error",{}).updateMessages("warning",{});
+			this.goForLaunch();
 			this.updateBodyClass('showlaunch');
 		        //this.log('going for launch (view=launch)');
 		        //this.log('stage (pre):',this.stage);
 		        //this.log('launchstep (pre):',this.launchstep);
 		        //this.log('status (pre)',this);
-			this.goForLaunch();
 			this.stage = "launch";
 		        //this.log('stage (post):',this.stage);
 		        //this.log('launchstep (pre):',this.launchstep);
