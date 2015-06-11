@@ -91,6 +91,7 @@ h1, h2, h3 { font-weight: bold; }
 p { margin-bottom: 1em; line-height: 1.5em; }
 strong { font-weight: bold; }
 
+img.screenshot { max-width: 100%; }
 
 #bar {
 	position: fixed;
@@ -328,7 +329,7 @@ a.togglescience:hover { padding-bottom: 0.3em; border-bottom: 0.2em solid #69dff
 }
 #files { display: none; }
 
-#messages ul.summary { list-style: disc; margin-left: 1em; }
+#messages ul.summary,ul.summary { list-style: disc; margin-left: 1em; }
 
 #designer {
 	width: 80em;
