@@ -2269,38 +2269,51 @@ if(typeof $==="undefined") $ = {};
 		return this;
 	}
 
-	// Function to launch (non-IE)
 	SpaceTelescope.prototype.goForLaunch = function(){
 
-		this.log('function:goForLaunch');
+	        var goodBrowser=(
+		    navigator.appVersion.indexOf("Firefox")==-1 &&
+		    navigator.appVersion.indexOf("Chrome")==-1 &&
+		    navigator.appVersion.indexOf("Opera")==-1);
 
-		if(!this.launchable){
-			this.showView('designer');
-		        this.log('not launchable');
-			return this;
-		}
-	        this.log('is launchable');
-		this.log('stage:',this.stage);
-		if(this.stage=="launch"){
-		        this.log('launch stage:',this.stage);
-			$('.togglelaunch').hide();
-			$('body').addClass('showlaunch');
-			$('#launch').show();
+
+		if (goodBrowser){
+		    // Function to launch (non-IE)
+
+			this.log('function:goForLaunch');
 	
-			var orbit = this.phrases.designer.orbit.options[this.choices.orbit].label;
-			var vehicle = this.phrases.designer.vehicle.options[this.choices.vehicle].label;
-			var site = this.phrases.designer.site.options[this.choices.site].label;
-			var devtime = this.formatValue(this.table.time_dev_total.list.time_dev_total.value);
-
-			// Build launch progress
-		        this.log('making animation');
-			$('#launch').html('<h2>'+this.phrases.launch.title+'</h2><p>'+this.phrases.launch.intro.replace(/%DEVTIME%/,devtime).replace(/%VEHICLE%/,vehicle).replace(/%SITE%/,site).replace(/%ORBIT%/,orbit).replace(/%LAUNCHDATE%/,this.launchdate)+'</p><div id="launchanimation">'+('<div id="launchpadbg"><img src="images/launchpad_'+this.choices.site+'.png" /></div><div id="launchpadfg"><img src="images/launchpad_'+this.choices.site+'_fg.png" /></div><div id="launchrocket"><img src="'+this.data.vehicle[this.choices.vehicle].img+'" /></div>')+'<div id="countdown" class="padded">Countdown</div></div><div id="launchnav" class="toppadded"></div><ul id="launchtimeline" class="toppadded"></ul>');
+			if(!this.launchable){
+				this.showView('designer');
+			        this.log('not launchable');
+				return this;
+			}
+		        this.log('is launchable');
+			this.log('stage:',this.stage);
+			if(this.stage=="launch"){
+			        this.log('launch stage:',this.stage);
+				$('.togglelaunch').hide();
+				$('body').addClass('showlaunch');
+				$('#launch').show();
+		
+				var orbit = this.phrases.designer.orbit.options[this.choices.orbit].label;
+				var vehicle = this.phrases.designer.vehicle.options[this.choices.vehicle].label;
+				var site = this.phrases.designer.site.options[this.choices.site].label;
+				var devtime = this.formatValue(this.table.time_dev_total.list.time_dev_total.value);
 	
-			$('#launchanimation').css({'height':($('#launchanimation').innerWidth()/2)+'px'});
+				// Build launch progress
+			        this.log('making animation');
+				$('#launch').html('<h2>'+this.phrases.launch.title+'</h2><p>'+this.phrases.launch.intro.replace(/%DEVTIME%/,devtime).replace(/%VEHICLE%/,vehicle).replace(/%SITE%/,site).replace(/%ORBIT%/,orbit).replace(/%LAUNCHDATE%/,this.launchdate)+'</p><div id="launchanimation">'+('<div id="launchpadbg"><img src="images/launchpad_'+this.choices.site+'.png" /></div><div id="launchpadfg"><img src="images/launchpad_'+this.choices.site+'_fg.png" /></div><div id="launchrocket"><img src="'+this.data.vehicle[this.choices.vehicle].img+'" /></div>')+'<div id="countdown" class="padded">Countdown</div></div><div id="launchnav" class="toppadded"></div><ul id="launchtimeline" class="toppadded"></ul>');
+		
+				$('#launchanimation').css({'height':($('#launchanimation').innerWidth()/2)+'px'});
+	
+				this.launchstep = 0;
+				if(this.launchstep==0) this.countdown(10);
+			};
+		    }else{
 
-			this.launchstep = 0;
-			if(this.launchstep==0) this.countdown(10);
-		}
+			this.log('running IE');
+
+		    }
 	}
 
 	SpaceTelescope.prototype.countdown = function(i){
