@@ -7,7 +7,7 @@
 	<script type="text/javascript" src="js/jquery-1.11.0.min.js"></script>
 	<script type="text/javascript" src="js/jquery.history.js"></script>
 	<script type="text/javascript" src="js/raphael.min.js"></script>
-	<script type="text/javascript" src="js/spacetelescope.js"></script>
+	<script type="text/javascript" src="js/spacetelescope-ie.js"></script>
 	<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 	<script>
 	var spacetel;
@@ -16,15 +16,6 @@
 		//spacetel = $.spacetelescope({id:"image",width:455,height:333,langs:{'en':'English','cy':'Cymraeg','he':'&#1506;&#1489;&#1512;&#1497;&#1514;'}});
 		spacetel = $.spacetelescope({id:"image",width:455,height:333,langs:{'en':'English'}});
 	});
-	var goodBrowser=false;
-	if( navigator.appVersion.indexOf("Firefox")==-1 &&
-	  navigator.appVersion.indexOf("Chrome")==-1 &&
-          navigator.appVersion.indexOf("Opera")==-1){
-	     goodBrowser=true;
-	};
-	if (!goodBrowser){
-	  window.location.href="index-ie.html";
-	};
 	</script>
 	<link rel="stylesheet" media="all" href="css/fonts.css" type="text/css"/>
 	<link rel="stylesheet" media="all" href="css/style.css" type="text/css"/>
