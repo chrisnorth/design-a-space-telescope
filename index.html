@@ -16,13 +16,13 @@
 		//spacetel = $.spacetelescope({id:"image",width:455,height:333,langs:{'en':'English','cy':'Cymraeg','he':'&#1506;&#1489;&#1512;&#1497;&#1514;'}});
 		spacetel = $.spacetelescope({id:"image",width:455,height:333,langs:{'en':'English'}});
 	});
-	var goodBrowser=false;
+	var badBrowser=true;
 	if( navigator.appVersion.indexOf("Firefox")==-1 &&
 	  navigator.appVersion.indexOf("Chrome")==-1 &&
           navigator.appVersion.indexOf("Opera")==-1){
-	     goodBrowser=true;
+	     badBrowser=false;
 	};
-	if (!goodBrowser){
+	if (badBrowser){
 	  window.location.href="index-ie.html";
 	};
 	</script>
