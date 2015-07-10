@@ -2217,6 +2217,7 @@ if(typeof $==="undefined") $ = {};
 
 	// Attempt to save a file
 	// Blob() requires browser >= Chrome 20, Firefox 13, IE 10, Opera 12.10 or Safari 6
+	// If Blob() doesn't exist we can't save.
 	SpaceTelescope.prototype.save = function(){
 
 		// Bail out if there is no Blob function
@@ -2269,7 +2270,7 @@ if(typeof $==="undefined") $ = {};
 		return this;
 	}
 
-	// Function to launch (non-IE)
+	// Function to launch
 	SpaceTelescope.prototype.goForLaunch = function(){
 
 		this.log('function:goForLaunch');
@@ -2281,26 +2282,25 @@ if(typeof $==="undefined") $ = {};
 		}
 	        this.log('is launchable');
 		this.log('stage:',this.stage);
-		if(this.stage=="launch"){
-		        this.log('launch stage:',this.stage);
-			$('.togglelaunch').hide();
-			$('body').addClass('showlaunch');
-			$('#launch').show();
-	
-			var orbit = this.phrases.designer.orbit.options[this.choices.orbit].label;
-			var vehicle = this.phrases.designer.vehicle.options[this.choices.vehicle].label;
-			var site = this.phrases.designer.site.options[this.choices.site].label;
-			var devtime = this.formatValue(this.table.time_dev_total.list.time_dev_total.value);
+		this.log('launch stage:',this.stage);
+		// Hide the launch button from the interface
+		$('.togglelaunch').hide();
+		$('body').addClass('showlaunch');
+		$('#launch').show();
 
-			// Build launch progress
-		        this.log('making animation');
-			$('#launch').html('<h2>'+this.phrases.launch.title+'</h2><p>'+this.phrases.launch.intro.replace(/%DEVTIME%/,devtime).replace(/%VEHICLE%/,vehicle).replace(/%SITE%/,site).replace(/%ORBIT%/,orbit).replace(/%LAUNCHDATE%/,this.launchdate)+'</p><div id="launchanimation">'+('<div id="launchpadbg"><img src="images/launchpad_'+this.choices.site+'.png" /></div><div id="launchpadfg"><img src="images/launchpad_'+this.choices.site+'_fg.png" /></div><div id="launchrocket"><img src="'+this.data.vehicle[this.choices.vehicle].img+'" /></div>')+'<div id="countdown" class="padded">Countdown</div></div><div id="launchnav" class="toppadded"></div><ul id="launchtimeline" class="toppadded"></ul>');
-	
-			$('#launchanimation').css({'height':($('#launchanimation').innerWidth()/2)+'px'});
+		var orbit = this.phrases.designer.orbit.options[this.choices.orbit].label;
+		var vehicle = this.phrases.designer.vehicle.options[this.choices.vehicle].label;
+		var site = this.phrases.designer.site.options[this.choices.site].label;
+		var devtime = this.formatValue(this.table.time_dev_total.list.time_dev_total.value);
 
-			this.launchstep = 0;
-			if(this.launchstep==0) this.countdown(10);
-		}
+		// Build launch progress
+		this.log('making animation');
+		$('#launch').html('<h2>'+this.phrases.launch.title+'</h2><p>'+this.phrases.launch.intro.replace(/%DEVTIME%/,devtime).replace(/%VEHICLE%/,vehicle).replace(/%SITE%/,site).replace(/%ORBIT%/,orbit).replace(/%LAUNCHDATE%/,this.launchdate)+'</p><div id="launchanimation">'+('<div id="launchpadbg"><img src="images/launchpad_'+this.choices.site+'.png" /></div><div id="launchpadfg"><img src="images/launchpad_'+this.choices.site+'_fg.png" /></div><div id="launchrocket"><img src="'+this.data.vehicle[this.choices.vehicle].img+'" /></div>')+'<div id="countdown" class="padded">Countdown</div></div><div id="launchnav" class="toppadded"></div><ul id="launchtimeline" class="toppadded"></ul>');
+
+		$('#launchanimation').css({'height':($('#launchanimation').innerWidth()/2)+'px'});
+
+		this.launchstep = 0;
+		this.countdown(10);
 	}
 
 	SpaceTelescope.prototype.countdown = function(i){
@@ -2312,8 +2312,10 @@ if(typeof $==="undefined") $ = {};
 		if(i > 0){
 			$('#countdown').html('<div class="tick">'+this.phrases.launch.countdown[i.toFixed(0)]+'</div>');
 			i--;
-			if(!this.outtatime) clearTimeout(this.outtatime);
-			this.outtatime = setTimeout(function(){ _obj.countdown(i); },1000);
+			// Have we got a spurious timeout set? If so, cancel it.
+			if(this.outtatime) clearTimeout(this.outtatime);
+			// Create a timeout for the next second of the launch countdown
+			this.outtatime = setTimeout(function(){ _obj.countdown(i); _obj.log('setTimeout',i) },1000);
 		}else{
 			$('#countdown').html(''+this.phrases.launch.countdown["liftoff"])
 			this.ok = true;
@@ -3212,7 +3214,7 @@ if(typeof $==="undefined") $ = {};
 			this.updateBodyClass('showlaunch');
 		        //this.log('going for launch (view=launch)');
 		        //this.log('stage (pre):',this.stage);
-		        //this.log('launchstep (pre):',this.launchstep);
+		        this.log('launchstep (pre):',this.launchstep);
 		        //this.log('status (pre)',this);
 			this.goForLaunch();
 			this.stage = "launch";

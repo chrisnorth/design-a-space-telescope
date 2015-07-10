@@ -515,7 +515,7 @@ a.togglescience:hover { padding-bottom: 0.3em; border-bottom: 0.2em solid #69dff
 #launchrocket { z-index: 3; width: 100%; text-align: center; }
 #launchexhaust { z-index: 2; }
 #launchpadbg { z-index: 1; }
-#launchrocket img { height: 100px; position: absolute; top: 0px; margin-top: 172px; margin-left: -15px; -webkit-transition: 9s ease-in; -moz-transition: 9s ease-in; -o-transition: 9s ease-in; transition: 9s ease-in; }
+#launchrocket img { height: 100px; position: relative; top: 0px; margin-top: 172px; margin-left: -15px; -webkit-transition: 9s ease-in; -moz-transition: 9s ease-in; -o-transition: 9s ease-in; transition: 9s ease-in; }
 #launchanimation.launched #launchrocket img {
 	-webkit-transform: translate(8px,-500px) rotate(3deg); -moz-transform: translate(8px,-500px) rotate(3deg); -o-transform: translate(8px,-500px) rotate(3deg); -ms-transform: translate(8px,-500px) rotate(3deg); transform: translate(8px,-500px) rotate(3deg);
 }
