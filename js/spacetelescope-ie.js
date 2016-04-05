@@ -89,7 +89,7 @@ if(typeof $==="undefined") $ = {};
 		element.atFront = false;
 		element.path = path;
 		element.direction = direction;
-		element.pathLen = element.path.getTotalLength();    
+		element.pathLen = element.path.getTotalLength();
 		duration = (is(duration,"undefined")) ? 5000 : duration;
 		repetitions = (is(repetitions,"undefined")) ? 1 : repetitions;
 		element.paper.customAttributes.along = function(v) {
@@ -108,10 +108,10 @@ if(typeof $==="undefined") $ = {};
 			}
 			this.rotateWith && (attrs.transform = 'r'+point.alpha);
 			return attrs;
-		};    
+		};
 		element.attr({along:0});
 		var anim = Raphael.animation({along: 1}, duration);
-		element.animate(anim.repeat(repetitions)); 
+		element.animate(anim.repeat(repetitions));
 	};
 
 	// http://paulirish.com/2011/requestanimationframe-for-smart-animating/
@@ -126,7 +126,7 @@ if(typeof $==="undefined") $ = {};
 			window.cancelAnimationFrame = window[vendors[x]+'CancelAnimationFrame']
 									   || window[vendors[x]+'CancelRequestAnimationFrame'];
 		}
-	 
+
 		if(!window.requestAnimationFrame)
 			window.requestAnimationFrame = function(callback, element) {
 				var currTime = new Date().getTime();
@@ -136,7 +136,7 @@ if(typeof $==="undefined") $ = {};
 				lastTime = currTime + timeToCall;
 				return id;
 			};
-	 
+
 		if(!window.cancelAnimationFrame)
 			window.cancelAnimationFrame = function(id) {
 				clearTimeout(id);
@@ -160,13 +160,13 @@ if(typeof $==="undefined") $ = {};
 		return r;
 	};
 
-	// Elements with the class "accessible" are intended for people who don't 
+	// Elements with the class "accessible" are intended for people who don't
 	// have Javascript enabled. If we are here they obviously do have Javascript.
 	document.write('<style type="text/css">.noscriptmsg { display: none; }</style>');
-	
+
 	// Main
 	function SpaceTelescope(inp){
-	
+
 		// Error checking for jQuery
 		if(typeof $!=="function"){ this.log('No jQuery! Abort! Abort!'); return this; }
 
@@ -186,7 +186,7 @@ if(typeof $==="undefined") $ = {};
 		this.langurl = "config/%LANG%%MODE%.json";
 		this.dataurl = "config/options%MODE%.json";
 		this.scenariourl = "config/scenarios_%LANG%%MODE%.json";
-		
+
 		// Allow keyboard events
 		this.keys = new Array();
 
@@ -204,7 +204,7 @@ if(typeof $==="undefined") $ = {};
 		// Safe for IE8 check of style
 		for(var k = 0; k < prefixes.length; k++){
 			var div = document.createElement('div');
-			if(div.style[prefixes[k]] != undefined) this.hastransform = true;	
+			if(div.style[prefixes[k]] != undefined) this.hastransform = true;
 		}
 
 		return this;
@@ -249,7 +249,7 @@ if(typeof $==="undefined") $ = {};
 		$('a.togglelang').on('click',{me:this},function(e){ e.preventDefault(); e.data.me.toggleMenus('language'); });
 
 		// Deal with drag and dropping of files
-		$(document).on('dragenter','#application',function(e){ e.preventDefault(); });	
+		$(document).on('dragenter','#application',function(e){ e.preventDefault(); });
 		$(document).on('dragover','#application',function(e){ e.preventDefault(); $(this).css('opacity',0.75); });
 		$(document).on('drop',function(e){ e.preventDefault(); });
 
@@ -273,7 +273,7 @@ if(typeof $==="undefined") $ = {};
 			var files = e.originalEvent.dataTransfer.files;
 			e.data.me.log("Attempting to call readFile function")
 			readFile(files,e.data.me);
-			return false;     
+			return false;
 		});
 		if(is(Blob,"function")){
 			// Add load to menu
@@ -332,7 +332,7 @@ if(typeof $==="undefined") $ = {};
 		$(document).on('click','#messages a',{me:this},function(e){
 			$('#messages').hide();
 		});
-		
+
 		// Remove instruments
 		$(document).on('click','.remove_instrument',{me:this},function(e){
 			e.preventDefault();
@@ -379,7 +379,7 @@ if(typeof $==="undefined") $ = {};
 		$(document).on('click','#launchnav a.button',{me:this},function(e){ e.preventDefault(); e.data.me.launch(); });
 		$(document).on('click','.toggler',{me:this},function(e){
 			var input = $(this).find('input:checked');
-			
+
 			if(input.attr('value')=="yes") $(this).addClass('checked');
 			else $(this).removeClass('checked');
 
@@ -434,7 +434,7 @@ if(typeof $==="undefined") $ = {};
 		this.buildTable();
 		if(is(fn,"function")) fn = [this.update,fn];
 		else fn = [this.update];
-		
+
 		this.loadConfig();
 		this.loadLanguage(this.lang,fn);
 
@@ -447,7 +447,7 @@ if(typeof $==="undefined") $ = {};
 		}
 		$('#language ul').html(list);
 		if(n < 2) $('.togglelang').closest('.baritem').hide();
-		
+
 
 		return this;
 	}
@@ -463,7 +463,7 @@ if(typeof $==="undefined") $ = {};
 		this.changeToggle('togglemode','mode_'+m);
 		return this;
 	}
-	
+
 	// Change a toggle
 	// Inputs:
 	//   id = (string) The toggle ID
@@ -513,7 +513,7 @@ if(typeof $==="undefined") $ = {};
 		$('label[for='+b.id+']').html(b.label);
 		return this;
 	}
-	
+
 	// Build the page structure, adds events and resets values.
 	// Called when we've loaded the options.
 	SpaceTelescope.prototype.buildPage = function(){
@@ -701,7 +701,7 @@ if(typeof $==="undefined") $ = {};
 
 		return this;
 	}
-	
+
 	// Work out where we are based on the anchor tag
 	SpaceTelescope.prototype.navigate = function(e,a){
 		if(!a) var a = location.href.split("#")[1];
@@ -758,7 +758,7 @@ if(typeof $==="undefined") $ = {};
 		if(e && is(e,"object")) e.preventDefault();
 		var m = $('.dropdown');
 		var a = (e) ? $(e.currentTarget).attr('href') : "";
-		
+
 		for(var i = 0; i < m.length ; i++){
 			var _obj = this;
 			if($(m[i]).attr('id') == id) $(m[i]).toggle(0,function(){ if(a && a.indexOf('#') >= 0) _obj.setScroll('#'+a.split('#')[1]); });
@@ -782,7 +782,7 @@ if(typeof $==="undefined") $ = {};
 		return this;
 	}
 
-	
+
 	SpaceTelescope.prototype.setVar = function(v,t){
 		if(is(v,"string")){
 			if(this.i && typeof this.i[v]===t) this.settings[v] = this.i[v];
@@ -907,7 +907,7 @@ if(typeof $==="undefined") $ = {};
 		this.updateSummary().updateLanguage();
 		return this;
 	}
-	
+
 	// Update the page using the JSON response
 	SpaceTelescope.prototype.update = function(){
 
@@ -918,14 +918,14 @@ if(typeof $==="undefined") $ = {};
 		this.buildPage().updateLanguage().makeSpace('orbits').displayOrbits();
 
 		$('#language.dropdown').hide()
-		
+
 		// Is this the first time we've called this function since page load?
 		if(!this.loaded){
 			// Executed on page load with URL containing an anchor tag.
 			this.navigate();
 			this.loaded = true;
 		}
-		
+
 		return this;
 	}
 
@@ -950,7 +950,7 @@ if(typeof $==="undefined") $ = {};
 		this.updateInstruments();
 		return this;
 	}
-	
+
 	SpaceTelescope.prototype.displayInstruments = function(){
 		var html = "";
 		var d = this.phrases.designer;
@@ -966,7 +966,7 @@ if(typeof $==="undefined") $ = {};
 		$('#designer_instruments .instrument_list').html(html);
 		return html;
 	}
-	
+
 	SpaceTelescope.prototype.updateInstruments = function(){
 
 		this.log('updateInstruments');
@@ -974,7 +974,7 @@ if(typeof $==="undefined") $ = {};
 		this.parseChoices('designer_instruments');
 		return this;
 	}
-	
+
 	SpaceTelescope.prototype.makeSatellite = function(){
 
 		this.log('makeSatellite');
@@ -984,7 +984,7 @@ if(typeof $==="undefined") $ = {};
 
 		return this;
 	}
-	
+
 	// Create an animation area for the orbit animations
 	SpaceTelescope.prototype.makeSpace = function(id){
 
@@ -1032,19 +1032,19 @@ if(typeof $==="undefined") $ = {};
 	SpaceTelescope.prototype.displayOrbits = function(key,zoom){
 
 		this.log('displayOrbits',key,zoom);
-		
+
 		this.space.displayOrbits(key,zoom);
 		return this;
 	}
-	
+
 	SpaceTelescope.prototype.updateProposal = function(){
 		this.log('updateProposal')
 		$('.printable').remove();
-		
+
 		this.parseChoices();
 
 		// First we will autocomplete fields
-		
+
 		// As we loop over instruments we find the wavelength coverage
 		var lambdamax = {};
 		var lambdamin = {};
@@ -1075,7 +1075,7 @@ if(typeof $==="undefined") $ = {};
 				$('#proposal_reshigh').val(htmlDecode(this.formatValue(this.makeValue(1.22*lambdamax.value/D.value,'degrees'))))
 			}
 		}
-		
+
 		// Complete cooling section
 		if(this.choices.temperature){
 			$('#proposal_reqtemp').val(this.formatValue(this.choices.instrument.temp));
@@ -1260,14 +1260,14 @@ if(typeof $==="undefined") $ = {};
 		}
 		return this;
 	}
-	
+
 	SpaceTelescope.prototype.updateLanguage = function(){
 		this.log('updateLanguage')
 		if(!this.phrases || !this.data) return this;
 
 		var d = this.phrases;
 		var html,i,r,li,rk;
-		
+
 		// Update page title (make sure we encode the HTML entities)
 		if(d.title) document.title = htmlDecode(d.title);
 
@@ -1285,7 +1285,7 @@ if(typeof $==="undefined") $ = {};
 			if($('#designer_objectives .banner').length==0) $('#designer_objectives .intro').before('<div class="banner"></div>');
 			$('#designer_objectives .banner').html('<div class="title">'+this.scenario.name+'</div>');
 			if(this.scenario.image && this.scenario.image.banner) $('#designer_objectives .banner').css('background-image','url('+this.scenario.image.banner+')');
-			if(d.designer.objectives.intro) $('#designer_objectives .intro').html('<p><strong>'+d.scenarios.mission+'BLAH</strong> &quot;'+this.formatScenario(this.scenario)+'&quot;</p>'+(this.scenario.funder ? d.designer.objectives.intro : d.designer.objectives.intronofunder).replace(/%TITLE%/,this.scenario.name).replace(/%FUNDER%/,this.scenario.funder)).addClass('bigpadded');
+			if(d.designer.objectives.intro) $('#designer_objectives .intro').html('<p><strong>'+d.scenarios.mission+'</strong> &quot;'+this.formatScenario(this.scenario)+'&quot;</p>'+(this.scenario.funder ? d.designer.objectives.intro : d.designer.objectives.intronofunder).replace(/%TITLE%/,this.scenario.name).replace(/%FUNDER%/,this.scenario.funder)).addClass('bigpadded');
 		}
 
 		// Update the satellite section
@@ -1373,7 +1373,7 @@ if(typeof $==="undefined") $ = {};
 
 			li.find('input').attr('value',l);
 			li.find('.button').html(rk.select);
-			
+
 			i++;
 		}
 		if(d.designer.vehicle.intro) $('#designer_vehicle .intro').html(d.designer.vehicle.intro).addClass('bigpadded');
@@ -1444,14 +1444,14 @@ if(typeof $==="undefined") $ = {};
 		$('#introduction').append('<div class="centre"><a href="#scenarios" class="button fancybtn">'+d.intro.button+'</a></div>');
 		$('#introduction').append('<div class="centre toppadded">'+this.buildToggle("togglemode",{ "value": "no", "id": "mode_basic", "checked": (this.settings.mode!="advanced" ? true : false) },{ "value": "yes", "id": "mode_advanced", "checked": (this.settings.mode=="advanced" ? true : false) })+'</div>');
 		this.updateToggle({ "id": "mode_basic", "label": this.phrases.modes.basic }, { "id": "mode_advanced", "label": this.phrases.modes.advanced }, this.phrases.modes.label);
-		
+
 		var li = '';
 		for(var i = 0; i < this.scenarios.length; i++) li += '<li><div class="padded">'+(this.scenarios[i].image && this.scenarios[i].image.banner ? '<img src="'+this.scenarios[i].image.banner+'"'+(this.scenarios[i].image.alt ? 'alt="'+this.scenarios[i].image.alt+'"' : '')+' style="width: 100%;" />':'')+'<h3>'+this.scenarios[i].name+'</h3><p>'+this.formatScenario(this.scenarios[i])+'</p><a href="#designer_objectives" class="button" title="'+this.scenarios[i].name+'" data="'+i+'">Choose this mission<!--LANGUAGE--></a></div></li>';
 		$('#scenariolist').html(li);
 		$('#scenarios h2').html(d.scenarios.title);
 		$('#scenarios p.about').html(d.scenarios.intro);
 
-		
+
 		// Update values to be consistent with current user preferences
 		this.updateUnits();
 
@@ -1564,7 +1564,7 @@ if(typeof $==="undefined") $ = {};
 		var html = '';
 		if(!area || area == "") return this;
 		var d,dt,m,mu,s,i,c,ch,o;
-		
+
 		d = this.phrases.designer;
 		dt = this.data;
 		ch = this.choices;
@@ -1580,7 +1580,7 @@ if(typeof $==="undefined") $ = {};
 				var busmass = this.copyValue(m.bus.mass);
 				var bustime = this.copyValue(m.bus.devtime);
 				var busdiam = this.copyValue(m.bus.diameter);
-				
+
 				// Applies to both mirror and bus
 				if(ch.deployablemirror){
 					mu = dt.deployablemirror.multiplier;
@@ -1639,9 +1639,9 @@ if(typeof $==="undefined") $ = {};
 				if(dt.site[value].orbits[o]) sitenames += ''+d.orbit.options[o].label+'<br />';
 			}
 			html += this.buildRow(d.site.orbits,sitenames);
-			
+
 			if(is(dt.site[value].risk,"number")) html += this.buildRow(d.site.risk,(dt.site[value].risk*100).toFixed(0)+'%');
-			
+
 		}else if(area=="orbit"){
 
 			o = dt.orbit[value];
@@ -1659,7 +1659,7 @@ if(typeof $==="undefined") $ = {};
 		$('#designer_'+area+' .details').html(html).addClass('padded').show();
 		return this;
 	}
-	
+
 	SpaceTelescope.prototype.formatScenario = function(s){
 		return ''+((is(s.description,"string")) ? s.description : "").replace(/%COST%/,this.formatValueSpan(s.budget))+'';
 	}
@@ -1671,7 +1671,7 @@ if(typeof $==="undefined") $ = {};
 
 		// Loop over options
 		for(var o in ph.ui.options){
-		
+
 			html = '<li><label for="change'+o+'">'+ph.ui.options[o]+'</label> <select id="change'+o+'" name="change'+o+'">';
 			if(o=="currency"){
 				for(var c in ph.ui[o]){
@@ -1680,7 +1680,7 @@ if(typeof $==="undefined") $ = {};
 			}else{
 				for(var c in ph.ui.units){
 					if(ph.ui.units[c].dimension==o && ph.ui.units[c].selectable) html += '<option value="'+c+'"'+(c==this.settings[o] ? ' selected="selected"' : '')+'>'+ph.ui.units[c].label+'</option>';
-				}			
+				}
 			}
 			html += '</select></li>'
 			$('#options ul').append(html);
@@ -1699,7 +1699,7 @@ if(typeof $==="undefined") $ = {};
 
 		var els = $('.convertable');
 		var el,val,v,u,d;
-		
+
 		for(var i = 0; i < els.length ; i++){
 			el = $(els[i]);
 			v = el.attr('data-value');
@@ -1712,7 +1712,7 @@ if(typeof $==="undefined") $ = {};
 		this.updateDropdown('cooling_temperature');
 		return this;
 	}
-	
+
 	// Update a value. If a time is provided and the original and final values share dimensions, it will animate the change
 	// Inputs:
 	//   key - the CSS key
@@ -1745,7 +1745,7 @@ if(typeof $==="undefined") $ = {};
 						}else{
 							el.html(_obj.formatValue({ 'value': (orig.value+(value.value-orig.value)*(diff/ms)), 'units':orig.units, 'dimension':orig.dimension }));
 							requestAnimFrame(frame);
-						}	
+						}
 					}
 					frame();
 				}else{
@@ -1760,12 +1760,12 @@ if(typeof $==="undefined") $ = {};
 		key = (key) ? " "+key : "";
 		return (is(value,"object") ? '<span class="value'+key+' convertable" data-value="'+value.value+'" data-units="'+value.units+'" data-dimension="'+value.dimension+'">'+this.formatValue(value)+'</span>' : '<span class="value'+key+'">'+value+'</span>');
 	}
-	
+
 	SpaceTelescope.prototype.copyValue = function(v){
 		if(is(v,"object")) return JSON.parse(JSON.stringify(v));
 		return {};
 	}
-	
+
 	SpaceTelescope.prototype.getValue = function(v){
 
 		var el = $(v);
@@ -1775,7 +1775,7 @@ if(typeof $==="undefined") $ = {};
 		}
 		return "";
 	}
-	
+
 	SpaceTelescope.prototype.getChoice = function(choice){
 		var ch = this.choices;
 		if(choice=="mirror.cost"){
@@ -1845,7 +1845,7 @@ if(typeof $==="undefined") $ = {};
 			v = (ch.vehicle ? this.phrases.designer.vehicle.options[ch.vehicle].label : '');
 		}else if(choice=="vehicle.cost"){
 			v = (ch.vehicle ? this.copyValue(this.data.vehicle[ch.vehicle].cost) : this.makeValue(0,'GBP'));
-			v.value = -v.value;		
+			v.value = -v.value;
 		}else if(choice=="vehicle.prob"){
 			v = 0;
 			if(ch.vehicle){
@@ -1855,7 +1855,7 @@ if(typeof $==="undefined") $ = {};
 			var m = ch.mission ? this.copyValue(this.data.mission[ch.mission].life) : this.makeValue(0,'months');
 			if(ch.orbit){
 				v = this.copyValue(this.data.orbit[ch.orbit].groundcost);
-				v.value *= -this.convertValue(m,'years').value;	
+				v.value *= -this.convertValue(m,'years').value;
 			}else{
 				v = this.makeValue(0,'GBP');
 			}
@@ -1901,7 +1901,7 @@ if(typeof $==="undefined") $ = {};
 		html += '</ul>';
 		return html;
 	}
-	
+
 
 	SpaceTelescope.prototype.updateSummaryList = function(){
 		for(var k in this.table){
@@ -1985,10 +1985,10 @@ if(typeof $==="undefined") $ = {};
 		if(time.mission.value > fuel.value) this.warnings.push({ 'text': ph.warnings.fuellifetime.replace(/%LIFE%/,this.formatValue(fuel)).replace(/%DURATION%/,this.formatValue(time.mission)), 'link':'#designer_orbit' });
 		cool = this.convertValue(time.lifecooling,time.mission.units);
 		if(time.mission.value > cool.value) this.warnings.push({ 'text': ph.warnings.coolinglifetime.replace(/%LIFE%/,this.formatValue(cool)).replace(/%DURATION%/,this.formatValue(time.mission)), 'link':'#designer_orbit' });
-		
+
 		// Warning about mission time
 		if(prob.total > 0 && time.mission.value == 0) this.warnings.push({ 'text': ph.warnings.missionlife,'link':'#designer_orbit'});
-	    
+
 		// Format masses
 		mass.mirror = this.getChoice('mirror.mass');
 		mass.satellite = this.getChoice('satellite.mass');
@@ -2049,9 +2049,9 @@ if(typeof $==="undefined") $ = {};
 		// Check mission targets
 		av = 0;
 		this.table.science_total.list = {};
-		if(this.scenario && this.scenario.requires && is(this.scenario.requires,"object")){ 
+		if(this.scenario && this.scenario.requires && is(this.scenario.requires,"object")){
 			var requires = this.scenario.requires;
-		
+
 			// Build mission target list
 			this.table.science_total.list = {};
 			for(r = 0; r < requires.length; r++){
@@ -2144,7 +2144,7 @@ if(typeof $==="undefined") $ = {};
 		$('.togglelaunch').show();
 		return this;
 	}
-	
+
 	SpaceTelescope.prototype.disableLaunch = function(){
 		this.launchable = false;
 		$('.togglelaunch').hide();
@@ -2246,7 +2246,7 @@ if(typeof $==="undefined") $ = {};
 		txt += "---\n";
 		var textFileAsBlob = new Blob([txt], {type:'text/plain'});
 		var fileNameToSaveAs = "spacetelescope.txt";
-	
+
 		function destroyClickedElement(event){ document.body.removeChild(event.target); }
 
 		var dl = document.createElement("a");
@@ -2278,7 +2278,7 @@ if(typeof $==="undefined") $ = {};
 			this.showView('designer');
 			return this;
 		}
-		
+
 		$('.togglelaunch').hide();
 		$('body').addClass('showlaunch');
 		$('#launch').show();
@@ -2292,7 +2292,7 @@ if(typeof $==="undefined") $ = {};
 		// Build launch progress
 		$('#launch').html('<h2>'+this.phrases.launch.title+'</h2><p>'+this.phrases.launch.intro.replace(/%DEVTIME%/,devtime).replace(/%VEHICLE%/,vehicle).replace(/%SITE%/,site).replace(/%ORBIT%/,orbit).replace(/%LAUNCHDATE%/,this.launchdate)+'</p><ul id="launchtimeline"></ul>');
 
-		
+
 		var ms = 1000;
 
 		var prob = {};
@@ -2330,7 +2330,7 @@ if(typeof $==="undefined") $ = {};
 				ok = this.roll(prob.mirror);
 				$('#launchtimeline').append('<li>'+this.buildRow(this.phrases.launch.deploy.label,(ok ? this.phrases.launch.deploy.success : this.phrases.launch.deploy.fail),'launch_mirror')+'</li>');
 				if(ok){
-	
+
 					okcool = true;
 					// Has the user requested cooling?
 					if(this.choices.hascooling){
@@ -2342,7 +2342,7 @@ if(typeof $==="undefined") $ = {};
 							okcool = this.roll(t.risk);
 							$('#launchtimeline').append('<li>'+this.buildRow(this.phrases.launch.cooling.label.label,(okcool ? this.phrases.launch.cooling.label.success : this.phrases.launch.cooling.label.fail),'launch_temperature')+'</li>');
 						}
-						
+
 						// Do we have passive cooling
 						if(this.data.cooling.passive){
 							$('#launchtimeline').append('<li>'+this.buildRow(this.phrases.launch.cooling.label,'','launch_cooling')+'</li>');
@@ -2352,7 +2352,7 @@ if(typeof $==="undefined") $ = {};
 								okpassive = okcool;
 								if(okcool) temp.value *= this.data.cooling.passive[p].multiplier.temperature;
 								$('#launchtimeline').append('<li class="indent">'+this.buildRow(this.phrases.launch.cooling.passive.label,(okcool ? this.phrases.launch.cooling.passive.success : this.phrases.launch.cooling.passive.fail),'launch_passive')+'</li>');
-	
+
 								// Do we have active cooling (requires passive cooling)?
 								if(this.data.cooling.active && okpassive){
 									p = this.choices.cool.active;
@@ -2408,7 +2408,7 @@ if(typeof $==="undefined") $ = {};
 		$('#launchtimeline').append('<li>'+this.buildRow(this.phrases.launch.overall.label,tmp,'finalresult')+'</li>');
 
 		$('#launch').append('<div class="printable bigpadded"><a href="#" class="button fancybtn">'+this.phrases.designer.proposal.reprint+'</a></div>');
-		
+
 		return this;
 	}
 
@@ -2443,7 +2443,7 @@ if(typeof $==="undefined") $ = {};
 			$('.togglelaunch').hide();
 			$('body').addClass('showlaunch');
 			$('#launch').show();
-	
+
 			var orbit = this.phrases.designer.orbit.options[this.choices.orbit].label;
 			var vehicle = this.phrases.designer.vehicle.options[this.choices.vehicle].label;
 			var site = this.phrases.designer.site.options[this.choices.site].label;
@@ -2452,7 +2452,7 @@ if(typeof $==="undefined") $ = {};
 			// Build launch progress
 		        this.log('making animation');
 			$('#launch').html('<h2>'+this.phrases.launch.title+'</h2><p>'+this.phrases.launch.intro.replace(/%DEVTIME%/,devtime).replace(/%VEHICLE%/,vehicle).replace(/%SITE%/,site).replace(/%ORBIT%/,orbit).replace(/%LAUNCHDATE%/,this.launchdate)+'</p><div id="launchanimation">'+('<div id="launchpadbg"><img src="images/launchpad_'+this.choices.site+'.png" /></div><div id="launchpadfg"><img src="images/launchpad_'+this.choices.site+'_fg.png" /></div><div id="launchrocket"><img src="'+this.data.vehicle[this.choices.vehicle].img+'" /></div>')+'<div id="countdown" class="padded">Countdown</div></div><div id="launchnav" class="toppadded"></div><ul id="launchtimeline" class="toppadded"></ul>');
-	
+
 			$('#launchanimation').css({'height':($('#launchanimation').innerWidth()/2)+'px'});
 
 			this.launchstep = 0;
@@ -2529,7 +2529,7 @@ if(typeof $==="undefined") $ = {};
 					this.launchanim.resize();
 				}
 			}
-			if(this.launchstep==4){	
+			if(this.launchstep==4){
 				this.ok = this.roll(prob.mirror);
 				fadeIn('<li>'+this.buildRow(ph.launch.deploy.label,(this.ok ? ph.launch.deploy.success : ph.launch.deploy.fail),'launch_mirror')+'</li>');
 				lanim.html('');
@@ -2555,7 +2555,7 @@ if(typeof $==="undefined") $ = {};
 						this.launchanim.colourize.cooling = { 'passive': true, 'active': true, 'cryogenic': true };
 						this.launchanim.build();
 					}
-					
+
 					// Do we have passive cooling
 					if(this.data.cooling.passive){
 						l += '<li>'+this.buildRow(ph.launch.cooling.label.label,'','launch_cooling')+'</li>';
@@ -2641,7 +2641,7 @@ if(typeof $==="undefined") $ = {};
 					}
 					if(ch.instruments.length > 0) percent /= ch.instruments.length;
 				}
-	
+
 				tmp = (this.ok ? ph.launch.overall.success : ph.launch.overall.fail).replace(/\%PERCENT%/,this.formatValue(this.makeValue(percent,'%')));
 				fadeIn(l);
 				fadeIn('<li>'+this.buildRow(ph.launch.overall.label,tmp,'finalresult')+'</li>');
@@ -2652,7 +2652,7 @@ if(typeof $==="undefined") $ = {};
 			}
 		}
 		if(!this.ok){
-			
+
 			// It failed so remove next button
 			$('#launchnav a.button').remove();
 
@@ -2671,7 +2671,7 @@ if(typeof $==="undefined") $ = {};
 				$('.relaunch').remove();
 			}
 		}
-		
+
 		return this;
 	}
 
@@ -2702,7 +2702,7 @@ if(typeof $==="undefined") $ = {};
 		this.table = this.setKey(this.table,key,typ,value);
 		return this;
 	}
-	
+
 	// Convert an input value/unit/dimension object into another unit
 	// Inputs:
 	//   v - the { "value": 1, "units": "m", "dimension": "length" } object
@@ -2717,7 +2717,7 @@ if(typeof $==="undefined") $ = {};
 		if(is(v.value,"string") && v.value != "inf") v.value = parseFloat(v.value,10);
 
 		v = this.copyValue(v);
-		
+
 
 		if(v.dimension == "length"){
 			if(v.dimension == this.phrases.ui.units[to].dimension){
@@ -2866,7 +2866,7 @@ if(typeof $==="undefined") $ = {};
 		return {};
 	}
 
-	// Return the minimum value in an array of input values	
+	// Return the minimum value in an array of input values
 	SpaceTelescope.prototype.minValue = function(){
 		var args = Array.prototype.slice.call(arguments, 0);
 		var a,i,min;
@@ -2889,7 +2889,7 @@ if(typeof $==="undefined") $ = {};
 		else return 1;
 		return 1;
 	}
-		
+
 	// Format a value differently depending on the dimension
 	// Inputs:
 	//  v - the value as an object e.g. { "value": 1, "units": "m", "dimension": "length" }
@@ -2910,13 +2910,13 @@ if(typeof $==="undefined") $ = {};
 		var dim = v.dimension;
 
 		if(dim=="length"){
-			
+
 			v = this.convertValue(v,(this.settings.length) ? this.settings.length : "m")
 			if(!is(p,"number")) p = (v.units=="km" ? 0 : getPrecision(v.value));
 			unit = (ph.ui.units[v.units]) ? ph.ui.units[v.units].unit : "";
 			if(v.value > 1e15) return powerOfTen(v.value,unit);
-			return ''+addCommas((v.value).toFixed(p)).replace(/\.0+$/,'').replace(/(\.0?[1-9]+)0+$/,"$1")+''+unit;	
-			
+			return ''+addCommas((v.value).toFixed(p)).replace(/\.0+$/,'').replace(/(\.0?[1-9]+)0+$/,"$1")+''+unit;
+
 		}else if(dim=="mass"){
 
 			v = this.convertValue(v,(this.settings.mass) ? this.settings.mass : "kg")
@@ -2924,20 +2924,20 @@ if(typeof $==="undefined") $ = {};
 			if(!is(p,"number")) p = (v.value >= 1000) ? 0 : getPrecision(v.value);
 			if(v.value > 1e15) return powerOfTen(v.value,unit);
 			else return ''+addCommas((v.value).toFixed(p)).replace(/\.0+$/,'').replace(/(\.[1-9]+)0+$/,"$1")+''+unit;
-		
+
 		}else if(dim=="currency"){
 			v = this.convertValue(v,(this.settings.currency) ? this.settings.currency : "GBP")
 			if(!is(p,"number")) p = 0;
-	
+
 			var append = (ph.ui.million.compact) ? ph.ui.million.compact : "";
 			var s = (ph.ui.currency[v.units] && ph.ui.currency[v.units].symbol) ? ph.ui.currency[v.units].symbol : (ph.ui.currency["GBP"].symbol ? ph.ui.currency["GBP"].symbol : "");
-	
+
 			if(v.value == "inf" || v.value >= 1e15) return '&infin;';
-	
+
 			// Correct for sign of currency (we can have negative values)
 			var sign = (v.value < 0) ? '-' : '';
 			v.value = Math.abs(v.value);
-	
+
 			// Change the "million" to "billion" if the number if too big
 			if(v.value >= 1000){
 				v.value /= 1000;
@@ -3036,10 +3036,10 @@ if(typeof $==="undefined") $ = {};
 
 		this.errors = [];
 		this.warnings = [];
-		
+
 		var ch = this.choices;
 		var d = this.data;
-		
+
 		// Get mission
 		l = $('#mission_duration').val();
 		ch.mission = (l && d.mission[l]) ? l : "";
@@ -3240,7 +3240,7 @@ if(typeof $==="undefined") $ = {};
 			}
 		}
 
-		// Error if the temperature achieved is not suitable for the instruments 
+		// Error if the temperature achieved is not suitable for the instruments
 		var a = this.convertValue(ch.instrument.temp,'K');
 		var b = this.convertValue(ch.temperature,'K');
 		if(b.value > a.value) this.errors.push({ 'text': this.phrases.errors.temperature.replace(/%TEMPERATURE%/,'<strong>'+this.formatValue(b)+'</strong>').replace(/%REQUIREMENT%/,'<strong>'+this.formatValue(a)+'</strong>'), 'link': '#designer_cooling' });
@@ -3254,7 +3254,7 @@ if(typeof $==="undefined") $ = {};
 		return this;
 	}
 
-	
+
 	SpaceTelescope.prototype.updateMessages = function(category,e){
 
 		this.log('updateMessages',e)
@@ -3266,7 +3266,7 @@ if(typeof $==="undefined") $ = {};
 			v = e.length;
 			for(var i = 0 ; i < e.length; i++) li += '<li>'+e[i].text+(e[i].link ? ' <a href="'+e[i].link+'">'+this.phrases.ui[category].link+'</a>' : '')+'</li>';
 		}
-		
+
 		// Update the values
 		$('.'+category+'.value').html(v);
 		$('#messages h3.'+category).next().html(li);
@@ -3274,10 +3274,10 @@ if(typeof $==="undefined") $ = {};
 		// Toggle if there are no messages in this category
 		if(v == 0) $('.toggle'+category+',.'+category+'s').hide();
 		else $('.toggle'+category+',.'+category+'s').show();
-		
+
 		return this;
 	}
-	
+
 	SpaceTelescope.prototype.toggleView = function(view,e){
 
 		this.log('toggleView',view)
@@ -3308,7 +3308,7 @@ if(typeof $==="undefined") $ = {};
 				$('#summaryext').hide();
 				this.showModal($('#options'));
 				$('body').addClass('showoptions');
-			
+
 			}
 			return this;
 		}
@@ -3338,12 +3338,12 @@ if(typeof $==="undefined") $ = {};
 				$('#designer').show();
 				if($('#'+view).find('a').is(':visible')) $('#'+view).find('a:visible').eq(0).focus();
 				else{
-					if($('#'+view).find('input')) $('#'+view).find('input').eq(0).focus(); 
+					if($('#'+view).find('input')) $('#'+view).find('input').eq(0).focus();
 					else $('#menubar a.toggle'+section).focus();
 				}
 				if(section=="orbit") this.makeSpace('orbits').displayOrbits();
 				else this.removeOrbits();
-				
+
 				if(section=="proposal") this.updateProposal();
 
 			}else{
@@ -3450,7 +3450,7 @@ if(typeof $==="undefined") $ = {};
 
 
 			if(key=="guide"){
-			
+
 				html += '<h2>'+this.phrases.guide.title+'</h2><p>'+this.phrases.guide.about+'</p><ul class="index">';
 				for(k in this.phrases.guide){
 					if(k != "title" && k != "about" && is(this.phrases.guide[k].title,"string")){
@@ -3458,11 +3458,11 @@ if(typeof $==="undefined") $ = {};
 					}
 				}
 				html += '</ul>'
-			
+
 			}else if(g[key]){
 
 				html += '<div class="guidetop"><span class="breadcrumb"><a href="#guide" class="guidelink">'+g.title+'</a> &raquo; '+g[key].title+'</span></div>'
-	
+
 				txt = g[key].about;
 				var m = this.data.mirror;
 				if(key=="mirror"){
@@ -3503,7 +3503,7 @@ if(typeof $==="undefined") $ = {};
 						txt = txt.replace(/\%ACTIVELIFE\%/,this.formatValue(c.active.yes.life));
 						txt = txt.replace(/\%ACTIVEMASS\%/,this.formatValue(c.active.yes.mass));
 						txt = txt.replace(/\%ACTIVECOST\%/,this.formatValue(c.active.yes.cost));
-	
+
 					}else{
 						for(i in c.temperature){
 							table += '<tr>';
@@ -3516,7 +3516,7 @@ if(typeof $==="undefined") $ = {};
 					txt = txt.replace(/\%COOLINGTABLE\%/,table);
 				}else if(key=="instruments"){
 					table = '';
-	
+
 					for(i in this.data.wavelengths){
 						if(i != "none"){
 							table += '<tr>';
@@ -3526,7 +3526,7 @@ if(typeof $==="undefined") $ = {};
 						}
 					}
 					txt = txt.replace(/\%WAVELENGTHTABLE\%/,table);
-	
+
 					if(this.settings.mode=="advanced"){
 						table = '';
 						for(i in this.data.instrument.options){
@@ -3598,14 +3598,14 @@ if(typeof $==="undefined") $ = {};
 					}
 					txt = txt.replace(/\%SITETABLE\%/,table);
 				}
-	
+
 				// Wrap in a paragraph tag if it isn't already
 				if(txt.indexOf('<p>') < 0) txt = '<p>'+txt+'</p>';
 
 				// Add any questions
 
 				html += '<h2 id="guide_'+key+'">'+g[key].title+'</h2>'+txt+'<div class="clearall" /></div>';
-	
+
 				if(key=="roles"){
 					for(k in g[key]){
 						if(k != "title" && k != "about" && is(g[key][k].title,"string")){
@@ -3652,7 +3652,7 @@ if(typeof $==="undefined") $ = {};
 			var _obj = this;
 			$('#guide').show(function(){ _obj.setScroll('#'+origkey); });
 			$('#intro').hide();
-	
+
 		}else this.closeGuide();
 
 		$('#guide').show().find('a').eq(0).focus();
@@ -3665,7 +3665,7 @@ if(typeof $==="undefined") $ = {};
 		$('body').removeClass('showguide showintro showoptions showmessages showlaunch').addClass(cls);
 		return this;
 	}
-	
+
 	// Add a close button to the element
 	// Inputs:
 	//  el - jQuery DOM element
@@ -3737,10 +3737,10 @@ if(typeof $==="undefined") $ = {};
 		if(!inp) inp = {};
 		if(inp.spacetel) this.s = inp.spacetel;
 		else return this;
-		
+
 		this.heightscale = "";	// Do we scale the height?
 		this.prop = { 'mirror': 0, 'bus': 0, 'slots': 0 };
-		
+
 		this.id = (is(inp.id,"string")) ? inp.id : "sidebar_satellite";
 		if(!this.el) this.el = $('#'+this.id);
 		if(this.el.find('#'+this.id+'_schematic').length==0) this.el.html('<div class="schematic" id="'+this.id+'_schematic"></div>')
@@ -3846,8 +3846,8 @@ if(typeof $==="undefined") $ = {};
 		}
 
 		// Define some styles
-		var solid = {'stroke':'white','stroke-width':1,'fill':'white','fill-opacity':0.5};		
-		var solidlight = {'stroke':'white','stroke-width':1,'fill':'white','fill-opacity':0.15};		
+		var solid = {'stroke':'white','stroke-width':1,'fill':'white','fill-opacity':0.5};
+		var solidlight = {'stroke':'white','stroke-width':1,'fill':'white','fill-opacity':0.15};
 		var stroke = {'stroke':'white','stroke-width':1};
 		var colour,style;
 		var p = this.paper;
@@ -3874,7 +3874,7 @@ if(typeof $==="undefined") $ = {};
 			this.vgroove.push(p.ellipse(0,-1.8*fb,8*fb,4.5*fb).attr(style));
 			this.vgroove.push(p.path('m 0,'+(-0.6*fb)+' l'+(-5.5*fb)+','+(2.5*fb)+' m'+(5.5*fb)+','+(-2.5*fb)+' l'+(1.5*fb)+','+(3.5*fb)+' m'+(-1.5*fb)+','+(-3.5*fb)+' l'+(8*fb)+','+(-fb)+' m'+(-8*fb)+','+(fb)+' l'+(5*fb)+','+(-5*fb)+' m'+(-5*fb)+','+(5*fb)+' l'+(-2*fb)+','+(-5.5*fb)+' m'+(2*fb)+','+(5.5*fb)+' l'+(-7*fb)+','+(-3*fb)).attr({'stroke':'white','stroke-width':1,'stroke-opacity':0.4}))
 		}
-		
+
 		if(this.s.choices.mirror){
 			this.body = p.set();
 			var bw = Math.min(7,8.5*(this.prop.bus/this.prop.mirror));
@@ -3885,7 +3885,7 @@ if(typeof $==="undefined") $ = {};
 			// Shape of body
 			this.body.push(p.path('m '+(-bw*f)+',0 a '+(bw*f)+','+(bh*f)+' 0 0,0 '+(2*bw*f)+',0 l 0,'+(-(bodyh+tank-1)*f)+' q 0,'+(-2*f)+' '+(-bh*f)+','+(-bodytop*f)+' l0,'+(-1*f)+' a'+(bt*f)+','+(bt*0.5*f)+' 0 0,0 '+(-2*bt*f)+',0 l0,'+(1*f)+' q'+(-bh*f)+','+(1*f)+' '+(-bh*f)+','+(bh*f)+' z').attr(solid));
 			if(tank > 0){
-				// Tank 
+				// Tank
 				style = {'stroke':'white','stroke-width':1,'fill':'white','fill-opacity':0.3};
 				// If we are in-flight and the the cooling state has been explicitly set to false we change the colour
 				if(this.colourize.cooling.cryogenic){ style.fill = (this.state.cooling.cryogenic) ? $('.mass').css('color') : "black"; style['fill-opacity'] = 0.8; }
@@ -3906,7 +3906,7 @@ if(typeof $==="undefined") $ = {};
 			// Get the number of instruments
 			var n = 0;
 			var ni = (this.s.choices.instruments) ? this.s.choices.instruments.length : 0;
-			
+
 			// Remove existing labels
 			$('#'+this.id+'_schematic .label').remove();
 			var html = "";
@@ -4021,7 +4021,7 @@ if(typeof $==="undefined") $ = {};
 		// Show the contents again
 		$('#'+this.id+'_schematic').show();
 
-		return this;	
+		return this;
 	}
 
 
@@ -4036,7 +4036,7 @@ if(typeof $==="undefined") $ = {};
 	//   inp.interactive = (boolean) Is this interactive?
 	//   inp.orbits   = (array) An array of keys for which orbits to use
 	function OrbitAnimation(inp){
-	
+
 		this.width = 0;	// The width
 		this.height = 300;	// The height
 		this.heightscale = "";
@@ -4052,7 +4052,7 @@ if(typeof $==="undefined") $ = {};
 		this.spacetel = {};
 		this.id = "orbits";
 		this.interactive = true;
-		
+
 		if(!inp) inp = {};
 		if(is(inp.id,"string")) this.id = inp.id;
 		if(is(inp.zoom,"number")) this.zoom = inp.zoom;
@@ -4064,7 +4064,7 @@ if(typeof $==="undefined") $ = {};
 		if(is(inp.height,"string") && inp.height.indexOf('%') > 0) this.heightscale = inp.height/100;
 		if(is(inp.height,"number")) this.height = inp.height;
 		if(inp.context) this.spacetel = inp.context;
-		
+
 		// Properties for the orbit animation
 		this.orbits = {
 			"GEO": { "i": 0, "color": "#048b9f", "e": 0.3, "zoom": 0, "z": false, "ok": false },
@@ -4075,8 +4075,8 @@ if(typeof $==="undefined") $ = {};
 			"ES2": { "i": 0, "color": "#9467bd", "e": 1, "zoom": 1, "z": false, "ok": false },
 			"ETR": { "i": 0, "color": "#fac900", "e": 1, "zoom": 1, "z": false, "ok": false }
 		}
-		
-		
+
+
 		// Update if they are ok to use
 		if(!inp.orbits) inp.orbits = ["GEO","SNS","HEO","LEO","EM2","ES2","ETR"];
 		for(var i = 0; i < inp.orbits.length; i++){
@@ -4087,7 +4087,7 @@ if(typeof $==="undefined") $ = {};
 
 		// If we don't have a convertValue function we make a dummy
 		if(!this.spacetel.convertValue || !is(this.spacetel.convertValue,"function")) this.spacetel.convertValue = function(inp){ return inp; };
-		
+
 		// Add resize function
 		$(window).on('resize',{me:this},function(e){ e.data.me.resize(); });
 
@@ -4101,7 +4101,7 @@ if(typeof $==="undefined") $ = {};
 
 		// Make the element fill the container's width
 		this.el.css({'width':'auto','display':'block'});
-		
+
 		// Get the inner width of the space container (i.e. without margins)
 		var w = this.el.innerWidth();
 		if(w < this.el.parent().width()/2) w = this.el.parent().width()-(parseInt(this.el.css('margin-left'),10) + parseInt(this.el.css('margin-right'),10));
@@ -4170,7 +4170,7 @@ if(typeof $==="undefined") $ = {};
 
 		// Update the orbital size of the HEO as it depends on the size of the Earth
 		if(this.orbits["HEO"]) this.orbits["HEO"].r = this.E.r*3.3;
-		
+
 		if(key) this.zoom = this.orbits[key].zoom;
 		if(is(zoom,"number")) this.zoom = zoom;
 
@@ -4216,7 +4216,7 @@ if(typeof $==="undefined") $ = {};
 		var dx,dy,r,e,i,period;
 
 		var _obj = this;
-		
+
 		function makeOrbit(inp){
 			if(!inp) return null;
 			if(!inp.cx) inp.cx = 0;
@@ -4281,7 +4281,7 @@ if(typeof $==="undefined") $ = {};
 		}
 
 		if(!this.E || !this.M || !this.scale) return this;
-		
+
 		if(this.zoom == 0){
 			for(var o in this.data){
 				if(this.orbits[o] && this.orbits[o].ok && this.orbits[o].zoom == this.zoom && !this.svg.orbits[o]){
@@ -4348,7 +4348,7 @@ if(typeof $==="undefined") $ = {};
 				hide(this.Moonorbit);
 				hide(this.Moon);
 			}else{
-				show(this.Moonorbit);			
+				show(this.Moonorbit);
 				show(this.Moon);
 			}
 			if(this.svg.orbits["EM2"]){
@@ -4378,11 +4378,11 @@ if(typeof $==="undefined") $ = {};
 		if(this.scale[this.zoom] < 1) scale *= this.scale[this.zoom]*10;
 		// Now scale the path
 		if(this.Earth) transformer(this.Earth,['S',scale,scale,this.E.x,this.E.y]);
-		
+
 		return this;
 	}
-	
-	
+
+
 	// Highlight the selected orbit (uses the value from the select dropdown)
 	// If necessary (i.e. if the zoom level has changed) redisplay the orbits first.
 	OrbitAnimation.prototype.highlight = function(key){
@@ -4447,7 +4447,7 @@ if(typeof $==="undefined") $ = {};
 		y =  Math.round(this.bottom + (this.top-this.bottom)*this.getYFrac(this.req))-0.5;
 		this.ticks.push(this.thermo.path("M "+(this.xoff + this.wide/2 - this.p*5)+","+(this.yoff + y)+" l "+(this.p*6)+",0").attr({'stroke':'#ffffff','stroke-width':1,'stroke-dasharray':['-']}));
 		this.updateLanguage(this.pb);
-		return this;	
+		return this;
 	}
 	Thermometer.prototype.updateLanguage = function(lang){
 		this.pb = lang;
@@ -4490,11 +4490,11 @@ if(typeof $==="undefined") $ = {};
 		this.xoff = (is(inp.x,"number")) ? inp.x : 0;
 		this.yoff = (is(inp.y,"number")) ? inp.y : 0;
 		this.p = 0.1;
-		
+
 		// Create a canvas to draw on
 		if(is(inp.canvas,"object")) this.canvas = inp.canvas;
 		else return this;
-		
+
 		p = this.wide*this.p;
 		q = this.tall*this.p;
 
@@ -4527,19 +4527,19 @@ if(typeof $==="undefined") $ = {};
 		var ctx = canvas.getContext("2d");
 		this.active = true;
 		var c;
-		
-		// Make the canvas occupy the same space 
+
+		// Make the canvas occupy the same space
 		var w = pad.innerWidth(), h = pad.innerHeight();
 		canvas.width = w;
 		canvas.height = h;
-		
+
 		var particles = [];
 		var mouse = {};
-		
+
 		// Create some particles
 		var particle_count = 80;
 		for(var i = 0; i < particle_count; i++) particles.push(new particle());
-			
+
 		// Particle class
 		function particle(){
 			// The speed in both the horizontal and vertical directions
@@ -4565,7 +4565,7 @@ if(typeof $==="undefined") $ = {};
 			ctx.globalCompositeOperation = "source-over";
 			ctx.fillStyle = "transparent";
 			ctx.fillRect(0, 0, w, h);
-			
+
 			// Draw all the particles
 			for(var i = 0; i < particles.length; i++){
 				var p = particles[i];
@@ -4583,18 +4583,18 @@ if(typeof $==="undefined") $ = {};
 				// Draw particle
 				ctx.arc(p.loc.x, p.loc.y, p.radius, Math.PI*2, false);
 				ctx.fill();
-				
+
 				// Move the particles
 				p.remaining_life -= 0.5;
 				p.radius += 0.5;
 				p.loc.x += p.speed.x;
 				p.loc.y -= p.speed.y;
-				
+
 				// Regenerate the particles
 				if(p.remaining_life < 0 || p.radius < 0) particles[i] = new particle();
 			}
 			// Request a new animation frame if we are still active
-			if(_obj.active) requestAnimationFrame(draw);	
+			if(_obj.active) requestAnimationFrame(draw);
 		}
 
 		// Start the animation
@@ -4629,10 +4629,10 @@ if(typeof $==="undefined") $ = {};
 		var a = Math.round(v/Math.pow(10,p))
 		return ''+a+'&times;10<sup>'+p+'</sup>'+u;
 	}
-	
+
 	// Escape HTML characters
 	function htmlDecode(input){ return $('<div />').html(input).text(); }
-	
+
 	function centre(lb){
 		var wide = $(window).width();
 		var tall = $(window).height();
@@ -4646,7 +4646,7 @@ if(typeof $==="undefined") $ = {};
 		}
 		lb.css({left:l+"px",top:t+'px','position':'absolute'});
 	}
-	
+
 	// Update the transforms on a Raphael element
 	function transformer(el,trans){
 		t = el.data('transform');
@@ -4667,7 +4667,7 @@ if(typeof $==="undefined") $ = {};
 		// As a work-around we make a function that stores the transform in .data('transform')
 		el.transform(t).data('transform',t);
 	}
-	
+
 	// Functions for getting, setting and deleting cookies
 	function setCookie(name,value,days){
 		if (days) {
@@ -4678,7 +4678,7 @@ if(typeof $==="undefined") $ = {};
 		else var expires = "";
 		document.cookie = name+"="+value+expires+"; path=/";
 	}
-	
+
 	function getCookie(name){
 		var nameEQ = name + "=";
 		var ca = document.cookie.split(';');
@@ -4689,7 +4689,7 @@ if(typeof $==="undefined") $ = {};
 		}
 		return null;
 	}
-	
+
 	function deleteCookie(name){ setCookie(name,"",-1); }
 
 	$.spacetelescope = function(placeholder,input) {

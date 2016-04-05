@@ -24,21 +24,6 @@
 		//spacetel = $.spacetelescope({id:"image",width:455,height:333,langs:{'en':'English','cy':'Cymraeg','he':'&#1506;&#1489;&#1512;&#1497;&#1514;'}});
 		spacetel = $.spacetelescope({id:"image",width:455,height:333,langs:{'en':'English'}});
 	});
-	var badBrowser=true;
-	if (navigator.userAgent.indexOf("Firefox")!=-1){
-	//console.log('Firefox');
-	badBrowser=false;
-	}else if (navigator.userAgent.indexOf("Chrome")!=-1){
-	//console.log('Chrome');
-	badBrowser=false;
-	}else if (navigator.userAgent.indexOf("Opera")!=-1){
-	//console.log('Opera');
-	badBrowser=false;
-	};
-	if (badBrowser){
-	  window.location.href="index-ie.html";
-	  //console.log(badBrowser);
-	};
 	</script>
 	<link rel="stylesheet" media="all" href="css/fonts.css" type="text/css"/>
 	<link rel="stylesheet" media="all" href="css/style.css" type="text/css"/>
@@ -76,9 +61,9 @@
 		<div id="summaryext" class="dropdown fullwidth">
 			<ul><li id="summaryext_success"></li><li id="summaryext_cost"></li><li id="summaryext_mass"></li><li id="summaryext_time"></li><li id="summaryext_science"></li><li id="summaryext_profile"></li></ul>
 		</div>
-		
+
 		<div id="page">
-			<div class="noscriptmsg">The interactive web version of this activity requires Javascript. Sorry about that.</strong></div>
+			<div class="noscriptmsg">The interactive web version of this activity requires Javascript. Sorry about that.</div>
 			<div id="options" class="view"></div>
 			<div id="intro" class="view">
 				<h1>Space Telescope Designer</h1>
