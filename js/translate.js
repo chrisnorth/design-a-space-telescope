@@ -100,6 +100,8 @@
 	Translator.prototype.rebuildForm = function(){
 
 		var html = "<form id=\"language\">";
+		console.log(this.phrasebook);
+		console.log(this.phrasebook);
 		html += this.buildForm(this.masterbook,this.phrasebook,"");
 		html += "</form>";
 
@@ -138,6 +140,7 @@
 			n = parseInt(key);
 			newk = k+"."+key;
 
+
 			if(typeof m[key]==="object"){
 
 				if(n >= 0 && this.previousgroup != n) html += '</div>';
@@ -156,7 +159,15 @@
 							inp += '<option value="'+m[key]._options[o].value+'"'+sel+'>'+m[key]._options[o].name+'</option>'
 						}
 						inp += '</select>';
+					// }else if((m[key]._type=="obj")&&(m[key].fields)) {
+					// 	console.log("OBJ",key,m[key].fields);
+					// 	inp='';
+					// 	for (f in m[key].fields){
+					// 		console.log(m[key].fields[f]);
+					// 		inp += '<input type="text" name="'+newk+'" value="'+sanitize((p && p[key][m[key].fields[f]] ? p[key][m[key].fields[f]] : ""))+'" />'
+					// 	}
 					}else if(m[key]._type=="string"){
+						console.log('STRING KEY',key,newk,sanitize(p && p[key] ? p[key] : ""));
 						inp = '<input type="text" name="'+newk+'" value="'+sanitize((p && p[key] ? p[key] : ""))+'" />';
 					}
 					html += this.row((m[key]._title ? m[key]._title : key),m[key]._text,inp);
@@ -272,6 +283,7 @@
 		return bstr;
 	}
 	function sanitize(str){
+		console.log("SANITIZE",str);
 		if(str){
 			str = str.replace(/</g,"&lt;");
 			str = str.replace(/>/g,"&gt;");

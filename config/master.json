@@ -7,36 +7,28 @@
 		"translator" : { "_title": "Translator", "_text": "This is the name of the translator. It can contain a hyperlink. Not currently displayed but may be in the future.", "_type": "string" },
 		"alignment" : { "_title": "Language Direction", "_text": "The direction that the language goes.", "_type": "select", "_options": [{"name":"left to right","value":"left"},{"name":"right to left","value":"right"}] }
 	},
-	"ui": {
-		"million": " million",
-		"billion": "Bn",
-		"units": {
-			"km": { "unit": " km" },
-			"m": { "unit": " m" },
-			"mm": { "unit": " mm" },
-			"ft": { "unit": " ft" },
-			"t": { "unit": " t" },
-			"kg": { "unit": " kg" },
-			"lb": { "unit": " lb" },
-			"years": { "unit": " yrs" },
-			"months": { "unit": " months" }
-		},
-		"currency": {
-			"pounds": { "symbol": "&pound;" },
-			"dollars": { "symbol": "&dollar;" },
-			"euros": { "symbol": "&euro;" },
-			"yen": { "symbol": "&yen;" }
-		}
-	},
+	
 
 	"ui": {
 		"_title": "User-interface",
-		"million": { "_title": "Million", "_text": "The text label appended to numbers in the millions", "_type": "string" },
-		"billion": { "_title": "Billion", "_text": "The text label appended to numbers in the billions", "_type": "string" },
+		"million": { 
+			"full":{
+				"_title": "Million (full)", "_text": "The full text label appended to numbers in the millions", "_type": "string"},
+			"compact":{
+				"_title": "Million (compact)", "_text": "The compact text label appended to numbers in the millions", "_type": "string"}
+			},
+		"billion": { 
+			"full":{
+				"_title": "Billion (full)", "_text": "The full text label appended to numbers in the billions", "_type": "string"},
+			"compact":{
+				"_title": "Billion (compact)", "_text": "The compact text label appended to numbers in the billions", "_type": "string"}
+			},
 		"units": {
 			"_title": "Units",
-			"m": { "unit": { "_title": "Metres", "_text": "The unit appended to linear dimensions.", "_type": "string" } },
-			"ft": { "unit": { "_title": "Feet", "_text": "The unit appended to linear dimensions.", "_type": "string" } },
+			"m": { "unit": { "_title": "Metres (unit)", "_text": "The unit appended to linear dimensions.", "_type": "string" } ,
+		 	"label": { "_title": "Metres (label)", "_text": "The label appended to linear dimensions.", "_type": "string" } },
+			"ft": { "unit": { "_title": "Feet", "_text": "The unit appended to linear dimensions.", "_type": "string" } ,
+			"label": { "_title": "Feet", "_text": "The unit appended to linear dimensions.", "_type": "string" } },
 			"kg": { "unit": { "_title": "Kilograms", "_text": "The unit appended to mass.", "_type": "string" } },
 			"lb": { "unit": { "_title": "lbs", "_text": "The unit appended to mass.", "_type": "string" } },
 			"years": { "unit": { "_title": "Years", "_text": "The unit appended to time.", "_type": "string" } },
@@ -44,10 +36,14 @@
 		},
 		"currency": {
 			"_title": "Currency",
-			"pounds": { "symbol": { "_title": "&pound;", "_text": "The currency symbol for GBP.", "_type": "string" } },
-			"dollars": { "symbol": { "_title": "&dollar;", "_text": "The currency symbol for USD.", "_type": "string" } },
-			"euros": { "symbol": { "_title": "&euro;", "_text": "The currency symbol for Euros.", "_type": "string" } },
-			"yen": { "symbol": { "_title": "&yen;", "_text": "The currency symbol for YEN.", "_type": "string" } }
+			"GBP": { "symbol": { "_title": "&pound;", "_text": "The currency symbol for GBP.", "_type": "string" },
+				"label": { "_title": "&pound;", "_text": "The currency label for GBP.", "_type": "string" } },
+			"USD": { "symbol": { "_title": "&dollar;", "_text": "The currency symbol for USD.", "_type": "string" },
+		 		"label": { "_title": "&dollar;", "_text": "The currency label for USD.", "_type": "string" }},
+			"EUR": { "symbol": { "_title": "&euro;", "_text": "The currency symbol for Euros.", "_type": "string" },
+		 		"label": { "_title": "&euro;", "_text": "The currency label for Euros.", "_type": "string" }},
+			"JPY": { "symbol": { "_title": "&yen;", "_text": "The currency symbol for YEN.", "_type": "string" },
+		 		"label": { "_title": "&yen;", "_text": "The currency label for YEN.", "_type": "string" }}
 		}
 	},
 	"options": {
